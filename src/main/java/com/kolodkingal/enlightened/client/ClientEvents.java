@@ -3,6 +3,8 @@ package com.kolodkingal.enlightened.client;
 import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.bending.Benders;
 import com.kolodkingal.enlightened.bending.BendingData;
+import com.kolodkingal.enlightened.client.anim.Animator;
+import com.kolodkingal.enlightened.client.anim.BodyLean;
 import com.kolodkingal.enlightened.client.render.AirShieldRenderer;
 import com.kolodkingal.enlightened.network.AbilityKeyPayload;
 import com.kolodkingal.enlightened.network.ChangeLookPayload;
@@ -61,6 +63,7 @@ public final class ClientEvents {
             return;
         }
         handleKeys(mc, player);
+        BodyLean.tick(mc.level);
     }
 
     private static void handleKeys(Minecraft mc, LocalPlayer player) {
@@ -93,6 +96,10 @@ public final class ClientEvents {
             if (usable && clicked && !SENT_DOWN[i]) {
                 ModNetwork.sendToServer(new AbilityKeyPayload(i, true, sneak));
                 SENT_DOWN[i] = true;
+                com.kolodkingal.enlightened.bending.Ability pressed = data.slot(BendingData.slotIndex(i, sneak));
+                if (pressed != null && data.has(pressed)) {
+                    Animator.predict(player, pressed);
+                }
             }
             if (!down && SENT_DOWN[i]) {
                 ModNetwork.sendToServer(new AbilityKeyPayload(i, false, mc.options.keyShift.isDown()));
@@ -111,6 +118,7 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         SeismicGlow.clear();
+        BodyLean.clear();
         java.util.Arrays.fill(SENT_DOWN, false);
     }
 

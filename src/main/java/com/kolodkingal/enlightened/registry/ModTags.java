@@ -31,6 +31,8 @@ public final class ModTags {
 
     /** Items that are metal (a metal pull takes them from the ground). */
     public static final TagKey<Item> METAL_ITEMS = ItemTags.create(Enlightened.id("metal_items"));
+    /** What tames, heals and breeds a flying lemur: apples, berries, melon, glow berries. */
+    public static final TagKey<Item> LEMUR_FOOD = ItemTags.create(Enlightened.id("lemur_food"));
 
     private ModTags() {
     }

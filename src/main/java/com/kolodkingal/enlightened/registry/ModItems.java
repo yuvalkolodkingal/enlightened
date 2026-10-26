@@ -27,6 +27,10 @@ public final class ModItems {
     public static final DeferredItem<GliderItem> AIR_GLIDER = ITEMS.register("air_glider",
             () -> new GliderItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
 
+    /** The flying lemur's spawn egg (cream and dark grey, the lemur's colours). */
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> LEMUR_SPAWN_EGG = ITEMS.register("flying_lemur_spawn_egg",
+            () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.LEMUR, 0xEDE3C8, 0x4A4A4A, new Item.Properties()));
+
     private static DeferredItem<BendingScrollItem> scroll(String name, Element element) {
         return ITEMS.register(name, () -> new BendingScrollItem(element, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     }

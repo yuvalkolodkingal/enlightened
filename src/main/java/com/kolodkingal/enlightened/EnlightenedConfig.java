@@ -80,8 +80,8 @@ public final class EnlightenedConfig {
         BOSS_XP = B.comment("Experience a boss (the Wither, the Ender Dragon, the Warden, an Elder Guardian) gives.")
                 .defineInRange("bossXp", 10, 1, 1000);
         PLAYER_XP = B.comment("Experience another player gives (with PvP on).").defineInRange("playerXp", 2, 0, 100);
-        HURT_PASSIVES = B.comment("Whether area attacks (fire ring, air blast, tornado, spout) hurt villagers, animals and golems.")
-                .define("hurtPassives", false);
+        HURT_PASSIVES = B.comment("Whether bending hurts creatures that are not hostile (animals, villagers, golems); the bender's own pets and teammates are always spared.")
+                .define("hurtPassives", true);
         SCROLLS_IN_CHESTS = B.comment("Whether the bending scrolls are found in chests (besides being crafted).")
                 .define("scrollsInChests", true);
         RAISED_BLOCK_SECONDS = B.comment("How long a wall or pillar bending raised stands before it goes back.")

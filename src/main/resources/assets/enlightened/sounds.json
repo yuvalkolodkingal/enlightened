@@ -220,5 +220,17 @@
     "sounds": [
       "enlightened:sfx/lightning_redirect"
     ]
+  },
+  "lemur_chirp": {
+    "subtitle": "subtitles.enlightened.lemur_chirp",
+    "sounds": [
+      "enlightened:sfx/lemur_chirp"
+    ]
+  },
+  "lemur_hurt": {
+    "subtitle": "subtitles.enlightened.lemur_hurt",
+    "sounds": [
+      "enlightened:sfx/lemur_hurt"
+    ]
   }
 }

@@ -1,6 +1,5 @@
 {
   "itemGroup.enlightened": "Enlightened",
-
   "element.enlightened.none": "No bending",
   "element.enlightened.earth": "Earth",
   "element.enlightened.air": "Air",
@@ -26,7 +25,6 @@
   "element.enlightened.water.chosen": "%s has become a Waterbender!",
   "element.enlightened.fire.chosen": "%s has become a Firebender!",
   "element.enlightened.none.chosen": "%s bends nothing now.",
-
   "gate.enlightened.none": "",
   "gate.enlightened.sand": "Sandbending",
   "gate.enlightened.lava": "Lavabending",
@@ -35,7 +33,6 @@
   "gate.enlightened.blood": "Bloodbending",
   "gate.enlightened.lightning": "Lightning",
   "gate.enlightened.tetherless": "Tetherless",
-
   "ability.enlightened.rock_throw": "Rock Throw",
   "ability.enlightened.rock_throw.desc": "Rocks tear out of the ground in front of you and fly at what you look at: one, two or three at once as you master it. Needs earth under your feet.",
   "ability.enlightened.rock_lift": "Rock Lift",
@@ -70,7 +67,6 @@
   "ability.enlightened.metal_pull.desc": "The metal in the ground round you (iron, gold, copper ore, ancient debris) comes out of the rock into your pack, and loose metal on the ground with it. More metal as you master it.",
   "ability.enlightened.wreck": "Wreck",
   "ability.enlightened.wreck.desc": "Tear metal devices apart: furnaces, pistons, rails, hoppers, iron doors (1, 3 or 6 at once); minecarts and iron golems too.",
-
   "ability.enlightened.air_blast": "Air Blast",
   "ability.enlightened.air_blast.desc": "A wave of air throws everyone in front of you back, farther as you master it.",
   "ability.enlightened.air_shield": "Air Shield",
@@ -91,7 +87,6 @@
   "ability.enlightened.flight.desc": "Only an airbender who let go of his earthly tethers flies. Toggle; press again to take off or land.",
   "ability.enlightened.suffocate": "Suffocation",
   "ability.enlightened.suffocate.desc": "Take the air out of an enemy's lungs while you hold the key, unless he gets far away from you. Only for the tetherless.",
-
   "ability.enlightened.water_whip": "Water Whip",
   "ability.enlightened.water_whip.desc": "A whip of water lashes what you look at. The first art of every waterbender; it is what carries your water.",
   "ability.enlightened.water_healing": "Healing",
@@ -116,7 +111,6 @@
   "ability.enlightened.bloodbending.desc": "Take hold of a creature or a player up close and move him like a puppet; press again to throw him. Below mastery only under a full moon. A stronger waterbender cannot be held.",
   "ability.enlightened.blood_suppress": "Take Bending",
   "ability.enlightened.blood_suppress.desc": "A master bloodbender takes the bending of the bender he holds: ten minutes for a weak bender, a minute or two for a skilled one.",
-
   "ability.enlightened.fire_skin": "Firebender's Skin",
   "ability.enlightened.fire_skin.desc": "Fire hurts you less: half, a quarter, then not at all. Passive.",
   "ability.enlightened.fire_ball": "Fire Ball",
@@ -133,7 +127,6 @@
   "ability.enlightened.lightning.desc": "Gather lightning for a moment and strike: four and a half hearts and a stun. A master strikes with both hands for six. Long to recharge.",
   "ability.enlightened.lightning_redirect": "Lightning Redirection",
   "ability.enlightened.lightning_redirect.desc": "Take the stance: lightning that strikes you is caught. A novice is burned two times in three, an adept half the time; a master sends it all back at what he looks at. Toggle.",
-
   "look.enlightened.earth.toph": "Toph Beifong",
   "look.enlightened.earth.bumi": "King Bumi",
   "look.enlightened.earth.lin": "Lin Beifong",
@@ -159,7 +152,6 @@
   "look.enlightened.fire.jeong_jeong": "Jeong Jeong (White Lotus)",
   "look.enlightened.fire.ozai": "Fire Lord Ozai",
   "look.enlightened.fire.own": "Your own skin",
-
   "item.enlightened.earth_scroll": "Earth Scroll",
   "item.enlightened.air_scroll": "Air Scroll",
   "item.enlightened.water_scroll": "Water Scroll",
@@ -172,16 +164,13 @@
   "item.enlightened.air_glider": "Air Glider",
   "item.enlightened.air_glider.desc": "In an airbender's hand it opens as he falls and he glides on the wind.",
   "item.enlightened.air_glider.desc2": "Dye it in a crafting table for the colour you like.",
-
   "entity.enlightened.shot": "Bent Shot",
   "entity.enlightened.tornado": "Tornado",
   "entity.enlightened.meditating_body": "Meditating Body",
-
   "effect.enlightened.bloodbent": "Bloodbent",
   "effect.enlightened.quicksand": "Quicksand",
   "effect.enlightened.frozen": "Frozen",
   "effect.enlightened.stunned": "Stunned",
-
   "key.categories.enlightened": "Enlightened Bending",
   "key.enlightened.ability_1": "Ability 1",
   "key.enlightened.ability_2": "Ability 2",
@@ -190,7 +179,6 @@
   "key.enlightened.ability_5": "Ability 5",
   "key.enlightened.change_look": "Change Look",
   "key.enlightened.scroll": "Bending Scroll",
-
   "message.enlightened.scroll_hint": "Press K to open your Bending Scroll: your abilities, your points and your keys.",
   "message.enlightened.look": "Look: %s",
   "message.enlightened.look.none": "This element has only one look",
@@ -212,7 +200,6 @@
   "message.enlightened.protected": "This place is protected",
   "message.enlightened.scroll.other_element": "You already bend %s: this scroll is not yours to read",
   "message.enlightened.water_skin.filled": "The water skin is full",
-
   "message.enlightened.earth.no_earth": "No earth under your feet",
   "message.enlightened.earth.no_earth_there": "No earth there",
   "message.enlightened.earth.no_sand": "No sand near you",
@@ -227,7 +214,6 @@
   "message.enlightened.earth.seismic_off": "Seismic sense off",
   "message.enlightened.earth.quicksand_stronger": "%s is the stronger earthbender: the sand will not take him",
   "message.enlightened.earth.nothing_to_wreck": "No metal device in sight",
-
   "message.enlightened.air.shield_burst": "Your shield burst!",
   "message.enlightened.air.scooter_on": "Air scooter on",
   "message.enlightened.air.scooter_off": "Air scooter off",
@@ -240,7 +226,6 @@
   "message.enlightened.air.projection_far": "Too far from your body: the tether pulls you back",
   "message.enlightened.air.projection_left": "Spirit: %s s",
   "message.enlightened.air.tetherless": "You have let go of your earthly tethers. The sky is yours: flight and suffocation can be learned, and your air strikes harder.",
-
   "message.enlightened.water.no_water": "No water: find a lake, a water skin or (a master) plants",
   "message.enlightened.water.octopus_on": "Octopus form",
   "message.enlightened.water.no_water_below": "No water under you",
@@ -254,12 +239,10 @@
   "message.enlightened.water.suppress_no_bender": "You must hold a bender in your grip first",
   "message.enlightened.water.suppressed_by": "%s has taken your bending!",
   "message.enlightened.water.suppressed": "You took the bending of %s for %s seconds",
-
   "message.enlightened.fire.redirect_on": "Lightning redirection stance",
   "message.enlightened.fire.redirect_off": "Stance dropped",
   "message.enlightened.fire.redirect_failed": "The lightning burned through you!",
   "message.enlightened.fire.redirected": "You caught the lightning",
-
   "hud.enlightened.points": "Points: %s",
   "hud.enlightened.xp": "(%s/%s to the next)",
   "hud.enlightened.scroll": "Scroll",
@@ -275,7 +258,6 @@
   "hud.enlightened.active": "active",
   "hud.enlightened.on": "ON",
   "hud.enlightened.off": "OFF",
-
   "screen.enlightened.scroll": "Bending Scroll",
   "screen.enlightened.scroll.points": "Points to spend: %s (spent: %s). Click an ability, then a key. + learns the next level.",
   "screen.enlightened.scroll.loadout": "Your keys (right-click to clear)",
@@ -285,7 +267,6 @@
   "screen.enlightened.scroll.gate": "%s: %s points first",
   "screen.enlightened.scroll.passive": "(passive)",
   "screen.enlightened.scroll.more": "Scroll for more...",
-
   "command.enlightened.unknown_element": "Unknown element: %s",
   "command.enlightened.unknown_look": "Unknown look: %s",
   "command.enlightened.unknown_ability": "Unknown ability: %s",
@@ -300,7 +281,6 @@
   "command.enlightened.reset": "Reset the abilities of %s player(s); the points were refunded",
   "command.enlightened.info": "%s: %s, %s points (%s/%s experience), %s spent, %s kills",
   "command.enlightened.info.ability": "  %s: level %s, key slot %s",
-
   "death.attack.enlightened.bending": "%1$s was bent to death",
   "death.attack.enlightened.bending.player": "%1$s was bent to death by %2$s",
   "death.attack.enlightened.earth": "%1$s was crushed by a rock",
@@ -325,7 +305,6 @@
   "death.attack.enlightened.flame.player": "%1$s burned in %2$s's fire",
   "death.attack.enlightened.lightning": "%1$s was struck by a firebender's lightning",
   "death.attack.enlightened.lightning.player": "%1$s was struck by %2$s's lightning",
-
   "subtitles.enlightened.awaken": "Bending awakens",
   "subtitles.enlightened.learn": "Ability learned",
   "subtitles.enlightened.point": "Ability point earned",
@@ -362,5 +341,16 @@
   "subtitles.enlightened.fire_ring": "Fire ring",
   "subtitles.enlightened.lightning_charge": "Lightning gathers",
   "subtitles.enlightened.lightning_strike": "Lightning strikes",
-  "subtitles.enlightened.lightning_redirect": "Lightning redirected"
+  "subtitles.enlightened.lightning_redirect": "Lightning redirected",
+  "entity.enlightened.flying_lemur": "Flying Lemur",
+  "item.enlightened.flying_lemur_spawn_egg": "Flying Lemur Spawn Egg",
+  "subtitles.enlightened.lemur_chirp": "Lemur chirps",
+  "subtitles.enlightened.lemur_hurt": "Lemur squeals",
+  "enlightened.configuration.animations": "Animations",
+  "enlightened.configuration.reducedMotion": "Reduced motion",
+  "enlightened.configuration.effects": "Gesture effects",
+  "enlightened.configuration.firstPersonHands": "First-person hands",
+  "enlightened.configuration.animation": "Animation",
+  "enlightened.configuration.section.enlightened.client.toml": "Enlightened client settings",
+  "enlightened.configuration.section.enlightened.client.toml.title": "Enlightened client settings"
 }

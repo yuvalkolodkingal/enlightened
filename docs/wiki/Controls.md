@@ -32,3 +32,14 @@ The panel in the top-left corner shows:
 * **Passive**: it works by itself and sits on no key (the skins, the air bubble, the water of plants).
 
 A key with nothing on it says so; open the scroll to put an ability there.
+
+## Body language
+
+Every bender acts their bending: a stomp and a punch for a rock, both palms thrust for an air blast, water drawn from
+the side and lashed, a fist chambered at the hip and driven for a fire ball, the arms circling for lightning; the fire
+fist punches in turn, a lifted rock rides on an open palm, bloodbending claws its hands at its victim. Tetherless
+flight and the glider lean the body into the wind, the scooter into the ride. Your own hands move the same way in
+first person. Each nation walks and sprints in its own way (the earthbender heavy, the airbender bouncy, the
+waterbender flowing, the firebender leaning in). The client config (the mod's config screen) has the switches:
+**animations**, **reduced motion** (no trembles or drift), **effects** (flames at the fists, dust at a stomp),
+**first-person hands**.

@@ -1,6 +1,5 @@
 {
   "itemGroup.enlightened": "Enlightened",
-
   "element.enlightened.none": "ללא כישוף",
   "element.enlightened.earth": "אדמה",
   "element.enlightened.air": "אוויר",
@@ -26,7 +25,6 @@
   "element.enlightened.water.chosen": "%s הפך לכשף מים!",
   "element.enlightened.fire.chosen": "%s הפך לכשף אש!",
   "element.enlightened.none.chosen": "%s כבר לא מכשף.",
-
   "gate.enlightened.none": "",
   "gate.enlightened.sand": "כשפות חול",
   "gate.enlightened.lava": "כשפות לבה",
@@ -35,7 +33,6 @@
   "gate.enlightened.blood": "כשפות דם",
   "gate.enlightened.lightning": "ברק",
   "gate.enlightened.tetherless": "משוחרר מכבלים",
-
   "ability.enlightened.rock_throw": "זריקת סלע",
   "ability.enlightened.rock_throw.desc": "סלעים נתלשים מהאדמה שמולך ועפים אל מה שאתה מסתכל עליו: אחד, שניים או שלושה בבת אחת ככל שאתה מתמחה. צריך אדמה מתחת לרגליים.",
   "ability.enlightened.rock_lift": "הרמת סלע",
@@ -70,7 +67,6 @@
   "ability.enlightened.metal_pull.desc": "המתכת שבאדמה סביבך (עפרות ברזל, זהב, נחושת, שרידים עתיקים) יוצאת מהסלע לתיק שלך, ואיתה מתכת שמונחת על הקרקע. יותר מתכת ככל שאתה מתמחה.",
   "ability.enlightened.wreck": "הריסת מכשירים",
   "ability.enlightened.wreck.desc": "קורע מכשירי מתכת: תנורים, בוכנות, מסילות, משפכים, דלתות ברזל (1, 3 או 6 בבת אחת); גם קרונות מכרה וגולמי ברזל.",
-
   "ability.enlightened.air_blast": "גל הדף אוויר",
   "ability.enlightened.air_blast.desc": "גל אוויר מעיף את כל מי שמולך אחורה, רחוק יותר ככל שאתה מתמחה.",
   "ability.enlightened.air_shield": "מגן אוויר",
@@ -91,7 +87,6 @@
   "ability.enlightened.flight.desc": "רק כשף אוויר שניתק את כבליו הארציים עף. הפעלה וכיבוי; לחץ שוב כדי להמריא או לנחות.",
   "ability.enlightened.suffocate": "חנק",
   "ability.enlightened.suffocate.desc": "מוציא את האוויר מהריאות של האויב כל עוד אתה מחזיק את המקש, אלא אם הוא מתרחק ממך. רק למשוחררים מכבלים.",
-
   "ability.enlightened.water_whip": "שוט מים",
   "ability.enlightened.water_whip.desc": "שוט של מים מצליף במה שאתה מסתכל עליו. היכולת הראשונה של כל כשף מים; היא זו שנושאת את המים שלך.",
   "ability.enlightened.water_healing": "ריפוי",
@@ -116,7 +111,6 @@
   "ability.enlightened.bloodbending.desc": "תפוס יצור או שחקן מקרוב והזז אותו כמו בובה; לחץ שוב כדי לזרוק אותו. לפני שליטה מלאה רק בירח מלא. כשף מים חזק יותר לא ייתפס.",
   "ability.enlightened.blood_suppress": "לקיחת כישוף",
   "ability.enlightened.blood_suppress.desc": "כשף דם מומחה לוקח את הכישוף של הכשף שהוא מחזיק: עשר דקות לכשף חלש, דקה-שתיים לכשף מיומן.",
-
   "ability.enlightened.fire_skin": "עור של כשף אש",
   "ability.enlightened.fire_skin.desc": "אש פוגעת בך פחות: חצי, רבע, ואז בכלל לא. פסיבי.",
   "ability.enlightened.fire_ball": "כדור אש",
@@ -133,7 +127,6 @@
   "ability.enlightened.lightning.desc": "אסוף ברק לרגע והכה: ארבעה וחצי לבבות ושיתוק. מומחה מכה בשתי הידיים לשישה. לוקח הרבה זמן להיטען.",
   "ability.enlightened.lightning_redirect": "החזרת ברק",
   "ability.enlightened.lightning_redirect.desc": "עמוד בעמידה: ברק שפוגע בך נתפס. מתחיל נשרף שתיים מתוך שלוש פעמים, מתקדם חצי מהפעמים; מומחה מחזיר את כולו אל מה שהוא מסתכל עליו. הפעלה וכיבוי.",
-
   "look.enlightened.earth.toph": "טוף בייפונג",
   "look.enlightened.earth.bumi": "המלך בומי",
   "look.enlightened.earth.lin": "לין בייפונג",
@@ -159,7 +152,6 @@
   "look.enlightened.fire.jeong_jeong": "ג'אונג ג'אונג (הלוטוס הלבן)",
   "look.enlightened.fire.ozai": "שליט האש אוזאי",
   "look.enlightened.fire.own": "הסקין שלך",
-
   "item.enlightened.earth_scroll": "מגילת אדמה",
   "item.enlightened.air_scroll": "מגילת אוויר",
   "item.enlightened.water_scroll": "מגילת מים",
@@ -172,16 +164,13 @@
   "item.enlightened.air_glider": "דאון אוויר",
   "item.enlightened.air_glider.desc": "ביד של כשף אוויר הוא נפתח כשהוא נופל והוא גולש על הרוח.",
   "item.enlightened.air_glider.desc2": "צבע אותו בשולחן עבודה לצבע שאתה אוהב.",
-
   "entity.enlightened.shot": "יסוד מכושף",
   "entity.enlightened.tornado": "טורנדו",
   "entity.enlightened.meditating_body": "גוף במדיטציה",
-
   "effect.enlightened.bloodbent": "כשפות דם",
   "effect.enlightened.quicksand": "חול טובעני",
   "effect.enlightened.frozen": "קפוא",
   "effect.enlightened.stunned": "משותק",
-
   "key.categories.enlightened": "Enlightened: כשפות",
   "key.enlightened.ability_1": "יכולת 1",
   "key.enlightened.ability_2": "יכולת 2",
@@ -190,7 +179,6 @@
   "key.enlightened.ability_5": "יכולת 5",
   "key.enlightened.change_look": "החלפת נראות",
   "key.enlightened.scroll": "מגילת הכשפות",
-
   "message.enlightened.scroll_hint": "לחץ K כדי לפתוח את מגילת הכשפות שלך: היכולות, הנקודות והמקשים.",
   "message.enlightened.look": "נראות: %s",
   "message.enlightened.look.none": "ליסוד הזה יש נראות אחת בלבד",
@@ -212,7 +200,6 @@
   "message.enlightened.protected": "המקום הזה מוגן",
   "message.enlightened.scroll.other_element": "אתה כבר מכשף %s: המגילה הזאת לא שלך לקריאה",
   "message.enlightened.water_skin.filled": "נאד המים מלא",
-
   "message.enlightened.earth.no_earth": "אין אדמה מתחת לרגליך",
   "message.enlightened.earth.no_earth_there": "אין שם אדמה",
   "message.enlightened.earth.no_sand": "אין חול לידך",
@@ -227,7 +214,6 @@
   "message.enlightened.earth.seismic_off": "חוש סיסמי כבוי",
   "message.enlightened.earth.quicksand_stronger": "%s הוא כשף האדמה החזק יותר: החול לא ייקח אותו",
   "message.enlightened.earth.nothing_to_wreck": "אין מכשיר מתכת בטווח ראייה",
-
   "message.enlightened.air.shield_burst": "המגן שלך התפוצץ!",
   "message.enlightened.air.scooter_on": "כדור אוויר דלוק",
   "message.enlightened.air.scooter_off": "כדור אוויר כבוי",
@@ -240,7 +226,6 @@
   "message.enlightened.air.projection_far": "רחוק מדי מהגוף: הקשר מושך אותך חזרה",
   "message.enlightened.air.projection_left": "רוח: %s שנ'",
   "message.enlightened.air.tetherless": "ניתקת את כבליך הארציים. השמיים שלך: אפשר ללמוד תעופה וחנק, והאוויר שלך מכה חזק יותר.",
-
   "message.enlightened.water.no_water": "אין מים: מצא אגם, נאד מים או (מומחה) צמחים",
   "message.enlightened.water.octopus_on": "תמנון מים",
   "message.enlightened.water.no_water_below": "אין מים מתחתיך",
@@ -254,12 +239,10 @@
   "message.enlightened.water.suppress_no_bender": "קודם תפוס כשף באחיזה שלך",
   "message.enlightened.water.suppressed_by": "%s לקח את הכישוף שלך!",
   "message.enlightened.water.suppressed": "לקחת את הכישוף של %s ל-%s שניות",
-
   "message.enlightened.fire.redirect_on": "עמידת החזרת ברק",
   "message.enlightened.fire.redirect_off": "העמידה נשברה",
   "message.enlightened.fire.redirect_failed": "הברק שרף דרכך!",
   "message.enlightened.fire.redirected": "תפסת את הברק",
-
   "hud.enlightened.points": "נקודות: %s",
   "hud.enlightened.xp": "(%s/%s לבאה)",
   "hud.enlightened.scroll": "מגילה",
@@ -275,7 +258,6 @@
   "hud.enlightened.active": "פעיל",
   "hud.enlightened.on": "דלוק",
   "hud.enlightened.off": "כבוי",
-
   "screen.enlightened.scroll": "מגילת הכשפות",
   "screen.enlightened.scroll.points": "נקודות להשקעה: %s (הושקעו: %s). לחץ על יכולת, ואז על מקש. + לומד את הרמה הבאה.",
   "screen.enlightened.scroll.loadout": "המקשים שלך (קליק ימני לניקוי)",
@@ -285,7 +267,6 @@
   "screen.enlightened.scroll.gate": "%s: קודם %s נקודות",
   "screen.enlightened.scroll.passive": "(פסיבי)",
   "screen.enlightened.scroll.more": "גלול לעוד...",
-
   "command.enlightened.unknown_element": "יסוד לא מוכר: %s",
   "command.enlightened.unknown_look": "נראות לא מוכרת: %s",
   "command.enlightened.unknown_ability": "יכולת לא מוכרת: %s",
@@ -300,7 +281,6 @@
   "command.enlightened.reset": "היכולות של %s שחקנים אופסו; הנקודות הוחזרו",
   "command.enlightened.info": "%s: %s, %s נקודות (%s/%s ניסיון), %s הושקעו, %s הריגות",
   "command.enlightened.info.ability": "  %s: רמה %s, משבצת מקש %s",
-
   "death.attack.enlightened.bending": "%1$s כושף למוות",
   "death.attack.enlightened.bending.player": "%1$s כושף למוות על ידי %2$s",
   "death.attack.enlightened.earth": "%1$s נמחץ על ידי סלע",
@@ -325,7 +305,6 @@
   "death.attack.enlightened.flame.player": "%1$s נשרף באש של %2$s",
   "death.attack.enlightened.lightning": "%1$s הוכה בברק של כשף אש",
   "death.attack.enlightened.lightning.player": "%1$s הוכה בברק של %2$s",
-
   "subtitles.enlightened.awaken": "כישוף מתעורר",
   "subtitles.enlightened.learn": "יכולת נלמדה",
   "subtitles.enlightened.point": "נקודת יכולת הושגה",
@@ -362,5 +341,16 @@
   "subtitles.enlightened.fire_ring": "מעגל אש",
   "subtitles.enlightened.lightning_charge": "ברק נאסף",
   "subtitles.enlightened.lightning_strike": "ברק מכה",
-  "subtitles.enlightened.lightning_redirect": "ברק הוחזר"
+  "subtitles.enlightened.lightning_redirect": "ברק הוחזר",
+  "entity.enlightened.flying_lemur": "למור מעופף",
+  "item.enlightened.flying_lemur_spawn_egg": "ביצת הטלה: למור מעופף",
+  "subtitles.enlightened.lemur_chirp": "למור מצייץ",
+  "subtitles.enlightened.lemur_hurt": "למור צווח",
+  "enlightened.configuration.animations": "אנימציות",
+  "enlightened.configuration.reducedMotion": "תנועה מופחתת",
+  "enlightened.configuration.effects": "אפקטים של מחוות",
+  "enlightened.configuration.firstPersonHands": "ידיים בגוף ראשון",
+  "enlightened.configuration.animation": "אנימציה",
+  "enlightened.configuration.section.enlightened.client.toml": "הגדרות לקוח של Enlightened",
+  "enlightened.configuration.section.enlightened.client.toml.title": "הגדרות לקוח של Enlightened"
 }

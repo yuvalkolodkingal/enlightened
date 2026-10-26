@@ -35,6 +35,7 @@ public class Enlightened {
         ModCreativeTab.TABS.register(modBus);
         modBus.addListener(ModNetwork::register);
         modBus.addListener(ModEntities::createAttributes);
+        modBus.addListener(ModEntities::registerSpawnPlacements);
         container.registerConfig(ModConfig.Type.SERVER, EnlightenedConfig.SPEC);
     }
 

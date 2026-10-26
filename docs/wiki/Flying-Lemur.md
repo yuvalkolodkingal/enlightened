@@ -1,0 +1,22 @@
+# The Flying Lemur
+
+[עברית](Flying-Lemur-HE)
+
+A small winged lemur, like Momo, inspired by the *Flying Lemur* Avatar add-on. It lives in **jungles, bamboo jungles,
+cherry groves, meadows and flower forests**, in small groups, and you can find a **spawn egg** in the creative tab.
+
+## Taming
+
+Hold an **apple, sweet berries, glow berries, a melon slice or a golden apple** and right-click the lemur. About one
+feeding in three tames it (hearts). A tamed lemur:
+
+* follows you, flying to keep up, and glides down to you;
+* **sits** when you right-click it with an empty hand, and stands again on the next click;
+* can be leashed while standing;
+* heals when fed, and breeds with the same food: babies are small and grow up.
+
+## Life
+
+The lemur flies and glides (it takes no fall damage), chirps, scolds when hurt, twitches its ears, tilts its head at
+you and perches with its wings folded and its tail curled round. Its wings beat in flight, spread flat in a glide and
+fold on the ground; it banks into its turns.

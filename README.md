@@ -22,6 +22,13 @@ Every bender wears the look of a character: Toph, King Bumi, Lin and Suyin Beifo
 Zaheer, Jinora, Monk Gyatso, Jae and Kartik; Katara, Amon, Ming-Hua and Master Pakku; Zuko, Uncle Iroh, Azula
 (whose fire is blue), Jeong Jeong and Fire Lord Ozai, or your own skin. **H** changes the look.
 
+Every bender **acts** their bending: a stomp and a punch for a rock, both palms thrust for an air blast, water drawn
+from the side and lashed, a fist chambered at the hip for a fire ball, the arms circling for lightning, in the spirit
+of the show's four martial arts; tetherless flight, the glider and the scooter lean the body into the wind, and your
+own hands move the same way in first person. Bending hits animals as well as monsters (a server can turn that off).
+And **flying lemurs**, like Momo, live in the jungles and meadows: feed one apples or berries to tame it, and it follows
+you, glides down to you and perches when told.
+
 Enlightened is built on the same frame as [Enhanced](https://github.com/yuvalkolodkingal/Enhanced), the
 superhero mod, and plays the same way: one power per player, the ability keys **R G V B N**, the look key **H**, the
 panel in the top-left corner, items that awaken the power, a server config, operator commands and GameTests.
@@ -86,6 +93,12 @@ Java 21. The skins and the sounds are generated: `python3 tools/skins.py` and `p
 כל כשף לובש נראות של דמות: טוף, המלך בומי, לין וסוּיין בייפונג, גזאן ובולין; טנזין, זאהיר, ג'ינורה, הנזיר ג'יאטסו,
 ג'יי וקארתיק; קטרה, אמון, מינג-הואה ומאסטר פאקו; זוקו, דוד אירו, אזולה (שהאש שלה כחולה), ג'אונג ג'אונג ושליט האש
 אוזאי, או הסקין שלכם. **H** מחליף נראות.
+
+כל כשף **משחק** את הכישוף שלו: רקיעה ואגרוף לסלע, שתי כפות ידיים להדף אוויר, מים שנמשכים מהצד ומוצלפים, אגרוף
+נטען במותן לכדור אש, זרועות במעגלים לברק, ברוח ארבע אומנויות הלחימה של הסדרה; טיסה חופשית, הדאון וכדור האוויר מטים
+את הגוף לתוך הרוח, והידיים שלכם זזות באותה צורה בגוף ראשון. הכישוף פוגע בחיות כמו במפלצות (שרת יכול לכבות את זה).
+ו**למורים מעופפים**, כמו מומו, חיים בג'ונגלים ובאחו: האכילו אחד בתפוחים או בפירות יער כדי לאלף אותו, והוא עוקב
+אחריכם, גולש אליכם ונח כשאומרים לו.
 
 Enlightened בנוי על אותה מסגרת כמו [Enhanced](https://github.com/yuvalkolodkingal/Enhanced), מוד גיבורי העל,
 ומשחקים בו באותה צורה: כוח אחד לשחקן, מקשי היכולות **R G V B N**, מקש הנראות **H**, הפאנל בפינה השמאלית העליונה,

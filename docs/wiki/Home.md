@@ -26,6 +26,7 @@ same authors, and plays the same way.
 
 * [Looks](Looks): Toph, Bumi, Lin, Suyin, Ghazan, Bolin; Tenzin, Zaheer, Jinora, Gyatso, Jae, Kartik; Katara, Amon, Ming-Hua, Pakku; Zuko, Iroh, Azula, Jeong Jeong, Ozai
 * [Items and Crafting](Items-and-Crafting): the scrolls, the Water Skin, the Air Glider
+* [The Flying Lemur](Flying-Lemur): a tameable winged lemur, like Momo
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)
 * [Building from Source](Building-from-Source)

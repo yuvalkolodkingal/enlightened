@@ -30,6 +30,10 @@ import java.util.Locale;
 public class BendingHud implements LayeredDraw.Layer {
     private static int shownWidth;
     private static long shownUntil;
+    /** What was seen of each ability's cooldown last frame, the tick it started and how long it was: the flash and the bar. */
+    private static final long[] SEEN = new long[Ability.values().length];
+    private static final long[] STARTED = new long[Ability.values().length];
+    private static final long[] LENGTH = new long[Ability.values().length];
 
     @Override
     public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
@@ -45,6 +49,8 @@ public class BendingHud implements LayeredDraw.Layer {
         }
         Font font = mc.font;
         long now = mc.level.getGameTime();
+        float partial = deltaTracker.getGameTimeDeltaPartialTick(false);
+        watch(data, now);
         Variant look = Variants.current(data);
         MutableComponent title = element.awakeningTitle().copy().withStyle(s -> s.withColor(look.color()).withBold(true));
         if (Variants.hasChoice(element)) {
@@ -98,9 +104,57 @@ public class BendingHud implements LayeredDraw.Layer {
         graphics.fill(x - 2, y - 2, x + width + 4, y + height, 0x70000000);
         graphics.drawString(font, title, x, y, 0xFFFFFFFF, true);
         y += 12;
-        for (Component line : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            Component line = lines.get(i);
+            if (i < BendingData.KEYS) {
+                bars(graphics, data, i + 1, x, y + 9, width, now, partial, look.color());
+            }
             graphics.drawString(font, line, x, y, 0xFFFFFFFF, true);
             y += 10;
+        }
+    }
+
+    /** Remembers when each cooldown began and how long it is, so the bar can ease and the line can flash. */
+    private static void watch(BendingData data, long now) {
+        for (Ability a : Ability.values()) {
+            long until = data.cooldownUntil(a);
+            int i = a.ordinal();
+            if (until > SEEN[i] && until > now) {
+                STARTED[i] = now;
+                LENGTH[i] = Math.max(1, until - now);
+            }
+            SEEN[i] = until;
+        }
+    }
+
+    /**
+     * Under a key's line: a thin bar for each of its two abilities that drains as the cooldown runs out, in the look's
+     * colour, and a brief flash of the bar when the ability was just cast.
+     */
+    private static void bars(GuiGraphics graphics, BendingData data, int key, int x, int y, int width, long now, float partial, int color) {
+        int half = width / 2 - 2;
+        for (int sneak = 0; sneak < 2; sneak++) {
+            Ability a = data.slot(BendingData.slotIndex(key, sneak == 1));
+            if (a == null || !data.has(a)) {
+                continue;
+            }
+            int i = a.ordinal();
+            long until = data.cooldownUntil(a);
+            float left = until - (now + partial);
+            int bx = x + sneak * (half + 4);
+            float since = now + partial - STARTED[i];
+            float flash = Math.max(0.0F, 1.0F - since / 10.0F);
+            if (left > 0.0F && LENGTH[i] > 0) {
+                float f = Math.min(1.0F, left / LENGTH[i]);
+                // Eased so the bar's end moves smoothly rather than in tick steps.
+                int w = Math.round(half * f);
+                int alpha = 0x90 + Math.round(0x60 * flash);
+                graphics.fill(bx, y, bx + half, y + 1, 0x40000000);
+                graphics.fill(bx, y, bx + w, y + 1, (alpha << 24) | (color & 0xFFFFFF));
+            } else if (flash > 0.0F) {
+                int alpha = Math.round(0xC0 * flash);
+                graphics.fill(bx, y, bx + half, y + 1, (alpha << 24) | 0xFFFFFF);
+            }
         }
     }
 

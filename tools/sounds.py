@@ -349,6 +349,18 @@ def _():
     return mix(env(sine(220, 0.6) * sine(2200, 0.6), 0.01, 0.2, 0.5, 0.3), env(highpass(noise(0.5), 3000), 0.01, 0.1, 0.4, 0.3) * 0.5, chime([880, 1320], 0.6, 0.2) * 0.4)
 
 
+@recipe('lemur_chirp')
+def _():
+    tt = t(0.35)
+    chirp = sine(1800 + 900 * np.sin(2 * np.pi * 9 * tt), 0.35) * (0.6 + 0.4 * np.sin(2 * np.pi * 18 * tt))
+    return mix(env(chirp, 0.01, 0.1, 0.5, 0.15), env(sweep(2400, 1400, 0.2), 0.01, 0.05, 0.4, 0.1) * 0.4)
+
+
+@recipe('lemur_hurt')
+def _():
+    return mix(env(sweep(2200, 900, 0.3) * (0.7 + 0.3 * sine(40, 0.3)), 0.005, 0.1, 0.5, 0.15), env(highpass(noise(0.25), 3000), 0.005, 0.05, 0.3, 0.15) * 0.3)
+
+
 def main():
     names = sys.argv[1:] or list(RECIPES)
     for name in names:

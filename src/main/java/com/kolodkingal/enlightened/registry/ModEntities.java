@@ -2,6 +2,7 @@ package com.kolodkingal.enlightened.registry;
 
 import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.entity.BendingShotEntity;
+import com.kolodkingal.enlightened.entity.FlyingLemurEntity;
 import com.kolodkingal.enlightened.entity.MeditatingBodyEntity;
 import com.kolodkingal.enlightened.entity.TornadoEntity;
 import net.minecraft.core.registries.Registries;
@@ -29,8 +30,21 @@ public final class ModEntities {
             () -> EntityType.Builder.<MeditatingBodyEntity>of(MeditatingBodyEntity::new, MobCategory.MISC)
                     .sized(0.6F, 1.5F).clientTrackingRange(10).updateInterval(4).build("meditating_body"));
 
+    /** The flying lemur of the Air Nomads: tamed with fruit, it follows its owner and flits from tree to tree. */
+    public static final DeferredHolder<EntityType<?>, EntityType<FlyingLemurEntity>> LEMUR = ENTITIES.register("flying_lemur",
+            () -> EntityType.Builder.of(FlyingLemurEntity::new, MobCategory.CREATURE)
+                    .sized(0.5F, 0.6F).clientTrackingRange(8).build("flying_lemur"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
         event.put(MEDITATING_BODY.get(), MeditatingBodyEntity.createAttributes().build());
+        event.put(LEMUR.get(), FlyingLemurEntity.createAttributes().build());
+    }
+
+    public static void registerSpawnPlacements(net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent event) {
+        event.register(LEMUR.get(), net.minecraft.world.entity.SpawnPlacementTypes.ON_GROUND,
+                net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                FlyingLemurEntity::checkLemurSpawnRules,
+                net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     private ModEntities() {

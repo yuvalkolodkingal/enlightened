@@ -4,7 +4,6 @@ import com.kolodkingal.enlightened.entity.MeditatingBodyEntity;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -20,14 +19,14 @@ import java.util.UUID;
  * Draws the body an airbender left in meditation: his own skin (the look he wears, if he is in view; else the skin
  * of his account), sitting still with his arms at rest.
  */
-public class MeditatingBodyRenderer extends LivingEntityRenderer<MeditatingBodyEntity, PlayerModel<MeditatingBodyEntity>> {
+public class MeditatingBodyRenderer extends LivingEntityRenderer<MeditatingBodyEntity, MeditatingBodyModel> {
     public MeditatingBodyRenderer(EntityRendererProvider.Context context) {
-        super(context, new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER), false), 0.5F);
+        super(context, new MeditatingBodyModel(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
     }
 
     @Override
     public void render(MeditatingBodyEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        PlayerModel<MeditatingBodyEntity> model = getModel();
+        MeditatingBodyModel model = getModel();
         model.hat.visible = true;
         model.jacket.visible = true;
         model.leftSleeve.visible = true;
@@ -35,8 +34,9 @@ public class MeditatingBodyRenderer extends LivingEntityRenderer<MeditatingBodyE
         model.leftPants.visible = true;
         model.rightPants.visible = true;
         poseStack.pushPose();
-        // Sitting: the body is drawn lower, the legs folded by the riding pose.
-        poseStack.translate(0.0, -0.5, 0.0);
+        // Sitting in the lotus: the body is drawn lower, floating the width of a breath above the ground.
+        float breath = 0.012F * (float) Math.sin((entity.tickCount + partialTick) * 0.08F);
+        poseStack.translate(0.0, -0.56 + breath, 0.0);
         super.render(entity, entityYaw, partialTick, poseStack, buffer, packedLight);
         poseStack.popPose();
     }
@@ -49,7 +49,6 @@ public class MeditatingBodyRenderer extends LivingEntityRenderer<MeditatingBodyE
     @Override
     protected void setupRotations(MeditatingBodyEntity entity, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale) {
         super.setupRotations(entity, poseStack, bob, yBodyRot, partialTick, scale);
-        getModel().riding = true;
     }
 
     @Override

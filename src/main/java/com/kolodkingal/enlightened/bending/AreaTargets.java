@@ -47,7 +47,7 @@ public final class AreaTargets {
                 return true;
             }
         }
-        return EnlightenedConfig.SPEC.isLoaded() && EnlightenedConfig.HURT_PASSIVES.get();
+        return !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.HURT_PASSIVES.get();
     }
 
     private AreaTargets() {

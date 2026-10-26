@@ -56,6 +56,10 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_STRIKE = register("lightning_strike");
     public static final DeferredHolder<SoundEvent, SoundEvent> LIGHTNING_REDIRECT = register("lightning_redirect");
 
+    // The flying lemur
+    public static final DeferredHolder<SoundEvent, SoundEvent> LEMUR_CHIRP = register("lemur_chirp");
+    public static final DeferredHolder<SoundEvent, SoundEvent> LEMUR_HURT = register("lemur_hurt");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Enlightened.id(name)));
     }

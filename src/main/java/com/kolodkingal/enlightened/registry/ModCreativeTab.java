@@ -21,6 +21,7 @@ public final class ModCreativeTab {
                 output.accept(ModItems.FIRE_SCROLL.get());
                 output.accept(ModItems.WATER_SKIN.get());
                 output.accept(ModItems.AIR_GLIDER.get());
+                output.accept(ModItems.LEMUR_SPAWN_EGG.get());
             })
             .build());
 

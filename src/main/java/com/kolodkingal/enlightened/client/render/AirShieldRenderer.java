@@ -41,9 +41,13 @@ public final class AirShieldRenderer {
             PoseStack pose = event.getPoseStack();
             pose.pushPose();
             pose.translate(at.x, at.y, at.z);
-            float spin = (player.tickCount + partial) * 0.02F;
+            float time = player.tickCount + partial;
+            float spin = time * 0.02F;
             pose.mulPose(com.mojang.math.Axis.YP.rotation(spin));
-            sphere(pose.last().pose(), buffer.getBuffer(RenderType.lightning()), (float) radius, player.tickCount + partial);
+            pose.mulPose(com.mojang.math.Axis.XP.rotation(0.08F * (float) Math.sin(time * 0.05F)));
+            // The shield breathes: a slow swell and shrink of a few percent.
+            float breathe = 1.0F + 0.035F * (float) Math.sin(time * 0.12F);
+            sphere(pose.last().pose(), buffer.getBuffer(RenderType.lightning()), (float) radius * breathe, time);
             pose.popPose();
         }
         if (any) {

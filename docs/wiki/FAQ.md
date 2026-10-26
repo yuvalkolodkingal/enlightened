@@ -37,3 +37,13 @@ player can be a hero in one and a bender in the other.
 
 **Who made it?** The ideas are Eilon Kolodkin-Gal's; the mod is by Yuval Kolodkin-Gal. Not affiliated with
 Nickelodeon or Avatar Studios.
+
+**My bending doesn't hit animals.** It does, unless the server turned `general.hurtPassives` off (it is on by
+default since 1.1). Pets, teammates, and Creative or Spectator players are never hit.
+
+**Can I turn the animations off, or calm them down?** Yes: the mod's config screen (Mods, Enlightened, Config) has
+**animations**, **reduced motion**, **effects** and **first-person hands**. They are yours alone; the server does not
+see them.
+
+**Where are the flying lemurs?** In jungles, bamboo jungles, cherry groves, meadows and flower forests. Feed one an
+apple or berries to tame it: see [The Flying Lemur](Flying-Lemur).

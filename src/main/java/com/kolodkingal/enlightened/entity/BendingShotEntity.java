@@ -9,6 +9,7 @@ import com.kolodkingal.enlightened.registry.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
@@ -175,15 +176,54 @@ public class BendingShotEntity extends Entity {
         return owner == null ? null : level().getPlayerByUUID(owner);
     }
 
+    /** The trail each shot leaves (client only): heat off a fire ball, grit off a rock, frost off ice, embers off lava. */
+    private void clientTrail() {
+        Vec3 v = getDeltaMovement();
+        boolean moving = v.lengthSqr() > 0.01;
+        switch (kind()) {
+            case FIRE_BALL -> {
+                if (random.nextInt(2) == 0) {
+                    level().addParticle(ParticleTypes.FLAME, getX(), getY() + 0.3, getZ(), -v.x * 0.1, 0.02 - v.y * 0.1, -v.z * 0.1);
+                }
+                if (random.nextInt(4) == 0) {
+                    level().addParticle(ParticleTypes.SMOKE, getX(), getY() + 0.3, getZ(), 0, 0.01, 0);
+                }
+            }
+            case ROCK, SAND -> {
+                if (moving && random.nextInt(2) == 0 && blockState().getRenderShape() == RenderShape.MODEL) {
+                    level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockState()), getX(), getY() + 0.3, getZ(),
+                            -v.x * 0.2, 0.02, -v.z * 0.2);
+                } else if (held() && random.nextInt(6) == 0) {
+                    level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockState()), getX(), getY() + 0.1, getZ(), 0, -0.02, 0);
+                }
+            }
+            case ICE_KNIFE, SNOWBALL -> {
+                if (moving && random.nextInt(3) == 0) {
+                    level().addParticle(ParticleTypes.SNOWFLAKE, getX(), getY() + 0.3, getZ(), 0, 0, 0);
+                }
+            }
+            case LAVA -> {
+                if (random.nextInt(2) == 0) {
+                    level().addParticle(ParticleTypes.LAVA, getX(), getY() + 0.3, getZ(), 0, 0, 0);
+                }
+            }
+            case METAL_BLADE -> {
+                if (moving && random.nextInt(3) == 0) {
+                    level().addParticle(ParticleTypes.CRIT, getX(), getY() + 0.3, getZ(), 0, 0, 0);
+                }
+            }
+            case AIR_BLADE -> {
+            }
+        }
+    }
+
     // ---- life ----
 
     @Override
     public void tick() {
         super.tick();
         if (level().isClientSide) {
-            if (kind() == Kind.FIRE_BALL && random.nextInt(2) == 0) {
-                level().addParticle(ParticleTypes.FLAME, getX(), getY() + 0.3, getZ(), 0, 0.02, 0);
-            }
+            clientTrail();
             return;
         }
         life++;

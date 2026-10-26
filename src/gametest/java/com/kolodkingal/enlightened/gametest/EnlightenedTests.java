@@ -14,6 +14,16 @@ import com.kolodkingal.enlightened.entity.MeditatingBodyEntity;
 import com.kolodkingal.enlightened.registry.ModDamageTypes;
 import com.kolodkingal.enlightened.registry.ModEffects;
 import com.kolodkingal.enlightened.registry.ModItems;
+import com.kolodkingal.enlightened.client.anim.AnimMath;
+import com.kolodkingal.enlightened.client.anim.Gesture;
+import com.kolodkingal.enlightened.client.anim.Gestures;
+import com.kolodkingal.enlightened.entity.FlyingLemurEntity;
+import com.kolodkingal.enlightened.registry.ModEntities;
+import com.kolodkingal.enlightened.registry.ModTags;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.item.Items;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -326,5 +336,101 @@ public final class EnlightenedTests {
     }
 
     private EnlightenedTests() {
+    }
+
+    // ---- animals, the animation tables, the lemur ----
+
+    @GameTest(template = ARENA, timeoutTicks = 80)
+    public static void bendingHurtsAnimalsByDefault(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 6);
+        f.bender(player, Element.EARTH);
+        Cow cow = EntityType.COW.create(helper.getLevel());
+        check(cow != null, "a cow can be made");
+        Vec3 at = helper.absoluteVec(new Vec3(10, FLOOR, 12));
+        cow.moveTo(at.x, at.y, at.z, 180.0F, 0.0F);
+        cow.setNoAi(true);
+        helper.getLevel().addFreshEntity(cow);
+        f.onClose(cow::discard);
+        // The default is on; a stale config of an older run must not decide the test.
+        boolean was = EnlightenedConfig.HURT_PASSIVES.get();
+        EnlightenedConfig.HURT_PASSIVES.set(true);
+        f.onClose(() -> EnlightenedConfig.HURT_PASSIVES.set(was));
+        check(EnlightenedConfig.HURT_PASSIVES.getDefault(), "hurtPassives is on by default");
+        float health = cow.getHealth();
+        f.lookAt(player, cow);
+        f.press(player, Ability.ROCK_THROW, false);
+        helper.runAtTickTime(30, () -> {
+            check(cow.getHealth() < health, "the rock hurt the cow (general.hurtPassives is on by default)");
+            helper.succeed();
+        });
+    }
+
+    /** Every gesture has keys, in order, inside its length; a spin ends facing the way it began. */
+    @GameTest(template = ARENA)
+    public static void gestureTablesAreWellFormed(GameTestHelper helper) {
+        java.util.List<String> problems = Gestures.problems();
+        check(problems.isEmpty(), "the gesture tables: " + String.join("; ", problems));
+        check(Gestures.all().size() == Gesture.VALUES.length, "every gesture is keyed");
+        helper.succeed();
+    }
+
+    /** The maths of the animation behaves: eases settle, envelopes rise and fall, springs come to rest without blowing up. */
+    @GameTest(template = ARENA)
+    public static void animationMathSettles(GameTestHelper helper) {
+        float x = 0.0F;
+        for (int i = 0; i < 60; i++) {
+            x = AnimMath.ease(x, 1.0F, 1.0F, 3.0F);
+        }
+        check(x > 0.99F, "an ease reaches its target");
+        float coarse = AnimMath.ease(0.0F, 1.0F, 4.0F, 3.0F);
+        float fine = 0.0F;
+        for (int i = 0; i < 8; i++) {
+            fine = AnimMath.ease(fine, 1.0F, 0.5F, 3.0F);
+        }
+        check(Math.abs(coarse - fine) < 1.0E-4F, "an ease is the same at any frame rate");
+        check(AnimMath.envelope(0.0F, 2, 10, 4) == 0.0F && AnimMath.envelope(5.0F, 2, 10, 4) == 1.0F && AnimMath.envelope(10.0F, 2, 10, 4) == 0.0F,
+                "a gesture's envelope rises, holds and falls");
+        AnimMath.Spring spring = new AnimMath.Spring();
+        spring.snap(1.0F);
+        float peak = 0.0F;
+        for (int i = 0; i < 200; i++) {
+            spring.damped(0.0F, 0.8F, 0.45F, 0.5F);
+            peak = Math.max(peak, -spring.x);
+        }
+        check(Math.abs(spring.x) < 1.0E-3F && Math.abs(spring.v) < 1.0E-3F, "a damped spring comes to rest");
+        check(peak > 0.05F && peak < 0.5F, "a damped spring overshoots a little and no more");
+        float[] arm = com.kolodkingal.enlightened.client.anim.AimMath.arm(new org.joml.Vector3f(0, 0, 1), 0, 0, 0);
+        check(Math.abs(arm[0] + Math.PI / 2) < 1.0E-3F && Math.abs(arm[1]) < 1.0E-3F, "an arm aimed straight ahead points level forward");
+        helper.succeed();
+    }
+
+    /** A flying lemur is fed until it is tamed, then sits when told. */
+    @GameTest(template = ARENA, timeoutTicks = 100)
+    public static void flyingLemurIsTamedAndSits(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        FlyingLemurEntity lemur = ModEntities.LEMUR.get().create(helper.getLevel());
+        check(lemur != null, "a lemur can be made");
+        Vec3 at = helper.absoluteVec(new Vec3(10, FLOOR, 10));
+        lemur.moveTo(at.x, at.y, at.z, 180.0F, 0.0F);
+        lemur.setNoAi(true);
+        helper.getLevel().addFreshEntity(lemur);
+        f.onClose(lemur::discard);
+        check(new ItemStack(Items.APPLE).is(ModTags.LEMUR_FOOD), "an apple is lemur food");
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.APPLE, 64));
+        int fed = 0;
+        while (!lemur.isTame() && fed < 100) {
+            lemur.mobInteract(player, InteractionHand.MAIN_HAND);
+            fed++;
+        }
+        check(lemur.isTame(), "the lemur was tamed by feeding");
+        check(lemur.isOwnedBy(player), "the lemur belongs to its feeder");
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        lemur.mobInteract(player, InteractionHand.MAIN_HAND);
+        check(lemur.isOrderedToSit(), "a tamed lemur sits when told");
+        lemur.mobInteract(player, InteractionHand.MAIN_HAND);
+        check(!lemur.isOrderedToSit(), "and stands when told again");
+        helper.succeed();
     }
 }

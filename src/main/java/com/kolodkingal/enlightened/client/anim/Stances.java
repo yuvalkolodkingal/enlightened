@@ -65,6 +65,41 @@ final class Stances {
             c.arm(true, StancePoses.WATER_ARMS_M[0] + roll, StancePoses.WATER_ARMS_M[1], StancePoses.WATER_ARMS_M[2], w);
             c.arm(false, StancePoses.WATER_ARMS_O[0] - roll, StancePoses.WATER_ARMS_O[1], StancePoses.WATER_ARMS_O[2], w);
         }
+        if ((w = st.stance(Stance.AIR_SPOUT)) > 0.001F) {
+            // Balancing on the column of wind: arms out and low, the body turning a little with the spin.
+            float sway = 6.0F * Mth.sin(0.25F * age);
+            c.arm(true, 20, 0, 48 + sway, w);
+            c.arm(false, 20, 0, -48 + sway, w);
+            c.leg(true, -4 + 2.0F * Mth.sin(0.25F * age), 3, w);
+            c.leg(false, -4 - 2.0F * Mth.sin(0.25F * age), -3, w);
+            c.twist(4.0F * Mth.sin(0.25F * age + 0.8F), w);
+        }
+        if ((w = st.stance(Stance.MEDITATE)) > 0.001F) {
+            // The lotus: the hands rest at the lap, the back straight, a slow breath.
+            float breath = 2.0F * Mth.sin(0.08F * age);
+            c.arm(true, -34 + breath, -48, 10, w);
+            c.arm(false, -34 + breath, 48, -10, w);
+            c.leg(true, -92, -12, w);
+            c.leg(false, -92, 12, w);
+            c.head(6 + breath, 0, 0, w);
+        }
+        if ((w = st.stance(Stance.AVATAR)) > 0.001F) {
+            // Afloat in the light: the arms spread wide and a little up, the head back, the legs hanging.
+            float drift = 4.0F * Mth.sin(0.09F * age);
+            c.arm(true, -40 + drift, 0, 70, w);
+            c.arm(false, -40 - drift, 0, -70, w);
+            c.leg(true, 6, 4, w);
+            c.leg(false, 6, -4, w);
+            c.head(-16, 0, 0, w);
+        }
+        if ((w = st.stance(Stance.FIRE_JET)) > 0.001F) {
+            // Streamlined: the arms swept back along the body, the head forward.
+            c.arm(true, 50, 0, 22, w);
+            c.arm(false, 50, 0, -22, w);
+            c.leg(true, 10, 2, w);
+            c.leg(false, 10, -2, w);
+            c.head(-8, 0, 0, w);
+        }
         if ((w = st.stance(Stance.REDIRECT)) > 0.001F) {
             // The lightning stance: the leading arm out with two fingers, the other at the belly, the body turned side on.
             c.arm(true, StancePoses.REDIRECT_M, w);
@@ -155,6 +190,53 @@ final class Stances {
             c.occupy(true, w);
             c.occupy(false, w);
         }
+        if ((w = st.stance(Stance.EARTH_TUNNEL)) > 0.001F) {
+            // Both palms driving into the rock ahead, the body leaning into them, trembling with the push.
+            c.aim(true, Target.LOOK, 2, -10, 0, w);
+            c.aim(false, Target.LOOK, 2, 10, 0, w);
+            c.tremble(true, 2.0F, 2.2F, w);
+            c.tremble(false, 2.0F, 2.4F, w);
+            c.head(4, 0, 0, w);
+            c.leg(true, -16, 4, w * ground * (1.0F - st.limbAmount));
+            c.leg(false, 16, -4, w * ground * (1.0F - st.limbAmount));
+            c.occupy(true, w);
+            c.occupy(false, w);
+        }
+        if ((w = st.stance(Stance.WATER_SHIELD)) > 0.001F) {
+            // Both arms raised over the head, holding the dome up, swaying with the water.
+            float sway = 4.0F * Mth.sin(0.2F * age);
+            c.arm(true, -150 + sway, -10, 30, w);
+            c.arm(false, -150 - sway, 10, -30, w);
+            c.head(-6, 0, 0, w);
+            c.occupy(true, w);
+            c.occupy(false, w);
+        }
+        if ((w = st.stance(Stance.FROST_BREATH)) > 0.001F) {
+            // The hands cupped at the chest, the head forward, the chest heaving.
+            float heave = 3.0F * Mth.sin(0.4F * age);
+            c.arm(true, -70 + heave, -40, 0, w);
+            c.arm(false, -70 + heave, 40, 0, w);
+            c.head(-4 + heave, 0, 0, w);
+            c.occupy(true, w);
+            c.occupy(false, w);
+        }
+        if ((w = st.stance(Stance.FIRE_SHIELD)) > 0.001F) {
+            // The arms out at the sides, palms down, holding the dome of fire; a tremble with the heat.
+            c.arm(true, -60, 0, 70, w);
+            c.arm(false, -60, 0, -70, w);
+            c.tremble(true, 1.5F, 1.8F, w);
+            c.tremble(false, 1.5F, 1.9F, w);
+            c.occupy(true, w);
+            c.occupy(false, w);
+        }
+        if ((w = st.stance(Stance.COMBUSTION)) > 0.001F) {
+            // Two fingers of the main hand to the third eye, the other arm braced back, the head lowered a little.
+            c.arm(true, -170, -34, -10, w);
+            c.arm(false, 30, 10, -20, w);
+            c.tremble(true, 1.0F, 2.0F, w);
+            c.head(6, 0, 0, w);
+            c.occupy(true, w);
+        }
         if ((w = st.stance(Stance.LIGHTNING_CHARGE)) > 0.001F) {
             // The arms circle wide (the classic generation), growing taut as the charge builds, then come to point.
             float held = age - st.activeSinceAge();
@@ -181,7 +263,8 @@ final class Stances {
 
     /** What the stances add to the body's lean (degrees, forward positive). */
     static float lean(AnimState st) {
-        return 8.0F * st.stance(Stance.BLOODBENDING) + 4.0F * st.stance(Stance.FIRE_FIST) + 6.0F * st.stance(Stance.FIRE_BREATH)
+        return 10.0F * st.stance(Stance.EARTH_TUNNEL) + 6.0F * st.stance(Stance.FIRE_JET) + 4.0F * st.stance(Stance.FROST_BREATH)
+                - 8.0F * st.stance(Stance.AVATAR) + 8.0F * st.stance(Stance.BLOODBENDING) + 4.0F * st.stance(Stance.FIRE_FIST) + 6.0F * st.stance(Stance.FIRE_BREATH)
                 + 6.0F * st.stance(Stance.SEISMIC) * (1.0F - st.wAir) + 4.0F * st.stance(Stance.LIGHTNING_CHARGE);
     }
 
@@ -189,7 +272,8 @@ final class Stances {
     static float drop(AnimState st) {
         float ground = 1.0F - Math.max(st.wAir, st.wGlide);
         // The scooter lifts him onto the ball of air (a negative dip).
-        return -0.58F * st.stance(Stance.SCOOTER) + 0.12F * st.stance(Stance.SEISMIC) * ground * (1.0F - st.limbAmount)
+        return -0.58F * st.stance(Stance.SCOOTER) + 0.62F * st.stance(Stance.MEDITATE) * ground - 0.45F * st.stance(Stance.AVATAR)
+                + 0.12F * st.stance(Stance.SEISMIC) * ground * (1.0F - st.limbAmount)
                 + 0.08F * st.stance(Stance.BLOODBENDING) * ground + 0.10F * st.stance(Stance.OCTOPUS) * ground * (1.0F - st.limbAmount)
                 + 0.06F * st.stance(Stance.FIRE_FIST) * ground * (1.0F - st.limbAmount) + 0.08F * st.stance(Stance.LIGHTNING_CHARGE) * ground * (1.0F - st.limbAmount);
     }

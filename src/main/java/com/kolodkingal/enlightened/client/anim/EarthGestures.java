@@ -15,6 +15,7 @@ import static com.kolodkingal.enlightened.client.anim.Gestures.define;
  */
 final class EarthGestures {
     static void register() {
+        registerMore();
         // The rock throw: the right foot stamps and the body sinks as the stone comes up, the fist cocks at the hip,
         // then drives along the look with the shoulders turning into it.
         define(Gesture.EARTH_ROCK_THROW)
@@ -129,6 +130,43 @@ final class EarthGestures {
                 .key(3, O).m(-30, 0, 40).o(-30, 0, -40).drop(-0.03F).head(-4, 0, 0)
                 .key(6, S).m(10, 0, 18).o(10, 0, -18).drop(0.02F)
                 .key(10, E).m(StancePoses.REST_M).o(StancePoses.REST_O).drop(0).head(0, 0, 0);
+    }
+
+    static void registerMore() {
+        // The shockwave: a hop, then both fists driven into the ground, the whole body dropping into it.
+        define(Gesture.EARTH_SHOCKWAVE)
+                .key(0, S).m(-20, 0, 10).o(-20, 0, -10).drop(0).legs(0, 0).lean(0).head(0, 0, 0)
+                .key(3, I).m(-170, -10, 10).o(-170, 10, -10).drop(-0.10F).legs(-30, -30).lean(-6).head(-10, 0, 0)
+                .key(6, O).m(50, -20, 10).o(50, 20, -10).drop(0.45F).lean(26).legs(-70, -70).head(12, 0, 0)
+                .key(10, S).m(40, -18, 10).o(40, 18, -10).drop(0.40F).lean(22).legs(-64, -64)
+                .key(16, E).m(StancePoses.REST_M).o(StancePoses.REST_O).drop(0).lean(0).legs(0, 0).head(0, 0, 0);
+
+        // The catapult: a deep crouch, then sprung from the earth, the arms thrown up.
+        define(Gesture.EARTH_CATAPULT)
+                .key(0, S).m(0, 0, 8).o(0, 0, -8).drop(0).legs(0, 0).lean(0)
+                .key(3, I).m(30, -10, 14).o(30, 10, -14).drop(0.30F).legs(-50, -50).lean(14).head(8, 0, 0)
+                .key(5, O).m(-160, -10, 14).o(-160, 10, -14).drop(-0.08F).legs(10, 10).lean(-10).head(-12, 0, 0)
+                .key(12, E).m(-30, 0, 24).o(-30, 0, -24).drop(0).legs(0, 0).lean(0).head(0, 0, 0);
+
+        // The earth grab: both hands claw up from the hips and close.
+        define(Gesture.EARTH_GRAB)
+                .key(0, S).m(20, -10, 14).o(20, 10, -14).lean(0).drop(0)
+                .key(3, I).m(36, -20, 18).o(36, 20, -18).lean(8).drop(0.10F).head(6, 0, 0)
+                .key(6, O).mAim(LOOK, 10, -30, 0).oAim(LOOK, 10, 30, 0).lean(4).drop(0).head(2, 0, 0)
+                .key(12, E).m(StancePoses.REST_M).o(StancePoses.REST_O).lean(0).head(0, 0, 0);
+
+        // The tunnel begins: both palms set against the rock ahead.
+        define(Gesture.EARTH_TUNNEL_START)
+                .key(0, S).m(-30, -10, 10).o(-30, 10, -10).lean(0)
+                .key(3, O).mAim(LOOK, 4, -12, 0).oAim(LOOK, 4, 12, 0).lean(10).head(4, 0, 0)
+                .key(6, S).mAim(LOOK, 2, -10, 0).oAim(LOOK, 2, 10, 0).lean(10).head(4, 0, 0);
+
+        // Extraction: the fist reaches, closes on the ore, and tears the metal out with a yank.
+        define(Gesture.EARTH_EXTRACT)
+                .key(0, S).m(-20, 0, 10).o(-10, 0, -10).twist(0).lean(0)
+                .key(3, O).mAim(LOOK, -4, -6, 0).o(-20, 0, -20).twist(-10).lean(8)
+                .key(7, O).m(-40, -30, 20).o(10, 10, -20).twist(14).lean(-8).head(-6, 0, 0)
+                .key(12, E).m(StancePoses.REST_M).o(StancePoses.REST_O).twist(0).lean(0).head(0, 0, 0);
     }
 
     private EarthGestures() {

@@ -7,6 +7,8 @@ import com.kolodkingal.enlightened.air.Projection;
 import com.kolodkingal.enlightened.bending.Abilities;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.Benders;
+import com.kolodkingal.enlightened.bending.Chakras;
+import com.kolodkingal.enlightened.bending.SoftLanding;
 import com.kolodkingal.enlightened.bending.BendingData;
 import com.kolodkingal.enlightened.bending.BendingTicker;
 import com.kolodkingal.enlightened.bending.Element;
@@ -111,6 +113,15 @@ public final class CommonEvents {
         }
         DamageSource source = event.getSource();
         float amount = event.getAmount();
+        long now = victim.level().getGameTime();
+        if (data.avatar(now) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            event.setCanceled(true);
+            return;
+        }
+        if (amount >= victim.getHealth() - 0.5F && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && Chakras.dire(victim, data)) {
+            event.setCanceled(true);
+            return;
+        }
         boolean lightning = source.is(ModDamageTypes.LIGHTNING) || source.is(DamageTypes.LIGHTNING_BOLT);
         if (lightning && data.element() == Element.FIRE && FireBending.redirect(victim, source, amount)) {
             event.setCanceled(true);
@@ -128,6 +139,17 @@ public final class CommonEvents {
         }
         if (data.element() == Element.WATER) {
             amount *= 1.0F - WaterBending.octopusGuard(data);
+            if (!source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+                amount = com.kolodkingal.enlightened.water.WaterMore.shieldAbsorb(victim, data, amount);
+            }
+        }
+        if (data.element() == Element.FIRE && !source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            boolean deflected = source.is(DamageTypeTags.IS_PROJECTILE) || source.is(ModTags.BENDING);
+            amount = com.kolodkingal.enlightened.fire.FireMore.shieldAbsorb(victim, data, amount, deflected);
+        }
+        if (amount <= 0) {
+            event.setCanceled(true);
+            return;
         }
         if (data.element() == Element.AIR && AirBending.shieldUp(victim, data)
                 && !source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
@@ -169,9 +191,21 @@ public final class CommonEvents {
         }
     }
 
-    /** An airbender on his scooter or his glider lands softly. */
+    /** An airbender on his scooter or his glider lands softly; so does anyone a step, a jet or a catapult carried. */
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && SoftLanding.active(player)) {
+            event.setDamageMultiplier(0.0F);
+            return;
+        }
+        if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.EARTH)) {
+            com.kolodkingal.enlightened.earth.EarthMore.onFall(player, Benders.get(player), event);
+            return;
+        }
+        if (event.getEntity() instanceof ServerPlayer player && Benders.get(player).avatar(player.level().getGameTime())) {
+            event.setDamageMultiplier(0.0F);
+            return;
+        }
         if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.AIR)) {
             BendingData data = Benders.get(player);
             if (data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER) || AirBending.gliding(data) || data.has(Ability.AIR_JUMP)) {
@@ -195,6 +229,9 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer leaving) {
+            SoftLanding.forget(leaving);
+        }
         if (event.getEntity() instanceof ServerPlayer player) {
             BendingData data = Benders.get(player);
             if (data.element().bends()) {
@@ -237,6 +274,7 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
+        SoftLanding.clear();
         Abilities.clearAll();
         Projection.clear();
         TempBlocks.clear();

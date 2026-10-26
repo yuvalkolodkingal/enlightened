@@ -54,7 +54,7 @@ public final class Cast {
     }
 
     public void cooldown(int ticks) {
-        data.startCooldown(ability, now(), ticks);
+        data.startCooldown(ability, now(), Math.max(0, Math.round(ticks * Chakras.cooldownFactor(data, now()))));
     }
 
     public void cooldownSeconds(double seconds) {

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CPC",
+    "SSS"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:cyan_dye"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "S": {
+      "item": "minecraft:smooth_stone_slab"
+    }
+  },
+  "result": {
+    "id": "enlightened:meditation_point",
+    "count": 1
+  }
+}

@@ -39,4 +39,19 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 ## `[fire]`
 
 `lightningGate` 6; `fireBallDamage` 4; `fireStreamDps` 4; `fireWhipDamage` 3; `fireRingDamage` 4; `fireHeal` 3;
-`lightningDamage` 9; `lightningTwoHandsDamage` 12; `lightningCooldown` 600 ticks; `lightningStunTicks` 40.
+`lightningDamage` 9; `lightningTwoHandsDamage` 12; `lightningCooldown` 600 ticks; `lightningStunTicks` 40;
+`combustionGate` 9; `combustionDamage` 10; `combustionBreaksBlocks` false; `fireWallSeconds` 6.
+
+## `[avatar]`
+
+| Option | Default | What it does |
+|---|---|---|
+| `chakraMeditationSeconds` | 60 | Seconds of meditation that open one chakra (a third of it on a Meditation Point). |
+| `chakraPointsEach` | 2 | Points spent on the element each chakra asks for (the n-th needs n times this). |
+| `meditationXpSeconds` | 15 | Seconds of meditation that earn one experience (0: none). |
+| `avatarStateSeconds` | 12 | How long the Avatar State lasts. |
+| `avatarStateCooldownSeconds` | 300 | Seconds before it can be entered again. |
+| `avatarStateOnLowHealth` | true | Whether a bender with all seven chakras open enters it by himself when near death. |
+| `combos` | true | Whether sequences of casts trigger the combos. |
+| `comboWindowTicks` | 60 | Ticks between the casts of a combo. |
+| `steps` | true | Whether a double tap of a direction dashes a bender who learned his element's step. |

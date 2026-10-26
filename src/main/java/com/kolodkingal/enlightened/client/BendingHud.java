@@ -86,6 +86,16 @@ public class BendingHud implements LayeredDraw.Layer {
         if (element == Element.AIR && data.tetherless()) {
             lines.add(Component.translatable("hud.enlightened.tetherless").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
+        if (data.avatar(now)) {
+            lines.add(Component.translatable("hud.enlightened.avatar", (data.avatarUntil() - now) / 20).withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+        } else if (data.chakras() > 0 || data.meditating()) {
+            MutableComponent chakras = Component.translatable("hud.enlightened.chakras", data.chakras()).withStyle(ChatFormatting.LIGHT_PURPLE);
+            if (data.meditating() && data.chakras() < com.kolodkingal.enlightened.bending.Chakras.COUNT) {
+                int pct = Math.min(100, data.meditation() * 100 / Math.max(1, com.kolodkingal.enlightened.bending.Chakras.ticksPerChakra()));
+                chakras.append(Component.literal("  ")).append(Component.translatable("hud.enlightened.meditating", pct).withStyle(ChatFormatting.GRAY));
+            }
+            lines.add(chakras);
+        }
 
         int width = font.width(title) + 4;
         for (Component line : lines) {

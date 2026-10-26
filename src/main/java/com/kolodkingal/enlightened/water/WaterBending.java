@@ -77,6 +77,7 @@ public final class WaterBending {
         logic.put(Ability.ICE_WALL, new IceWall());
         logic.put(Ability.BLOODBENDING, new Blood());
         logic.put(Ability.BLOOD_SUPPRESS, new Suppress());
+        WaterMore.register(logic);
     }
 
     public static void applyBody(ServerPlayer player, BendingData data) {

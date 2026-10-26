@@ -1,7 +1,9 @@
 package com.kolodkingal.enlightened.client.fx;
 
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +14,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.SequencedMap;
 import java.util.List;
 
 /**
@@ -30,7 +34,8 @@ public final class FxGeometry {
     public static final ResourceLocation ICE = ResourceLocation.withDefaultNamespace("textures/block/ice.png");
     public static final ResourceLocation PACKED_ICE = ResourceLocation.withDefaultNamespace("textures/block/packed_ice.png");
     public static final ResourceLocation SNOW = ResourceLocation.withDefaultNamespace("textures/block/snow.png");
-    public static final ResourceLocation GLOW = ResourceLocation.withDefaultNamespace("textures/particle/glow.png");
+    /** A soft radial glow of our own (the game's particle glow is an 8x8 sprite that draws as a square). */
+    public static final ResourceLocation GLOW = com.kolodkingal.enlightened.Enlightened.id("textures/fx/glow.png");
     /** Frames of the animated textures (their height over their width). */
     public static final int WATER_FRAMES = 32;
     public static final int FIRE_FRAMES = 32;
@@ -74,6 +79,24 @@ public final class FxGeometry {
     }
 
     /** Additive light, untextured: the heart of a flame, a bolt, the shine of air. */
+    private static MultiBufferSource.BufferSource source;
+
+    /**
+     * A buffer source of our own with a fixed buffer per element type, so several types can be built at once (a
+     * stream of fire and its glow, water and its highlights). The game's shared source ends a batch the moment another
+     * type is asked for, which would throw on the next vertex of the first.
+     */
+    public static MultiBufferSource.BufferSource source() {
+        if (source == null) {
+            SequencedMap<RenderType, ByteBufferBuilder> fixed = new LinkedHashMap<>();
+            for (RenderType type : List.of(WATER_TYPE, FLOW_TYPE, ICE_TYPE, SNOW_TYPE, LAVA_TYPE, FIRE_TYPE, SOUL_FIRE_TYPE, GLOW_TYPE, RenderType.lightning())) {
+                fixed.put(type, new ByteBufferBuilder(type.bufferSize()));
+            }
+            source = MultiBufferSource.immediateWithBuffers(fixed, new ByteBufferBuilder(786432));
+        }
+        return source;
+    }
+
     public static RenderType light() {
         return RenderType.lightning();
     }
@@ -244,9 +267,8 @@ public final class FxGeometry {
     }
 
     /** A cone (or a funnel) from {@code from} along {@code dir}: radius {@code r0} at the start, {@code r1} at the end. */
-    public static void cone(PoseStack.Pose pose, VertexConsumer vc, Vec3 from, Vec3 dir, float length, float r0, float r1, int sides, int segs,
-                            float v0, float v1, float repeat, float scroll, float r, float g, float b, float a0, float a1, int light, boolean textured,
-                            float wobble, float phase) {
+    /** The spine of a cone from {@code from} along {@code dir}, wobbling sideways by {@code wobble} toward the tip. */
+    public static List<Vec3> conePoints(Vec3 from, Vec3 dir, float length, int segs, float wobble, float phase) {
         List<Vec3> pts = new ArrayList<>();
         Vec3 d = dir.normalize();
         Vec3 any = Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
@@ -260,7 +282,34 @@ public final class FxGeometry {
             }
             pts.add(p);
         }
-        tube(pose, vc, pts, r0, r1, sides, v0, v1, repeat, scroll, r, g, b, a0, a1, light, textured);
+        return pts;
+    }
+
+    public static void cone(PoseStack.Pose pose, VertexConsumer vc, Vec3 from, Vec3 dir, float length, float r0, float r1, int sides, int segs,
+                            float v0, float v1, float repeat, float scroll, float r, float g, float b, float a0, float a1, int light, boolean textured,
+                            float wobble, float phase) {
+        tube(pose, vc, conePoints(from, dir, length, segs, wobble, phase), r0, r1, sides, v0, v1, repeat, scroll, r, g, b, a0, a1, light, textured);
+    }
+
+    /**
+     * Camera-facing puffs along a path, the size from {@code s0} to {@code s1} and the alpha from {@code a0} to
+     * {@code a1}: the volume a tube or a ribbon lacks when it is seen along its length (the third-person camera
+     * looks along every stream its player sends out, and sees a thin tube end-on as a ring).
+     */
+    public static void puffs(PoseStack.Pose pose, VertexConsumer vc, List<Vec3> pts, float s0, float s1, float v0, float v1,
+                             float r, float g, float b, float a0, float a1, int light, boolean textured, float roll) {
+        int n = pts.size();
+        for (int i = 0; i < n; i++) {
+            float t = n == 1 ? 0.0F : (float) i / (n - 1);
+            billboard(pose, vc, pts.get(i), Mth.lerp(t, s0, s1), v0, v1, r, g, b, Mth.lerp(t, a0, a1), light, textured, roll + i * 0.9F);
+        }
+    }
+
+    /** {@link #puffs} along the spine of a cone, each puff as wide as the cone is there (times {@code scale}). */
+    public static void conePuffs(PoseStack.Pose pose, VertexConsumer vc, Vec3 from, Vec3 dir, float length, float r0, float r1, int segs,
+                                 float v0, float v1, float r, float g, float b, float a0, float a1, int light, boolean textured,
+                                 float wobble, float phase, float scale, float roll) {
+        puffs(pose, vc, conePoints(from, dir, length, segs, wobble, phase), r0 * 2.0F * scale, r1 * 2.0F * scale, v0, v1, r, g, b, a0, a1, light, textured, roll);
     }
 
     /** A vertical band round {@code c}: a wall of the element of {@code height}, with a ripple along it. */

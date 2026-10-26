@@ -20,12 +20,14 @@ same authors, and plays the same way.
 * [Earthbending](Earthbending): rock, armour, pillars, walls, the seismic sense; sand, lava, metal
 * [Airbending](Airbending): blast, shield, jump and glide, blades, spirit projection, scooter, tornado; the tetherless
 * [Waterbending](Waterbending): whip, healing, octopus form, spout, water arms; ice; bloodbending
-* [Firebending](Firebending): the skin, fire ball, fist, whip, ring, healing; lightning and its redirection
+* [Firebending](Firebending): the skin, fire ball, fist, whip, ring, healing; lightning and its redirection; combustion
+* [Combos and Steps](Combos-and-Steps): sequences of casts that end in a greater art; the double-tap dash
+* [Chakras and the Avatar State](Chakras-and-the-Avatar-State): meditation, the seven chakras, the Avatar State
 
 ## More
 
 * [Looks](Looks): Toph, Bumi, Lin, Suyin, Ghazan, Bolin; Tenzin, Zaheer, Jinora, Gyatso, Jae, Kartik; Katara, Amon, Ming-Hua, Pakku; Zuko, Iroh, Azula, Jeong Jeong, Ozai
-* [Items and Crafting](Items-and-Crafting): the scrolls, the Water Skin, the Air Glider
+* [Items and Crafting](Items-and-Crafting): the scrolls, the Water Skin, the Air Glider, the Meditation Point
 * [The Flying Lemur](Flying-Lemur): a tameable winged lemur, like Momo
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)

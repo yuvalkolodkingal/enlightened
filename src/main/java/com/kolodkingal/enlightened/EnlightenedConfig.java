@@ -70,6 +70,21 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.DoubleValue LIGHTNING_TWO_HANDS_DAMAGE;
     public static final ModConfigSpec.IntValue LIGHTNING_COOLDOWN;
     public static final ModConfigSpec.IntValue LIGHTNING_STUN_TICKS;
+    public static final ModConfigSpec.IntValue COMBUSTION_GATE;
+    public static final ModConfigSpec.DoubleValue COMBUSTION_DAMAGE;
+    public static final ModConfigSpec.BooleanValue COMBUSTION_BREAKS_BLOCKS;
+    public static final ModConfigSpec.IntValue FIRE_WALL_SECONDS;
+
+    // ---- chakras, the Avatar State, combos, steps ----
+    public static final ModConfigSpec.IntValue CHAKRA_MEDITATION_SECONDS;
+    public static final ModConfigSpec.IntValue CHAKRA_POINTS_EACH;
+    public static final ModConfigSpec.IntValue MEDITATION_XP_SECONDS;
+    public static final ModConfigSpec.IntValue AVATAR_STATE_SECONDS;
+    public static final ModConfigSpec.IntValue AVATAR_STATE_COOLDOWN_SECONDS;
+    public static final ModConfigSpec.BooleanValue AVATAR_STATE_ON_LOW_HEALTH;
+    public static final ModConfigSpec.BooleanValue COMBOS;
+    public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
+    public static final ModConfigSpec.BooleanValue STEPS;
 
     static {
         B.push("general");
@@ -147,6 +162,25 @@ public final class EnlightenedConfig {
         LIGHTNING_TWO_HANDS_DAMAGE = B.comment("Damage of a master's two-handed lightning (12 = six hearts).").defineInRange("lightningTwoHandsDamage", 12.0, 0.0, 100.0);
         LIGHTNING_COOLDOWN = B.comment("Ticks before lightning can be cast again (600 = 30 s; a master waits two thirds).").defineInRange("lightningCooldown", 600, 0, 12000);
         LIGHTNING_STUN_TICKS = B.comment("Ticks the struck creature cannot move (40 = 2 s).").defineInRange("lightningStunTicks", 40, 0, 1200);
+        COMBUSTION_GATE = B.comment("Points spent on fire before combustion can be learned.").defineInRange("combustionGate", 9, 0, 100);
+        COMBUSTION_DAMAGE = B.comment("Damage at the heart of a combustion blast at level 1 (it grows with the level).").defineInRange("combustionDamage", 10.0, 0.0, 200.0);
+        COMBUSTION_BREAKS_BLOCKS = B.comment("Whether a combustion blast breaks blocks (the wrecked blocks drop).").define("combustionBreaksBlocks", false);
+        FIRE_WALL_SECONDS = B.comment("How long a wall of fire burns at level 1 (it grows with the level).").defineInRange("fireWallSeconds", 6, 1, 120);
+        B.pop();
+
+        B.push("avatar");
+        CHAKRA_MEDITATION_SECONDS = B.comment("Seconds of meditation that open one chakra (a third of it on a Meditation Point).")
+                .defineInRange("chakraMeditationSeconds", 60, 1, 3600);
+        CHAKRA_POINTS_EACH = B.comment("Points spent on the element that each chakra asks for (the n-th chakra needs n times this).")
+                .defineInRange("chakraPointsEach", 2, 0, 50);
+        MEDITATION_XP_SECONDS = B.comment("Seconds of meditation that earn one experience (0: meditation earns none).").defineInRange("meditationXpSeconds", 15, 0, 3600);
+        AVATAR_STATE_SECONDS = B.comment("How long the Avatar State lasts.").defineInRange("avatarStateSeconds", 12, 1, 600);
+        AVATAR_STATE_COOLDOWN_SECONDS = B.comment("Seconds before the Avatar State can be entered again.").defineInRange("avatarStateCooldownSeconds", 300, 0, 86400);
+        AVATAR_STATE_ON_LOW_HEALTH = B.comment("Whether a bender with all seven chakras open enters the Avatar State by himself when near death.")
+                .define("avatarStateOnLowHealth", true);
+        COMBOS = B.comment("Whether sequences of casts trigger the combos (Twister, Earth Dome, Ice Wave, Fire Spin...).").define("combos", true);
+        COMBO_WINDOW_TICKS = B.comment("Ticks between the casts of a combo (60 = 3 s).").defineInRange("comboWindowTicks", 60, 10, 600);
+        STEPS = B.comment("Whether a double tap of a direction dashes a bender who learned his element's step.").define("steps", true);
         B.pop();
     }
 

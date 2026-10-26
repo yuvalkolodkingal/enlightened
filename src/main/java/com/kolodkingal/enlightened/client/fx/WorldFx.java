@@ -29,7 +29,15 @@ public final class WorldFx {
         if (level == null || payload.kind() < 0 || payload.kind() >= Fx.VALUES.length) {
             return;
         }
-        EFFECTS.add(new Effect(Fx.VALUES[payload.kind()], new Vec3(payload.x(), payload.y(), payload.z()),
+        Fx kind = Fx.VALUES[payload.kind()];
+        if (kind == Fx.AIR_BURST && payload.data() == 0.0F && payload.entity() >= 0) {
+            // The flourish of a combo: the bender it names acts it; nothing is drawn for it here.
+            if (level.getEntity(payload.entity()) instanceof net.minecraft.world.entity.player.Player player) {
+                com.kolodkingal.enlightened.client.anim.Animator.play(player, com.kolodkingal.enlightened.client.anim.Gesture.COMBO);
+            }
+            return;
+        }
+        EFFECTS.add(new Effect(kind, new Vec3(payload.x(), payload.y(), payload.z()),
                 new Vec3(payload.tx(), payload.ty(), payload.tz()), payload.color(), payload.data(), payload.entity(), level.getGameTime()));
     }
 

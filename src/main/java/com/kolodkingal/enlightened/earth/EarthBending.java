@@ -89,6 +89,7 @@ public final class EarthBending {
         logic.put(Ability.METAL_BLADES, new MetalBlades());
         logic.put(Ability.METAL_PULL, new MetalPull());
         logic.put(Ability.WRECK, new Wreck());
+        EarthMore.register(logic);
     }
 
     // ---- the body: earth and metal armour ----

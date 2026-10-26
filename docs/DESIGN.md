@@ -285,3 +285,86 @@ Inspired by the *Flying Lemur* Avatar add-on: a small tameable winged lemur, lik
 | Taming | Feed it apples, sweet berries, glow berries, melon or a golden apple (`#enlightened:lemur_food`); one feeding in three tames it. A tamed lemur follows its owner, flies to keep up, sits when right-clicked and stands again, can be leashed when standing, and breeds with the same food. Babies are small. |
 | Life | It flies and glides (no fall damage), chirps, scolds when hurt, twitches its ears, and perches. |
 
+## 14. The arts of 1.2 **(added in 1.2)**
+
+Reverse-engineered from ProjectKorra (Bukkit), *Avatar: Legend Reforged* (NeoForge 1.21.1), *Avatar: The Four
+Elements* (Forge 1.20.1) and the Bedrock *Avatar Legends* add-on, and rebuilt on Enlightened's frame (an
+`AbilityLogic` per art in `EarthMore`, `AirMore`, `WaterMore`, `FireMore`; numbers *novice / adept / master*).
+
+| Element | Ability | Kind | How it works |
+|---|---|---|---|
+| Earth | **Shockwave** | press | A stomp: everyone within 4.5 / 6 / 8 blocks hurt, thrown back and shaken; the ground ripples (`Fx.SHOCKWAVE`). Cooldown 12 / 10 / 8 s. |
+| Earth | **Catapult** | press | The earth flings him the way he looks (1.3 / 1.7 / 2.1), the landing soft (`SoftLanding`). Cooldown 6 / 5 / 4 s. |
+| Earth | **Earth Grab** | press | The ground closes round the legs of the target (held 3 / 5 / 7 s); aimed at nothing, the loose items come to him. Cooldown 8 s. |
+| Earth | **Earth Tunnel** | hold | The earth and sand he looks at are dug away (wider for a master), only where he may break. |
+| Earth | **Earth Step** | passive | The element's step (§16). |
+| Earth | **Extraction** | press, metal | The raw metal torn out of the ore he aims at: 1 / 2 / 3 pieces, the ore left stone. Cooldown 4 / 3 / 2 s. |
+| Air | **Air Suction** | press | Pulls what he looks at (10 / 14 / 18) to him: creatures, arrows, items. Cooldown 3 s (1.5 s empty). |
+| Air | **Air Burst** | press | A sphere of air (5 / 7 / 9 blocks) throws everyone back. Cooldown 10 / 8 / 6 s. |
+| Air | **Air Spout** | toggle | A column of wind holds him 6 / 10 / 15 blocks up; Sneak to come down. |
+| Air | **Air Agility** | passive | Faster on foot; from level 2 higher jumps. |
+| Water | **Water Shield** | hold | A dome of water (2 / 2.4 / 2.8) that turns arrows and takes most of each blow (`WaterMore.shieldAbsorb` in `CommonEvents`), drinking his water; broken, it rests 3 s. |
+| Water | **Water Bubble** | toggle | Air under water for him and friends within 1.5 / 2.5 / 3.5. |
+| Water | **Phase Change** | press, ice | Water he aims at freezes (2 / 3 / 5 blocks, 30 / 60 / 120 s, `TempBlocks`); ice and snow melt. Cooldown 6 / 5 / 4 s. |
+| Water | **Frost Breath** | hold, ice | A cone of frost (5 / 7 / 9) that slows and then freezes (2 / 3 / 4 s, `FROZEN`). |
+| Water | **Plant Tether** | press | A vine from the plants within 5 / 7 / 9 lashes the target, slows it and drags it to them; aimed at nothing, pulls him to the plant. Cooldown 8 / 6 / 5 s. |
+| Water | **Fast Swim** | passive | Swift in water; an adept breathes longer, a master always. |
+| Fire | **Fire Jet** | press | Flames from the feet throw him the way he looks for 10 / 14 / 18 ticks; soft landing. Cooldown 5 / 4 / 3 s. |
+| Fire | **Fire Shield** | hold | A dome of fire (2 / 2.4 / 2.8) that burns arrows and bending away and scorches who steps in (`FireMore.shieldAbsorb`); broken, it rests 3 s. |
+| Fire | **Wall of Fire** | press | A `FireWallEntity` where he looks, `fire.fireWallSeconds` (6) × 1 / 1.4 / 1.8: burns and throws back who crosses, deflects projectiles. Cooldown 12 / 10 / 8 s. |
+| Fire | **Blaze** | press | An arc of fire over the ground ahead (6 / 8 / 10), lighting it for 40 / 60 / 80 ticks and burning who stands in it 3 / 4 / 5 s. Cooldown 8 / 7 / 6 s. |
+| Fire | **Heat Control** | toggle | Melts snow and ice within 2 / 3 / 4, no freezing or burning, (adept) boils the water at his feet. |
+| Fire | **Illumination** | toggle | A flame on the hand: light 10 / 13 / 15 (a light block that follows him). |
+| Fire | **Combustion** | press, combustion (`fire.combustionGate` 9) | A breath of focus (16 / 13 / 10 ticks, third eye glowing), then a beam from the forehead explodes where it lands (24 / 32 / 40 away): `fire.combustionDamage` (10) × 1 / 1.4 / 1.8 at the heart; `combustionBreaksBlocks`. Cooldown 30 / 24 / 18 s. |
+
+Combustion is a gate of its own (`Gate.COMBUSTION`, `Mastery`), like lightning.
+
+## 15. Combos **(added in 1.2)**
+
+ProjectKorra's `ComboManager`, rebuilt: `Combos` remembers each bender's last casts that went off (`BendingHandler`
+records a cast after its logic ran) and, when the tail of the list matches a combo's sequence within
+`avatar.comboWindowTicks` (60) of each other, performs it and clears the list. Twister (Air Shield, Tornado, Air
+Blast), Air Sweep (Air Blades ×2, Air Burst), Earth Dome (Earth Wall, Shockwave), Earth Pillars (Shockwave, Earth
+Pillar ×2), Ice Wave (Water Spout, Freeze), Ice Bullets (Ice Wall, Ice Knives ×2), Fire Kick (Fire Ball ×2, Fire
+Ring), Fire Spin (Fire Shield, Fire Ring). The combo plays its own gesture (`Gesture.COMBO`) and a message.
+
+## 16. Steps **(added in 1.2)**
+
+*Legend Reforged*'s STEP form: the client notices a double tap of a movement key or Jump within 7 ticks
+(`ClientEvents.handleSteps`, `StepPayload`); the server (`Steps.step`) dashes a bender who learned his element's step
+(0.9 / 1.1 / 1.3 blocks a tick, or a hop) with a soft landing and the element's own `Fx.STEP`; cooldown 2 / 1.5 / 1 s;
+`avatar.steps` turns them off.
+
+## 17. Chakras and the Avatar State **(added in 1.2)**
+
+The Bedrock add-on's seven-tier chakra system and temporary invincibility, with ProjectKorra's AvatarState
+(cleared cooldowns, stronger bending, the low-health trigger). `Chakras`: the Meditate key (`MeditatePayload`,
+default M) sits the bender in the lotus (`Stance.MEDITATE`, the meditating body); moving, swinging or falling ends it.
+Every `avatar.chakraMeditationSeconds` (60; a third on a block of `#enlightened:meditation_point`, the **Meditation
+Point** block) opens the next chakra if `spent() >= n × avatar.chakraPointsEach` (2); meditation also earns experience
+(`avatar.meditationXpSeconds`). Gifts: chakras 1 and 4 a heart each (an attribute modifier), 2 and 5 cooldowns −5%
+each (`Cast.cooldown`), 3 and 6 damage +5% each (`Shots.hurt`). With all seven open, holding the meditation a breath
+longer (or, `avatar.avatarStateOnLowHealth`, a lethal hit in `CommonEvents`) enters the Avatar State for
+`avatar.avatarStateSeconds` (12): invulnerable to damage, damage ×2, cooldowns ×0.5, cooldowns cleared, speed +30%,
+absorption, no drowning, burning or falling, `Fx.AVATAR_RISE` and a push on everyone near, a broadcast; then
+`avatar.avatarStateCooldownSeconds` (300). `BendingData` saves chakras, meditation progress and the cooldown;
+`/enlightened chakras` sets the count; the HUD shows them.
+
+## 18. World effects **(added in 1.2)**
+
+Every element is drawn as the element itself (`client.fx`): water as ribbons, tubes, domes and discs of the game's
+water textures (32 frames of `water_still`, `water_flow`, tinted), fire as `fire_0` / `soul_fire_0` (Azula) and
+`lava_still`, ice and snow as their blocks, air and lightning as additive light (`RenderType.lightning()`), earth as
+rippling rings of the ground's colour. The server sends one-shot effects as `FxPayload` (`Fx` kinds: a whip's lash,
+a healing's glow, a freeze, a lightning bolt, a redirect, a blast, a shockwave, the steps, a vine, a blaze's arc, a
+combustion beam, an ice wave, a fire spin, an extraction, the Avatar's rise, a chakra's opening); the client draws
+sustained effects from the synced data (`WorldFxRenderer`: water arms, the octopus's tentacles, the spout's column,
+fire streams and whip, the lightning gathering, bloodbending's strands, the air shield, the glider's wings, the
+wind of flight, the scooter's ball, the water and fire domes, the frost breath, the fire jet, the combustion glow,
+the Avatar's aura). Geometry is built in `FxGeometry` (tubes along splines, cones, spheres, discs, ring bands,
+billboards, glow blobs, and camera-facing *puffs* along a path) into a buffer source of its own with a fixed buffer
+per type, and drawn after the particles (`RenderLevelStageEvent.AFTER_PARTICLES`). Every stream carries puffs along
+its length and the streams from the hands fan a little outward, because the bender's own third-person camera looks
+straight along his look: a bare tube seen end-on is a ring, and a stream on the view axis hides behind his body. The air scooter is a rolling ball of air under a body lifted off the
+ground (`Stances.drop`), rolled by a quaternion with the ride.
+

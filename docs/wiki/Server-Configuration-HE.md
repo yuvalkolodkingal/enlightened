@@ -41,6 +41,21 @@
 ## `[fire]`
 
 `lightningGate` 6; `fireBallDamage` 4; `fireStreamDps` 4; `fireWhipDamage` 3; `fireRingDamage` 4; `fireHeal` 3;
-`lightningDamage` 9; `lightningTwoHandsDamage` 12; `lightningCooldown` 600 טיקים; `lightningStunTicks` 40.
+`lightningDamage` 9; `lightningTwoHandsDamage` 12; `lightningCooldown` 600 טיקים; `lightningStunTicks` 40;
+`combustionGate` 9; `combustionDamage` 10; `combustionBreaksBlocks` false; `fireWallSeconds` 6.
+
+## `[avatar]`
+
+| אפשרות | ברירת מחדל | מה היא עושה |
+|---|---|---|
+| `chakraMeditationSeconds` | 60 | שניות מדיטציה שפותחות צ'אקרה אחת (שליש מזה על נקודת מדיטציה). |
+| `chakraPointsEach` | 2 | נקודות שהושקעו ביסוד שכל צ'אקרה דורשת (ה-n-ית דורשת פי n). |
+| `meditationXpSeconds` | 15 | שניות מדיטציה שמרוויחות נקודת ניסיון (0: אף אחת). |
+| `avatarStateSeconds` | 12 | כמה זמן מצב האווטאר נמשך. |
+| `avatarStateCooldownSeconds` | 300 | שניות עד שאפשר להיכנס אליו שוב. |
+| `avatarStateOnLowHealth` | true | האם כשף עם כל שבע הצ'אקרות פתוחות נכנס אליו מעצמו כשהוא קרוב למוות. |
+| `combos` | true | האם רצפי הטלות מפעילים את הקומבואים. |
+| `comboWindowTicks` | 60 | טיקים בין ההטלות של קומבו. |
+| `steps` | true | האם לחיצה כפולה על כיוון מזניקה כשף שלמד את הצעד של היסוד שלו. |
 
 </div>

@@ -95,6 +95,8 @@ public final class TestKit {
             Vec3 at = helper.absoluteVec(new Vec3(x, y, z));
             player.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
             player.setYHeadRot(0.0F);
+            // The server never simulates a player's movement (the client reports it), so the ground is declared.
+            player.setOnGround(true);
             player.getFoodData().setFoodLevel(20);
             players.add(player);
             return player;

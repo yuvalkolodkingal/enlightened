@@ -36,6 +36,13 @@ public enum Ability {
     METAL_ARMOR(Element.EARTH, Gate.METAL, Kind.TOGGLE, false),
     METAL_PULL(Element.EARTH, Gate.METAL, Kind.PRESS, false),
     WRECK(Element.EARTH, Gate.METAL, Kind.PRESS, false),
+    SHOCKWAVE(Element.EARTH, Gate.NONE, Kind.PRESS, false),
+    CATAPULT(Element.EARTH, Gate.NONE, Kind.PRESS, false),
+    EARTH_GRAB(Element.EARTH, Gate.NONE, Kind.PRESS, false),
+    EARTH_TUNNEL(Element.EARTH, Gate.NONE, Kind.HOLD, false),
+    DENSITY_SHIFT(Element.EARTH, Gate.NONE, Kind.PASSIVE, false),
+    EARTH_STEP(Element.EARTH, Gate.NONE, Kind.PASSIVE, false),
+    EXTRACTION(Element.EARTH, Gate.METAL, Kind.PRESS, false),
 
     // ---- Air ----
     AIR_BLAST(Element.AIR, Gate.NONE, Kind.PRESS, true),
@@ -48,6 +55,11 @@ public enum Ability {
     TORNADO(Element.AIR, Gate.NONE, Kind.PRESS, false),
     FLIGHT(Element.AIR, Gate.TETHERLESS, Kind.TOGGLE, false),
     SUFFOCATE(Element.AIR, Gate.TETHERLESS, Kind.HOLD, false),
+    AIR_SUCTION(Element.AIR, Gate.NONE, Kind.PRESS, false),
+    AIR_BURST(Element.AIR, Gate.NONE, Kind.PRESS, false),
+    AIR_SPOUT(Element.AIR, Gate.NONE, Kind.TOGGLE, false),
+    AIR_AGILITY(Element.AIR, Gate.NONE, Kind.PASSIVE, false),
+    AIR_STEP(Element.AIR, Gate.NONE, Kind.PASSIVE, false),
 
     // ---- Water ----
     WATER_WHIP(Element.WATER, Gate.NONE, Kind.PRESS, true),
@@ -62,6 +74,13 @@ public enum Ability {
     ICE_WALL(Element.WATER, Gate.ICE, Kind.PRESS, false),
     BLOODBENDING(Element.WATER, Gate.BLOOD, Kind.PRESS, false),
     BLOOD_SUPPRESS(Element.WATER, Gate.BLOOD, Kind.PRESS, false),
+    WATER_SHIELD(Element.WATER, Gate.NONE, Kind.HOLD, false),
+    WATER_BUBBLE(Element.WATER, Gate.NONE, Kind.TOGGLE, false),
+    PHASE_CHANGE(Element.WATER, Gate.ICE, Kind.PRESS, false),
+    FROST_BREATH(Element.WATER, Gate.ICE, Kind.HOLD, false),
+    PLANT_TETHER(Element.WATER, Gate.NONE, Kind.PRESS, false),
+    FAST_SWIM(Element.WATER, Gate.NONE, Kind.PASSIVE, false),
+    WATER_STEP(Element.WATER, Gate.NONE, Kind.PASSIVE, false),
 
     // ---- Fire ----
     FIRE_SKIN(Element.FIRE, Gate.NONE, Kind.PASSIVE, true),
@@ -71,7 +90,15 @@ public enum Ability {
     FIRE_RING(Element.FIRE, Gate.NONE, Kind.PRESS, false),
     FIRE_HEALING(Element.FIRE, Gate.NONE, Kind.PRESS, false),
     LIGHTNING(Element.FIRE, Gate.LIGHTNING, Kind.PRESS, false),
-    LIGHTNING_REDIRECT(Element.FIRE, Gate.LIGHTNING, Kind.TOGGLE, false);
+    LIGHTNING_REDIRECT(Element.FIRE, Gate.LIGHTNING, Kind.TOGGLE, false),
+    FIRE_JET(Element.FIRE, Gate.NONE, Kind.PRESS, false),
+    FIRE_SHIELD(Element.FIRE, Gate.NONE, Kind.HOLD, false),
+    WALL_OF_FIRE(Element.FIRE, Gate.NONE, Kind.PRESS, false),
+    BLAZE(Element.FIRE, Gate.NONE, Kind.PRESS, false),
+    HEAT_CONTROL(Element.FIRE, Gate.NONE, Kind.TOGGLE, false),
+    ILLUMINATION(Element.FIRE, Gate.NONE, Kind.TOGGLE, false),
+    FIRE_STEP(Element.FIRE, Gate.NONE, Kind.PASSIVE, false),
+    COMBUSTION(Element.FIRE, Gate.COMBUSTION, Kind.PRESS, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }

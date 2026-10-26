@@ -126,7 +126,58 @@ public enum Gesture {
     FIRE_REDIRECT_ON(Group.CAST, 12, 2, 5, false),
     FIRE_REDIRECT_OFF(Group.CAST, 8, 1, 4, false),
     /** Lightning caught: in one hand, through the belly, out the other. */
-    FIRE_REDIRECTED(Group.CAST, 16, 1, 6, true);
+    FIRE_REDIRECTED(Group.CAST, 16, 1, 6, true),
+
+    // ===== the arts of 1.2 =====
+    /** The shockwave: a leap and both fists driven into the ground. */
+    EARTH_SHOCKWAVE(Group.CAST, 16, 1, 6, true),
+    /** The catapult: a crouch, then sprung from the earth. */
+    EARTH_CATAPULT(Group.CAST, 12, 1, 5, true),
+    /** The earth grab: both hands claw up and close. */
+    EARTH_GRAB(Group.CAST, 12, 1, 5, true),
+    /** The tunnel begins: both palms set against the rock. */
+    EARTH_TUNNEL_START(Group.CAST, 6, 1, 3, true),
+    /** Extraction: a fist closes and tears the metal out. */
+    EARTH_EXTRACT(Group.CAST, 12, 1, 5, true),
+    /** Air suction: the palms draw in. */
+    AIR_SUCTION(Group.CAST, 10, 1, 4, true),
+    /** The air burst: the arms thrown wide. */
+    AIR_BURST(Group.CAST, 12, 1, 5, true),
+    AIR_SPOUT_ON(Group.CAST, 14, 2, 5, false),
+    AIR_SPOUT_OFF(Group.CAST, 8, 1, 4, false),
+    /** The water shield begins: the arms sweep up to hold the dome. */
+    WATER_SHIELD_START(Group.CAST, 8, 1, 3, true),
+    WATER_BUBBLE_ON(Group.CAST, 12, 2, 5, false),
+    WATER_BUBBLE_OFF(Group.CAST, 8, 1, 4, false),
+    /** Phase change: a slow press down, the hands spreading. */
+    WATER_PHASE(Group.CAST, 14, 2, 6, true),
+    /** Frost breathed: the hands cup at the chest, the head comes forward. */
+    WATER_FROST_START(Group.CAST, 8, 1, 3, true),
+    /** The plant tether: a sweep to the plant and a pull. */
+    WATER_TETHER(Group.CAST, 14, 1, 6, true),
+    /** The fire jet: a crouch, then thrown forward on the flames. */
+    FIRE_JET(Group.CAST, 10, 1, 4, true),
+    /** The fire shield begins: the arms sweep out, palms down. */
+    FIRE_SHIELD_START(Group.CAST, 8, 1, 3, true),
+    /** A wall of fire: both arms rise from low and press out. */
+    FIRE_WALL(Group.CAST, 14, 2, 6, true),
+    /** Blaze: the arm sweeps low across the ground. */
+    FIRE_BLAZE(Group.CAST, 12, 1, 5, true),
+    FIRE_HEAT_ON(Group.CAST, 12, 2, 5, false),
+    FIRE_HEAT_OFF(Group.CAST, 8, 1, 4, false),
+    FIRE_LIGHT_ON(Group.CAST, 10, 2, 5, false),
+    FIRE_LIGHT_OFF(Group.CAST, 8, 1, 4, false),
+    /** Combustion: a hand to the third eye, then the head thrust forward. */
+    FIRE_COMBUSTION(Group.CAST, 14, 1, 5, true),
+    /** The element step: a lean into the dash. */
+    STEP(Group.CAST, 8, 1, 4, false),
+    /** A combo: a flourish bigger than any one cast. */
+    COMBO(Group.CAST, 18, 2, 6, true),
+    /** A chakra opens: the hands rise from the lap to the heart. */
+    CHAKRA_OPEN(Group.CAST, 30, 4, 10, false),
+    /** The Avatar State: the body rises, the arms spread, the head thrown back. */
+    AVATAR_ENTER(Group.TAKEOFF, 24, 2, 8, true),
+    AVATAR_LEAVE(Group.CAST, 16, 2, 8, false);
 
     /** At most one gesture of a group plays at a time. */
     public enum Group {

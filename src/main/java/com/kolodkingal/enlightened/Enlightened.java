@@ -2,6 +2,7 @@ package com.kolodkingal.enlightened;
 
 import com.kolodkingal.enlightened.network.ModNetwork;
 import com.kolodkingal.enlightened.registry.ModAttachments;
+import com.kolodkingal.enlightened.registry.ModBlocks;
 import com.kolodkingal.enlightened.registry.ModCreativeTab;
 import com.kolodkingal.enlightened.registry.ModEffects;
 import com.kolodkingal.enlightened.registry.ModEntities;
@@ -26,6 +27,8 @@ public class Enlightened {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Enlightened(IEventBus modBus, ModContainer container) {
+        ModBlocks.BLOCKS.register(modBus);
+        ModBlocks.registerItems();
         ModItems.ITEMS.register(modBus);
         ModEffects.EFFECTS.register(modBus);
         ModEntities.ENTITIES.register(modBus);

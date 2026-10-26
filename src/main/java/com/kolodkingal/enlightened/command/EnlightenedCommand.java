@@ -95,6 +95,10 @@ public final class EnlightenedCommand {
                         .then(Commands.argument("players", EntityArgument.players())
                                 .then(Commands.argument("value", com.mojang.brigadier.arguments.BoolArgumentType.bool())
                                         .executes(EnlightenedCommand::tetherless))))
+                .then(Commands.literal("chakras")
+                        .then(Commands.argument("players", EntityArgument.players())
+                                .then(Commands.argument("count", IntegerArgumentType.integer(0, 7))
+                                        .executes(EnlightenedCommand::chakras))))
                 .then(Commands.literal("reset")
                         .then(Commands.argument("players", EntityArgument.players())
                                 .executes(EnlightenedCommand::reset)))
@@ -102,6 +106,19 @@ public final class EnlightenedCommand {
                         .executes(ctx -> info(ctx, ctx.getSource().getPlayerOrException()))
                         .then(Commands.argument("player", EntityArgument.player())
                                 .executes(ctx -> info(ctx, EntityArgument.getPlayer(ctx, "player"))))));
+    }
+
+    private static int chakras(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        int count = IntegerArgumentType.getInteger(ctx, "count");
+        for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
+            BendingData data = Benders.get(player);
+            data.setChakras(count);
+            data.setMeditation(0);
+            BendingTicker.applyPassives(player, data);
+            Benders.syncIfDirty(player);
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.chakras", count), true);
+        return count;
     }
 
     private static Element element(String name) {

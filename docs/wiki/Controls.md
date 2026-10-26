@@ -6,6 +6,7 @@
 |---|---|---|
 | Ability 1-5 | **R, G, V, B, N** | The ability on that key. **Sneak + the key** is the ability on the key's second slot. |
 | Change Look | **H** | The next look of your element (Sneak + H goes back). |
+| Meditate | **M** | Sit and meditate: opens the [chakras](Chakras-and-the-Avatar-State), and with all seven open, the Avatar State. |
 | Bending Scroll | **K** | Opens the Bending Scroll: your abilities, your points and your keys. (Your element's scroll item opens it too.) |
 
 Rebind them under *Options → Controls → Enlightened Bending*.
@@ -32,6 +33,8 @@ The panel in the top-left corner shows:
 * **Passive**: it works by itself and sits on no key (the skins, the air bubble, the water of plants).
 
 A key with nothing on it says so; open the scroll to put an ability there.
+
+A **double tap of a direction** (or of Jump) is a [step](Combos-and-Steps#steps) for a bender who learned his element's; a sequence of casts within three seconds may be a [combo](Combos-and-Steps).
 
 ## Body language
 

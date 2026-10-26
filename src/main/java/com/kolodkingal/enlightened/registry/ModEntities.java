@@ -31,6 +31,10 @@ public final class ModEntities {
                     .sized(0.6F, 1.5F).clientTrackingRange(10).updateInterval(4).build("meditating_body"));
 
     /** The flying lemur of the Air Nomads: tamed with fruit, it follows its owner and flits from tree to tree. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.FireWallEntity>> FIRE_WALL = ENTITIES.register("fire_wall",
+            () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.FireWallEntity>of(com.kolodkingal.enlightened.entity.FireWallEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 3.0F).clientTrackingRange(10).updateInterval(10).noSummon().build("fire_wall"));
+
     public static final DeferredHolder<EntityType<?>, EntityType<FlyingLemurEntity>> LEMUR = ENTITIES.register("flying_lemur",
             () -> EntityType.Builder.of(FlyingLemurEntity::new, MobCategory.CREATURE)
                     .sized(0.5F, 0.6F).clientTrackingRange(8).build("flying_lemur"));

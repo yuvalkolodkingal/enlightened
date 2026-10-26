@@ -49,6 +49,7 @@ public final class Mastery {
             case ICE -> loaded ? EnlightenedConfig.ICE_GATE.get() : 3;
             case BLOOD -> loaded ? EnlightenedConfig.BLOOD_GATE.get() : 9;
             case LIGHTNING -> loaded ? EnlightenedConfig.LIGHTNING_GATE.get() : 6;
+            case COMBUSTION -> loaded ? EnlightenedConfig.COMBUSTION_GATE.get() : 9;
             case TETHERLESS -> -1;
         };
     }
@@ -147,6 +148,22 @@ public final class Mastery {
             return 1;
         }
         return 0;
+    }
+
+    /** Experience from anywhere (meditation): a point whenever enough has gathered. */
+    public static void earn(ServerPlayer player, int xp) {
+        BendingData data = Benders.get(player);
+        int total = data.xp() + xp;
+        int per = xpPerPoint();
+        int gained = total / per;
+        data.setXp(total % per);
+        if (gained > 0) {
+            data.setPoints(data.points() + gained);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.POINT.get(), SoundSource.PLAYERS, 0.8F, 1.0F);
+            player.displayClientMessage(Component.translatable(gained == 1 ? "message.enlightened.point" : "message.enlightened.points", gained, data.points())
+                    .withStyle(ChatFormatting.GOLD), true);
+        }
+        Benders.syncIfDirty(player);
     }
 
     /** A bender killed a creature with his bending: experience, and a point whenever enough has gathered. */

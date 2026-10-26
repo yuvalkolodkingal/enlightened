@@ -51,6 +51,14 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // The screenshot tour (client/dev/Tour): a flat world, every ability cast, a screenshot of each, then quits.
+        tour {
+            client()
+            systemProperty 'enlightened.tour', 'true'
+            systemProperty 'enlightened.tour.quick', System.getProperty('enlightened.tour.quick', 'false')
+            programArguments.addAll '--width', '1280', '--height', '720'
+        }
+
         server {
             server()
             programArgument '--nogui'

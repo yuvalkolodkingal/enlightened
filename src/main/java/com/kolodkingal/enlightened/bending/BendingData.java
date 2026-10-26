@@ -40,6 +40,10 @@ public final class BendingData {
     private long toggles;
     private boolean tetherless;
     private float water;
+    /** The chakras open (0..7), the meditation toward the next (ticks), and when the Avatar State may come again. */
+    private int chakras;
+    private int meditation;
+    private long avatarCooldownUntil;
 
     // ---- runtime (synced, not saved) ----
     private long active;
@@ -47,6 +51,9 @@ public final class BendingData {
     private int heldEntityId = -1;
     private long suppressedUntil;
     private boolean flying;
+    private boolean meditating;
+    private long meditateSince;
+    private long avatarUntil;
 
     private boolean dirty;
 
@@ -64,8 +71,11 @@ public final class BendingData {
             Codec.STRING.listOf().optionalFieldOf("slots", List.of()).forGetter(BendingData::slotList),
             Codec.LONG.optionalFieldOf("toggles", 0L).forGetter(d -> d.toggles),
             Codec.BOOL.optionalFieldOf("tetherless", false).forGetter(d -> d.tetherless),
-            Codec.FLOAT.optionalFieldOf("water", 0F).forGetter(d -> d.water)
-    ).apply(i, (element, variant, levels, points, xp, kills, slots, toggles, tetherless, water) -> {
+            Codec.FLOAT.optionalFieldOf("water", 0F).forGetter(d -> d.water),
+            Codec.INT.optionalFieldOf("chakras", 0).forGetter(d -> d.chakras),
+            Codec.INT.optionalFieldOf("meditation", 0).forGetter(d -> d.meditation),
+            Codec.LONG.optionalFieldOf("avatarCooldownUntil", 0L).forGetter(d -> d.avatarCooldownUntil)
+    ).apply(i, (element, variant, levels, points, xp, kills, slots, toggles, tetherless, water, chakras, meditation, avatarCooldownUntil) -> {
         BendingData d = new BendingData();
         d.element = element;
         d.variant = variant;
@@ -85,6 +95,9 @@ public final class BendingData {
         d.toggles = toggles;
         d.tetherless = tetherless;
         d.water = water;
+        d.chakras = Math.max(0, Math.min(7, chakras));
+        d.meditation = meditation;
+        d.avatarCooldownUntil = avatarCooldownUntil;
         return d;
     }));
 
@@ -131,6 +144,12 @@ public final class BendingData {
         ByteBufCodecs.VAR_INT.encode(buf, heldEntityId + 1);
         ByteBufCodecs.VAR_LONG.encode(buf, suppressedUntil);
         ByteBufCodecs.BOOL.encode(buf, flying);
+        ByteBufCodecs.VAR_INT.encode(buf, chakras);
+        ByteBufCodecs.VAR_INT.encode(buf, meditation);
+        ByteBufCodecs.VAR_LONG.encode(buf, avatarCooldownUntil);
+        ByteBufCodecs.BOOL.encode(buf, meditating);
+        ByteBufCodecs.VAR_LONG.encode(buf, meditateSince);
+        ByteBufCodecs.VAR_LONG.encode(buf, avatarUntil);
     }
 
     private static BendingData read(ByteBuf buf) {
@@ -159,6 +178,12 @@ public final class BendingData {
         d.heldEntityId = ByteBufCodecs.VAR_INT.decode(buf) - 1;
         d.suppressedUntil = ByteBufCodecs.VAR_LONG.decode(buf);
         d.flying = ByteBufCodecs.BOOL.decode(buf);
+        d.chakras = ByteBufCodecs.VAR_INT.decode(buf);
+        d.meditation = ByteBufCodecs.VAR_INT.decode(buf);
+        d.avatarCooldownUntil = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.meditating = ByteBufCodecs.BOOL.decode(buf);
+        d.meditateSince = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.avatarUntil = ByteBufCodecs.VAR_LONG.decode(buf);
         return d;
     }
 
@@ -413,6 +438,82 @@ public final class BendingData {
 
     public boolean suppressed(long gameTime) {
         return suppressedUntil > gameTime;
+    }
+
+    // ---- chakras, meditation, the Avatar State ----
+
+    public int chakras() {
+        return chakras;
+    }
+
+    public void setChakras(int v) {
+        v = Math.max(0, Math.min(7, v));
+        if (v != chakras) {
+            chakras = v;
+            dirty = true;
+        }
+    }
+
+    public int meditation() {
+        return meditation;
+    }
+
+    public void setMeditation(int v) {
+        if (v != meditation) {
+            meditation = v;
+            dirty = true;
+        }
+    }
+
+    public boolean meditating() {
+        return meditating;
+    }
+
+    public void setMeditating(boolean v) {
+        if (v != meditating) {
+            meditating = v;
+            dirty = true;
+        }
+    }
+
+    public long meditateSince() {
+        return meditateSince;
+    }
+
+    public void setMeditateSince(long v) {
+        meditateSince = v;
+    }
+
+    public long avatarUntil() {
+        return avatarUntil;
+    }
+
+    public void setAvatarUntil(long v) {
+        if (v != avatarUntil) {
+            avatarUntil = v;
+            dirty = true;
+        }
+    }
+
+    /** Whether the Avatar State holds him now. */
+    public boolean avatar(long gameTime) {
+        return avatarUntil > gameTime;
+    }
+
+    public long avatarCooldownUntil() {
+        return avatarCooldownUntil;
+    }
+
+    public void setAvatarCooldownUntil(long v) {
+        if (v != avatarCooldownUntil) {
+            avatarCooldownUntil = v;
+            dirty = true;
+        }
+    }
+
+    public void clearCooldowns() {
+        java.util.Arrays.fill(cooldownUntil, 0L);
+        dirty = true;
     }
 
     public boolean flying() {

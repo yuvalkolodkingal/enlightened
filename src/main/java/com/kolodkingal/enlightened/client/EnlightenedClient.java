@@ -54,6 +54,7 @@ public final class EnlightenedClient {
         }
         event.register(KeyBindings.CHANGE_LOOK);
         event.register(KeyBindings.SCROLL);
+        event.register(KeyBindings.MEDITATE);
     }
 
     private static void onGuiLayers(RegisterGuiLayersEvent event) {
@@ -69,6 +70,7 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.TORNADO.get(), com.kolodkingal.enlightened.client.render.TornadoRenderer::new);
         event.registerEntityRenderer(ModEntities.MEDITATING_BODY.get(), MeditatingBodyRenderer::new);
         event.registerEntityRenderer(ModEntities.LEMUR.get(), com.kolodkingal.enlightened.client.render.LemurRenderer::new);
+        event.registerEntityRenderer(ModEntities.FIRE_WALL.get(), com.kolodkingal.enlightened.client.render.FireWallRenderer::new);
     }
 
     private static void onLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

@@ -64,9 +64,11 @@ public final class AirBending {
         logic.put(Ability.TORNADO, new Tornado());
         logic.put(Ability.FLIGHT, new Flight());
         logic.put(Ability.SUFFOCATE, new Suffocate());
+        AirMore.register(logic);
     }
 
     public static void applyBody(ServerPlayer player, BendingData data) {
+        AirMore.applyBody(player, data);
         boolean scooter = data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER);
         double boost = scooter ? 0.3 + data.level(Ability.AIR_SCOOTER) * 0.3 : 0; // 0.6 / 0.9 / 1.2
         BendingTicker.setModifier(player, Attributes.MOVEMENT_SPEED, SCOOTER_ID, boost, scooter, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);

@@ -52,6 +52,11 @@ panel in the top-left corner, items that awaken the power, a server config, oper
    suffocation open to him, and his air strikes harder.
 5. **Items.** The **Water Skin** (4 leather, 1 string) carries ten uses of water; right-click water to fill it. The
    **Air Glider** (2 leather, a breeze rod, 2 sticks) opens as an airbender falls; dye it in a crafting table.
+6. **Combos and steps.** Cast the right abilities within three seconds of each other for a combo (Earth Dome, Ice
+   Wave, Fire Spin, Twister...); double-tap a direction to dash with your element's step.
+7. **Chakras.** Press **M** to meditate (faster on a **Meditation Point**: cyan dye, paper, cyan dye over three
+   smooth stone slabs). Each minute opens a chakra; with all seven open, a breath more takes you into the
+   **Avatar State**: invincible, twice as strong, for twelve seconds.
 
 The full guide (every ability and its numbers, the looks, the commands, every server option) is on the
 [wiki](../../wiki), in English and Hebrew.
@@ -121,6 +126,11 @@ Enlightened בנוי על אותה מסגרת כמו [Enhanced](https://github.c
    מחדל). כשף אוויר שהורג את חיית המחמד שלו מנתק את כבליו הארציים: תעופה וחנק נפתחים לו, והאוויר שלו מכה חזק יותר.
 5. **פריטים.** **נאד המים** (4 עור, חוט) נושא עשר מנות מים; קליק ימני על מים ממלא אותו. **דאון האוויר** (2 עור,
    מוט בריז, 2 מקלות) נפתח כשכשף אוויר נופל; צובעים אותו בשולחן עבודה.
+6. **קומבואים וצעדים.** מטילים את היכולות הנכונות בתוך שלוש שניות זו מזו לקומבו (כיפת אדמה, גל קרח, סחרור אש,
+   טוויסטר...); לחיצה כפולה על כיוון מזניקה אתכם בצעד של היסוד שלכם.
+7. **צ'אקרות.** **M** למדיטציה (מהר יותר על **נקודת מדיטציה**: צבע טורקיז, נייר, צבע טורקיז מעל שלושה לוחות אבן
+   חלקה). כל דקה פותחת צ'אקרה; כשכל השבע פתוחות, עוד נשימה מכניסה אתכם ל**מצב האווטאר**: בלתי פגיעים, חזקים פי
+   שניים, לשתים עשרה שניות.
 
 המדריך המלא (כל יכולת והמספרים שלה, הנראויות, הפקודות, כל אפשרות שרת) נמצא ב[ויקי](../../wiki), באנגלית ובעברית.
 

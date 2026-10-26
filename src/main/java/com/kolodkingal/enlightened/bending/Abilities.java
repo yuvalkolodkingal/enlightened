@@ -36,12 +36,14 @@ public final class Abilities {
         for (AbilityLogic logic : LOGIC.values()) {
             logic.clear();
         }
+        Combos.clear();
     }
 
     public static void forgetAll(ServerPlayer player) {
         for (AbilityLogic logic : LOGIC.values()) {
             logic.forget(player);
         }
+        Combos.forget(player);
     }
 
     private Abilities() {

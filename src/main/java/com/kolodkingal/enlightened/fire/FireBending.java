@@ -64,6 +64,7 @@ public final class FireBending {
         logic.put(Ability.FIRE_HEALING, new Healing());
         logic.put(Ability.LIGHTNING, new Lightning());
         logic.put(Ability.LIGHTNING_REDIRECT, new Redirect());
+        FireMore.register(logic);
     }
 
     /** The fire particle of this bender's look (Azula's fire is blue). */

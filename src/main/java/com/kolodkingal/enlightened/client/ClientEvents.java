@@ -9,7 +9,10 @@ import com.kolodkingal.enlightened.client.fx.WorldFx;
 import com.kolodkingal.enlightened.client.fx.WorldFxRenderer;
 import com.kolodkingal.enlightened.network.AbilityKeyPayload;
 import com.kolodkingal.enlightened.network.ChangeLookPayload;
+import com.kolodkingal.enlightened.network.MeditatePayload;
 import com.kolodkingal.enlightened.network.ModNetwork;
+import com.kolodkingal.enlightened.network.StepPayload;
+import com.kolodkingal.enlightened.bending.Steps;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -32,6 +35,11 @@ public final class ClientEvents {
      * the key event itself: by the time the tick handles the click the player may have let go of Sneak.
      */
     private static final byte[] PRESS_SNEAK = new byte[BendingData.KEYS + 1];
+    private static boolean meditateSent;
+    /** The last tick each movement key went down (forward, back, left, right, jump), for the double tap of a step. */
+    private static final long[] TAPPED = new long[5];
+    private static final boolean[] WAS_DOWN = new boolean[5];
+    private static long stepTick = Long.MIN_VALUE;
 
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
@@ -64,6 +72,8 @@ public final class ClientEvents {
             return;
         }
         handleKeys(mc, player);
+        handleMeditate(mc, player);
+        handleSteps(mc, player);
         BodyLean.tick(mc.level);
         WorldFx.tick(mc.level);
     }
@@ -107,6 +117,52 @@ public final class ClientEvents {
                 ModNetwork.sendToServer(new AbilityKeyPayload(i, false, mc.options.keyShift.isDown()));
                 SENT_DOWN[i] = false;
             }
+        }
+    }
+
+    /** The Meditate key: down and up go to the server (it decides whether he may). */
+    private static void handleMeditate(Minecraft mc, LocalPlayer player) {
+        BendingData data = Benders.get(player);
+        boolean down = data.element().bends() && mc.screen == null && KeyBindings.MEDITATE.isDown() && !player.isSpectator();
+        if (down != meditateSent) {
+            meditateSent = down;
+            ModNetwork.sendToServer(new MeditatePayload(down));
+        }
+    }
+
+    /** A double tap of a direction (or of jump) within seven ticks: the element step. */
+    private static void handleSteps(Minecraft mc, LocalPlayer player) {
+        BendingData data = Benders.get(player);
+        if (!data.element().bends() || mc.screen != null || Steps.stepOf(data.element()) == null || !data.has(Steps.stepOf(data.element()))) {
+            return;
+        }
+        KeyMapping[] keys = {mc.options.keyUp, mc.options.keyDown, mc.options.keyLeft, mc.options.keyRight, mc.options.keyJump};
+        long now = mc.level.getGameTime();
+        for (int i = 0; i < keys.length; i++) {
+            boolean isDown = keys[i].isDown();
+            if (isDown && !WAS_DOWN[i]) {
+                if (now - TAPPED[i] <= 7 && now - stepTick > 10) {
+                    stepTick = now;
+                    TAPPED[i] = Long.MIN_VALUE / 2;
+                    float yaw = (float) Math.toRadians(player.getYRot());
+                    double fx = -Math.sin(yaw);
+                    double fz = Math.cos(yaw);
+                    double rx = -fz;
+                    double rz = fx;
+                    double[] dir = switch (i) {
+                        case 0 -> new double[]{fx, 0, fz};
+                        case 1 -> new double[]{-fx, 0, -fz};
+                        case 2 -> new double[]{-rx, 0, -rz};
+                        case 3 -> new double[]{rx, 0, rz};
+                        default -> new double[]{0, 1, 0};
+                    };
+                    ModNetwork.sendToServer(new StepPayload((float) dir[0], (float) dir[1], (float) dir[2]));
+                    com.kolodkingal.enlightened.client.anim.Animator.playLocal(player, com.kolodkingal.enlightened.client.anim.Gesture.STEP);
+                } else {
+                    TAPPED[i] = now;
+                }
+            }
+            WAS_DOWN[i] = isDown;
         }
     }
 

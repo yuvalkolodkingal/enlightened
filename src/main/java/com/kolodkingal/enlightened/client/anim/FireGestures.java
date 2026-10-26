@@ -15,6 +15,7 @@ import static com.kolodkingal.enlightened.client.anim.Gestures.define;
  */
 final class FireGestures {
     static void register() {
+        registerMore();
         // A fire ball: the fist chambers at the hip, then punches straight along the look with the hips snapping into it.
         define(Gesture.FIRE_BALL)
                 .key(0, S).m(StancePoses.FIRE_BALL_CHARGE_M).o(StancePoses.FIRE_BALL_CHARGE_O).twist(-16).lean(2)
@@ -88,6 +89,63 @@ final class FireGestures {
                 .key(2, O).m(-40, -50, 0).o(50, 30, 20).twist(30).lean(-6).head(-4, 0, 0).mTremble(4, 2.6F)
                 .key(6, E).m(50, 20, 20).oAim(LOOK, 0, 10, 0).twist(-30).lean(12).head(4, 0, 0).oTremble(3, 2.6F)
                 .key(16, E).m(StancePoses.REST_M).o(StancePoses.REST_O).twist(0).lean(0).head(0, 0, 0);
+    }
+
+    static void registerMore() {
+        // The fire jet: a crouch, then thrown forward on the flames, the arms swept back.
+        define(Gesture.FIRE_JET)
+                .key(0, S).m(-20, 0, 10).o(-20, 0, -10).drop(0).lean(0).legs(0, 0)
+                .key(3, I).m(30, -10, 14).o(30, 10, -14).drop(0.20F).lean(14).legs(-40, -40).head(6, 0, 0)
+                .key(5, O).m(50, 0, 22).o(50, 0, -22).drop(0).lean(10).legs(10, 10).head(-8, 0, 0)
+                .key(10, S).m(50, 0, 22).o(50, 0, -22).drop(0).lean(6).legs(10, 10).head(-8, 0, 0);
+
+        // The fire shield begins: the arms sweep out, palms down, as the fire rises round him.
+        define(Gesture.FIRE_SHIELD_START)
+                .key(0, S).m(-30, -30, 0).o(-30, 30, 0)
+                .key(4, O).m(-60, 0, 70).o(-60, 0, -70).head(-4, 0, 0)
+                .key(8, S).m(-60, 0, 70).o(-60, 0, -70).head(0, 0, 0);
+
+        // A wall of fire: both arms rise from the hips to the chest and press out as the fire climbs.
+        define(Gesture.FIRE_WALL)
+                .key(0, S).m(30, -20, 12).o(30, 20, -12).lean(0).drop(0).legs(0, 0)
+                .key(4, I).m(40, -24, 16).o(40, 24, -16).lean(-6).drop(0.08F).legs(-20, -20)
+                .key(8, B).m(-110, -22, 4).o(-110, 22, -4).lean(10).drop(0).legs(-14, 8).head(-6, 0, 0)
+                .key(14, E).m(StancePoses.REST_M).o(StancePoses.REST_O).lean(0).legs(0, 0).head(0, 0, 0);
+
+        // Blaze: the arm sweeps low across the ground from one side to the other, the fire following it.
+        define(Gesture.FIRE_BLAZE)
+                .key(0, S).m(-20, 50, 10).o(-20, 0, -14).twist(16).lean(4)
+                .key(3, I).m(10, 60, 20).o(-30, 0, -20).twist(22).lean(10).head(6, 0, 0)
+                .key(7, O).m(-10, -60, 30).o(-10, 0, -16).twist(-24).lean(12).head(4, -6, 0)
+                .key(12, E).m(StancePoses.REST_M).o(StancePoses.REST_O).twist(0).lean(0).head(0, 0, 0);
+
+        // Heat control on: the hands open at the chest and the heat shimmers out of them.
+        define(Gesture.FIRE_HEAT_ON)
+                .key(0, S).m(-40, -30, 0).o(-40, 30, 0)
+                .key(6, E).m(-70, -10, 30).o(-70, 10, -30).head(-4, 0, 0)
+                .key(12, S).m(StancePoses.REST_M).o(StancePoses.REST_O).head(0, 0, 0);
+
+        define(Gesture.FIRE_HEAT_OFF)
+                .key(0, S).m(-40, -10, 20).o(-40, 10, -20)
+                .key(8, E).m(StancePoses.REST_M).o(StancePoses.REST_O);
+
+        // Illumination: the hand comes up, palm open, and a flame is lit on it.
+        define(Gesture.FIRE_LIGHT_ON)
+                .key(0, S).m(-10, 0, 6)
+                .key(5, O).m(-100, -20, 10).head(0, -6, 0)
+                .key(10, S).m(-70, -10, 10).head(0, 0, 0);
+
+        define(Gesture.FIRE_LIGHT_OFF)
+                .key(0, S).m(-70, -10, 10)
+                .key(3, O).m(-90, -30, 0)
+                .key(8, E).m(StancePoses.REST_M);
+
+        // Combustion: two fingers to the third eye, then the head thrust forward as the blast leaves it.
+        define(Gesture.FIRE_COMBUSTION)
+                .key(0, S).m(-170, -34, -10).o(30, 10, -20).head(6, 0, 0).lean(0)
+                .key(3, I).m(-176, -36, -12).o(40, 14, -24).head(12, 0, 0).lean(-6)
+                .key(5, O).m(-80, -30, 20).o(-30, 10, -30).head(-16, 0, 0).lean(14)
+                .key(14, E).m(StancePoses.REST_M).o(StancePoses.REST_O).head(0, 0, 0).lean(0);
     }
 
     private FireGestures() {

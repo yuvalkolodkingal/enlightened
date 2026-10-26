@@ -77,6 +77,7 @@ public final class Shots {
     }
 
     public static boolean hurt(ServerPlayer player, Entity target, float amount, ResourceKey<DamageType> type) {
+        amount *= Chakras.damageFactor(Benders.get(player), player.level().getGameTime());
         if (amount <= 0) {
             return false;
         }

@@ -19,6 +19,8 @@ public final class ModNetwork {
         registrar.playToServer(AbilityKeyPayload.TYPE, AbilityKeyPayload.STREAM_CODEC, AbilityKeyPayload::handle);
         registrar.playToServer(ChangeLookPayload.TYPE, ChangeLookPayload.STREAM_CODEC, ChangeLookPayload::handle);
         registrar.playToServer(ScrollActionPayload.TYPE, ScrollActionPayload.STREAM_CODEC, ScrollActionPayload::handle);
+        registrar.playToServer(StepPayload.TYPE, StepPayload.STREAM_CODEC, StepPayload::handle);
+        registrar.playToServer(MeditatePayload.TYPE, MeditatePayload.STREAM_CODEC, MeditatePayload::handle);
         registrar.playToClient(SeismicPayload.TYPE, SeismicPayload.STREAM_CODEC, SeismicPayload::handle);
         registrar.playToClient(FxPayload.TYPE, FxPayload.STREAM_CODEC, FxPayload::handle);
     }

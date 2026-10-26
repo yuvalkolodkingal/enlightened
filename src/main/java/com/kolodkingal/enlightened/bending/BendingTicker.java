@@ -32,6 +32,7 @@ public final class BendingTicker {
             return;
         }
         applyPassives(player, data);
+        Chakras.tick(player, data);
         for (Ability a : Ability.values()) {
             if (data.has(a)) {
                 AbilityLogic logic = com.kolodkingal.enlightened.bending.Abilities.of(a);
@@ -68,6 +69,7 @@ public final class BendingTicker {
         EarthBending.applyBody(player, data);
         WaterBending.applyBody(player, data);
         AirBending.applyBody(player, data);
+        Chakras.applyBody(player, data);
     }
 
     /** Everything the bender's abilities left in the world ends (the element is lost). */

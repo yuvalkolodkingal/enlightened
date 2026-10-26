@@ -58,3 +58,19 @@ free slot: see the [Bending Scroll](Points-and-the-Bending-Scroll).
 ## Looks
 
 Toph Beifong (default), King Bumi, Lin Beifong, Suyin Beifong, Ghazan, Bolin, your own skin. See [Looks](Looks).
+
+## New in 1.2
+
+Arts in the spirit of ProjectKorra and *Avatar: Legend Reforged*; see also [Combos and Steps](Combos-and-Steps).
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Shockwave** | press | A stomp sends a wave of earth out all round you, **4.5 / 6 / 8** blocks: everyone in it is hurt, thrown back and shaken; the ground ripples. Cooldown **12 / 10 / 8 s**. |
+| **Catapult** | press | The earth flings you the way you look, far and high (**1.3 / 1.7 / 2.1** blocks a tick); you land as if on a cushion. Cooldown **6 / 5 / 4 s**. |
+| **Earth Grab** | press | The ground closes round the legs of the creature you aim at and holds it for **3 / 5 / 7 s**; aimed at nothing, it pulls the loose items on the ground to you. Cooldown 8 s. |
+| **Earth Tunnel** | hold | The earth and sand ahead are dug away as you look at them (wider for a master): a tunnel at walking pace. Only where you may break. |
+| **Earth Step** | passive | A double tap of a direction dashes you through a burst of dust; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
+| **Extraction** | press, metal | The raw metal is torn out of the ore you aim at: **1 / 2 / 3** pieces, the ore left as stone. Cooldown **4 / 3 / 2 s**. |
+
+Every earthbender's first chakra, and his heavy footing, also show in the **steps**: see
+[Chakras and the Avatar State](Chakras-and-the-Avatar-State).

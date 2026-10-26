@@ -44,7 +44,13 @@ public final class BendingHandler {
         }
         AbilityLogic logic = Abilities.of(ability);
         if (logic != null) {
+            long before = data.cooldownUntil(ability);
             logic.key(new Cast(player, data, ability), down);
+            // A cast that went off (its cooldown began, or a hold took hold) may complete a combo.
+            if (down && (data.cooldownUntil(ability) > before || ability.kind == Ability.Kind.HOLD && data.active(ability)
+                    || ability.kind == Ability.Kind.TOGGLE && data.on(ability))) {
+                Combos.cast(player, data, ability);
+            }
         }
         if (!down) {
             // The slot's ability got the release; any other hold still active on another key stays its own.

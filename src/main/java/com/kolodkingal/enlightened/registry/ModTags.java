@@ -33,6 +33,8 @@ public final class ModTags {
     public static final TagKey<Item> METAL_ITEMS = ItemTags.create(Enlightened.id("metal_items"));
     /** What tames, heals and breeds a flying lemur: apples, berries, melon, glow berries. */
     public static final TagKey<Item> LEMUR_FOOD = ItemTags.create(Enlightened.id("lemur_food"));
+    /** Blocks a bender meditates faster on (the Meditation Point of the temples). */
+    public static final TagKey<Block> MEDITATION_POINT = BlockTags.create(Enlightened.id("meditation_point"));
 
     private ModTags() {
     }

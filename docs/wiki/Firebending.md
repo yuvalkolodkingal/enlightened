@@ -39,3 +39,24 @@ R Fire Ball, ⇧R Fire Fist, G Fire Whip, ⇧G Fire Ring, V Lightning, ⇧V Ligh
 
 Zuko after he joined Team Avatar (default), Uncle Iroh in the White Lotus robes, Azula, Jeong Jeong in the White
 Lotus robes, Fire Lord Ozai, your own skin. See [Looks](Looks).
+
+## New in 1.2
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Fire Jet** | press | Flames from your feet throw you the way you look for **10 / 14 / 18** ticks; you land softly. Cooldown **5 / 4 / 3 s**. |
+| **Fire Shield** | hold | A dome of fire round you (**2 / 2.4 / 2.8** blocks) that burns arrows and bending away and scorches whoever steps in. A broken dome rests 3 s. |
+| **Wall of Fire** | press | A wall of fire rises where you look and burns `fireWallSeconds` (6 s) × **1 / 1.4 / 1.8**, burning and throwing back whoever crosses it. Cooldown **12 / 10 / 8 s**. |
+| **Blaze** | press | An arc of fire runs **6 / 8 / 10** blocks over the ground ahead, setting it alight for a while and burning whoever stands in it for **3 / 4 / 5 s**. Cooldown **8 / 7 / 6 s**. |
+| **Heat Control** | toggle | Your heat melts the snow and ice within **2 / 3 / 4** blocks, keeps you from freezing and burning, and (an adept) boils the water at your feet away. |
+| **Illumination** | toggle | A flame on your hand lights your way (light **10 / 13 / 15**). |
+| **Fire Step** | passive | A double tap of a direction dashes you in a flare of fire; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
+
+## Combustion (`combustionGate`, 9 points spent)
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Combustion** | press | After a breath of focus (**16 / 13 / 10** ticks, the third eye glowing) a beam leaves your forehead and explodes where it lands, up to **24 / 32 / 40** blocks away: `combustionDamage` (10) × **1 / 1.4 / 1.8** at the heart, less further out. `combustionBreaksBlocks` (false) lets it wreck the ground. Cooldown **30 / 24 / 18 s**. |
+
+Every fire art is drawn as real fire: the fist's streams, the whip, the ball, the ring, the walls and domes are the
+game's fire texture; Azula's fire is blue soul fire.

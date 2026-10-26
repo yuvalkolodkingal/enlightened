@@ -48,7 +48,29 @@ public enum Fx {
     /** Lava bursting (size). */
     LAVA_BURST(10),
     /** Earth bursting up where a pillar or a wall rises (size). */
-    EARTH_RISE(12);
+    EARTH_RISE(12),
+    /** An element step: a streak of the element along the dash (colour: the element's). */
+    STEP(10),
+    /** A vine lashing from a plant to its mark. */
+    VINE(14),
+    /** An arc of flame sweeping over the ground ahead (data: the range; to: the way it faces). */
+    BLAZE_ARC(16),
+    /** A combustion beam from the forehead to its mark, and the blast (data: the blast's size). */
+    COMBUSTION(14),
+    /** A wave of earth rolling out (radius). */
+    SHOCKWAVE(16),
+    /** Earth closing round a creature (entity). */
+    EARTH_GRAB(14),
+    /** A wave of ice sweeping forward (data: range; to: the way). */
+    ICE_WAVE(16),
+    /** A whirl of flame spinning out from the bender (radius). */
+    FIRE_SPIN(18),
+    /** Metal drawn out of an ore (at). */
+    EXTRACT(12),
+    /** The Avatar State entered: light bursting out. */
+    AVATAR_RISE(20),
+    /** A chakra opening: a ring of light rising (data: the chakra's number). */
+    CHAKRA(30);
 
     public final int life;
 

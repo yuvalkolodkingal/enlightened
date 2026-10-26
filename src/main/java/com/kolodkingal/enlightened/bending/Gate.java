@@ -18,6 +18,7 @@ public enum Gate {
     ICE,
     BLOOD,
     LIGHTNING,
+    COMBUSTION,
     TETHERLESS;
 
     public String id() {

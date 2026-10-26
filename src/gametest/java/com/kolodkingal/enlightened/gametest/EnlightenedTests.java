@@ -433,4 +433,97 @@ public final class EnlightenedTests {
         check(!lemur.isOrderedToSit(), "and stands when told again");
         helper.succeed();
     }
+
+    // ---- the arts of 1.2: the shockwave, combos, steps, the wall of fire, chakras and the Avatar State ----
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void shockwaveHurtsAndThrowsBack(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        f.bender(player, Element.EARTH, Ability.SHOCKWAVE, 1);
+        Mob zombie = f.zombie(10, FLOOR, 11);
+        float health = zombie.getHealth();
+        double before = zombie.distanceTo(player);
+        f.press(player, Ability.SHOCKWAVE, false);
+        helper.runAtTickTime(15, () -> {
+            check(zombie.getHealth() < health, "the shockwave hurt the zombie");
+            // A mob without AI is never moved by the server, so the throw shows in its velocity.
+            check(zombie.getDeltaMovement().horizontalDistance() > 0.5 || zombie.distanceTo(player) > before + 0.5, "the shockwave threw the zombie back");
+            check(!Benders.get(player).isReady(Ability.SHOCKWAVE, player.level().getGameTime()), "the shockwave has a cooldown");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 80)
+    public static void fireSpinComboFollowsTheShieldAndTheRing(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        f.bender(player, Element.FIRE, Ability.FIRE_SHIELD, 1, Ability.FIRE_RING, 1);
+        Mob zombie = f.zombie(10, FLOOR, 12);
+        double before = zombie.distanceTo(player);
+        f.press(player, Ability.FIRE_SHIELD, true);
+        helper.runAtTickTime(5, () -> f.release(player, Ability.FIRE_SHIELD));
+        helper.runAtTickTime(10, () -> f.press(player, Ability.FIRE_RING, false));
+        helper.runAtTickTime(25, () -> {
+            // The ring alone reaches 3 blocks; the Fire Spin reaches six and more, and throws far.
+            check(zombie.distanceTo(player) > before + 2.0 || zombie.getHealth() < zombie.getMaxHealth() - 6, "the Fire Spin followed the shield and the ring");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA)
+    public static void elementStepDashes(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        f.bender(player, Element.AIR, Ability.AIR_STEP, 1);
+        com.kolodkingal.enlightened.bending.Steps.step(player, new Vec3(0, 0, 1));
+        check(player.getDeltaMovement().z > 0.5, "the step threw the airbender forward");
+        check(!Benders.get(player).isReady(Ability.AIR_STEP, player.level().getGameTime()), "the step has a cooldown");
+        check(com.kolodkingal.enlightened.bending.SoftLanding.active(player), "the landing after a step is soft");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 100)
+    public static void wallOfFireBurnsWhoCrossesIt(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 6);
+        f.bender(player, Element.FIRE, Ability.WALL_OF_FIRE, 1);
+        f.lookAt(player, new Vec3(10, FLOOR, 11));
+        f.press(player, Ability.WALL_OF_FIRE, false);
+        var walls = helper.getLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.FireWallEntity.class, player.getBoundingBox().inflate(12));
+        check(!walls.isEmpty(), "a wall of fire was raised");
+        Vec3 wallAt = helper.relativeVec(walls.getFirst().position());
+        Mob zombie = f.zombie(wallAt.x, FLOOR, wallAt.z);
+        float health = zombie.getHealth();
+        helper.runAtTickTime(40, () -> {
+            check(zombie.getHealth() < health || zombie.isOnFire(), "the wall burned the zombie standing in it");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 140)
+    public static void meditationOpensTheLastChakraAndTheAvatarStateShields(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        BendingData data = f.bender(player, Element.FIRE, Ability.FIRE_BALL, 3, Ability.FIRE_FIST, 3, Ability.FIRE_WHIP, 3);
+        check(data.spent() >= com.kolodkingal.enlightened.bending.Chakras.pointsFor(7), "enough points are spent for the seventh chakra");
+        data.setChakras(6);
+        data.setMeditation(com.kolodkingal.enlightened.bending.Chakras.ticksPerChakra() - 2);
+        // The awakening swings the arm, and a swing ends a meditation: so it begins once the arm is still.
+        helper.runAtTickTime(10, () -> {
+            com.kolodkingal.enlightened.bending.Chakras.meditate(player, true);
+            check(data.meditating(), "the bender meditates");
+        });
+        helper.runAtTickTime(16, () -> check(data.chakras() == 7, "the seventh chakra opened by meditation (meditating " + data.meditating()
+                + ", progress " + data.meditation() + ", swinging " + player.swinging + ")"));
+        // Still meditating with all seven open: the Avatar State comes after a breath.
+        helper.runAtTickTime(50, () -> {
+            check(data.avatar(player.level().getGameTime()), "the Avatar State was entered");
+            float health = player.getHealth();
+            player.hurt(player.damageSources().generic(), 6.0F);
+            check(player.getHealth() >= health - 0.01F, "nothing hurts the Avatar");
+            check(com.kolodkingal.enlightened.bending.Chakras.damageFactor(data, player.level().getGameTime()) > 2.0F, "bending is twice as strong");
+            helper.succeed();
+        });
+    }
 }

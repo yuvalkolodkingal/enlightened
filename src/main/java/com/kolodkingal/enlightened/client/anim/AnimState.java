@@ -113,6 +113,9 @@ public final class AnimState {
     /** The tick each ability last went active (for how long a charge was held). */
     public final int[] activeSince = new int[ABILITIES];
     public int lastHeld = -1;
+    public boolean avatar;
+    public int chakras = -1;
+    public boolean meditating;
     /** The age the stance now held (a charge, a grip) began at, for the rows that grow with it. */
     public float chargeAge;
 

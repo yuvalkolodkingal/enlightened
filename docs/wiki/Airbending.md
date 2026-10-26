@@ -45,3 +45,16 @@ N Tornado.
 ## Looks
 
 Tenzin (default), Zaheer, Jinora, Monk Gyatso, Jae and Kartik of the Seven Havens, your own skin. See [Looks](Looks).
+
+## New in 1.2
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Air Suction** | press | A gust that pulls what you look at (within **10 / 14 / 18**) to you: creatures, arrows, loose items. Cooldown 3 s (1.5 s if it pulled nothing). |
+| **Air Burst** | press | A sphere of air bursts out of you, **5 / 7 / 9** blocks, throwing everyone round you back. Cooldown **10 / 8 / 6 s**. |
+| **Air Spout** | toggle | A column of wind lifts you **6 / 10 / 15** blocks off the ground and holds you there; Sneak to come down. |
+| **Air Agility** | passive | Lighter on your feet: you run faster, and from the second level jump higher. |
+| **Air Step** | passive | A double tap of a direction dashes you on a gust; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
+
+The **scooter** is now a ball of air you ride like Aang: you sit on a rolling sphere of wind that carries you
+over gaps, drawn as real swirling air.

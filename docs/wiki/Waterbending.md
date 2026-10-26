@@ -62,3 +62,18 @@ N Bloodbending, ⇧N Take Bending. Snow Throw waits for a free slot.
 ## Looks
 
 Katara (default), Amon (Noatak), Ming-Hua, Master Pakku in the White Lotus robes, your own skin. See [Looks](Looks).
+
+## New in 1.2
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Water Shield** | hold | A dome of water over you (**2 / 2.4 / 2.8** blocks) that turns arrows aside and takes most of every blow; it drinks your water. A broken dome rests 3 s. |
+| **Water Bubble** | toggle | A pocket of air under the water for you and the friends within **1.5 / 2.5 / 3.5** blocks. |
+| **Phase Change** | press, ice | The water you aim at freezes into a sheet of ice **2 / 3 / 5** blocks across for **30 / 60 / 120 s**; ice and snow you aim at melt. Cooldown **6 / 5 / 4 s**. |
+| **Frost Breath** | hold, ice | A cone of frost from your mouth, **5 / 7 / 9** blocks, that slows and, held long enough, freezes solid for **2 / 3 / 4 s**. |
+| **Plant Tether** | press | A vine from the plants within **5 / 7 / 9** blocks lashes the creature you aim at, slows it and drags it to them; aimed at nothing, it pulls you to the plant. Cooldown **8 / 6 / 5 s**. |
+| **Fast Swim** | passive | The water carries you swiftly; an adept breathes longer under it, a master as long as he likes. |
+| **Water Step** | passive | A double tap of a direction dashes you in a sheet of water; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
+
+Every water art is now drawn as real water: the whip, the arms and the octopus's tentacles are ribbons of the
+game's water texture, the healing a glow of it, the ice a sheet of ice.

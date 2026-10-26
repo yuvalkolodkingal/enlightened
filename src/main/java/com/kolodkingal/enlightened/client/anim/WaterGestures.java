@@ -15,6 +15,7 @@ import static com.kolodkingal.enlightened.client.anim.Gestures.define;
  */
 final class WaterGestures {
     static void register() {
+        registerMore();
         // The whip: the main hand draws the water from the side in an arc up and over, then lashes along the look.
         define(Gesture.WATER_WHIP)
                 .key(0, S).m(-40, 30, 30).o(-30, 10, -30).twist(12).lean(-2)
@@ -115,6 +116,44 @@ final class WaterGestures {
                 .key(4, O).mAim(LOOK, -14, -6, 0).oAim(LOOK, 10, 10, 0).lean(10).head(6, 0, 0)
                 .key(13, S).mAim(LOOK, -14, -6, 0).oAim(LOOK, 10, 10, 0).lean(10).head(6, 0, 0).mTremble(1.5F, 1.9F)
                 .key(20, E).m(StancePoses.REST_M).o(StancePoses.REST_O).lean(0).head(0, 0, 0);
+    }
+
+    static void registerMore() {
+        // The water shield begins: the arms sweep up from the sides to hold the dome.
+        define(Gesture.WATER_SHIELD_START)
+                .key(0, S).m(-20, 0, 20).o(-20, 0, -20).head(0, 0, 0)
+                .key(4, O).m(-150, -10, 30).o(-150, 10, -30).head(-6, 0, 0)
+                .key(8, S).m(-150, -10, 30).o(-150, 10, -30).head(-6, 0, 0);
+
+        // The bubble: the hands push out and round, as the water is held back.
+        define(Gesture.WATER_BUBBLE_ON)
+                .key(0, S).m(-60, -30, 0).o(-60, 30, 0)
+                .key(6, E).m(-70, 0, 60).o(-70, 0, -60).head(-4, 0, 0)
+                .key(12, S).m(StancePoses.REST_M).o(StancePoses.REST_O).head(0, 0, 0);
+
+        define(Gesture.WATER_BUBBLE_OFF)
+                .key(0, S).m(-40, 0, 30).o(-40, 0, -30)
+                .key(8, E).m(StancePoses.REST_M).o(StancePoses.REST_O);
+
+        // Phase change: the palms rise to the chest and press slowly down and apart, as the water sets or softens.
+        define(Gesture.WATER_PHASE)
+                .key(0, S).m(-70, -24, 8).o(-70, 24, -8).lean(0).drop(0)
+                .key(5, E).m(-80, -10, 20).o(-80, 10, -20).lean(4).drop(0.04F).head(6, 0, 0)
+                .key(10, E).m(0, -10, 40).o(0, 10, -40).lean(10).drop(0.12F).head(10, 0, 0)
+                .key(14, S).m(StancePoses.REST_M).o(StancePoses.REST_O).lean(0).drop(0).head(0, 0, 0);
+
+        // Frost breathed: the hands cup at the chest and the head comes forward.
+        define(Gesture.WATER_FROST_START)
+                .key(0, S).m(-30, -10, 10).o(-30, 10, -10).head(0, 0, 0)
+                .key(4, O).m(-70, -40, 0).o(-70, 40, 0).head(-4, 0, 0)
+                .key(8, S).m(-70, -40, 0).o(-70, 40, 0).head(-4, 0, 0);
+
+        // The plant tether: a sweep of the arm to the plant, then a pull with both.
+        define(Gesture.WATER_TETHER)
+                .key(0, S).m(-40, 30, 20).o(-20, 0, -14).twist(10).lean(0)
+                .key(4, E).m(-120, 40, 30).o(-30, 0, -20).twist(16).lean(-4).head(-6, 6, 0)
+                .key(8, O).m(-60, -30, 0).o(-60, 30, 0).twist(-10).lean(10).head(4, 0, 0)
+                .key(14, E).m(StancePoses.REST_M).o(StancePoses.REST_O).twist(0).lean(0).head(0, 0, 0);
     }
 
     private WaterGestures() {

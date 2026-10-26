@@ -50,7 +50,8 @@ public final class Animator {
     /** Abilities whose gestures come from their active flag, not from their cooldown. */
     private static final Set<Ability> ACTIVE_DRIVEN = EnumSet.of(Ability.ROCK_LIFT, Ability.BLOODBENDING, Ability.SUFFOCATE,
             Ability.FIRE_FIST, Ability.FIRE_WHIP, Ability.SPIRIT_PROJECTION, Ability.AIR_JUMP, Ability.FIRE_BALL, Ability.LIGHTNING,
-            Ability.SEISMIC_SENSE);
+            Ability.SEISMIC_SENSE, Ability.EARTH_TUNNEL, Ability.WATER_SHIELD, Ability.FROST_BREATH, Ability.FIRE_JET, Ability.FIRE_SHIELD,
+            Ability.COMBUSTION);
 
     private static final Map<UUID, AnimState> STATES = new HashMap<>();
 
@@ -182,6 +183,18 @@ public final class Animator {
         if (!s.look.equals(data.variant()) && !s.look.isEmpty()) {
             start(s, p, Gesture.LOOK_CHANGE, age, false);
         }
+        boolean avatar = data.avatar(now);
+        if (avatar && !s.avatar) {
+            start(s, p, Gesture.AVATAR_ENTER, age, false);
+        } else if (!avatar && s.avatar) {
+            start(s, p, Gesture.AVATAR_LEAVE, age, false);
+        }
+        if (data.chakras() > s.chakras && s.chakras >= 0) {
+            start(s, p, Gesture.CHAKRA_OPEN, age, false);
+        }
+        if (data.meditating() && !s.meditating) {
+            start(s, p, Gesture.AIR_PROJECTION, age, false);
+        }
         if (s.onGround && !s.wasOnGround && !s.scooter) {
             if (s.element == Element.AIR && s.airTicks >= 0 && lastAir(s) >= 8) {
                 start(s, p, Gesture.AIR_LAND, age, false);
@@ -204,6 +217,9 @@ public final class Animator {
         s.active = data.activeBits();
         s.look = data.variant();
         s.lastHeld = data.heldEntityId();
+        s.avatar = data.avatar(p.level().getGameTime());
+        s.chakras = data.chakras();
+        s.meditating = data.meditating();
         s.prevAir = s.onGround ? 0 : s.airTicks;
     }
 
@@ -230,6 +246,15 @@ public final class Animator {
         on[Stance.FIRE_WHIP.ordinal()] = data.active(Ability.FIRE_WHIP);
         on[Stance.FIRE_BALL_CHARGE.ordinal()] = data.active(Ability.FIRE_BALL);
         on[Stance.LIGHTNING_CHARGE.ordinal()] = data.active(Ability.LIGHTNING);
+        on[Stance.EARTH_TUNNEL.ordinal()] = data.active(Ability.EARTH_TUNNEL);
+        on[Stance.WATER_SHIELD.ordinal()] = data.active(Ability.WATER_SHIELD);
+        on[Stance.FROST_BREATH.ordinal()] = data.active(Ability.FROST_BREATH);
+        on[Stance.FIRE_JET.ordinal()] = data.active(Ability.FIRE_JET);
+        on[Stance.FIRE_SHIELD.ordinal()] = data.active(Ability.FIRE_SHIELD);
+        on[Stance.AIR_SPOUT.ordinal()] = data.has(Ability.AIR_SPOUT) && data.on(Ability.AIR_SPOUT);
+        on[Stance.MEDITATE.ordinal()] = data.meditating();
+        on[Stance.AVATAR.ordinal()] = data.avatar(p.level().getGameTime());
+        on[Stance.COMBUSTION.ordinal()] = data.active(Ability.COMBUSTION);
     }
 
     // ---- the routes from the data to the gestures ----
@@ -261,6 +286,16 @@ public final class Animator {
             case BLOOD_SUPPRESS -> Gesture.WATER_SUPPRESS;
             case FIRE_RING -> Gesture.FIRE_RING;
             case FIRE_HEALING -> Gesture.FIRE_HEAL;
+            case SHOCKWAVE -> Gesture.EARTH_SHOCKWAVE;
+            case CATAPULT -> Gesture.EARTH_CATAPULT;
+            case EARTH_GRAB -> Gesture.EARTH_GRAB;
+            case EXTRACTION -> Gesture.EARTH_EXTRACT;
+            case AIR_SUCTION -> Gesture.AIR_SUCTION;
+            case AIR_BURST -> Gesture.AIR_BURST;
+            case PHASE_CHANGE -> Gesture.WATER_PHASE;
+            case PLANT_TETHER -> Gesture.WATER_TETHER;
+            case WALL_OF_FIRE -> Gesture.FIRE_WALL;
+            case BLAZE -> Gesture.FIRE_BLAZE;
             default -> null;
         };
     }
@@ -278,6 +313,10 @@ public final class Animator {
             case WATER_SPOUT -> on ? Gesture.WATER_SPOUT_ON : Gesture.WATER_SPOUT_OFF;
             case WATER_ARMS -> on ? Gesture.WATER_ARMS_ON : Gesture.WATER_ARMS_OFF;
             case LIGHTNING_REDIRECT -> on ? Gesture.FIRE_REDIRECT_ON : Gesture.FIRE_REDIRECT_OFF;
+            case AIR_SPOUT -> on ? Gesture.AIR_SPOUT_ON : Gesture.AIR_SPOUT_OFF;
+            case WATER_BUBBLE -> on ? Gesture.WATER_BUBBLE_ON : Gesture.WATER_BUBBLE_OFF;
+            case HEAT_CONTROL -> on ? Gesture.FIRE_HEAT_ON : Gesture.FIRE_HEAT_OFF;
+            case ILLUMINATION -> on ? Gesture.FIRE_LIGHT_ON : Gesture.FIRE_LIGHT_OFF;
             default -> null;
         };
     }
@@ -293,6 +332,12 @@ public final class Animator {
             case FIRE_WHIP -> Gesture.FIRE_WHIP_START;
             case SPIRIT_PROJECTION -> Gesture.AIR_PROJECTION;
             case AIR_JUMP -> Gesture.AIR_JUMP;
+            case EARTH_TUNNEL -> Gesture.EARTH_TUNNEL_START;
+            case WATER_SHIELD -> Gesture.WATER_SHIELD_START;
+            case FROST_BREATH -> Gesture.WATER_FROST_START;
+            case FIRE_JET -> Gesture.FIRE_JET;
+            case FIRE_SHIELD -> Gesture.FIRE_SHIELD_START;
+            case COMBUSTION -> Gesture.FIRE_COMBUSTION;
             default -> null;
         };
     }
@@ -324,6 +369,14 @@ public final class Animator {
         };
         if (g != null) {
             start(s, player, g, player.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), true);
+        }
+    }
+
+    /** The local player does something the data does not show yet (a step): its gesture starts now. */
+    public static void playLocal(LocalPlayer player, Gesture id) {
+        AnimState s = STATES.get(player.getUUID());
+        if (s != null) {
+            start(s, player, id, player.tickCount + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), true);
         }
     }
 

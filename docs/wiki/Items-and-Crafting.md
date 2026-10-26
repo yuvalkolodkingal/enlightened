@@ -38,3 +38,9 @@ L = leather, B = breeze rod, S = stick. Held in **either hand** by an airbender,
 the wind (see [Airbending](Airbending)); Air Jump first and you fly far. **Dye it**: put it in a crafting table with
 any dye (as leather armour) and its wings take the colour: blue, red, whatever you like. In anyone else's hands it is
 a staff.
+
+## Meditation Point
+
+A low stone seat for meditation: **cyan dye, paper, cyan dye** over **three smooth stone slabs**. Standing on it (or
+on any block in `#enlightened:meditation_point`), meditation runs three times as fast; see
+[Chakras and the Avatar State](Chakras-and-the-Avatar-State).

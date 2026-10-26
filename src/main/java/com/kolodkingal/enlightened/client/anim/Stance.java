@@ -44,7 +44,25 @@ public enum Stance {
     /** A fire ball gathering: the fist cocked at the hip, the other palm forward. */
     FIRE_BALL_CHARGE(1.5F, 3, true),
     /** Lightning gathering: the arms circle, then point. */
-    LIGHTNING_CHARGE(1.5F, 3, true);
+    LIGHTNING_CHARGE(1.5F, 3, true),
+    /** The earth tunnel: both palms driving into the rock ahead. */
+    EARTH_TUNNEL(1.5F, 3, true),
+    /** A dome of water held up over the head. */
+    WATER_SHIELD(1.5F, 3, true),
+    /** Frost breathed: the head forward, the hands cupped at the chest. */
+    FROST_BREATH(1.5F, 3, true),
+    /** The fire jet: streamlined, the arms back, the fire from the feet. */
+    FIRE_JET(1.0F, 2, false),
+    /** A dome of fire held up round the body. */
+    FIRE_SHIELD(1.5F, 3, true),
+    /** The air spout: balancing on the column of wind. */
+    AIR_SPOUT(3, 4, false),
+    /** Meditation: the lotus, the hands at the lap. */
+    MEDITATE(4, 6, false),
+    /** The Avatar State: afloat, the arms spread, the head back. */
+    AVATAR(3, 6, false),
+    /** Combustion gathering at the forehead: a hand to the third eye. */
+    COMBUSTION(1.5F, 3, true);
 
     public final float tauIn;
     public final float tauOut;

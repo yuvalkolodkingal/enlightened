@@ -81,7 +81,7 @@ public final class WorldFxRenderer {
         partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         now = level.getGameTime();
         age = now + partial;
-        buffer = mc.renderBuffers().bufferSource();
+        buffer = FxGeometry.source();
         pose = event.getPoseStack().last();
         for (WorldFx.Effect e : WorldFx.all()) {
             timed(e);
@@ -92,15 +92,7 @@ public final class WorldFxRenderer {
                 sustained(player, data);
             }
         }
-        buffer.endBatch(FxGeometry.water());
-        buffer.endBatch(FxGeometry.flow());
-        buffer.endBatch(FxGeometry.ice());
-        buffer.endBatch(FxGeometry.snow());
-        buffer.endBatch(FxGeometry.fire(false));
-        buffer.endBatch(FxGeometry.fire(true));
-        buffer.endBatch(FxGeometry.lava());
-        buffer.endBatch(FxGeometry.glowTexture());
-        buffer.endBatch(FxGeometry.light());
+        buffer.endBatch();
     }
 
     static void clear() {
@@ -132,6 +124,16 @@ public final class WorldFxRenderer {
 
     private static Vec3 look(AbstractClientPlayer p) {
         return p.getViewVector(partial);
+    }
+
+    /**
+     * The look turned {@code radians} to the side (positive to the right): a stream from a hand goes out a little
+     * away from the middle, so from the bender's own camera behind him (which looks along his look) it shows beside
+     * his body instead of collapsing behind it.
+     */
+    private static Vec3 fan(Vec3 look, double radians) {
+        Vec3 side = right(look);
+        return look.scale(Math.cos(radians)).add(side.scale(Math.sin(radians))).normalize();
     }
 
     private static Vec3 right(Vec3 look) {
@@ -207,6 +209,222 @@ public final class WorldFxRenderer {
         }
         if (data.has(Ability.SEISMIC_SENSE) && data.on(Ability.SEISMIC_SENSE) && p.onGround()) {
             seismicPulse(p);
+        }
+        if ((w = stance(st, data, Stance.WATER_SHIELD, data.active(Ability.WATER_SHIELD))) > 0.01F) {
+            waterDome(p, data, w);
+        }
+        if ((w = stance(st, data, Stance.FIRE_SHIELD, data.active(Ability.FIRE_SHIELD))) > 0.01F) {
+            fireDome(p, data, w);
+        }
+        if ((w = stance(st, data, Stance.FIRE_JET, data.active(Ability.FIRE_JET))) > 0.01F) {
+            jetFlames(p, data, w);
+        }
+        if ((w = stance(st, data, Stance.FROST_BREATH, data.active(Ability.FROST_BREATH))) > 0.01F) {
+            frostBreath(p, data, w);
+        }
+        if (data.has(Ability.AIR_SPOUT) && data.on(Ability.AIR_SPOUT)) {
+            airSpout(p);
+        }
+        if ((w = stance(st, data, Stance.EARTH_TUNNEL, data.active(Ability.EARTH_TUNNEL))) > 0.01F) {
+            tunnelDust(p, w);
+        }
+        if (data.has(Ability.WATER_BUBBLE) && data.on(Ability.WATER_BUBBLE) && p.isUnderWater()) {
+            bubble(p, data);
+        }
+        if (data.has(Ability.HEAT_CONTROL) && data.on(Ability.HEAT_CONTROL) && !calm) {
+            heatShimmer(p);
+        }
+        if (data.has(Ability.ILLUMINATION) && data.on(Ability.ILLUMINATION)) {
+            handFlame(p, data);
+        }
+        if ((w = stance(st, data, Stance.COMBUSTION, data.active(Ability.COMBUSTION))) > 0.01F) {
+            thirdEye(p, w);
+        }
+        if ((w = stance(st, data, Stance.MEDITATE, data.meditating())) > 0.01F) {
+            meditation(p, data, w);
+        }
+        if ((w = stance(st, data, Stance.AVATAR, data.avatar(now))) > 0.01F) {
+            avatarAura(p, data, w);
+        }
+    }
+
+    /** The water shield: a dome of water over the bender, rolling. */
+    private static void waterDome(AbstractClientPlayer p, BendingData data, float w) {
+        float radius = (1.9F + 0.4F * (data.level(Ability.WATER_SHIELD) - 1)) * (0.6F + 0.4F * w);
+        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        float[] fr = waterFrame();
+        int lit = lightAt(p.position());
+        Quaternionf rot = new Quaternionf().rotationY(age * 0.05F);
+        FxGeometry.sphere(pose, vc(FxGeometry.water()), c, radius, 10, 20, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.55F * w, 1.5F, age * 0.2F, lit, true, rot);
+        FxGeometry.sphere(pose, vc(FxGeometry.light()), c, radius * 1.01F, 8, 16, 0, 1, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.10F * w, 2.0F, -age * 0.3F, FULL, false,
+                new Quaternionf().rotationY(-age * 0.08F));
+    }
+
+    /** The fire shield: a dome of fire round the bender, burning. */
+    private static void fireDome(AbstractClientPlayer p, BendingData data, float w) {
+        boolean blue = Variants.blueFire(data);
+        float radius = (1.9F + 0.4F * (data.level(Ability.FIRE_SHIELD) - 1)) * (0.6F + 0.4F * w);
+        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        float[] fr = fireFrame(1.0F);
+        float[] core = blue ? BLUE_CORE : FIRE_CORE;
+        FxGeometry.sphere(pose, vc(FxGeometry.fire(blue)), c, radius, 10, 20, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.75F * w, 1.3F, age * 0.5F, FULL, true,
+                new Quaternionf().rotationY(age * 0.07F));
+        FxGeometry.sphere(pose, vc(FxGeometry.light()), c, radius * 0.96F, 8, 16, 0, 1, core[0], core[1], core[2], 0.12F * w, 2.0F, -age * 0.4F, FULL, false,
+                new Quaternionf().rotationX(0.5F).mul(new Quaternionf().rotationY(-age * 0.1F)));
+    }
+
+    /** The fire jet: flames roaring from the feet against the flight. */
+    private static void jetFlames(AbstractClientPlayer p, BendingData data, float w) {
+        boolean blue = Variants.blueFire(data);
+        Vec3 v = new Vec3(p.getX() - p.xOld, p.getY() - p.yOld, p.getZ() - p.zOld);
+        Vec3 back = v.lengthSqr() < 1.0E-4 ? look(p).scale(-1.0) : v.normalize().scale(-1.0);
+        float[] fr = fireFrame(1.0F);
+        float[] core = blue ? BLUE_CORE : FIRE_CORE;
+        for (HumanoidArm side : HumanoidArm.values()) {
+            Vec3 foot = HandTracker.foot(p, side, partial);
+            if (foot == null) {
+                foot = p.getPosition(partial).add(side == HumanoidArm.RIGHT ? 0.15 : -0.15, 0.1, 0);
+            }
+            Vec3 f = rel(foot);
+            FxGeometry.cone(pose, vc(FxGeometry.fire(blue)), f, back, 2.6F * w, 0.16F, 0.5F, 8, 6, fr[0], fr[1], 2.0F, age * 0.3F, 1.0F, 1.0F, 1.0F, 0.95F, 0.0F, FULL, true, 0.2F, age * 0.6F + side.ordinal());
+            FxGeometry.cone(pose, vc(FxGeometry.light()), f, back, 1.8F * w, 0.08F, 0.25F, 6, 4, 0, 1, 1, 0, core[0], core[1], core[2], 0.7F, 0.0F, FULL, false, 0.1F, age * 0.6F);
+        }
+    }
+
+    /** Frost breath: a cone of icy mist from the mouth. */
+    private static void frostBreath(AbstractClientPlayer p, BendingData data, float w) {
+        Vec3 look = look(p);
+        Vec3 mouth = rel(p.getEyePosition(partial).add(look.scale(0.3)).add(0, -0.12, 0));
+        float len = (5.0F + 2.0F * (data.level(Ability.FROST_BREATH) - 1)) * w;
+        VertexConsumer light = vc(FxGeometry.light());
+        FxGeometry.cone(pose, light, mouth, look, len, 0.08F, 1.0F, 10, 8, 0, 1, 1, 0, 0.85F, 0.95F, 1.0F, 0.45F, 0.0F, FULL, false, 0.25F, age * 0.4F);
+        FxGeometry.cone(pose, light, mouth, look, len * 0.7F, 0.04F, 0.5F, 8, 6, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.35F, 0.0F, FULL, false, 0.15F, age * 0.4F + 1);
+        FxGeometry.conePuffs(pose, vc(FxGeometry.snow()), mouth, look, len, 0.08F, 1.0F, 10, 0, 1, 0.85F, 0.95F, 1.0F, 0.55F, 0.0F, FULL, true, 0.25F, age * 0.4F, 1.2F, age * 0.2F);
+    }
+
+    /** The air spout: a column of spinning wind from the ground to the feet. */
+    private static void airSpout(AbstractClientPlayer p) {
+        Vec3 feet = p.getPosition(partial);
+        BlockPos.MutableBlockPos pos = BlockPos.containing(feet).mutable();
+        int ground = Integer.MIN_VALUE;
+        for (int i = 0; i < 20; i++) {
+            if (level.getBlockState(pos).isSolid()) {
+                ground = pos.getY() + 1;
+                break;
+            }
+            pos.move(0, -1, 0);
+        }
+        if (ground == Integer.MIN_VALUE || feet.y - ground < 0.3) {
+            return;
+        }
+        double bottom = ground;
+        VertexConsumer light = vc(FxGeometry.light());
+        List<Vec3> pts = new ArrayList<>();
+        int n = Math.max(4, (int) ((feet.y - bottom) * 2));
+        for (int k = 0; k <= n; k++) {
+            float t = (float) k / n;
+            pts.add(rel(new Vec3(feet.x, bottom + (feet.y - bottom) * t, feet.z)));
+        }
+        FxGeometry.tube(pose, light, pts, 0.9F, 0.45F, 12, 0, 1, 1, 0, AIR[0], AIR[1], AIR[2], 0.22F, 0.30F, FULL, false);
+        for (int i = 0; i < 4; i++) {
+            List<Vec3> rope = new ArrayList<>();
+            for (int k = 0; k <= n * 2; k++) {
+                float t = (float) k / (n * 2);
+                double y = bottom + (feet.y - bottom) * t;
+                double a = i * 1.57 - age * 0.45 + t * 10;
+                double r = 0.95 - 0.45 * t;
+                rope.add(rel(new Vec3(feet.x + Math.cos(a) * r, y, feet.z + Math.sin(a) * r)));
+            }
+            FxGeometry.ribbon(pose, light, rope, 0.12F, 0.05F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.35F, 0.5F, FULL, false);
+        }
+        FxGeometry.disc(pose, light, rel(new Vec3(feet.x, bottom + 0.05, feet.z)), 0.6F, 1.8F, 20, 0, 1, AIR[0], AIR[1], AIR[2], 0.25F, 0.0F, FULL, false, age * 0.4F);
+    }
+
+    /** The tunnel: dust streaming back past the digger. */
+    private static void tunnelDust(AbstractClientPlayer p, float w) {
+        Vec3 look = look(p);
+        Vec3 from = rel(p.getEyePosition(partial).add(look.scale(1.5)).add(0, -0.3, 0));
+        VertexConsumer light = vc(FxGeometry.light());
+        FxGeometry.cone(pose, light, from, look.scale(-1.0), 2.5F * w, 0.6F, 0.1F, 8, 5, 0, 1, 1, 0, EARTH[0], EARTH[1], EARTH[2], 0.35F, 0.0F, FULL, false, 0.3F, age * 0.7F);
+    }
+
+    /** The water bubble: a pocket of air, its skin shimmering, under the water. */
+    private static void bubble(AbstractClientPlayer p, BendingData data) {
+        float radius = 1.5F + (data.level(Ability.WATER_BUBBLE) - 1) * 1.0F;
+        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        VertexConsumer light = vc(FxGeometry.light());
+        FxGeometry.sphere(pose, light, c, radius, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.12F, 1.7F, age * 0.1F, FULL, false, new Quaternionf().rotationY(age * 0.02F));
+    }
+
+    /** Heat control: a shimmer of heat rising off the bender. */
+    private static void heatShimmer(AbstractClientPlayer p) {
+        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        VertexConsumer light = vc(FxGeometry.light());
+        FxGeometry.sphere(pose, light, c, 1.1F + 0.05F * Mth.sin(age * 0.5F), 6, 12, 0, 1, 1.0F, 0.6F, 0.25F, 0.05F, 2.5F, age * 0.9F, FULL, false,
+                new Quaternionf().rotationY(age * 0.3F));
+    }
+
+    /** Illumination: a flame burning on the open hand. */
+    private static void handFlame(AbstractClientPlayer p, BendingData data) {
+        boolean blue = Variants.blueFire(data);
+        float[] core = blue ? BLUE_CORE : FIRE_CORE;
+        Vec3 h = rel(hand(p, p.getMainArm()).add(0, 0.1, 0));
+        float[] fr = fireFrame(1.0F);
+        float flicker = 0.85F + 0.15F * Mth.sin(age * 1.3F);
+        FxGeometry.cone(pose, vc(FxGeometry.fire(blue)), h, new Vec3(0, 1, 0), 0.6F * flicker, 0.16F, 0.02F, 8, 4, fr[0], fr[1], 1.0F, age * 0.2F, 1.0F, 1.0F, 1.0F, 0.95F, 0.3F, FULL, true, 0.08F, age * 0.5F);
+        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), h.add(0, 0.2, 0), 1.2F, core[0], core[1], core[2], 0.5F, age * 0.2F);
+    }
+
+    /** Combustion gathering: light at the third eye. */
+    private static void thirdEye(AbstractClientPlayer p, float w) {
+        Vec3 eye = rel(p.getEyePosition(partial).add(look(p).scale(0.25)).add(0, 0.15, 0));
+        float pulse = 0.6F + 0.4F * Mth.sin(age * 1.1F);
+        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eye, (0.4F + 0.4F * pulse) * w, 1.0F, 0.6F, 0.2F, 0.9F * w, age * 0.5F);
+        FxGeometry.bolt(pose, vc(FxGeometry.light()), eye, eye.add(look(p).scale(0.6)), now / 2, 0.06F, 0.03F, 1.0F, 0.7F, 0.3F, 0.6F * w, 0);
+    }
+
+    /** Meditation: a faint ring of light at the lap and motes rising. */
+    private static void meditation(AbstractClientPlayer p, BendingData data, float w) {
+        Vec3 c = rel(p.getPosition(partial).add(0, 0.05, 0));
+        int color = Benders.get(p).element().color;
+        float r = ((color >> 16) & 0xFF) / 255F;
+        float g = ((color >> 8) & 0xFF) / 255F;
+        float b = (color & 0xFF) / 255F;
+        float pulse = 0.5F + 0.5F * Mth.sin(age * 0.08F);
+        FxGeometry.disc(pose, vc(FxGeometry.light()), c, 0.7F + 0.1F * pulse, 1.1F + 0.15F * pulse, 24, 0, 1, r, g, b, 0.25F * w, 0.0F, FULL, false, age * 0.05F);
+        // The open chakras: a column of small rings up the spine, one per chakra.
+        for (int i = 0; i < data.chakras(); i++) {
+            Vec3 at = c.add(0, 0.25 + i * 0.22, 0);
+            FxGeometry.disc(pose, vc(FxGeometry.light()), at, 0.12F, 0.22F, 12, 0, 1, 1.0F, 0.95F, 0.8F, 0.35F * w, 0.1F * w, FULL, false, age * (0.1F + i * 0.02F));
+        }
+    }
+
+    /** The Avatar State: the eyes and the tattoos blaze, light streams off the body, the air whirls round it. */
+    private static void avatarAura(AbstractClientPlayer p, BendingData data, float w) {
+        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        VertexConsumer light = vc(FxGeometry.light());
+        Quaternionf rot = new Quaternionf().rotationY(age * 0.12F).mul(new Quaternionf().rotationX(0.3F * Mth.sin(age * 0.07F)));
+        FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, 0.75F, 0.9F, 1.0F, 0.18F * w, 1.5F, age * 0.3F, FULL, false, rot);
+        FxGeometry.sphere(pose, light, c, 1.2F, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.12F * w, 2.2F, -age * 0.4F, FULL, false, new Quaternionf().rotationZ(1.0F).mul(new Quaternionf().rotationY(-age * 0.2F)));
+        Vec3 eyes = rel(p.getEyePosition(partial).add(look(p).scale(0.15)));
+        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.9F * w, 0.85F, 0.95F, 1.0F, 0.95F * w, age * 0.3F);
+        Vec3 forehead = HandTracker.forehead(p, partial);
+        if (forehead != null) {
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(forehead), 0.6F * w, 0.85F, 0.95F, 1.0F, 0.9F * w, -age * 0.3F);
+        }
+        for (HumanoidArm arm : HumanoidArm.values()) {
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(hand(p, arm)), 0.5F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.4F);
+        }
+        // Streams of light climbing round the body.
+        for (int i = 0; i < 5; i++) {
+            List<Vec3> pts = new ArrayList<>();
+            for (int k = 0; k <= 12; k++) {
+                float t = k / 12.0F;
+                double a = i * 1.26 + age * 0.15 + t * 4;
+                double r = 0.8 + 0.5 * Mth.sin(t * Mth.PI);
+                pts.add(c.add(Math.cos(a) * r, -1.0 + 2.6 * t, Math.sin(a) * r));
+            }
+            FxGeometry.ribbon(pose, light, pts, 0.10F, 0.02F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.0F, 0.5F * w, FULL, false);
         }
     }
 
@@ -335,16 +553,18 @@ public final class WorldFxRenderer {
         VertexConsumer light = vc(FxGeometry.light());
         for (HumanoidArm arm : HumanoidArm.values()) {
             Vec3 h = hand(p, arm);
+            Vec3 dir = fan(look, arm == HumanoidArm.RIGHT ? 0.2 : -0.2);
             int lit = lightAt(h);
             float phase = age * 0.3F + (arm == HumanoidArm.RIGHT ? 0 : 1.6F);
             List<Vec3> pts = new ArrayList<>();
             for (int k = 0; k <= 8; k++) {
                 float t = k / 8.0F;
-                Vec3 at = h.add(look.scale(t * len * w)).add(side.scale(Math.sin(phase + t * 4) * 0.12 * t))
+                Vec3 at = h.add(dir.scale(t * len * w)).add(side.scale(Math.sin(phase + t * 4) * 0.12 * t))
                         .add(0, Math.cos(phase * 1.2 + t * 3) * 0.10 * t, 0);
                 pts.add(rel(at));
             }
             FxGeometry.tube(pose, water, pts, 0.15F, 0.06F, 8, fr[0], fr[1], 2.0F, age * 0.05F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.85F * w, 0.6F * w, lit, true);
+            FxGeometry.puffs(pose, water, pts, 0.34F, 0.14F, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.7F * w, 0.4F * w, lit, true, age * 0.1F);
             FxGeometry.ribbon(pose, light, pts, 0.06F, 0.02F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.35F * w, 0.1F * w, FULL, false);
         }
     }
@@ -475,10 +695,14 @@ public final class WorldFxRenderer {
         if (fist > 0.01F) {
             for (HumanoidArm arm : HumanoidArm.values()) {
                 Vec3 h = rel(hand(p, arm));
+                Vec3 dir = fan(look, arm == HumanoidArm.RIGHT ? 0.12 : -0.12);
                 float phase = age * 0.45F + (arm == HumanoidArm.RIGHT ? 0 : 2.0F);
                 float flicker = 0.85F + 0.15F * Mth.sin(age * 1.7F + arm.ordinal());
-                FxGeometry.cone(pose, fire, h, look, len * fist, 0.13F, 0.75F, 10, 9, fr[0], fr[1], len / 1.6F, age * 0.18F, 1.0F, 1.0F, 1.0F, 0.95F * flicker, 0.0F, FULL, true, 0.28F, phase);
-                FxGeometry.cone(pose, light, h, look, len * fist * 0.8F, 0.06F, 0.3F, 8, 6, 0, 1, 1, 0, core[0], core[1], core[2], 0.65F, 0.0F, FULL, false, 0.15F, phase + 1);
+                FxGeometry.cone(pose, fire, h, dir, len * fist, 0.13F, 0.75F, 10, 9, fr[0], fr[1], len / 1.6F, age * 0.18F, 1.0F, 1.0F, 1.0F, 0.95F * flicker, 0.0F, FULL, true, 0.28F, phase);
+                // Puffs of flame along the stream give it body from every angle, the bender's own camera included.
+                FxGeometry.conePuffs(pose, fire, h, dir, len * fist, 0.13F, 0.75F, 12, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * flicker, 0.0F, FULL, true, 0.28F, phase, 1.3F, age * 0.15F + arm.ordinal());
+                FxGeometry.cone(pose, light, h, dir, len * fist * 0.8F, 0.06F, 0.3F, 8, 6, 0, 1, 1, 0, core[0], core[1], core[2], 0.65F, 0.0F, FULL, false, 0.15F, phase + 1);
+                FxGeometry.conePuffs(pose, vc(FxGeometry.glowTexture()), h, dir, len * fist * 0.9F, 0.2F, 0.6F, 6, 0, 1, core[0], core[1], core[2], 0.5F, 0.0F, FULL, true, 0.15F, phase + 1, 1.0F, age * 0.1F);
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), h, 0.5F, core[0], core[1], core[2], 0.6F * fist, age * 0.2F);
             }
         }
@@ -486,6 +710,7 @@ public final class WorldFxRenderer {
             Vec3 mouth = rel(p.getEyePosition(partial).add(look.scale(0.25)).add(0, -0.12, 0));
             float flicker = 0.85F + 0.15F * Mth.sin(age * 1.9F);
             FxGeometry.cone(pose, fire, mouth, look, (len + 3.0F) * breath, 0.12F, 1.0F, 12, 10, fr[0], fr[1], len / 1.4F, age * 0.2F, 1.0F, 1.0F, 1.0F, 0.95F * flicker, 0.0F, FULL, true, 0.3F, age * 0.5F);
+            FxGeometry.conePuffs(pose, fire, mouth, look, (len + 3.0F) * breath, 0.12F, 1.0F, 14, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * flicker, 0.0F, FULL, true, 0.3F, age * 0.5F, 1.3F, age * 0.2F);
             FxGeometry.cone(pose, light, mouth, look, (len + 2.0F) * breath, 0.06F, 0.4F, 8, 6, 0, 1, 1, 0, core[0], core[1], core[2], 0.7F, 0.0F, FULL, false, 0.15F, age * 0.5F + 1);
         }
     }
@@ -500,15 +725,17 @@ public final class WorldFxRenderer {
         int lvl = Math.max(1, data.level(Ability.FIRE_WHIP));
         float len = (6.0F + 3.0F * (lvl - 1)) * w;
         Vec3 h = hand(p, p.getMainArm());
+        Vec3 dir = fan(look, p.getMainArm() == HumanoidArm.RIGHT ? 0.14 : -0.14);
         List<Vec3> pts = new ArrayList<>();
         for (int k = 0; k <= 14; k++) {
             float t = k / 14.0F;
-            Vec3 at = h.add(look.scale(t * len)).add(side.scale(Math.sin(t * Math.PI * 2 + age * 0.6) * 0.55 * t))
+            Vec3 at = h.add(dir.scale(t * len)).add(side.scale(Math.sin(t * Math.PI * 2 + age * 0.6) * 0.55 * t))
                     .add(up.scale(Math.cos(t * 3 + age * 0.5) * 0.28 * t));
             pts.add(rel(at));
         }
         float[] fr = fireFrame(0.9F);
         FxGeometry.ribbon(pose, vc(FxGeometry.fire(blue)), pts, 0.34F, 0.14F, fr[0], fr[1], len / 1.2F, age * 0.25F, 1.0F, 1.0F, 1.0F, 0.95F, 0.55F, FULL, true);
+        FxGeometry.puffs(pose, vc(FxGeometry.fire(blue)), pts, 0.55F, 0.25F, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.85F, 0.4F, FULL, true, age * 0.3F);
         FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.12F, 0.04F, 0, 1, 1, 0, core[0], core[1], core[2], 0.7F, 0.2F, FULL, false);
         FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), pts.get(pts.size() - 1), 0.5F, core[0], core[1], core[2], 0.6F * w, age * 0.3F);
     }
@@ -646,11 +873,148 @@ public final class WorldFxRenderer {
                 FxGeometry.sphere(pose, vc(FxGeometry.lava()), from, r, 6, 12, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - f), 0, 0, FULL, true, new Quaternionf().rotationY(a * 0.4F));
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from, r * 2.0F, 1.0F, 0.55F, 0.15F, 0.7F * (1.0F - f), a * 0.3F);
             }
+            case STEP -> {
+                Vec3 d = to.subtract(from);
+                float[] rgb = elementRgb(e.color());
+                Vec3 head = from.add(d.scale(Math.min(1.0F, f * 2.0F)));
+                List<Vec3> pts = List.of(head.subtract(d.scale(0.5)), head);
+                FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.6F, 0.2F, 0, 1, 1, 0, rgb[0], rgb[1], rgb[2], 0.0F, 0.5F * (1.0F - f), FULL, false);
+                FxGeometry.sphere(pose, vc(FxGeometry.light()), from, 0.8F * easeOut(f), 6, 12, 0, 1, rgb[0], rgb[1], rgb[2], 0.3F * (1.0F - f), 1.5F, a, FULL, false, null);
+            }
+            case VINE -> {
+                Vec3 end = entity != null ? at : to;
+                float reach = Math.min(1.0F, a / 4.0F);
+                List<Vec3> pts = new ArrayList<>();
+                Vec3 d = end.subtract(from);
+                Vec3 side = right(d.lengthSqr() < 1.0E-6 ? new Vec3(0, 0, 1) : d.normalize());
+                for (int k = 0; k <= 12; k++) {
+                    float t = k / 12.0F * reach;
+                    pts.add(from.add(d.scale(t)).add(side.scale(Math.sin(t * 8 + a * 0.5) * 0.25 * t)).add(0, Math.sin(t * Math.PI) * 0.4, 0));
+                }
+                FxGeometry.ribbon(pose, vc(FxGeometry.snow()), pts, 0.22F, 0.12F, 0, 1, 4, 0, 0.25F, 0.55F, 0.22F, 0.95F * (1.0F - f * f), 0.9F * (1.0F - f * f), lit, true);
+                FxGeometry.tube(pose, vc(FxGeometry.snow()), pts, 0.06F, 0.04F, 5, 0, 1, 4, 0, 0.18F, 0.42F, 0.16F, 0.95F * (1.0F - f * f), 0.9F * (1.0F - f * f), lit, true);
+            }
+            case BLAZE_ARC -> {
+                boolean blue = e.color() == 1;
+                Vec3 dir = to.subtract(from);
+                dir = dir.lengthSqr() < 1.0E-6 ? new Vec3(0, 0, 1) : dir.normalize();
+                float reach = e.data() * easeOut(f * 1.2F);
+                float[] fr = fireFrame(1.0F);
+                float[] core = blue ? BLUE_CORE : FIRE_CORE;
+                int segs = 14;
+                VertexConsumer fire = vc(FxGeometry.fire(blue));
+                for (int i = 0; i < segs; i++) {
+                    double a0 = Math.toRadians(-40 + 80.0 * i / segs);
+                    double a1 = Math.toRadians(-40 + 80.0 * (i + 1) / segs);
+                    Vec3 p0 = from.add(dir.yRot((float) a0).scale(reach));
+                    Vec3 p1 = from.add(dir.yRot((float) a1).scale(reach));
+                    float h = 1.2F * (1.0F - f * 0.7F) * (0.8F + 0.2F * Mth.sin(a * 0.6F + i));
+                    FxGeometry.tube(pose, fire, List.of(p0.add(0, 0.1, 0), p0.add(0, 0.1 + h, 0)), 0.5F, 0.1F, 6, fr[0], fr[1], 1, age * 0.2F, 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - f), 0.0F, FULL, true);
+                    if (i == segs - 1) {
+                        FxGeometry.tube(pose, fire, List.of(p1.add(0, 0.1, 0), p1.add(0, 0.1 + h, 0)), 0.5F, 0.1F, 6, fr[0], fr[1], 1, age * 0.2F, 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - f), 0.0F, FULL, true);
+                    }
+                }
+                FxGeometry.disc(pose, vc(FxGeometry.light()), from.add(0, 0.08, 0), Math.max(0.0F, reach - 1.0F), reach, 24, 0, 1, core[0], core[1], core[2], 0.3F * (1.0F - f), 0.0F, FULL, false, 0);
+            }
+            case COMBUSTION -> {
+                long seed = e.born() * 17 + now / 2;
+                float beam = Mth.clamp(a / 3.0F, 0.0F, 1.0F);
+                Vec3 head = from.lerp(to, beam);
+                FxGeometry.bolt(pose, vc(FxGeometry.light()), from, head, seed, 0.06F, 0.16F * (1.0F - f * 0.5F), 1.0F, 0.75F, 0.35F, 0.9F * (1.0F - f), 1);
+                FxGeometry.ribbon(pose, vc(FxGeometry.light()), List.of(from, head), 0.4F, 0.4F, 0, 1, 1, 0, 1.0F, 0.6F, 0.2F, 0.35F * (1.0F - f), 0.35F * (1.0F - f), FULL, false);
+                List<Vec3> along = new ArrayList<>();
+                for (int k = 0; k <= 10; k++) {
+                    along.add(from.lerp(head, k / 10.0));
+                }
+                FxGeometry.puffs(pose, vc(FxGeometry.glowTexture()), along, 0.5F, 0.7F, 0, 1, 1.0F, 0.75F, 0.35F, 0.5F * (1.0F - f), 0.6F * (1.0F - f), FULL, true, a * 0.5F);
+                if (beam >= 1.0F) {
+                    float bf = Mth.clamp((a - 3.0F) / 9.0F, 0.0F, 1.0F);
+                    float r = e.data() * 1.6F * easeOut(bf);
+                    float[] fr = fireFrame(1.0F);
+                    FxGeometry.sphere(pose, vc(FxGeometry.fire(false)), to, r, 8, 14, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - bf), 0, 0, FULL, true, new Quaternionf().rotationY(a * 0.4F));
+                    FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), to, r * 2.5F, 1.0F, 0.75F, 0.35F, 0.9F * (1.0F - bf), a);
+                    FxGeometry.disc(pose, vc(FxGeometry.light()), to, r * 1.5F, r * 2.5F, 24, 0, 1, 1.0F, 0.8F, 0.5F, 0.4F * (1.0F - bf), 0.0F, FULL, false, a);
+                }
+            }
+            case SHOCKWAVE -> {
+                float r = e.data() * easeOut(f);
+                FxGeometry.ringBand(pose, vc(FxGeometry.snow()), from.add(0, 0.05, 0), r, 1.0F * (1.0F - f * 0.8F), 32, 0, 1, EARTH[0] * 0.7F, EARTH[1] * 0.65F, EARTH[2] * 0.55F, 0.8F * (1.0F - f), lit, true, a * 0.3F, 0.35F);
+                FxGeometry.disc(pose, vc(FxGeometry.light()), from.add(0, 0.06, 0), Math.max(0.0F, r - 0.8F), r, 32, 0, 1, EARTH[0], EARTH[1], EARTH[2], 0.35F * (1.0F - f), 0.0F, FULL, false, 0);
+            }
+            case EARTH_GRAB -> {
+                Vec3 feet = entity != null ? rel(entity.getPosition(partial)) : from;
+                float h = 1.0F * easeOut(f * 1.5F) * (1.0F - Math.max(0.0F, f - 0.7F) / 0.3F);
+                for (int i = 0; i < 6; i++) {
+                    double ang = i * Math.PI / 3 + a * 0.05;
+                    Vec3 c = feet.add(Math.cos(ang) * 0.7, 0.02, Math.sin(ang) * 0.7);
+                    FxGeometry.ringBand(pose, vc(FxGeometry.snow()), c, 0.18F, h * (0.8F + 0.2F * Mth.sin(i * 2.1F)), 5, 0, 1, EARTH[0] * 0.7F, EARTH[1] * 0.65F, EARTH[2] * 0.55F, 0.9F, lit, true, i, 0.0F);
+                }
+            }
+            case ICE_WAVE -> {
+                Vec3 dir = to.subtract(from);
+                dir = dir.lengthSqr() < 1.0E-6 ? new Vec3(0, 0, 1) : dir.normalize();
+                float reach = e.data() * easeOut(f * 1.2F);
+                Vec3 side = right(dir);
+                int segs = 12;
+                VertexConsumer ice = vc(FxGeometry.ice());
+                for (int i = 0; i <= segs; i++) {
+                    float t = (float) i / segs;
+                    Vec3 c = from.add(dir.scale(reach)).add(side.scale((t - 0.5F) * reach * 1.2F)).add(0, 0.05, 0);
+                    float h = (1.4F + 0.6F * Mth.sin(i * 1.3F)) * (1.0F - f * 0.6F);
+                    FxGeometry.ringBand(pose, ice, c, 0.2F, h, 5, 0, 1, 0.85F, 0.95F, 1.0F, 0.9F * (1.0F - f * f), lit, true, i, 0.0F);
+                }
+                FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(dir.scale(reach)), reach * 0.6F, 0.4F * (1.0F - f), 20, 0, 1, 0.8F, 0.95F, 1.0F, 0.35F * (1.0F - f), FULL, false, a, 0.3F);
+            }
+            case FIRE_SPIN -> {
+                boolean blue = e.color() == 1;
+                float r = e.data() * easeOut(f);
+                float[] fr = fireFrame(1.0F);
+                float[] core = blue ? BLUE_CORE : FIRE_CORE;
+                VertexConsumer fire = vc(FxGeometry.fire(blue));
+                for (int i = 0; i < 4; i++) {
+                    List<Vec3> pts = new ArrayList<>();
+                    for (int k = 0; k <= 16; k++) {
+                        float t = k / 16.0F;
+                        double ang = i * Math.PI / 2 + a * 0.8 + t * 4.0;
+                        double rr = r * t;
+                        pts.add(from.add(Math.cos(ang) * rr, 0.6 + Math.sin(t * 7 + a) * 0.3, Math.sin(ang) * rr));
+                    }
+                    FxGeometry.ribbon(pose, fire, pts, 0.9F, 0.3F, fr[0], fr[1], 3.0F, a * 0.2F, 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - f), 0.5F * (1.0F - f), FULL, true);
+                    FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.25F, 0.05F, 0, 1, 1, 0, core[0], core[1], core[2], 0.6F * (1.0F - f), 0.1F * (1.0F - f), FULL, false);
+                }
+            }
+            case EXTRACT -> {
+                float[] fr = {0, 1};
+                for (int i = 0; i < 8; i++) {
+                    double ang = i * Math.PI / 4 + a * 0.3;
+                    double rr = 0.6 * (1.0F - f);
+                    Vec3 c = from.add(Math.cos(ang) * rr, Math.sin(a * 0.4 + i) * 0.2, Math.sin(ang) * rr);
+                    FxGeometry.billboard(pose, vc(FxGeometry.glowTexture()), c, 0.25F, fr[0], fr[1], METAL[0], METAL[1], METAL[2], 0.9F * (1.0F - f), FULL, true, a * 0.5F + i);
+                }
+            }
+            case AVATAR_RISE -> {
+                float r = e.data() * easeOut(f);
+                FxGeometry.sphere(pose, vc(FxGeometry.light()), from.add(0, 1.0, 0), r, 10, 20, 0, 1, 0.8F, 0.92F, 1.0F, 0.6F * (1.0F - f), 1.5F, a * 0.5F, FULL, false, new Quaternionf().rotationY(a * 0.3F));
+                FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(0, 0.05, 0), r * 1.3F, 2.0F * (1.0F - f), 32, 0, 1, 1.0F, 1.0F, 1.0F, 0.5F * (1.0F - f), FULL, false, a, 0.3F);
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 1.6, 0), 3.0F * (1.0F - f * 0.5F), 0.85F, 0.95F, 1.0F, 0.9F * (1.0F - f), a);
+            }
+            case CHAKRA -> {
+                float[] rgb = elementRgb(e.color());
+                float y = (float) (to.y - from.y) * easeOut(f);
+                Vec3 ring = from.add(0, y, 0);
+                FxGeometry.disc(pose, vc(FxGeometry.light()), ring, 0.5F, 0.9F + 0.3F * Mth.sin(a * 0.3F), 24, 0, 1, rgb[0], rgb[1], rgb[2], 0.6F * (1.0F - f), 0.0F, FULL, false, a * 0.2F);
+                FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(0, 0.05, 0), 1.2F, y, 24, 0, 1, 1.0F, 0.95F, 0.85F, 0.25F * (1.0F - f), FULL, false, a * 0.3F, 0.2F);
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), ring, 1.2F, 1.0F, 0.95F, 0.85F, 0.7F * (1.0F - f), a);
+            }
             case EARTH_RISE -> {
                 float r = e.data() * easeOut(f);
                 FxGeometry.ringBand(pose, vc(FxGeometry.snow()), from.add(0, 0.05, 0), r, 0.9F * (1.0F - f), 20, 0, 1, EARTH[0] * 0.7F, EARTH[1] * 0.65F, EARTH[2] * 0.6F, 0.6F * (1.0F - f), lit, true, a * 0.3F, 0.4F);
             }
         }
+    }
+
+    private static float[] elementRgb(int color) {
+        return new float[]{((color >> 16) & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, (color & 0xFF) / 255F};
     }
 
     private static void waterWhip(Vec3 from, Vec3 to, float a, float f, int lit) {
@@ -669,6 +1033,7 @@ public final class WorldFxRenderer {
         float[] fr = waterFrame();
         float alpha = 0.9F * (1.0F - f * f);
         FxGeometry.ribbon(pose, vc(FxGeometry.water()), pts, 0.36F, 0.16F, fr[0], fr[1], (float) d.length() / 1.2F, a * 0.2F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], alpha, alpha * 0.8F, lit, true);
+        FxGeometry.puffs(pose, vc(FxGeometry.water()), pts, 0.5F, 0.28F, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], alpha * 0.8F, alpha * 0.7F, lit, true, a * 0.2F);
         FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.12F, 0.04F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.5F * (1.0F - f), 0.2F * (1.0F - f), FULL, false);
         if (reach >= 1.0F) {
             float sf = Mth.clamp((a - 4.0F) / 6.0F, 0.0F, 1.0F);
@@ -736,6 +1101,12 @@ public final class WorldFxRenderer {
         VertexConsumer light = vc(FxGeometry.light());
         FxGeometry.bolt(pose, light, from, to, seed, 0.35F, 0.14F, BOLT[0], BOLT[1], BOLT[2], alpha, 4);
         FxGeometry.bolt(pose, light, from, to, seed + 1000, 0.5F, 0.06F, BOLT[0], BOLT[1], BOLT[2], alpha * 0.6F, 2);
+        // Glow along the bolt, so it shows even seen along its length (the caster's own camera looks down it).
+        List<Vec3> along = new ArrayList<>();
+        for (int k = 0; k <= 8; k++) {
+            along.add(from.lerp(to, k / 8.0));
+        }
+        FxGeometry.puffs(pose, vc(FxGeometry.glowTexture()), along, 0.7F, 0.9F, 0, 1, BOLT[0], BOLT[1], BOLT[2], 0.5F * alpha, 0.6F * alpha, FULL, true, a);
         FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), to, 1.4F * (1.0F - f * 0.5F), BOLT[0], BOLT[1], BOLT[2], 0.9F * (1.0F - f), a);
         FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from, 0.6F, BOLT[0], BOLT[1], BOLT[2], 0.6F * (1.0F - f), -a);
     }
@@ -750,6 +1121,7 @@ public final class WorldFxRenderer {
         float alpha = 0.35F * (1.0F - f);
         VertexConsumer light = vc(FxGeometry.light());
         FxGeometry.cone(pose, light, head, dir.scale(-1.0), 2.6F, 0.9F, 0.15F, 10, 6, 0, 1, 1, 0, AIR[0], AIR[1], AIR[2], alpha, 0.0F, FULL, false, 0.2F, a * 0.8F);
+        FxGeometry.conePuffs(pose, vc(FxGeometry.glowTexture()), head, dir.scale(-1.0), 2.6F, 0.9F, 0.2F, 5, 0, 1, AIR[0], AIR[1], AIR[2], alpha * 1.2F, 0.0F, FULL, true, 0.2F, a * 0.8F, 1.2F, a * 0.3F);
         Vec3 any = Math.abs(dir.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0);
         Vec3 n = any.cross(dir).normalize();
         Vec3 bn = dir.cross(n);

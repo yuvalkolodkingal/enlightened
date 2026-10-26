@@ -27,6 +27,10 @@ public final class KeyBindings {
     public static final KeyMapping SCROLL = new KeyMapping("key.enlightened.scroll", KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, CATEGORY);
 
+    /** Held: the bender meditates (opening his chakras; with all seven open, the Avatar State). */
+    public static final KeyMapping MEDITATE = new KeyMapping("key.enlightened.meditate", KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, CATEGORY);
+
     private static KeyMapping create(int ability, int key) {
         return new KeyMapping("key.enlightened.ability_" + ability, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, CATEGORY);
     }

@@ -188,7 +188,8 @@ final class Stances {
     /** What the stances add to the body's dip (blocks, positive sinks). */
     static float drop(AnimState st) {
         float ground = 1.0F - Math.max(st.wAir, st.wGlide);
-        return 0.26F * st.stance(Stance.SCOOTER) + 0.12F * st.stance(Stance.SEISMIC) * ground * (1.0F - st.limbAmount)
+        // The scooter lifts him onto the ball of air (a negative dip).
+        return -0.58F * st.stance(Stance.SCOOTER) + 0.12F * st.stance(Stance.SEISMIC) * ground * (1.0F - st.limbAmount)
                 + 0.08F * st.stance(Stance.BLOODBENDING) * ground + 0.10F * st.stance(Stance.OCTOPUS) * ground * (1.0F - st.limbAmount)
                 + 0.06F * st.stance(Stance.FIRE_FIST) * ground * (1.0F - st.limbAmount) + 0.08F * st.stance(Stance.LIGHTNING_CHARGE) * ground * (1.0F - st.limbAmount);
     }

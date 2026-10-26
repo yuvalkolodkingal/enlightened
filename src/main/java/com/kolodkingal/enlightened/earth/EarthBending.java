@@ -1,5 +1,6 @@
 package com.kolodkingal.enlightened.earth;
 
+import com.kolodkingal.enlightened.fx.Fx;
 import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.EnlightenedConfig;
 import com.kolodkingal.enlightened.bending.Ability;
@@ -448,6 +449,7 @@ public final class EarthBending {
             p.hurtMarked = true;
             p.fallDistance = 0;
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), p.getX(), foot.getY() + placed * 0.5, p.getZ(), 30, 0.5, placed * 0.5, 0.5, 0.1);
+            Fx.at(level, Fx.EARTH_RISE, Vec3.atBottomCenterOf(foot), c.color(), 2.0F);
             c.sound(ModSounds.EARTH_RISE.get(), 1.2F, 0.8F);
             c.exhaust(0.2F);
             c.cooldownSeconds(6);
@@ -525,6 +527,7 @@ public final class EarthBending {
                 return;
             }
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, last), center.x, center.y + 1, center.z, 40, width * 0.4, 1.0, width * 0.4, 0.1);
+            Fx.at(level, Fx.EARTH_RISE, center, c.color(), width * 0.6F);
             c.sound(material == Material.METAL ? ModSounds.METAL_CLANG.get() : material == Material.SAND ? ModSounds.SAND_HISS.get()
                     : ModSounds.EARTH_RISE.get(), 1.2F, 1.0F);
             c.exhaust(0.3F);
@@ -568,7 +571,7 @@ public final class EarthBending {
             }
             ModNetwork.sendTo(p, new SeismicPayload(ids, 12));
             if (p.tickCount % 40 == 0) {
-                Shots.ring(c.level(), p.position(), 1.5, new BlockParticleOption(ParticleTypes.BLOCK, Blocks.STONE.defaultBlockState()));
+                Fx.at(c.level(), Fx.SEISMIC, p.position(), c.color(), 8.0F);
             }
         }
 
@@ -619,6 +622,7 @@ public final class EarthBending {
             target.addEffect(new MobEffectInstance(ModEffects.QUICKSAND, c.by(4, 6, 8) * 20, c.level - 1));
             Shots.hurt(p, target, 1.0F, ModDamageTypes.EARTH);
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SAND.defaultBlockState()), target.getX(), target.getY() + 0.2, target.getZ(), 30, 0.6, 0.2, 0.6, 0.1);
+            Fx.around(level, Fx.QUICKSAND, target, c.color(), 1.0F);
             c.sound(ModSounds.SAND_HISS.get(), 1.0F, 0.7F);
             c.exhaust(0.2F);
             c.cooldownSeconds(10);
@@ -755,7 +759,7 @@ public final class EarthBending {
                 c.cooldownSeconds(1);
                 return;
             }
-            Shots.ring(level, p.position(), radius, c.color());
+            Fx.at(level, Fx.METAL_PULL, p.position().add(0, 0.2, 0), c.color(), (float) radius);
             c.sound(ModSounds.METAL_CLANG.get(), 1.0F, 0.6F);
             c.say("message.enlightened.earth.metal_pulled", taken);
             c.exhaust(0.5F);

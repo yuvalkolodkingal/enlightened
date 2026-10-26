@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
  */
 public final class ModNetwork {
     /** A client and a server with different versions can't play together. */
-    public static final String PROTOCOL_VERSION = "1";
+    public static final String PROTOCOL_VERSION = "2";
 
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
@@ -20,6 +20,7 @@ public final class ModNetwork {
         registrar.playToServer(ChangeLookPayload.TYPE, ChangeLookPayload.STREAM_CODEC, ChangeLookPayload::handle);
         registrar.playToServer(ScrollActionPayload.TYPE, ScrollActionPayload.STREAM_CODEC, ScrollActionPayload::handle);
         registrar.playToClient(SeismicPayload.TYPE, SeismicPayload.STREAM_CODEC, SeismicPayload::handle);
+        registrar.playToClient(FxPayload.TYPE, FxPayload.STREAM_CODEC, FxPayload::handle);
     }
 
     public static void sendTo(ServerPlayer player, CustomPacketPayload payload) {

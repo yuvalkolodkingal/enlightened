@@ -5,7 +5,8 @@ import com.kolodkingal.enlightened.bending.Benders;
 import com.kolodkingal.enlightened.bending.BendingData;
 import com.kolodkingal.enlightened.client.anim.Animator;
 import com.kolodkingal.enlightened.client.anim.BodyLean;
-import com.kolodkingal.enlightened.client.render.AirShieldRenderer;
+import com.kolodkingal.enlightened.client.fx.WorldFx;
+import com.kolodkingal.enlightened.client.fx.WorldFxRenderer;
 import com.kolodkingal.enlightened.network.AbilityKeyPayload;
 import com.kolodkingal.enlightened.network.ChangeLookPayload;
 import com.kolodkingal.enlightened.network.ModNetwork;
@@ -64,6 +65,7 @@ public final class ClientEvents {
         }
         handleKeys(mc, player);
         BodyLean.tick(mc.level);
+        WorldFx.tick(mc.level);
     }
 
     private static void handleKeys(Minecraft mc, LocalPlayer player) {
@@ -111,7 +113,7 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-            AirShieldRenderer.render(event);
+            WorldFxRenderer.render(event);
         }
     }
 
@@ -119,6 +121,7 @@ public final class ClientEvents {
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         SeismicGlow.clear();
         BodyLean.clear();
+        WorldFx.clear();
         java.util.Arrays.fill(SENT_DOWN, false);
     }
 

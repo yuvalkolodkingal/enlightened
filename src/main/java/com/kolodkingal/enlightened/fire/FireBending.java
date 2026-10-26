@@ -1,5 +1,6 @@
 package com.kolodkingal.enlightened.fire;
 
+import com.kolodkingal.enlightened.fx.Fx;
 import com.kolodkingal.enlightened.EnlightenedConfig;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.AbilityLogic;
@@ -178,14 +179,14 @@ public final class FireBending {
             ParticleOptions flame = flame(c.data);
             if (mouth) {
                 Vec3 from = p.getEyePosition().add(look.scale(0.4));
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 2; i++) {
                     Vec3 v = look.scale(0.8 + p.getRandom().nextDouble() * 0.4).add(p.getRandom().nextGaussian() * 0.1, p.getRandom().nextGaussian() * 0.1, p.getRandom().nextGaussian() * 0.1);
                     level.sendParticles(flame, from.x, from.y, from.z, 0, v.x, v.y, v.z, 0.7);
                 }
             } else {
                 for (int side = 0; side < 2; side++) {
                     Vec3 from = Shots.hand(p, side == 1);
-                    for (int i = 0; i < 3; i++) {
+                    for (int i = 0; i < 1; i++) {
                         Vec3 v = look.scale(0.7 + p.getRandom().nextDouble() * 0.3).add(p.getRandom().nextGaussian() * 0.08, p.getRandom().nextGaussian() * 0.08, p.getRandom().nextGaussian() * 0.08);
                         level.sendParticles(flame, from.x, from.y, from.z, 0, v.x, v.y, v.z, 0.6);
                     }
@@ -228,7 +229,7 @@ public final class FireBending {
             Vec3 from = Shots.hand(p);
             // The whip curls: a sine wave along the line, so it looks like a lash and not a beam.
             double len = from.distanceTo(aim.end());
-            int count = Math.max(2, (int) (len * 3));
+            int count = Math.max(2, (int) (len * 0.6));
             Vec3 look = p.getLookAngle();
             Vec3 right = look.cross(new Vec3(0, 1, 0)).normalize();
             for (int i = 0; i <= count; i++) {
@@ -271,12 +272,8 @@ public final class FireBending {
                 Shots.push(e, p.position(), 0.6, 0.3);
             }
             ParticleOptions flame = flame(c.data);
-            for (double r = 1; r <= radius; r += 1) {
-                Shots.ring(c.level(), p.position().add(0, c.level >= 2 ? 0.2 : 1.0, 0), r, flame);
-            }
-            if (c.level >= 2) {
-                Shots.ring(c.level(), p.position().add(0, 1.2, 0), radius * 0.7, flame);
-            }
+            Shots.ring(c.level(), p.position().add(0, 0.3, 0), radius, flame);
+            Fx.at(c.level(), Fx.FIRE_RING, p.position(), Variants.blueFire(c.data) ? 1 : 0, (float) radius);
             c.sound(ModSounds.FIRE_RING.get(), 1.2F, 1.0F);
             c.exhaust(0.3F);
             c.cooldownSeconds(8);
@@ -299,6 +296,7 @@ public final class FireBending {
             target.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 0, false, true, true));
             c.level().sendParticles(flame(c.data), target.getX(), target.getY() + 1, target.getZ(), 15, 0.4, 0.5, 0.4, 0.01);
             c.level().sendParticles(ParticleTypes.HEART, target.getX(), target.getY() + target.getBbHeight() * 0.7, target.getZ(), 3, 0.3, 0.3, 0.3, 0.0);
+            Fx.around(c.level(), Fx.FIRE_HEAL, target, Variants.blueFire(c.data) ? 1 : 0, 1.0F);
             c.sound(ModSounds.HEAL.get(), 1.0F, 0.8F);
             c.exhaust(0.2F);
             c.cooldownSeconds(10);
@@ -326,7 +324,7 @@ public final class FireBending {
     public static void strike(ServerPlayer caster, LivingEntity target, float damage) {
         ServerLevel level = caster.serverLevel();
         visualBolt(level, target.position());
-        Shots.line(level, Shots.hand(caster), target.position().add(0, target.getBbHeight() * 0.5, 0), ParticleTypes.ELECTRIC_SPARK, 3.0);
+        Fx.send(level, Fx.LIGHTNING, Shots.hand(caster), target.position().add(0, target.getBbHeight() * 0.5, 0), 0, 1.0F);
         target.hurt(ModDamageTypes.source(level, ModDamageTypes.LIGHTNING, caster, caster), damage);
         int stun = EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.LIGHTNING_STUN_TICKS.get() : 40;
         if (target.isAlive() && stun > 0) {
@@ -379,7 +377,7 @@ public final class FireBending {
                 strike(p, aim.target(), damage);
             } else {
                 visualBolt(c.level(), aim.end());
-                Shots.line(c.level(), hand, aim.end(), ParticleTypes.ELECTRIC_SPARK, 3.0);
+                Fx.send(c.level(), Fx.LIGHTNING, hand, aim.end(), 0, 1.0F);
                 for (LivingEntity e : Shots.area(p, aim.end(), 2.0)) {
                     e.hurt(ModDamageTypes.source(c.level(), ModDamageTypes.LIGHTNING, p, p), damage * 0.6F);
                 }
@@ -450,6 +448,7 @@ public final class FireBending {
             victim.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.fire.redirect_failed"), true);
             return false;
         }
+        Fx.send(victim.serverLevel(), Fx.REDIRECT, Shots.hand(victim, true), Shots.hand(victim).add(victim.getLookAngle().scale(6.0)), 0, 1.0F, victim.getId());
         world.playSound(null, victim.getX(), victim.getY(), victim.getZ(), ModSounds.LIGHTNING_REDIRECT.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 1.0F);
         world.sendParticles(ParticleTypes.ELECTRIC_SPARK, victim.getX(), victim.getY() + 1, victim.getZ(), 30, 0.5, 0.8, 0.5, 0.1);
         victim.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.fire.redirected"), true);

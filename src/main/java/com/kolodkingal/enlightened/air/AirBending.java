@@ -1,5 +1,8 @@
 package com.kolodkingal.enlightened.air;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import com.kolodkingal.enlightened.fx.Fx;
 import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.EnlightenedConfig;
 import com.kolodkingal.enlightened.bending.Ability;
@@ -108,10 +111,9 @@ public final class AirBending {
                     e.hurtMarked = true;
                 }
             }
-            for (double d = 1; d <= range; d += 1.0) {
-                Vec3 at = p.getEyePosition().add(look.scale(d));
-                level.sendParticles(ParticleTypes.GUST, at.x, at.y, at.z, 1, 0.3 * d / range, 0.3 * d / range, 0.3 * d / range, 0.0);
-            }
+            Fx.send(level, Fx.AIR_BLAST, p.getEyePosition().add(look.scale(0.8)).add(0, -0.3, 0), p.getEyePosition().add(look.scale(range)), c.color(), (float) range);
+            Vec3 mid = p.getEyePosition().add(look.scale(range * 0.5));
+            level.sendParticles(ParticleTypes.GUST, mid.x, mid.y, mid.z, 2, 0.5, 0.5, 0.5, 0.0);
             c.sound(ModSounds.AIR_BLAST.get(), 1.0F, 1.0F);
             c.exhaust(0.15F);
             c.cooldown(EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.AIR_BLAST_COOLDOWN.get() : 20);
@@ -171,6 +173,7 @@ public final class AirBending {
             Shots.push(e, p.position(), 1.8, 0.5);
         }
         level.sendParticles(ParticleTypes.GUST_EMITTER_LARGE, p.getX(), p.getY() + 1, p.getZ(), 1, 0, 0, 0, 0);
+        Fx.at(level, Fx.AIR_BURST, p.position().add(0, 1.0, 0), 0, (float) shieldRadius(data) + 1.5F);
         Shots.ring(level, p.position(), radius, ParticleTypes.CLOUD);
         level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_SHIELD_BREAK.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 1.0F);
         p.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.air.shield_burst"), true);
@@ -405,9 +408,10 @@ public final class AirBending {
             }
             ServerPlayer p = c.player;
             p.fallDistance = 0;
-            if (p.onGround() && p.tickCount % 2 == 0) {
+            ride(p);
+            if (p.tickCount % 4 == 0) {
                 double a = p.tickCount * 0.6;
-                c.level().sendParticles(ParticleTypes.CLOUD, p.getX() + Math.cos(a) * 0.6, p.getY() + 0.1, p.getZ() + Math.sin(a) * 0.6, 1, 0, 0, 0, 0.0);
+                c.level().sendParticles(ParticleTypes.CLOUD, p.getX() + Math.cos(a) * 0.7, p.getY() + 0.05, p.getZ() + Math.sin(a) * 0.7, 1, 0, 0, 0, 0.0);
             }
             if (p.tickCount % 60 == 0 && (p.getDeltaMovement().horizontalDistanceSqr() > 0.01)) {
                 c.exhaust(0.1F);
@@ -417,6 +421,18 @@ public final class AirBending {
         @Override
         public void end(Cast c) {
             c.setOn(false);
+        }
+
+        /** The ball of air under his feet carries him over gaps and lets him down softly; he never falls from it. */
+        private static void ride(ServerPlayer p) {
+            if (p.getAbilities().flying || p.isPassenger() || p.isInWater() || p.onGround()) {
+                return;
+            }
+            Vec3 v = p.getDeltaMovement();
+            if (v.y < -0.12) {
+                p.setDeltaMovement(v.x, -0.12, v.z);
+                p.hurtMarked = true;
+            }
         }
     }
 

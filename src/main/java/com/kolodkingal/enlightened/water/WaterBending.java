@@ -1,5 +1,6 @@
 package com.kolodkingal.enlightened.water;
 
+import com.kolodkingal.enlightened.fx.Fx;
 import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.EnlightenedConfig;
 import com.kolodkingal.enlightened.bending.Ability;
@@ -166,8 +167,8 @@ public final class WaterBending {
             }
             Shots.Aim aim = Shots.aim(p, whipRange(c));
             Vec3 from = Shots.hand(p);
-            Shots.line(c.level(), from, aim.end(), ParticleTypes.SPLASH, 2.0);
-            Shots.line(c.level(), from, aim.end(), c.color(), c.glow());
+            Fx.send(c.level(), Fx.WATER_WHIP, from, aim.end(), c.color(), 1.0F);
+            c.level().sendParticles(ParticleTypes.SPLASH, aim.end().x, aim.end().y, aim.end().z, 6, 0.2, 0.2, 0.2, 0.0);
             float damage = (float) (EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.WATER_WHIP_DAMAGE.get() : 3.0) + c.level;
             if (aim.target() != null) {
                 Shots.hurt(p, aim.target(), damage, ModDamageTypes.WATER);
@@ -205,6 +206,7 @@ public final class WaterBending {
             float base = (float) (EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.WATER_HEAL.get() : 4.0);
             heal(c, target, base * c.byF(1.0, 1.5, 2.0));
             c.level().sendParticles(ParticleTypes.HEART, target.getX(), target.getY() + target.getBbHeight() * 0.7, target.getZ(), 5, 0.4, 0.4, 0.4, 0.0);
+            Fx.around(c.level(), Fx.WATER_HEAL, target, c.color(), 1.0F);
             c.level().sendParticles(new com.kolodkingal.enlightened.particle.EnergyParticleOptions(c.glow(), 1.3F), target.getX(), target.getY() + 1, target.getZ(), 20, 0.4, 0.6, 0.4, 0.02);
             c.sound(ModSounds.HEAL.get(), 1.0F, 1.0F);
             c.exhaust(0.2F);
@@ -239,8 +241,8 @@ public final class WaterBending {
                 return;
             }
             ServerPlayer p = c.player;
-            if (p.tickCount % 2 == 0) {
-                tentacles(c.level(), p, 2);
+            if (p.tickCount % 10 == 0) {
+                tentacles(c.level(), p, 1);
             }
             if (p.tickCount % 30 == 0) {
                 float damage = 1.0F + c.level;
@@ -365,17 +367,7 @@ public final class WaterBending {
 
         @Override
         public void tick(Cast c) {
-            if (!c.on() || c.player.tickCount % 4 != 0) {
-                return;
-            }
-            ServerPlayer p = c.player;
-            Vec3 look = p.getLookAngle();
-            for (int side = -1; side <= 1; side += 2) {
-                Vec3 hand = Shots.hand(p, side < 0);
-                Vec3 tip = hand.add(look.scale(1.0 + c.level * 0.7));
-                c.level().sendParticles(new com.kolodkingal.enlightened.particle.EnergyParticleOptions(c.color(), 1.0F), tip.x, tip.y, tip.z, 1, 0.1, 0.1, 0.1, 0.0);
-                c.level().sendParticles(ParticleTypes.SPLASH, hand.lerp(tip, 0.5).x, hand.lerp(tip, 0.5).y, hand.lerp(tip, 0.5).z, 1, 0.1, 0.1, 0.1, 0.0);
-            }
+            // The arms of water are drawn by every client from the synced data (WorldFxRenderer).
         }
 
         @Override
@@ -425,7 +417,7 @@ public final class WaterBending {
                 }
                 aim.target().addEffect(new MobEffectInstance(ModEffects.FROZEN, c.by(3, 5, 7) * 20, 0));
                 Shots.hurt(p, aim.target(), 2.0F, ModDamageTypes.ICE);
-                Shots.line(c.level(), Shots.hand(p), aim.end(), ParticleTypes.SNOWFLAKE, 2.0);
+                Fx.send(c.level(), Fx.WATER_WHIP, Shots.hand(p), aim.end(), c.color(), 1.0F);
                 c.sound(ModSounds.ICE_CRACK.get(), 1.0F, 1.0F);
                 c.exhaust(0.15F);
                 c.cooldownSeconds(6);
@@ -452,6 +444,7 @@ public final class WaterBending {
                 return;
             }
             c.level().sendParticles(ParticleTypes.SNOWFLAKE, center.getX() + 0.5, center.getY() + 1, center.getZ() + 0.5, 30, radius, 0.3, radius, 0.02);
+            Fx.at(c.level(), Fx.FREEZE, Vec3.atBottomCenterOf(center).add(0, 1.0, 0), c.color(), (float) radius);
             c.sound(ModSounds.ICE_CRACK.get(), 1.0F, 0.8F);
             c.exhaust(0.15F);
             c.cooldownSeconds(6);
@@ -515,7 +508,8 @@ public final class WaterBending {
                 c.refuse("message.enlightened.protected");
                 return;
             }
-            level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y + 1, center.z, 40, width * 0.4, 1.0, width * 0.4, 0.05);
+            level.sendParticles(ParticleTypes.SNOWFLAKE, center.x, center.y + 1, center.z, 20, width * 0.4, 1.0, width * 0.4, 0.05);
+            Fx.send(level, Fx.ICE_RISE, center.subtract(side.scale((width - 1) / 2.0)).add(0, 0.1, 0), center.add(side.scale((width - 1) / 2.0)).add(0, 0.1, 0), c.color(), width);
             c.sound(ModSounds.ICE_CRACK.get(), 1.2F, 0.9F);
             c.exhaust(0.3F);
             c.cooldown(EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.WALL_COOLDOWN.get() : 200);
@@ -619,9 +613,9 @@ public final class WaterBending {
             held.setDeltaMovement(to.scale(0.4));
             held.hurtMarked = true;
             held.fallDistance = 0;
-            if (p.tickCount % 2 == 0) {
+            if (p.tickCount % 10 == 0) {
                 c.level().sendParticles(new com.kolodkingal.enlightened.particle.EnergyParticleOptions(0x8B0000, 1.0F),
-                        held.getX(), held.getY() + held.getBbHeight() * 0.5, held.getZ(), 2, 0.3, 0.4, 0.3, 0.0);
+                        held.getX(), held.getY() + held.getBbHeight() * 0.5, held.getZ(), 1, 0.3, 0.4, 0.3, 0.0);
             }
         }
 
@@ -673,6 +667,7 @@ public final class WaterBending {
             Benders.syncIfDirty(victim);
             victim.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.water.suppressed_by", p.getDisplayName()), false);
             c.say("message.enlightened.water.suppressed", victim.getDisplayName(), ticks / 20);
+            Fx.send(c.level(), Fx.SUPPRESS, Shots.hand(p), victim.position(), c.color(), 1.0F, victim.getId());
             c.sound(ModSounds.BLOOD_GRIP.get(), 1.2F, 0.5F);
             held.removeEffect(ModEffects.BLOODBENT);
             GRIPS.remove(p.getUUID());

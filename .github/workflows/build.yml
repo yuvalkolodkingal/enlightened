@@ -1,5 +1,5 @@
-# Builds the mod on every push and pull request, runs the GameTests, and publishes the jar as a GitHub Release
-# for every push to main (and for every v* tag).
+# Builds the mod on every push and pull request, runs the GameTests, and publishes the jar as a GitHub Release:
+# every push to main is an alpha pre-release (v<version>-alpha.<run number>), and every v* tag a full release.
 name: Build and release
 
 on:
@@ -47,7 +47,7 @@ jobs:
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             label="$GITHUB_REF_NAME"
           else
-            label="${version}-build.${GITHUB_RUN_NUMBER}"
+            label="${version}-alpha.${GITHUB_RUN_NUMBER}"
           fi
           mkdir -p dist
           cp "build/libs/enlightened-${version}.jar" "dist/enlightened-${label}.jar"
@@ -87,11 +87,13 @@ jobs:
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             tag="$GITHUB_REF_NAME"
             title="Enlightened $GITHUB_REF_NAME"
+            kind="--latest"
           else
             tag="v${LABEL}"
-            title="Enlightened ${VERSION} (build ${GITHUB_RUN_NUMBER})"
+            title="Enlightened ${VERSION} alpha (build ${GITHUB_RUN_NUMBER})"
+            kind="--prerelease"
           fi
-          notes="Built from ${GITHUB_SHA::7} on ${GITHUB_REF_NAME}.
+          notes="Alpha build from ${GITHUB_SHA::7} on ${GITHUB_REF_NAME}: everything may still change.
 
           Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,
           for multiplayer, on the server too."
@@ -100,4 +102,4 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "$title" \
             --notes "$notes" \
-            --latest
+            "$kind"

@@ -4,6 +4,7 @@ import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.client.anim.HandTrackerLayer;
 import com.kolodkingal.enlightened.client.particle.EnergyParticle;
 import com.kolodkingal.enlightened.client.render.MeditatingBodyRenderer;
+import com.kolodkingal.enlightened.client.render.AvatarGlowLayer;
 import com.kolodkingal.enlightened.client.render.ShellLayer;
 import com.kolodkingal.enlightened.client.render.ShotRenderer;
 import com.kolodkingal.enlightened.item.GliderItem;
@@ -85,6 +86,7 @@ public final class EnlightenedClient {
             if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
                 boolean slim = skin == PlayerSkin.Model.SLIM;
                 renderer.addLayer(new ShellLayer(renderer, event.getEntityModels().bakeLayer(slim ? SHELL_SLIM : SHELL_WIDE), slim));
+                renderer.addLayer(new AvatarGlowLayer(renderer));
                 renderer.addLayer(new HandTrackerLayer(renderer));
             }
         }

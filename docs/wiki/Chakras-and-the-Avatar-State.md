@@ -32,3 +32,9 @@ you by itself when a blow would kill you). For `avatarStateSeconds` (12 s): noth
 drown, burn or fall, and glow with your element's light; everyone near is thrown back as you rise. Then it rests
 `avatarStateCooldownSeconds` (5 min). The server announces who entered it. `/enlightened chakras <players> <0-7>`
 sets the open chakras.
+
+## As the show draws it
+
+In the Avatar State the eyes glow solid white and an air nomad's arrow tattoos glow blue-white with them (Zaheer has
+none). Each chakra opens in the colour of its vision in "The Guru": earth red, water orange, fire yellow, air green,
+sound blue, light indigo, thought violet.

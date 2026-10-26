@@ -347,7 +347,12 @@ public final class FxGeometry {
     /** A square facing the camera at {@code c}, {@code size} across, turned by {@code roll}. */
     public static void billboard(PoseStack.Pose pose, VertexConsumer vc, Vec3 c, float size, float v0, float v1,
                                  float r, float g, float b, float a, int light, boolean textured, float roll) {
-        Vec3 toCam = c.scale(-1.0);
+        billboardTowards(pose, vc, c, c.scale(-1.0), size, v0, v1, r, g, b, a, light, textured, roll);
+    }
+
+    /** A billboard facing along {@code toCam}: for a pose space that is not the camera's (an entity renderer's). */
+    public static void billboardTowards(PoseStack.Pose pose, VertexConsumer vc, Vec3 c, Vec3 toCam, float size, float v0, float v1,
+                                        float r, float g, float b, float a, int light, boolean textured, float roll) {
         if (toCam.lengthSqr() < 1.0E-8) {
             return;
         }

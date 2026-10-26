@@ -14,6 +14,7 @@ here; the defaults are what the [element pages](Home) describe.
 | `xpPerPoint` | 3 | Kills with bending needed for one point (a boss gives `bossXp`, a player `playerXp`). |
 | `bossXp` | 10 | Experience the Wither, the Ender Dragon, the Warden and an Elder Guardian give. |
 | `playerXp` | 2 | Experience another player gives (with PvP on). |
+| `hurtEverything` | true | Whether bending hurts every creature in its way: the bender's own pets, teammates, villagers, golems, everything alive but himself (players still by the server's PvP rule). On, `hurtPassives` does not matter. |
 | `hurtPassives` | true | Whether bending (a rock, a whip, a flame, an area attack) hurts villagers, animals and golems as well as monsters. Turn it off to keep your farms safe. |
 | `scrollsInChests` | true | Whether the scrolls are found in chests. |
 | `raisedBlockSeconds` | 10 | How long a pillar stands. |

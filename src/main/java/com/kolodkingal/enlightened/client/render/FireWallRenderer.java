@@ -51,6 +51,17 @@ public class FireWallRenderer extends EntityRenderer<FireWallEntity> {
                 sheet(fire, poseStack, b0, b1, h0, h1, 0.0F, 1.0F, v0, v1, 0.9F * fade, layer == 0 ? 1.0F : 0.6F);
             }
         }
+        // The show's wall rolls over at the top like a breaking wave: tongues of flame curl along the crest.
+        Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 base = wall.getPosition(partialTick);
+        int tongues = Math.max(3, (int) (wall.width() * 1.5F));
+        for (int i = 0; i < tongues; i++) {
+            float u = -half + wall.width() * (i + 0.5F) / tongues;
+            float h = height * (0.95F + 0.25F * Mth.sin(t * 0.4F + i * 2.3F));
+            Vec3 at = along.scale(u).add(Mth.sin(t * 0.3F + i) * 0.15, h, Mth.cos(t * 0.35F + i * 1.3F) * 0.15);
+            FxGeometry.billboardTowards(poseStack.last(), fire, at, cam.subtract(base.add(at)), 0.9F + 0.3F * Mth.sin(t * 0.6F + i), fr[0], fr[1],
+                    1.0F, 1.0F, 1.0F, 0.85F * fade, FxGeometry.FULL, true, t * 0.2F + i);
+        }
         // The glow goes on another buffer, so it is asked for only once the flames are drawn.
         VertexConsumer light = buffer.getBuffer(FxGeometry.light());
         sheet(light, poseStack, along.scale(-half), along.scale(half), height * 0.5F, height * 0.5F, 0, 1, 0, 1, 0.35F * fade, 1.0F);

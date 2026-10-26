@@ -58,6 +58,9 @@ panel in the top-left corner, items that awaken the power, a server config, oper
    smooth stone slabs). Each minute opens a chakra; with all seven open, a breath more takes you into the
    **Avatar State**: invincible, twice as strong, for twelve seconds.
 
+Every effect is drawn after the series itself (see `docs/SHOW-REFERENCE.md`), and bending hits every creature in
+its way, pets and villagers included (`general.hurtEverything`).
+
 The full guide (every ability and its numbers, the looks, the commands, every server option) is on the
 [wiki](../../wiki), in English and Hebrew.
 

@@ -451,6 +451,9 @@ public final class FireMore {
                     false, breaks ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.NONE, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
                     SoundEvents.GENERIC_EXPLODE);
             Fx.send(level, Fx.COMBUSTION, eye, end, c.color(), power);
+            // The grey-black mushroom of smoke that hangs over the blast.
+            level.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, end.x, end.y + 0.5, end.z, (int) (power * 10), power * 0.5, power * 0.6, power * 0.5, 0.03);
+            level.sendParticles(ParticleTypes.LAVA, end.x, end.y + 0.3, end.z, (int) (power * 6), power * 0.3, 0.2, power * 0.3, 0.0);
             c.exhaust(0.8F);
             c.cooldownSeconds(c.by(30, 24, 18));
         }

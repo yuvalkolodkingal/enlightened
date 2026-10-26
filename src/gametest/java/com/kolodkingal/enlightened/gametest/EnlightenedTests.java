@@ -526,4 +526,31 @@ public final class EnlightenedTests {
             helper.succeed();
         });
     }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void bendingHurtsTheBendersOwnPetByDefault(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 6);
+        f.bender(player, Element.EARTH);
+        net.minecraft.world.entity.animal.Wolf wolf = EntityType.WOLF.create(helper.getLevel());
+        check(wolf != null, "a wolf can be made");
+        Vec3 at = helper.absoluteVec(new Vec3(10, FLOOR, 12));
+        wolf.moveTo(at.x, at.y, at.z, 180.0F, 0.0F);
+        wolf.setNoAi(true);
+        wolf.tame(player);
+        helper.getLevel().addFreshEntity(wolf);
+        f.onClose(wolf::discard);
+        boolean was = EnlightenedConfig.HURT_EVERYTHING.get();
+        EnlightenedConfig.HURT_EVERYTHING.set(true);
+        f.onClose(() -> EnlightenedConfig.HURT_EVERYTHING.set(was));
+        check(EnlightenedConfig.HURT_EVERYTHING.getDefault(), "hurtEverything is on by default");
+        check(com.kolodkingal.enlightened.bending.AreaTargets.mayHurt(player, wolf), "the bender's own wolf is a target");
+        float health = wolf.getHealth();
+        f.lookAt(player, wolf);
+        f.press(player, Ability.ROCK_THROW, false);
+        helper.runAtTickTime(30, () -> {
+            check(wolf.getHealth() < health, "the rock hurt the bender's own wolf (general.hurtEverything)");
+            helper.succeed();
+        });
+    }
 }

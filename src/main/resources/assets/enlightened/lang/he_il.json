@@ -346,6 +346,7 @@
   "item.enlightened.flying_lemur_spawn_egg": "ביצת הטלה: למור מעופף",
   "subtitles.enlightened.lemur_chirp": "למור מצייץ",
   "subtitles.enlightened.lemur_hurt": "למור צווח",
+  "enlightened.configuration.hurtEverything": "הכישוף פוגע בכולם",
   "enlightened.configuration.animations": "אנימציות",
   "enlightened.configuration.reducedMotion": "תנועה מופחתת",
   "enlightened.configuration.effects": "אפקטים של מחוות",

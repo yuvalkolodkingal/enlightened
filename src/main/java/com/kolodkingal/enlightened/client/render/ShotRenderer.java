@@ -123,7 +123,7 @@ public class ShotRenderer extends EntityRenderer<BendingShotEntity> {
         FxGeometry.sphere(poseStack.last(), buffer.getBuffer(FxGeometry.fire(blue)), c, radius, 8, 14, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.95F, 0, 0, FxGeometry.FULL, true, rot);
         Quaternionf rot2 = new Quaternionf().rotationZ(t * 0.3F).mul(new Quaternionf().rotationY(-t * 0.2F));
         FxGeometry.sphere(poseStack.last(), buffer.getBuffer(FxGeometry.fire(blue)), c, radius * 1.25F, 6, 10, fr[1] - (fr[1] - fr[0]) * 0.5F, fr[1], 1.0F, 1.0F, 1.0F, 0.45F, 0, 0, FxGeometry.FULL, true, rot2);
-        float[] core = blue ? new float[]{0.55F, 0.80F, 1.0F} : new float[]{1.0F, 0.80F, 0.35F};
+        float[] core = blue ? new float[]{0.88F, 0.96F, 1.0F} : new float[]{1.0F, 0.88F, 0.45F};
         FxGeometry.glowBlob(poseStack.last(), buffer.getBuffer(FxGeometry.glowTexture()), c, radius * 3.2F, core[0], core[1], core[2], 0.75F, t * 0.3F);
         // The tail: a cone of fire trailing against the flight.
         Vec3 v = entity.getDeltaMovement();
@@ -131,7 +131,20 @@ public class ShotRenderer extends EntityRenderer<BendingShotEntity> {
             Vec3 back = v.normalize().scale(-1.0);
             FxGeometry.cone(poseStack.last(), buffer.getBuffer(FxGeometry.fire(blue)), c, back, 1.6F * size, radius * 0.9F, 0.05F, 8, 5,
                     fr[0], fr[1], 2.0F, t * 0.2F, 1.0F, 1.0F, 1.0F, 0.8F, 0.0F, FxGeometry.FULL, true, 0.15F, t * 0.5F);
+            // The show's ball is a comet: a round bulb in front, and two or three teardrop blobs shed behind it.
+            Vec3 cam = net.minecraft.client.Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+            Vec3 toCamBase = cam.subtract(entity.getPosition(partialOf(t, entity)));
+            for (int i = 1; i <= 3; i++) {
+                float k = i / 3.0F;
+                Vec3 at = back.scale(0.5 + i * 0.55 * size).add(Math.sin(t * 0.7F + i * 2) * 0.12 * k, Math.cos(t * 0.9F + i) * 0.12 * k, 0);
+                FxGeometry.billboardTowards(poseStack.last(), buffer.getBuffer(FxGeometry.fire(blue)), at, toCamBase.subtract(at), radius * (1.6F - k * 0.9F),
+                        fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.8F * (1.0F - k * 0.7F), FxGeometry.FULL, true, t * 0.4F + i);
+            }
         }
+    }
+
+    private static float partialOf(float t, BendingShotEntity entity) {
+        return t - entity.tickCount;
     }
 
     private static boolean isBlue(int color) {

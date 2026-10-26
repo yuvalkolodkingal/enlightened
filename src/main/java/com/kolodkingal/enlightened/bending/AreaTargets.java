@@ -14,10 +14,12 @@ import net.minecraft.world.entity.player.Player;
  * Without a rule they would kill the villagers, golems, farm animals and pets round a base, so each of them asks
  * {@link #mayHurt} for every creature in reach.
  *
- * <p>The rule: never the caster, a Creative or Spectator player, an armour stand, a teammate or the caster's own pets.
- * A player only if PvP is on and the caster may harm them. Hostile creatures always, and anything that is going after
- * the caster or their team. Every other creature (villagers, golems, animals, others' pets) only if the server option
- * {@code general.hurtPassives} says so (off by default).
+ * <p>The rule: never the caster, a Creative or Spectator player or an armour stand; a player only if PvP is on and
+ * the caster may harm them. With {@code general.hurtEverything} (on by default) every other creature is fair game:
+ * the bending goes where it is sent, through pets, teammates, villagers and golems alike, as in the show. With it off,
+ * the old mercy: a teammate or the caster's own pet is spared, hostile creatures and anything going after the caster or
+ * their team are hit, and every other creature (villagers, golems, animals, others' pets) only if
+ * {@code general.hurtPassives} says so.
  */
 public final class AreaTargets {
 
@@ -35,6 +37,10 @@ public final class AreaTargets {
             }
             return true;
         }
+        boolean loaded = EnlightenedConfig.SPEC.isLoaded();
+        if (!loaded || EnlightenedConfig.HURT_EVERYTHING.get()) {
+            return true;
+        }
         if (owner.isAlliedTo(target) || (target instanceof TamableAnimal pet && pet.isOwnedBy(owner))) {
             return false;
         }
@@ -47,7 +53,7 @@ public final class AreaTargets {
                 return true;
             }
         }
-        return !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.HURT_PASSIVES.get();
+        return EnlightenedConfig.HURT_PASSIVES.get();
     }
 
     private AreaTargets() {

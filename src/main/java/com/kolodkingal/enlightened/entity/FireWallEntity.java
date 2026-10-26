@@ -129,6 +129,11 @@ public class FireWallEntity extends Entity {
                 Shots.push(living, position().add(along.scale(alongDist)), 0.4, 0.2);
             }
         }
+        if (tickCount % 4 == 0) {
+            // Heavy grey smoke rolls off the crest, as off Jeong Jeong's walls.
+            double ts = (random.nextDouble() - 0.5) * width();
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.CAMPFIRE_COSY_SMOKE, getX() + along.x * ts, getY() + 2.8, getZ() + along.z * ts, 1, 0.1, 0.1, 0.1, 0.02);
+        }
         if (tickCount % 2 == 0) {
             double t = (random.nextDouble() - 0.5) * width();
             level.sendParticles(blue() ? net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME : net.minecraft.core.particles.ParticleTypes.FLAME,

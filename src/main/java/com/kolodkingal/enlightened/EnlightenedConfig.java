@@ -15,6 +15,7 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue BOSS_XP;
     public static final ModConfigSpec.IntValue PLAYER_XP;
     public static final ModConfigSpec.BooleanValue HURT_PASSIVES;
+    public static final ModConfigSpec.BooleanValue HURT_EVERYTHING;
     public static final ModConfigSpec.BooleanValue SCROLLS_IN_CHESTS;
     public static final ModConfigSpec.IntValue RAISED_BLOCK_SECONDS;
 
@@ -97,6 +98,8 @@ public final class EnlightenedConfig {
         PLAYER_XP = B.comment("Experience another player gives (with PvP on).").defineInRange("playerXp", 2, 0, 100);
         HURT_PASSIVES = B.comment("Whether bending hurts creatures that are not hostile (animals, villagers, golems); the bender's own pets and teammates are always spared.")
                 .define("hurtPassives", true);
+        HURT_EVERYTHING = B.comment("Whether bending hurts every creature in its way: the bender's own pets, his teammates, villagers, golems, everything alive but himself (players still by the server's PvP rule). On, hurtPassives does not matter.")
+                .define("hurtEverything", true);
         SCROLLS_IN_CHESTS = B.comment("Whether the bending scrolls are found in chests (besides being crafted).")
                 .define("scrollsInChests", true);
         RAISED_BLOCK_SECONDS = B.comment("How long a wall or pillar bending raised stands before it goes back.")

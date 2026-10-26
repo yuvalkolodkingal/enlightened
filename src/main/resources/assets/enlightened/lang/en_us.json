@@ -346,6 +346,7 @@
   "item.enlightened.flying_lemur_spawn_egg": "Flying Lemur Spawn Egg",
   "subtitles.enlightened.lemur_chirp": "Lemur chirps",
   "subtitles.enlightened.lemur_hurt": "Lemur squeals",
+  "enlightened.configuration.hurtEverything": "Bending hurts everything",
   "enlightened.configuration.animations": "Animations",
   "enlightened.configuration.reducedMotion": "Reduced motion",
   "enlightened.configuration.effects": "Gesture effects",

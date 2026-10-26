@@ -36,7 +36,7 @@ hotbar slot binding of abilities, which is where the loadout of section 2 comes 
 | Hunger | Bending costs food (exhaustion per use; holds and toggles a trickle). A starving bender cannot hold a shield or a stream. Creative players bend for free. |
 | HUD **(added)** | The top-left corner shows the element, the look and its key, each key with the ability on it and on its Sneak slot (level in stars, cooldown, ON/OFF, "holding", "charging"...), the points, the experience to the next, the water a waterbender carries, and whether bending was taken away. |
 | Looks **(added)** | Every element has several looks (section 7); the look changes only how the bender looks and the colour of his energy, except Azula, whose fire is blue. Every element includes *Your own skin*. |
-| Area attacks | A fire ring, an air blast, a tornado, a spout: never the caster, a Creative or Spectator player, a teammate or the caster's pets; a player only with PvP on; hostile creatures always; villagers, animals and golems only if `general.hurtPassives` is on (on by default since 1.1, so a bender's rock, whip or flame hits a cow as well as a zombie; a server that wants its animals safe turns it off). |
+| Area attacks | With `general.hurtEverything` (on by default) every creature but the caster is hit, pets and teammates included, as in the show; off, the old mercy: never a teammate or the caster's pets; a player only with PvP on; hostile creatures always; villagers, animals and golems only if `general.hurtPassives` is on (on by default since 1.1, so a bender's rock, whip or flame hits a cow as well as a zombie; a server that wants its animals safe turns it off). |
 | Blocks bending raises | Walls, pillars, lava paths and frozen water are **temporary**: the block that was there comes back after the ability's time (`general.raisedBlockSeconds`, `earth.wallSeconds`, `earth.lavaSeconds`), at the server's stop, or when the bender loses his element. Nothing is placed where the player may not place (spawn protection, claims, Adventure mode, the world border), and nothing is torn out of a block he may not break. |
 
 ---
@@ -368,3 +368,15 @@ its length and the streams from the hands fan a little outward, because the bend
 straight along his look: a bare tube seen end-on is a ring, and a stream on the view axis hides behind his body. The air scooter is a rolling ball of air under a body lifted off the
 ground (`Stances.drop`), rolled by a quaternion with the ride.
 
+## 19. After the show **(added in 1.2.1)**
+
+Every effect is tuned after the series' own animation, gathered in `docs/SHOW-REFERENCE.md`: fire with a yellow
+core in an orange body (Azula's white in cyan), the far tongues of a stream rolling upward and breaking into blobs,
+a fire ball as a comet shedding blobs behind it, the fire shield a spinning pinwheel, the wall of fire a breaking
+wave with smoke above, lightning blue-white with a white heart and a flash as it leaves, combustion a near-invisible
+sparking ray ending in a white flash and a mushroom of smoke; water a lighter translucent blue with a near-white rim
+along every stream, healing silvery-blue with rays and ripple rings, freezing with a pale flash and sparkles,
+bloodbending almost without light (the show shows none); air as thin white spiral lines round the shield and the
+scooter's ball; the seven chakras each in the colour of its vision in "The Guru"; and the Avatar State's solid white
+eyes and, on an air nomad, glowing arrow tattoos (`AvatarGlowLayer`, emissive overlays on the player's own model).
+Bending also hits every creature in its way (`general.hurtEverything`, §0).

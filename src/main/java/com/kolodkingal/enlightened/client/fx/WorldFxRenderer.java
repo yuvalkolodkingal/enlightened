@@ -48,12 +48,18 @@ import static com.kolodkingal.enlightened.client.fx.FxGeometry.FULL;
  * water and fire is fire.
  */
 public final class WorldFxRenderer {
-    private static final float[] WATER_TINT = {0.30F, 0.56F, 0.96F};
-    private static final float[] WATER_GLOW = {0.72F, 0.90F, 1.0F};
+    /** The show's water: a translucent mid-light blue with a near-white rim; ice pale blue-white; healing silvery-blue. */
+    private static final float[] WATER_TINT = {0.44F, 0.70F, 0.92F};
+    private static final float[] WATER_GLOW = {0.90F, 0.97F, 1.0F};
+    private static final float[] HEAL_GLOW = {0.80F, 0.92F, 1.0F};
     private static final float[] AIR = {0.82F, 0.92F, 1.0F};
-    private static final float[] FIRE_CORE = {1.0F, 0.80F, 0.35F};
-    private static final float[] BLUE_CORE = {0.55F, 0.80F, 1.0F};
-    private static final float[] BOLT = {0.60F, 0.78F, 1.0F};
+    /** The show's fire: a yellow core in an orange body; Azula's a white core in cyan; lightning blue-white. */
+    private static final float[] FIRE_CORE = {1.0F, 0.88F, 0.45F};
+    private static final float[] BLUE_CORE = {0.88F, 0.96F, 1.0F};
+    private static final float[] BOLT = {0.72F, 0.86F, 1.0F};
+    private static final float[] BOLT_CORE = {0.96F, 0.98F, 1.0F};
+    /** The seven chakras' colours, as the visions of "The Guru": red, orange, yellow, green, blue, indigo, violet. */
+    private static final float[][] CHAKRA_RGB = {{0.95F, 0.25F, 0.2F}, {1.0F, 0.6F, 0.15F}, {1.0F, 0.9F, 0.25F}, {0.3F, 0.9F, 0.4F}, {0.3F, 0.55F, 1.0F}, {0.35F, 0.25F, 0.85F}, {0.75F, 0.4F, 1.0F}};
     private static final float[] BLOOD = {0.65F, 0.02F, 0.06F};
     private static final float[] EARTH = {0.76F, 0.66F, 0.46F};
     private static final float[] METAL = {0.86F, 0.88F, 0.95F};
@@ -271,6 +277,18 @@ public final class WorldFxRenderer {
                 new Quaternionf().rotationY(age * 0.07F));
         FxGeometry.sphere(pose, vc(FxGeometry.light()), c, radius * 0.96F, 8, 16, 0, 1, core[0], core[1], core[2], 0.12F * w, 2.0F, -age * 0.4F, FULL, false,
                 new Quaternionf().rotationX(0.5F).mul(new Quaternionf().rotationY(-age * 0.1F)));
+        // The show's shield is a spinning pinwheel: streaks of the core colour wind round the sphere with the spin.
+        VertexConsumer light = vc(FxGeometry.light());
+        for (int i = 0; i < 5; i++) {
+            List<Vec3> pts = new ArrayList<>();
+            for (int k = 0; k <= 16; k++) {
+                float t = k / 16.0F;
+                double lat = (t - 0.5) * Math.PI * 0.9;
+                double lon = age * 0.35 + i * Math.PI * 0.4 + t * 2.4;
+                pts.add(c.add(Math.cos(lat) * Math.cos(lon) * radius * 1.02, Math.sin(lat) * radius * 1.02, Math.cos(lat) * Math.sin(lon) * radius * 1.02));
+            }
+            FxGeometry.ribbon(pose, light, pts, 0.05F, 0.22F, 0, 1, 1, 0, core[0], core[1], core[2], 0.15F * w, 0.6F * w, FULL, false);
+        }
     }
 
     /** The fire jet: flames roaring from the feet against the flight. */
@@ -541,6 +559,17 @@ public final class WorldFxRenderer {
         FxGeometry.sphere(pose, light, c, radius, 10, 20, 0, 1, AIR[0], AIR[1], AIR[2], 0.14F, 1.3F, age * 0.15F, FULL, false, rot);
         Quaternionf rot2 = new Quaternionf().rotationZ(0.6F).mul(new Quaternionf().rotationY(-age * 0.035F));
         FxGeometry.sphere(pose, light, c, radius * 0.97F, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.07F, 2.0F, -age * 0.2F, FULL, false, rot2);
+        // The show's cocoon of air: concentric white spiral lines winding round the body with the spin.
+        for (int i = 0; i < 6; i++) {
+            List<Vec3> pts = new ArrayList<>();
+            for (int k = 0; k <= 14; k++) {
+                float t = k / 14.0F;
+                double lat = (i / 6.0 - 0.5 + t * 0.25) * Math.PI * 0.9;
+                double lon = age * 0.3 + i * 1.3 + t * 3.0;
+                pts.add(c.add(Math.cos(lat) * Math.cos(lon) * radius * 1.03, Math.sin(lat) * radius * 1.03, Math.cos(lat) * Math.sin(lon) * radius * 1.03));
+            }
+            FxGeometry.ribbon(pose, light, pts, 0.03F, 0.12F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.1F, 0.5F, FULL, false);
+        }
     }
 
     /** Water arms: tendrils of water along the forearms, rolling. */
@@ -565,6 +594,7 @@ public final class WorldFxRenderer {
             }
             FxGeometry.tube(pose, water, pts, 0.15F, 0.06F, 8, fr[0], fr[1], 2.0F, age * 0.05F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.85F * w, 0.6F * w, lit, true);
             FxGeometry.puffs(pose, water, pts, 0.34F, 0.14F, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.7F * w, 0.4F * w, lit, true, age * 0.1F);
+            FxGeometry.ribbon(pose, light, pts, 0.36F, 0.16F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.18F * w, 0.08F * w, FULL, false);
             FxGeometry.ribbon(pose, light, pts, 0.06F, 0.02F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.35F * w, 0.1F * w, FULL, false);
         }
     }
@@ -588,6 +618,7 @@ public final class WorldFxRenderer {
                 pts.add(rel(base.add(Math.cos(a + sway) * r, y, Math.sin(a + sway) * r)));
             }
             FxGeometry.tube(pose, water, pts, 0.17F, 0.04F, 8, fr[0], fr[1], 3.0F, age * 0.06F + i * 0.2F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F * w, 0.6F * w, lit, true);
+            FxGeometry.ribbon(pose, light, pts, 0.40F, 0.12F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.16F * w, 0.06F * w, FULL, false);
             FxGeometry.ribbon(pose, light, pts, 0.05F, 0.01F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.3F * w, 0.05F * w, FULL, false);
         }
         // A collar of water round the waist that the tentacles grow from.
@@ -663,10 +694,10 @@ public final class WorldFxRenderer {
         for (HumanoidArm arm : HumanoidArm.values()) {
             Vec3 h = hand(p, arm);
             FxGeometry.bolt(pose, light, rel(h), rel(center.add(0, (arm == HumanoidArm.RIGHT ? 0.2 : -0.2), 0)), seed + arm.ordinal() * 97, 0.08F, 0.045F,
-                    BLOOD[0], BLOOD[1], BLOOD[2], 0.85F * w, 1);
+                    BLOOD[0], BLOOD[1], BLOOD[2], 0.4F * w, 1);
         }
         float pulse = 0.5F + 0.5F * Mth.sin(age * 0.5F);
-        FxGeometry.sphere(pose, light, rel(center), victim.getBbWidth() * 0.9F, 6, 12, 0, 1, BLOOD[0], BLOOD[1], BLOOD[2], (0.06F + 0.06F * pulse) * w, 1.5F, age * 0.3F, FULL, false,
+        FxGeometry.sphere(pose, light, rel(center), victim.getBbWidth() * 0.9F, 6, 12, 0, 1, BLOOD[0], BLOOD[1], BLOOD[2], (0.03F + 0.03F * pulse) * w, 1.5F, age * 0.3F, FULL, false,
                 new Quaternionf().rotationY(age * 0.05F));
     }
 
@@ -700,7 +731,13 @@ public final class WorldFxRenderer {
                 float flicker = 0.85F + 0.15F * Mth.sin(age * 1.7F + arm.ordinal());
                 FxGeometry.cone(pose, fire, h, dir, len * fist, 0.13F, 0.75F, 10, 9, fr[0], fr[1], len / 1.6F, age * 0.18F, 1.0F, 1.0F, 1.0F, 0.95F * flicker, 0.0F, FULL, true, 0.28F, phase);
                 // Puffs of flame along the stream give it body from every angle, the bender's own camera included.
-                FxGeometry.conePuffs(pose, fire, h, dir, len * fist, 0.13F, 0.75F, 12, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * flicker, 0.0F, FULL, true, 0.28F, phase, 1.3F, age * 0.15F + arm.ordinal());
+                // Puffs of flame along the stream give it body from every angle; the far tongues roll upward and break up.
+                List<Vec3> spine = FxGeometry.conePoints(h, dir, len * fist, 12, 0.28F, phase);
+                for (int k = 0; k < spine.size(); k++) {
+                    float t = (float) k / (spine.size() - 1);
+                    spine.set(k, spine.get(k).add(0, t * t * 0.9 + Math.sin(age * 0.5F + k) * 0.08 * t, 0));
+                }
+                FxGeometry.puffs(pose, fire, spine, 0.34F, 1.9F, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * flicker, 0.0F, FULL, true, age * 0.15F + arm.ordinal());
                 FxGeometry.cone(pose, light, h, dir, len * fist * 0.8F, 0.06F, 0.3F, 8, 6, 0, 1, 1, 0, core[0], core[1], core[2], 0.65F, 0.0F, FULL, false, 0.15F, phase + 1);
                 FxGeometry.conePuffs(pose, vc(FxGeometry.glowTexture()), h, dir, len * fist * 0.9F, 0.2F, 0.6F, 6, 0, 1, core[0], core[1], core[2], 0.5F, 0.0F, FULL, true, 0.15F, phase + 1, 1.0F, age * 0.1F);
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), h, 0.5F, core[0], core[1], core[2], 0.6F * fist, age * 0.2F);
@@ -920,19 +957,23 @@ public final class WorldFxRenderer {
                 long seed = e.born() * 17 + now / 2;
                 float beam = Mth.clamp(a / 3.0F, 0.0F, 1.0F);
                 Vec3 head = from.lerp(to, beam);
-                FxGeometry.bolt(pose, vc(FxGeometry.light()), from, head, seed, 0.06F, 0.16F * (1.0F - f * 0.5F), 1.0F, 0.75F, 0.35F, 0.9F * (1.0F - f), 1);
-                FxGeometry.ribbon(pose, vc(FxGeometry.light()), List.of(from, head), 0.4F, 0.4F, 0, 1, 1, 0, 1.0F, 0.6F, 0.2F, 0.35F * (1.0F - f), 0.35F * (1.0F - f), FULL, false);
-                List<Vec3> along = new ArrayList<>();
-                for (int k = 0; k <= 10; k++) {
-                    along.add(from.lerp(head, k / 10.0));
+                // The show's ray is a thin, nearly transparent shimmer with a faint orange-white heart, sparking like a firecracker.
+                FxGeometry.bolt(pose, vc(FxGeometry.light()), from, head, seed, 0.05F, 0.06F * (1.0F - f * 0.5F), 1.0F, 0.85F, 0.6F, 0.7F * (1.0F - f), 0);
+                FxGeometry.ribbon(pose, vc(FxGeometry.light()), List.of(from, head), 0.22F, 0.22F, 0, 1, 1, 0, 1.0F, 0.8F, 0.6F, 0.12F * (1.0F - f), 0.12F * (1.0F - f), FULL, false);
+                net.minecraft.util.RandomSource sparks = net.minecraft.util.RandomSource.create(seed);
+                int n = (int) (from.distanceTo(head) * 2);
+                for (int k = 0; k < n; k++) {
+                    Vec3 spark = from.lerp(head, sparks.nextDouble()).add((sparks.nextDouble() - 0.5) * 0.4, (sparks.nextDouble() - 0.5) * 0.4, (sparks.nextDouble() - 0.5) * 0.4);
+                    FxGeometry.billboard(pose, vc(FxGeometry.glowTexture()), spark, 0.12F + sparks.nextFloat() * 0.15F, 0, 1, 1.0F, 0.95F, 0.7F, 0.9F * (1.0F - f), FULL, true, sparks.nextFloat() * 6);
                 }
-                FxGeometry.puffs(pose, vc(FxGeometry.glowTexture()), along, 0.5F, 0.7F, 0, 1, 1.0F, 0.75F, 0.35F, 0.5F * (1.0F - f), 0.6F * (1.0F - f), FULL, true, a * 0.5F);
                 if (beam >= 1.0F) {
                     float bf = Mth.clamp((a - 3.0F) / 9.0F, 0.0F, 1.0F);
                     float r = e.data() * 1.6F * easeOut(bf);
                     float[] fr = fireFrame(1.0F);
                     FxGeometry.sphere(pose, vc(FxGeometry.fire(false)), to, r, 8, 14, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - bf), 0, 0, FULL, true, new Quaternionf().rotationY(a * 0.4F));
                     FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), to, r * 2.5F, 1.0F, 0.75F, 0.35F, 0.9F * (1.0F - bf), a);
+                    // A white flash at the heart of the blast as it goes off.
+                    FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), to, r * 3.5F * (1.0F - bf), 1.0F, 1.0F, 1.0F, Math.max(0.0F, 1.0F - bf * 4.0F), -a);
                     FxGeometry.disc(pose, vc(FxGeometry.light()), to, r * 1.5F, r * 2.5F, 24, 0, 1, 1.0F, 0.8F, 0.5F, 0.4F * (1.0F - bf), 0.0F, FULL, false, a);
                 }
             }
@@ -999,7 +1040,7 @@ public final class WorldFxRenderer {
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 1.6, 0), 3.0F * (1.0F - f * 0.5F), 0.85F, 0.95F, 1.0F, 0.9F * (1.0F - f), a);
             }
             case CHAKRA -> {
-                float[] rgb = elementRgb(e.color());
+                float[] rgb = CHAKRA_RGB[Mth.clamp((int) e.data() - 1, 0, 6)];
                 float y = (float) (to.y - from.y) * easeOut(f);
                 Vec3 ring = from.add(0, y, 0);
                 FxGeometry.disc(pose, vc(FxGeometry.light()), ring, 0.5F, 0.9F + 0.3F * Mth.sin(a * 0.3F), 24, 0, 1, rgb[0], rgb[1], rgb[2], 0.6F * (1.0F - f), 0.0F, FULL, false, a * 0.2F);
@@ -1034,7 +1075,9 @@ public final class WorldFxRenderer {
         float alpha = 0.9F * (1.0F - f * f);
         FxGeometry.ribbon(pose, vc(FxGeometry.water()), pts, 0.36F, 0.16F, fr[0], fr[1], (float) d.length() / 1.2F, a * 0.2F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], alpha, alpha * 0.8F, lit, true);
         FxGeometry.puffs(pose, vc(FxGeometry.water()), pts, 0.5F, 0.28F, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], alpha * 0.8F, alpha * 0.7F, lit, true, a * 0.2F);
-        FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.12F, 0.04F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.5F * (1.0F - f), 0.2F * (1.0F - f), FULL, false);
+        // The show draws a thin near-white rim along every stream: a wider, faint band of light behind the water.
+        FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.42F, 0.2F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.22F * (1.0F - f), 0.12F * (1.0F - f), FULL, false);
+        FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.08F, 0.03F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.45F * (1.0F - f), 0.2F * (1.0F - f), FULL, false);
         if (reach >= 1.0F) {
             float sf = Mth.clamp((a - 4.0F) / 6.0F, 0.0F, 1.0F);
             FxGeometry.ringBand(pose, vc(FxGeometry.water()), to, 0.2F + 0.8F * easeOut(sf), 0.5F * (1.0F - sf), 12, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.7F * (1.0F - sf), lit, true, a * 0.5F, 0.5F);
@@ -1049,7 +1092,7 @@ public final class WorldFxRenderer {
         float[] fr = fire ? fireFrame(0.7F) : waterFrame();
         VertexConsumer body = fire ? vc(FxGeometry.fire(blue)) : vc(FxGeometry.water());
         float[] tint = fire ? new float[]{1, 1, 1} : WATER_TINT;
-        float[] core = fire ? (blue ? BLUE_CORE : FIRE_CORE) : WATER_GLOW;
+        float[] core = fire ? (blue ? BLUE_CORE : FIRE_CORE) : HEAL_GLOW;
         for (int s = 0; s < 2; s++) {
             List<Vec3> pts = new ArrayList<>();
             for (int k = 0; k <= 18; k++) {
@@ -1063,6 +1106,18 @@ public final class WorldFxRenderer {
             FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.07F, 0.02F, 0, 1, 1, 0, core[0], core[1], core[2], 0.4F * en, 0.1F * en, FULL, false);
         }
         FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), at, 0.9F + 0.2F * Mth.sin(a * 0.6F), core[0], core[1], core[2], 0.35F * en, a * 0.2F);
+        if (!fire) {
+            // The show's healing water glows silvery-blue, with faint rays and ripple rings spreading from it.
+            VertexConsumer light = vc(FxGeometry.light());
+            for (int i = 0; i < 7; i++) {
+                double ang = i * Math.PI * 2 / 7 + a * 0.08;
+                double len = 0.9 + 0.3 * Math.sin(a * 0.5 + i);
+                Vec3 dir = new Vec3(Math.cos(ang) * 0.8, Math.sin(ang * 1.7) * 0.5, Math.sin(ang) * 0.8).normalize();
+                FxGeometry.ribbon(pose, light, List.of(at, at.add(dir.scale(len))), 0.08F, 0.0F, 0, 1, 1, 0, core[0], core[1], core[2], 0.35F * en, 0.0F, FULL, false);
+            }
+            float ripple = (a * 0.06F) % 1.0F;
+            FxGeometry.ringBand(pose, light, at.add(0, -height * 0.45, 0), 0.4F + ripple * 1.3F, 0.08F, 24, 0, 1, core[0], core[1], core[2], 0.3F * en * (1.0F - ripple), FULL, false, 0, 0);
+        }
     }
 
     private static void freeze(Vec3 from, float radius, float a, float f, int lit) {
@@ -1080,6 +1135,15 @@ public final class WorldFxRenderer {
             FxGeometry.ringBand(pose, ice, c, 0.12F + rnd.nextFloat() * 0.1F, h, 5, fr[0], fr[1], 0.85F, 0.95F, 1.0F, 0.9F * (1.0F - f * f), lit, true, i, 0.0F);
         }
         FxGeometry.ringBand(pose, vc(FxGeometry.light()), from, r, 0.3F * (1.0F - f), 24, 0, 1, 0.8F, 0.95F, 1.0F, 0.35F * (1.0F - f), FULL, false, a, 0.3F);
+        // The show: a pale flash runs over the water as it goes rigid, and little four-point sparkles crackle at the edge.
+        if (f < 0.3F) {
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 0.4, 0), radius * 2.0F, 1.0F, 1.0F, 1.0F, 0.8F * (1.0F - f / 0.3F), a);
+        }
+        for (int i = 0; i < 8; i++) {
+            double ang = rnd.nextDouble() * Math.PI * 2;
+            Vec3 at = from.add(Math.cos(ang) * r, 0.1 + rnd.nextDouble() * 0.8, Math.sin(ang) * r);
+            FxGeometry.billboard(pose, vc(FxGeometry.glowTexture()), at, 0.18F, 0, 1, 1.0F, 1.0F, 1.0F, 0.9F * (1.0F - f) * (0.5F + 0.5F * Mth.sin(a * 2 + i)), FULL, true, i);
+        }
     }
 
     private static void fireRing(Vec3 from, WorldFx.Effect e, float a, float f) {
@@ -1101,6 +1165,11 @@ public final class WorldFxRenderer {
         VertexConsumer light = vc(FxGeometry.light());
         FxGeometry.bolt(pose, light, from, to, seed, 0.35F, 0.14F, BOLT[0], BOLT[1], BOLT[2], alpha, 4);
         FxGeometry.bolt(pose, light, from, to, seed + 1000, 0.5F, 0.06F, BOLT[0], BOLT[1], BOLT[2], alpha * 0.6F, 2);
+        // The show's bolt is blue-white with a white heart, and the screen flashes as it leaves.
+        FxGeometry.bolt(pose, light, from, to, seed, 0.35F, 0.05F, BOLT_CORE[0], BOLT_CORE[1], BOLT_CORE[2], alpha, 0);
+        if (f < 0.25F) {
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from, 4.0F * (1.0F - f * 4.0F), BOLT_CORE[0], BOLT_CORE[1], BOLT_CORE[2], 0.8F * (1.0F - f * 4.0F), a);
+        }
         // Glow along the bolt, so it shows even seen along its length (the caster's own camera looks down it).
         List<Vec3> along = new ArrayList<>();
         for (int k = 0; k <= 8; k++) {

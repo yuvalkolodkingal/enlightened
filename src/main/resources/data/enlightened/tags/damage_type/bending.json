@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "enlightened:bending", "enlightened:earth", "enlightened:lava", "enlightened:air", "enlightened:air_burst",
+    "enlightened:suffocate", "enlightened:water", "enlightened:ice", "enlightened:blood", "enlightened:fire",
+    "enlightened:flame", "enlightened:lightning"
+  ]
+}

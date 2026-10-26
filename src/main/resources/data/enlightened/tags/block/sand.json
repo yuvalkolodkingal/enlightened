@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["#minecraft:sand", "minecraft:sandstone", "minecraft:red_sandstone", "minecraft:gravel", "minecraft:soul_sand", "minecraft:suspicious_sand", "minecraft:suspicious_gravel"]
+}

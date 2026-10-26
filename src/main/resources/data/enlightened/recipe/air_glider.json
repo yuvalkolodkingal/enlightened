@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": ["LBL", " S ", " S "],
+  "key": {"L": {"item": "minecraft:leather"}, "B": {"item": "minecraft:breeze_rod"}, "S": {"item": "minecraft:stick"}},
+  "result": {"id": "enlightened:air_glider", "count": 1}
+}

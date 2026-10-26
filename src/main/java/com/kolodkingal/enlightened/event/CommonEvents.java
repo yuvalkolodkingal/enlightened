@@ -1,0 +1,247 @@
+package com.kolodkingal.enlightened.event;
+
+import com.kolodkingal.enlightened.Enlightened;
+import com.kolodkingal.enlightened.EnlightenedConfig;
+import com.kolodkingal.enlightened.air.AirBending;
+import com.kolodkingal.enlightened.air.Projection;
+import com.kolodkingal.enlightened.bending.Abilities;
+import com.kolodkingal.enlightened.bending.Ability;
+import com.kolodkingal.enlightened.bending.Benders;
+import com.kolodkingal.enlightened.bending.BendingData;
+import com.kolodkingal.enlightened.bending.BendingTicker;
+import com.kolodkingal.enlightened.bending.Element;
+import com.kolodkingal.enlightened.bending.Mastery;
+import com.kolodkingal.enlightened.bending.TempBlocks;
+import com.kolodkingal.enlightened.command.EnlightenedCommand;
+import com.kolodkingal.enlightened.earth.EarthBending;
+import com.kolodkingal.enlightened.fire.FireBending;
+import com.kolodkingal.enlightened.registry.ModDamageTypes;
+import com.kolodkingal.enlightened.registry.ModEffects;
+import com.kolodkingal.enlightened.registry.ModSounds;
+import com.kolodkingal.enlightened.registry.ModTags;
+import com.kolodkingal.enlightened.water.WaterBending;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+
+/** The game events every element listens to: ticks, deaths (experience, the pet), damage (skins, shields, lightning), sessions. */
+@EventBusSubscriber(modid = Enlightened.MODID)
+public final class CommonEvents {
+
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BendingTicker.tick(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(ServerTickEvent.Post event) {
+        TempBlocks.tick(event.getServer());
+    }
+
+    @SubscribeEvent
+    public static void onCommands(RegisterCommandsEvent event) {
+        EnlightenedCommand.register(event.getDispatcher(), event.getBuildContext());
+    }
+
+    // ---- deaths: experience for a kill with bending; an airbender's pet ----
+
+    @SubscribeEvent
+    public static void onDeath(LivingDeathEvent event) {
+        LivingEntity killed = event.getEntity();
+        DamageSource source = event.getSource();
+        if (source.getEntity() instanceof ServerPlayer killer && killer != killed) {
+            BendingData data = Benders.get(killer);
+            if (data.element().bends() && source.is(ModTags.BENDING)) {
+                Mastery.onKill(killer, killed);
+            }
+            boolean severs = !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.PET_KILL_SEVERS_TETHERS.get();
+            if (severs && data.element() == Element.AIR && !data.tetherless() && killed instanceof TamableAnimal pet && pet.isOwnedBy(killer)) {
+                data.setTetherless(true);
+                killer.level().playSound(null, killer.getX(), killer.getY(), killer.getZ(), ModSounds.PROJECTION.get(), SoundSource.PLAYERS, 1.5F, 0.5F);
+                Benders.burst(killer.serverLevel(), killer.getX(), killer.getY() + 1, killer.getZ(), 0xE6E6E6, 80, 1.2);
+                killer.displayClientMessage(Component.translatable("message.enlightened.air.tetherless").withStyle(ChatFormatting.LIGHT_PURPLE), false);
+                Benders.syncIfDirty(killer);
+            }
+        }
+        if (killed instanceof ServerPlayer player) {
+            BendingData data = Benders.get(player);
+            if (data.element().bends()) {
+                BendingTicker.stopHolds(player, data);
+                if (Projection.isProjecting(player)) {
+                    Projection.end(player, null);
+                }
+                Benders.syncIfDirty(player);
+            }
+        }
+    }
+
+    // ---- damage: a firebender's skin, a lavabender's, the air shield, the octopus form, lightning redirection ----
+
+    @SubscribeEvent
+    public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer victim)) {
+            return;
+        }
+        BendingData data = Benders.get(victim);
+        if (!data.element().bends()) {
+            return;
+        }
+        DamageSource source = event.getSource();
+        float amount = event.getAmount();
+        boolean lightning = source.is(ModDamageTypes.LIGHTNING) || source.is(DamageTypes.LIGHTNING_BOLT);
+        if (lightning && data.element() == Element.FIRE && FireBending.redirect(victim, source, amount)) {
+            event.setCanceled(true);
+            return;
+        }
+        boolean fire = source.is(DamageTypeTags.IS_FIRE) || source.is(ModTags.FIRE_BENDING);
+        if (fire) {
+            float guard = data.element() == Element.FIRE ? FireBending.fireSkin(data)
+                    : data.element() == Element.EARTH ? EarthBending.lavaSkin(data) : 0F;
+            if (guard >= 1.0F) {
+                event.setCanceled(true);
+                return;
+            }
+            amount *= 1.0F - guard;
+        }
+        if (data.element() == Element.WATER) {
+            amount *= 1.0F - WaterBending.octopusGuard(data);
+        }
+        if (data.element() == Element.AIR && AirBending.shieldUp(victim, data)
+                && !source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
+            amount = AirBending.shieldAbsorb(victim, data, amount);
+            if (amount <= 0) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+        if (amount != event.getAmount()) {
+            event.setAmount(amount);
+        }
+    }
+
+    /** A firebender who masters his skin is not struck by the sky's lightning either. */
+    @SubscribeEvent
+    public static void onLightning(EntityStruckByLightningEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.FIRE)
+                && Benders.get(player).level(Ability.FIRE_SKIN) >= 2) {
+            event.setCanceled(true);
+        }
+    }
+
+    /** The octopus form strikes back round whoever its bender hits. */
+    @SubscribeEvent
+    public static void onAttack(AttackEntityEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && event.getTarget() instanceof LivingEntity target
+                && Benders.is(player, Element.WATER)) {
+            WaterBending.octopusStrike(player, target);
+        }
+    }
+
+    /** Held, sinking, frozen or stunned: no jumping. */
+    @SubscribeEvent
+    public static void onJump(LivingEvent.LivingJumpEvent event) {
+        LivingEntity e = event.getEntity();
+        if (e.hasEffect(ModEffects.BLOODBENT) || e.hasEffect(ModEffects.QUICKSAND) || e.hasEffect(ModEffects.FROZEN) || e.hasEffect(ModEffects.STUNNED)) {
+            e.setDeltaMovement(e.getDeltaMovement().x, 0, e.getDeltaMovement().z);
+        }
+    }
+
+    /** An airbender on his scooter or his glider lands softly. */
+    @SubscribeEvent
+    public static void onFall(LivingFallEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.AIR)) {
+            BendingData data = Benders.get(player);
+            if (data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER) || AirBending.gliding(data) || data.has(Ability.AIR_JUMP)) {
+                event.setDamageMultiplier(data.has(Ability.AIR_JUMP) && !AirBending.gliding(data) && !data.on(Ability.AIR_SCOOTER) ? 0.5F : 0F);
+            }
+        }
+    }
+
+    // ---- sessions ----
+
+    @SubscribeEvent
+    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BendingData data = Benders.get(player);
+            data.clearActive();
+            BendingTicker.applyPassives(player, data);
+            data.markDirty();
+            Benders.syncIfDirty(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BendingData data = Benders.get(player);
+            if (data.element().bends()) {
+                Projection.onLogout(player);
+                BendingTicker.stopHolds(player, data);
+            }
+            Abilities.forgetAll(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BendingData data = Benders.get(player);
+            data.clearActive();
+            BendingTicker.applyPassives(player, data);
+            Benders.syncIfDirty(player);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            BendingData data = Benders.get(player);
+            if (data.element().bends()) {
+                if (Projection.isProjecting(player)) {
+                    Projection.end(player, null);
+                }
+                BendingTicker.stopHolds(player, data);
+                Benders.syncIfDirty(player);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onServerStopping(ServerStoppingEvent event) {
+        Projection.returnAll(event.getServer());
+        TempBlocks.restoreEverything(event.getServer());
+    }
+
+    @SubscribeEvent
+    public static void onServerStopped(ServerStoppedEvent event) {
+        Abilities.clearAll();
+        Projection.clear();
+        TempBlocks.clear();
+    }
+
+    private CommonEvents() {
+    }
+}

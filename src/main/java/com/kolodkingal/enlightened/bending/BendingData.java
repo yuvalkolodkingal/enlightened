@@ -1,0 +1,440 @@
+package com.kolodkingal.enlightened.bending;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Per-player bending state. Attached to every player, saved with the player, kept on death and synced to every
+ * client that can see the player (other clients draw suits, armour shells, shields and the HUD from it).
+ *
+ * <p>Saved: the element, the look, the level of every ability, the points and experience, the kills, the loadout
+ * (which ability sits on which of the ten key slots), the toggles that are on, whether the airbender let go of his
+ * tethers, and the water the bender carries. Runtime (synced, not saved): which abilities are active right now (a key
+ * held, an effect running), the cooldowns, the entity a bloodbender holds, and the bending that is suppressed.
+ */
+public final class BendingData {
+    /** Five keys, each with a plain and a Sneak variant. */
+    public static final int KEYS = 5;
+    public static final int SLOTS = KEYS * 2;
+    private static final int COUNT = Ability.values().length;
+
+    // ---- persisted ----
+    private Element element = Element.NONE;
+    private String variant = "";
+    private final byte[] levels = new byte[COUNT];
+    private int points;
+    private int xp;
+    private int kills;
+    /** The ability on each slot (an ordinal), or -1. Slot {@code (key - 1) * 2} is the plain key, {@code + 1} its Sneak. */
+    private final int[] slots = new int[SLOTS];
+    private long toggles;
+    private boolean tetherless;
+    private float water;
+
+    // ---- runtime (synced, not saved) ----
+    private long active;
+    private final long[] cooldownUntil = new long[COUNT];
+    private int heldEntityId = -1;
+    private long suppressedUntil;
+    private boolean flying;
+
+    private boolean dirty;
+
+    public BendingData() {
+        Arrays.fill(slots, -1);
+    }
+
+    public static final Codec<BendingData> CODEC = RecordCodecBuilder.create(i -> i.group(
+            Element.CODEC.optionalFieldOf("element", Element.NONE).forGetter(d -> d.element),
+            Codec.STRING.optionalFieldOf("variant", "").forGetter(d -> d.variant),
+            Codec.unboundedMap(Codec.STRING, Codec.INT).optionalFieldOf("levels", Map.of()).forGetter(BendingData::levelMap),
+            Codec.INT.optionalFieldOf("points", 0).forGetter(d -> d.points),
+            Codec.INT.optionalFieldOf("xp", 0).forGetter(d -> d.xp),
+            Codec.INT.optionalFieldOf("kills", 0).forGetter(d -> d.kills),
+            Codec.STRING.listOf().optionalFieldOf("slots", List.of()).forGetter(BendingData::slotList),
+            Codec.LONG.optionalFieldOf("toggles", 0L).forGetter(d -> d.toggles),
+            Codec.BOOL.optionalFieldOf("tetherless", false).forGetter(d -> d.tetherless),
+            Codec.FLOAT.optionalFieldOf("water", 0F).forGetter(d -> d.water)
+    ).apply(i, (element, variant, levels, points, xp, kills, slots, toggles, tetherless, water) -> {
+        BendingData d = new BendingData();
+        d.element = element;
+        d.variant = variant;
+        for (Map.Entry<String, Integer> e : levels.entrySet()) {
+            Ability a = Ability.byId(e.getKey());
+            if (a != null) {
+                d.levels[a.ordinal()] = (byte) Math.max(0, Math.min(Ability.MAX_LEVEL, e.getValue()));
+            }
+        }
+        d.points = points;
+        d.xp = xp;
+        d.kills = kills;
+        for (int s = 0; s < Math.min(SLOTS, slots.size()); s++) {
+            Ability a = Ability.byId(slots.get(s));
+            d.slots[s] = a == null ? -1 : a.ordinal();
+        }
+        d.toggles = toggles;
+        d.tetherless = tetherless;
+        d.water = water;
+        return d;
+    }));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, BendingData> STREAM_CODEC = StreamCodec.of(
+            (buf, d) -> d.write(buf), BendingData::read);
+
+    private Map<String, Integer> levelMap() {
+        Map<String, Integer> map = new HashMap<>();
+        for (Ability a : Ability.values()) {
+            if (levels[a.ordinal()] > 0) {
+                map.put(a.id(), (int) levels[a.ordinal()]);
+            }
+        }
+        return map;
+    }
+
+    private List<String> slotList() {
+        List<String> list = new ArrayList<>(SLOTS);
+        for (int s = 0; s < SLOTS; s++) {
+            list.add(slots[s] < 0 ? "" : Ability.values()[slots[s]].id());
+        }
+        return list;
+    }
+
+    private void write(ByteBuf buf) {
+        ByteBufCodecs.VAR_INT.encode(buf, element.ordinal());
+        ByteBufCodecs.stringUtf8(64).encode(buf, variant);
+        for (int k = 0; k < COUNT; k++) {
+            buf.writeByte(levels[k]);
+        }
+        ByteBufCodecs.VAR_INT.encode(buf, points);
+        ByteBufCodecs.VAR_INT.encode(buf, xp);
+        ByteBufCodecs.VAR_INT.encode(buf, kills);
+        for (int s = 0; s < SLOTS; s++) {
+            ByteBufCodecs.VAR_INT.encode(buf, slots[s] + 1);
+        }
+        ByteBufCodecs.VAR_LONG.encode(buf, toggles);
+        ByteBufCodecs.BOOL.encode(buf, tetherless);
+        ByteBufCodecs.FLOAT.encode(buf, water);
+        ByteBufCodecs.VAR_LONG.encode(buf, active);
+        for (int k = 0; k < COUNT; k++) {
+            ByteBufCodecs.VAR_LONG.encode(buf, cooldownUntil[k]);
+        }
+        ByteBufCodecs.VAR_INT.encode(buf, heldEntityId + 1);
+        ByteBufCodecs.VAR_LONG.encode(buf, suppressedUntil);
+        ByteBufCodecs.BOOL.encode(buf, flying);
+    }
+
+    private static BendingData read(ByteBuf buf) {
+        BendingData d = new BendingData();
+        int ordinal = ByteBufCodecs.VAR_INT.decode(buf);
+        Element[] elements = Element.values();
+        d.element = ordinal >= 0 && ordinal < elements.length ? elements[ordinal] : Element.NONE;
+        d.variant = ByteBufCodecs.stringUtf8(64).decode(buf);
+        for (int k = 0; k < COUNT; k++) {
+            d.levels[k] = buf.readByte();
+        }
+        d.points = ByteBufCodecs.VAR_INT.decode(buf);
+        d.xp = ByteBufCodecs.VAR_INT.decode(buf);
+        d.kills = ByteBufCodecs.VAR_INT.decode(buf);
+        for (int s = 0; s < SLOTS; s++) {
+            int v = ByteBufCodecs.VAR_INT.decode(buf) - 1;
+            d.slots[s] = v >= 0 && v < COUNT ? v : -1;
+        }
+        d.toggles = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.tetherless = ByteBufCodecs.BOOL.decode(buf);
+        d.water = ByteBufCodecs.FLOAT.decode(buf);
+        d.active = ByteBufCodecs.VAR_LONG.decode(buf);
+        for (int k = 0; k < COUNT; k++) {
+            d.cooldownUntil[k] = ByteBufCodecs.VAR_LONG.decode(buf);
+        }
+        d.heldEntityId = ByteBufCodecs.VAR_INT.decode(buf) - 1;
+        d.suppressedUntil = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.flying = ByteBufCodecs.BOOL.decode(buf);
+        return d;
+    }
+
+    // ---- element and look ----
+
+    public Element element() {
+        return element;
+    }
+
+    /** Sets the element and resets everything that belonged to the old one. Use {@link Benders#setElement} from game code. */
+    void setElementRaw(Element element) {
+        this.element = element;
+        this.variant = "";
+        Arrays.fill(levels, (byte) 0);
+        Arrays.fill(slots, -1);
+        this.points = 0;
+        this.xp = 0;
+        this.kills = 0;
+        this.toggles = 0;
+        this.tetherless = false;
+        this.water = 0;
+        this.active = 0;
+        Arrays.fill(cooldownUntil, 0L);
+        this.heldEntityId = -1;
+        this.suppressedUntil = 0;
+        dirty = true;
+    }
+
+    public String variant() {
+        return variant;
+    }
+
+    void setVariantRaw(String v) {
+        if (!variant.equals(v)) {
+            variant = v;
+            dirty = true;
+        }
+    }
+
+    // ---- levels and points ----
+
+    /** The level the player has of an ability: 0 (not learned) to 3 (master). */
+    public int level(Ability a) {
+        return levels[a.ordinal()];
+    }
+
+    public boolean has(Ability a) {
+        return element == a.element && levels[a.ordinal()] > 0;
+    }
+
+    public void setLevel(Ability a, int level) {
+        byte v = (byte) Math.max(0, Math.min(Ability.MAX_LEVEL, level));
+        if (levels[a.ordinal()] != v) {
+            levels[a.ordinal()] = v;
+            dirty = true;
+        }
+    }
+
+    /** The points spent on the element so far: the sum of every level (what a sub-bending gate counts). */
+    public int spent() {
+        int sum = 0;
+        for (Ability a : Ability.values()) {
+            if (a.element == element) {
+                for (int l = 1; l <= levels[a.ordinal()]; l++) {
+                    sum += Ability.cost(l);
+                }
+            }
+        }
+        return sum;
+    }
+
+    public int points() {
+        return points;
+    }
+
+    public void setPoints(int v) {
+        if (points != v) {
+            points = v;
+            dirty = true;
+        }
+    }
+
+    public int xp() {
+        return xp;
+    }
+
+    public void setXp(int v) {
+        if (xp != v) {
+            xp = v;
+            dirty = true;
+        }
+    }
+
+    public int kills() {
+        return kills;
+    }
+
+    public void setKills(int v) {
+        if (kills != v) {
+            kills = v;
+            dirty = true;
+        }
+    }
+
+    // ---- loadout ----
+
+    /** The ability on a slot (0 to 9), or null. */
+    public Ability slot(int slot) {
+        int v = slots[slot];
+        return v < 0 ? null : Ability.values()[v];
+    }
+
+    public void setSlot(int slot, Ability ability) {
+        int v = ability == null ? -1 : ability.ordinal();
+        if (slots[slot] != v) {
+            slots[slot] = v;
+            dirty = true;
+        }
+    }
+
+    /** The slot an ability sits on, or -1. */
+    public int slotOf(Ability a) {
+        for (int s = 0; s < SLOTS; s++) {
+            if (slots[s] == a.ordinal()) {
+                return s;
+            }
+        }
+        return -1;
+    }
+
+    public static int slotIndex(int key, boolean sneak) {
+        return (key - 1) * 2 + (sneak ? 1 : 0);
+    }
+
+    // ---- toggles, active states, cooldowns ----
+
+    public boolean on(Ability a) {
+        return (toggles & (1L << a.ordinal())) != 0;
+    }
+
+    public void setOn(Ability a, boolean on) {
+        long updated = on ? toggles | (1L << a.ordinal()) : toggles & ~(1L << a.ordinal());
+        if (updated != toggles) {
+            toggles = updated;
+            dirty = true;
+        }
+    }
+
+    public long toggleBits() {
+        return toggles;
+    }
+
+    public void clearToggles() {
+        if (toggles != 0) {
+            toggles = 0;
+            dirty = true;
+        }
+    }
+
+    /** Whether an ability is running right now (its key is held, or its effect is on). */
+    public boolean active(Ability a) {
+        return (active & (1L << a.ordinal())) != 0;
+    }
+
+    public void setActive(Ability a, boolean on) {
+        long updated = on ? active | (1L << a.ordinal()) : active & ~(1L << a.ordinal());
+        if (updated != active) {
+            active = updated;
+            dirty = true;
+        }
+    }
+
+    public long activeBits() {
+        return active;
+    }
+
+    public void clearActive() {
+        if (active != 0) {
+            active = 0;
+            dirty = true;
+        }
+    }
+
+    public long cooldownUntil(Ability a) {
+        return cooldownUntil[a.ordinal()];
+    }
+
+    public boolean isReady(Ability a, long gameTime) {
+        return gameTime >= cooldownUntil[a.ordinal()];
+    }
+
+    public void startCooldown(Ability a, long gameTime, int ticks) {
+        cooldownUntil[a.ordinal()] = gameTime + ticks;
+        dirty = true;
+    }
+
+    public void clearCooldown(Ability a) {
+        if (cooldownUntil[a.ordinal()] != 0) {
+            cooldownUntil[a.ordinal()] = 0;
+            dirty = true;
+        }
+    }
+
+    // ---- the rest ----
+
+    public boolean tetherless() {
+        return tetherless;
+    }
+
+    public void setTetherless(boolean v) {
+        if (tetherless != v) {
+            tetherless = v;
+            dirty = true;
+        }
+    }
+
+    /** The water a waterbender carries with him, bent from a source, in units (one whip is one unit). */
+    public float water() {
+        return water;
+    }
+
+    public void setWater(float v) {
+        v = Math.max(0, v);
+        if (Math.abs(water - v) > 1.0E-4F) {
+            water = v;
+            dirty = true;
+        }
+    }
+
+    public int heldEntityId() {
+        return heldEntityId;
+    }
+
+    public void setHeldEntityId(int v) {
+        if (heldEntityId != v) {
+            heldEntityId = v;
+            dirty = true;
+        }
+    }
+
+    /** Game time until which a bloodbender has taken this player's bending away (0 when it is not). */
+    public long suppressedUntil() {
+        return suppressedUntil;
+    }
+
+    public void setSuppressedUntil(long v) {
+        if (suppressedUntil != v) {
+            suppressedUntil = v;
+            dirty = true;
+        }
+    }
+
+    public boolean suppressed(long gameTime) {
+        return suppressedUntil > gameTime;
+    }
+
+    public boolean flying() {
+        return flying;
+    }
+
+    public void setFlying(boolean v) {
+        if (flying != v) {
+            flying = v;
+            dirty = true;
+        }
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void markDirty() {
+        dirty = true;
+    }
+
+    public void clearDirty() {
+        dirty = false;
+    }
+}

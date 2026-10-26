@@ -1,0 +1,6 @@
+{
+  "replace": false,
+  "values": ["#minecraft:leaves", "#minecraft:crops", "#minecraft:flowers", "#minecraft:saplings", "minecraft:short_grass", "minecraft:tall_grass",
+    "minecraft:fern", "minecraft:large_fern", "minecraft:grass_block", "minecraft:vine", "minecraft:lily_pad", "minecraft:sugar_cane",
+    "minecraft:melon", "minecraft:pumpkin", "minecraft:cactus", "minecraft:bamboo", "minecraft:moss_block", "minecraft:moss_carpet"]
+}

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": ["minecraft:iron_ingot", "minecraft:iron_nugget", "minecraft:raw_iron", "minecraft:iron_block", "minecraft:raw_iron_block",
+    "minecraft:gold_ingot", "minecraft:gold_nugget", "minecraft:raw_gold", "minecraft:gold_block", "minecraft:copper_ingot", "minecraft:raw_copper",
+    "minecraft:copper_block", "minecraft:netherite_ingot", "minecraft:netherite_scrap", "minecraft:netherite_block", "minecraft:chain",
+    "minecraft:iron_bars", "minecraft:anvil", "minecraft:iron_door", "minecraft:iron_trapdoor", "minecraft:bucket", "minecraft:shears",
+    "minecraft:iron_sword", "minecraft:iron_pickaxe", "minecraft:iron_axe", "minecraft:iron_shovel", "minecraft:iron_hoe",
+    "minecraft:iron_helmet", "minecraft:iron_chestplate", "minecraft:iron_leggings", "minecraft:iron_boots", "minecraft:chainmail_helmet",
+    "minecraft:chainmail_chestplate", "minecraft:chainmail_leggings", "minecraft:chainmail_boots", "minecraft:minecart", "minecraft:rail",
+    "minecraft:powered_rail", "minecraft:detector_rail", "minecraft:activator_rail", "minecraft:hopper", "minecraft:cauldron", "minecraft:lantern"]
+}

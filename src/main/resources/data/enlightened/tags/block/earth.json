@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:base_stone_overworld", "#minecraft:dirt", "#minecraft:sand", "#minecraft:terracotta", "#minecraft:stone_bricks",
+    "#minecraft:iron_ores", "#minecraft:coal_ores", "#minecraft:copper_ores", "#minecraft:gold_ores", "#minecraft:redstone_ores",
+    "#minecraft:lapis_ores", "#minecraft:diamond_ores", "#minecraft:emerald_ores",
+    "minecraft:cobblestone", "minecraft:mossy_cobblestone", "minecraft:cobbled_deepslate", "minecraft:gravel", "minecraft:clay",
+    "minecraft:sandstone", "minecraft:red_sandstone", "minecraft:mud", "minecraft:packed_mud", "minecraft:mud_bricks",
+    "minecraft:netherrack", "minecraft:basalt", "minecraft:smooth_basalt", "minecraft:blackstone", "minecraft:end_stone",
+    "minecraft:calcite", "minecraft:tuff", "minecraft:dripstone_block", "minecraft:magma_block", "minecraft:soul_sand",
+    "minecraft:soul_soil", "minecraft:moss_block", "minecraft:rooted_dirt", "minecraft:stone_bricks", "minecraft:deepslate_bricks",
+    "minecraft:deepslate_tiles", "minecraft:polished_deepslate", "minecraft:polished_andesite", "minecraft:polished_diorite",
+    "minecraft:polished_granite", "minecraft:smooth_stone", "minecraft:smooth_sandstone", "minecraft:smooth_red_sandstone"
+  ]
+}

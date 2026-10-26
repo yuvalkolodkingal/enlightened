@@ -1,0 +1,1 @@
+Enlightened: the ideas are Eilon Kolodkin-Gal's; the mod is by Yuval Kolodkin-Gal. Built on the frame of [Enhanced](https://github.com/yuvalkolodkingal/Enhanced). Not affiliated with Nickelodeon or Avatar Studios.

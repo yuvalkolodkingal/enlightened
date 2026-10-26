@@ -1,0 +1,224 @@
+{
+  "awaken": {
+    "subtitle": "subtitles.enlightened.awaken",
+    "sounds": [
+      "enlightened:sfx/awaken"
+    ]
+  },
+  "learn": {
+    "subtitle": "subtitles.enlightened.learn",
+    "sounds": [
+      "enlightened:sfx/learn"
+    ]
+  },
+  "point": {
+    "subtitle": "subtitles.enlightened.point",
+    "sounds": [
+      "enlightened:sfx/point"
+    ]
+  },
+  "scroll": {
+    "subtitle": "subtitles.enlightened.scroll",
+    "sounds": [
+      "enlightened:sfx/scroll"
+    ]
+  },
+  "rock_throw": {
+    "subtitle": "subtitles.enlightened.rock_throw",
+    "sounds": [
+      "enlightened:sfx/rock_throw"
+    ]
+  },
+  "rock_hit": {
+    "subtitle": "subtitles.enlightened.rock_hit",
+    "sounds": [
+      "enlightened:sfx/rock_hit"
+    ]
+  },
+  "earth_rise": {
+    "subtitle": "subtitles.enlightened.earth_rise",
+    "sounds": [
+      "enlightened:sfx/earth_rise"
+    ]
+  },
+  "earth_armor": {
+    "subtitle": "subtitles.enlightened.earth_armor",
+    "sounds": [
+      "enlightened:sfx/earth_armor"
+    ]
+  },
+  "sand_hiss": {
+    "subtitle": "subtitles.enlightened.sand_hiss",
+    "sounds": [
+      "enlightened:sfx/sand_hiss"
+    ]
+  },
+  "lava_flow": {
+    "subtitle": "subtitles.enlightened.lava_flow",
+    "sounds": [
+      "enlightened:sfx/lava_flow"
+    ]
+  },
+  "metal_clang": {
+    "subtitle": "subtitles.enlightened.metal_clang",
+    "sounds": [
+      "enlightened:sfx/metal_clang"
+    ]
+  },
+  "metal_wreck": {
+    "subtitle": "subtitles.enlightened.metal_wreck",
+    "sounds": [
+      "enlightened:sfx/metal_wreck"
+    ]
+  },
+  "seismic": {
+    "subtitle": "subtitles.enlightened.seismic",
+    "sounds": [
+      "enlightened:sfx/seismic"
+    ]
+  },
+  "air_blast": {
+    "subtitle": "subtitles.enlightened.air_blast",
+    "sounds": [
+      "enlightened:sfx/air_blast"
+    ]
+  },
+  "air_shield": {
+    "subtitle": "subtitles.enlightened.air_shield",
+    "sounds": [
+      "enlightened:sfx/air_shield"
+    ]
+  },
+  "air_shield_break": {
+    "subtitle": "subtitles.enlightened.air_shield_break",
+    "sounds": [
+      "enlightened:sfx/air_shield_break"
+    ]
+  },
+  "air_blade": {
+    "subtitle": "subtitles.enlightened.air_blade",
+    "sounds": [
+      "enlightened:sfx/air_blade"
+    ]
+  },
+  "air_jump": {
+    "subtitle": "subtitles.enlightened.air_jump",
+    "sounds": [
+      "enlightened:sfx/air_jump"
+    ]
+  },
+  "air_scooter": {
+    "subtitle": "subtitles.enlightened.air_scooter",
+    "sounds": [
+      "enlightened:sfx/air_scooter"
+    ]
+  },
+  "tornado": {
+    "subtitle": "subtitles.enlightened.tornado",
+    "sounds": [
+      "enlightened:sfx/tornado"
+    ]
+  },
+  "projection": {
+    "subtitle": "subtitles.enlightened.projection",
+    "sounds": [
+      "enlightened:sfx/projection"
+    ]
+  },
+  "suffocate": {
+    "subtitle": "subtitles.enlightened.suffocate",
+    "sounds": [
+      "enlightened:sfx/suffocate"
+    ]
+  },
+  "water_whip": {
+    "subtitle": "subtitles.enlightened.water_whip",
+    "sounds": [
+      "enlightened:sfx/water_whip"
+    ]
+  },
+  "water_gather": {
+    "subtitle": "subtitles.enlightened.water_gather",
+    "sounds": [
+      "enlightened:sfx/water_gather"
+    ]
+  },
+  "heal": {
+    "subtitle": "subtitles.enlightened.heal",
+    "sounds": [
+      "enlightened:sfx/heal"
+    ]
+  },
+  "octopus": {
+    "subtitle": "subtitles.enlightened.octopus",
+    "sounds": [
+      "enlightened:sfx/octopus"
+    ]
+  },
+  "spout": {
+    "subtitle": "subtitles.enlightened.spout",
+    "sounds": [
+      "enlightened:sfx/spout"
+    ]
+  },
+  "ice_crack": {
+    "subtitle": "subtitles.enlightened.ice_crack",
+    "sounds": [
+      "enlightened:sfx/ice_crack"
+    ]
+  },
+  "ice_knife": {
+    "subtitle": "subtitles.enlightened.ice_knife",
+    "sounds": [
+      "enlightened:sfx/ice_knife"
+    ]
+  },
+  "blood_grip": {
+    "subtitle": "subtitles.enlightened.blood_grip",
+    "sounds": [
+      "enlightened:sfx/blood_grip"
+    ]
+  },
+  "fire_blast": {
+    "subtitle": "subtitles.enlightened.fire_blast",
+    "sounds": [
+      "enlightened:sfx/fire_blast"
+    ]
+  },
+  "fire_stream": {
+    "subtitle": "subtitles.enlightened.fire_stream",
+    "sounds": [
+      "enlightened:sfx/fire_stream"
+    ]
+  },
+  "fire_whip": {
+    "subtitle": "subtitles.enlightened.fire_whip",
+    "sounds": [
+      "enlightened:sfx/fire_whip"
+    ]
+  },
+  "fire_ring": {
+    "subtitle": "subtitles.enlightened.fire_ring",
+    "sounds": [
+      "enlightened:sfx/fire_ring"
+    ]
+  },
+  "lightning_charge": {
+    "subtitle": "subtitles.enlightened.lightning_charge",
+    "sounds": [
+      "enlightened:sfx/lightning_charge"
+    ]
+  },
+  "lightning_strike": {
+    "subtitle": "subtitles.enlightened.lightning_strike",
+    "sounds": [
+      "enlightened:sfx/lightning_strike"
+    ]
+  },
+  "lightning_redirect": {
+    "subtitle": "subtitles.enlightened.lightning_redirect",
+    "sounds": [
+      "enlightened:sfx/lightning_redirect"
+    ]
+  }
+}

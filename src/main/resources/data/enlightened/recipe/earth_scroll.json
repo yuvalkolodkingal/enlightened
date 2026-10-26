@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": ["OEO", "EPE", "OEO"],
+  "key": {"O": {"item": "minecraft:obsidian"}, "E": {"item": "minecraft:emerald"}, "P": {"item": "minecraft:paper"}},
+  "result": {"id": "enlightened:earth_scroll", "count": 1}
+}

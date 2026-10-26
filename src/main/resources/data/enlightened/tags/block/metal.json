@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:iron_block", "minecraft:gold_block", "minecraft:copper_block", "minecraft:netherite_block", "minecraft:raw_iron_block",
+    "minecraft:raw_gold_block", "minecraft:raw_copper_block", "#minecraft:anvil", "minecraft:chain", "minecraft:iron_bars",
+    "minecraft:iron_door", "minecraft:iron_trapdoor", "minecraft:lantern", "minecraft:soul_lantern", "minecraft:cauldron",
+    "minecraft:hopper", "minecraft:lightning_rod", "minecraft:heavy_weighted_pressure_plate", "minecraft:light_weighted_pressure_plate",
+    "#minecraft:rails", "minecraft:cut_copper", "minecraft:exposed_copper", "minecraft:weathered_copper", "minecraft:oxidized_copper",
+    "minecraft:copper_grate", "minecraft:copper_bulb", "minecraft:copper_door", "minecraft:copper_trapdoor",
+    "#minecraft:iron_ores", "#minecraft:gold_ores", "#minecraft:copper_ores", "minecraft:ancient_debris", "minecraft:bell"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.kolodkingal.enlightened.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+  ],
+  "client": [
+    "client.AbstractClientPlayerMixin",
+    "client.EntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

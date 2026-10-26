@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:furnace", "minecraft:blast_furnace", "minecraft:smoker", "minecraft:piston", "minecraft:sticky_piston",
+    "minecraft:piston_head", "minecraft:hopper", "minecraft:dispenser", "minecraft:dropper", "minecraft:observer",
+    "#minecraft:rails", "minecraft:iron_door", "minecraft:iron_trapdoor", "minecraft:iron_bars", "minecraft:chain",
+    "#minecraft:anvil", "minecraft:cauldron", "minecraft:water_cauldron", "minecraft:lava_cauldron", "minecraft:lightning_rod",
+    "minecraft:heavy_weighted_pressure_plate", "minecraft:light_weighted_pressure_plate", "minecraft:lantern",
+    "minecraft:soul_lantern", "minecraft:bell", "minecraft:grindstone", "minecraft:smithing_table", "minecraft:stonecutter",
+    "minecraft:copper_bulb", "minecraft:copper_grate", "minecraft:copper_door", "minecraft:copper_trapdoor", "minecraft:tripwire_hook",
+    "minecraft:crafter", "minecraft:iron_block", "minecraft:copper_block"
+  ]
+}

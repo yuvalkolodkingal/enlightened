@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {"layer0": "enlightened:item/air_glider", "layer1": "enlightened:item/air_glider_wings"}
+}

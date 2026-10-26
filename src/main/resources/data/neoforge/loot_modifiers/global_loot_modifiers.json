@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "entries": [
+    "enlightened:air_scroll_ancient_city",
+    "enlightened:air_scroll_end_city",
+    "enlightened:air_scroll_jungle",
+    "enlightened:earth_scroll_mineshaft",
+    "enlightened:earth_scroll_stronghold",
+    "enlightened:fire_scroll_bastion",
+    "enlightened:fire_scroll_fortress",
+    "enlightened:water_scroll_buried",
+    "enlightened:water_scroll_ruin",
+    "enlightened:water_scroll_shipwreck"
+  ]
+}

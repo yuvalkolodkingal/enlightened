@@ -502,20 +502,25 @@ public final class EnlightenedTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 100)
-    public static void theMasterAvatarMeditatesIntoTheAvatarStateAndItShields(GameTestHelper helper) {
+    public static void theMasterAvatarsArtTakesHimInAndItShields(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer player = f.player(10, FLOOR, 8);
-        BendingData data = f.bender(player, Element.AVATAR, Ability.FIRE_BALL, 3, Ability.ROCK_THROW, 3);
+        BendingData data = f.bender(player, Element.AVATAR, Ability.AVATAR_STATE, 1, Ability.FIRE_BALL, 3, Ability.ROCK_THROW, 3);
         data.setGuruTaught(true);
         data.setChakras(7);
-        // The awakening swings the arm, and a swing ends a meditation: so it begins once the arm is still.
+        // Meditating is a toggle now, and no longer takes him into the State: only his art does.
         helper.runAtTickTime(10, () -> {
             com.kolodkingal.enlightened.bending.Chakras.meditate(player, true);
-            check(data.meditating(), "the Avatar meditates");
+            check(data.meditating(), "the Avatar meditates (one press)");
+            com.kolodkingal.enlightened.bending.Chakras.meditate(player, false);
+            check(data.meditating(), "letting go of the key does not stand him up");
         });
-        // Still meditating with all seven open: the Avatar State comes after a breath.
         helper.runAtTickTime(40, () -> {
-            check(data.avatar(player.level().getGameTime()), "the Avatar State was entered");
+            check(!data.avatar(player.level().getGameTime()), "meditation alone does not bring the Avatar State");
+            com.kolodkingal.enlightened.bending.Chakras.meditate(player, true);
+            check(!data.meditating(), "a second press stands him up");
+            f.press(player, Ability.AVATAR_STATE, false);
+            check(data.avatar(player.level().getGameTime()), "the art takes him into the Avatar State");
             float health = player.getHealth();
             player.hurt(player.damageSources().generic(), 6.0F);
             check(player.getHealth() >= health - 0.01F, "nothing hurts the Avatar");

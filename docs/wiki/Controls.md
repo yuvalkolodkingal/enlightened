@@ -6,7 +6,7 @@
 |---|---|---|
 | Ability 1-5 | **R, G, V, B, N** | The ability on that key. **Sneak + the key** is the ability on the key's second slot. |
 | Change Look | **H** | The next look of your element (Sneak + H goes back). |
-| Meditate | **M** | Sit and meditate: opens the [chakras](Chakras-and-the-Avatar-State), and with all seven open, the Avatar State. |
+| Meditate | **M** | Press to sit and meditate, again (or move) to stand: opens the [chakras](Chakras-and-the-Avatar-State). A right-click on a Meditation Point sits you on it. |
 | Bending Scroll | **K** | Opens the Bending Scroll: your abilities, your points and your keys. (Your element's scroll item opens it too.) |
 
 Rebind them under *Options → Controls → Enlightened Bending*.

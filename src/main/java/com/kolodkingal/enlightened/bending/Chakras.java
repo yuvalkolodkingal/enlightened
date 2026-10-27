@@ -25,15 +25,13 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>The <b>Avatar State</b> is the Avatar's alone: a few seconds in which nothing can hurt him and his bending is twice
  * as strong. Untaught, it takes him only when he is near death, and leaves him to a long rest. Taught by the guru with
- * all seven chakras open, he enters it at will (his art, or a long meditation) and leaves it at will, and rests three
+ * all seven chakras open, he enters it at will (his art) and leaves it at will, and rests three
  * times as long as he spent in it. Meditation also earns a little experience.
  */
 public final class Chakras {
     public static final int COUNT = 7;
     private static final ResourceLocation HEALTH_ID = Enlightened.id("chakra_health");
     private static final ResourceLocation AVATAR_SPEED_ID = Enlightened.id("avatar_speed");
-    /** Ticks the Meditate key must be held before the Avatar State is entered. */
-    private static final int AVATAR_HOLD = 20;
 
     private static int seconds(net.neoforged.neoforge.common.ModConfigSpec.IntValue v, int fallback) {
         return EnlightenedConfig.SPEC.isLoaded() ? v.get() : fallback;
@@ -85,21 +83,35 @@ public final class Chakras {
         if (!data.element().bends()) {
             return;
         }
-        if (down) {
-            if (data.avatar(p.level().getGameTime())) {
-                return;
-            }
-            if (!p.onGround() && !p.isInWater()) {
-                p.displayClientMessage(Component.translatable("message.enlightened.meditate.ground").withStyle(ChatFormatting.GRAY), true);
-                return;
-            }
-            data.setMeditating(true);
-            data.setMeditateSince(p.level().getGameTime());
-            p.displayClientMessage(Component.translatable("message.enlightened.meditate.begin").withStyle(ChatFormatting.GRAY), true);
-        } else {
-            data.setMeditating(false);
+        // A toggle: a press sits him down, the next stands him up (so does moving); letting go of the key changes nothing.
+        if (!down) {
+            return;
         }
+        if (data.meditating()) {
+            data.setMeditating(false);
+            p.displayClientMessage(Component.translatable("message.enlightened.meditate.end").withStyle(ChatFormatting.GRAY), true);
+            Benders.syncIfDirty(p);
+            return;
+        }
+        startMeditation(p, data, false);
+    }
+
+    /** Sits him down to meditate; on a mat ({@code onMat}) he is on the ground whatever the last packet said. */
+    public static boolean startMeditation(ServerPlayer p, BendingData data, boolean onMat) {
+        if (!data.element().bends() || data.avatar(p.level().getGameTime())) {
+            return false;
+        }
+        if (!onMat && !p.onGround() && !p.isInWater()) {
+            p.displayClientMessage(Component.translatable("message.enlightened.meditate.ground").withStyle(ChatFormatting.GRAY), true);
+            return false;
+        }
+        data.setMeditating(true);
+        data.setMeditateSince(p.level().getGameTime());
+        SEAT.put(p.getUUID(), p.position());
+        p.displayClientMessage(Component.translatable(taught(data) ? "message.enlightened.meditate.begin" : "message.enlightened.chakra.closed")
+                .withStyle(ChatFormatting.GRAY), true);
         Benders.syncIfDirty(p);
+        return true;
     }
 
     /** Every tick of a bender: the meditation's progress, the chakras it opens, the Avatar State's course. */
@@ -118,24 +130,16 @@ public final class Chakras {
         if (!data.meditating()) {
             return;
         }
-        // Standing up, moving, fighting or falling ends it.
-        boolean moving = p.getDeltaMovement().horizontalDistanceSqr() > 0.003 || (!p.onGround() && !p.isInWater()) || p.swinging;
-        if (moving || !p.isAlive()) {
+        // Walking off, fighting or falling ends it (a moment's grace as he settles, or is set on a mat).
+        Vec3 seat = SEAT.get(p.getUUID());
+        boolean moving = seat != null && seat.distanceToSqr(p.position()) > 0.25 || p.getDeltaMovement().horizontalDistanceSqr() > 0.003
+                || (!p.onGround() && !p.isInWater()) || p.swinging;
+        if (now - data.meditateSince() > 10 && moving || !p.isAlive()) {
             data.setMeditating(false);
             return;
         }
         boolean point = onMeditationPoint(p);
         boolean guru = Guru.near(p);
-        long held = now - data.meditateSince();
-        // The master Avatar: holding on enters the Avatar State.
-        if (masters(data)) {
-            if (held >= AVATAR_HOLD && now >= data.avatarCooldownUntil()) {
-                data.setMeditating(false);
-                enterAtWill(p, data, 1.0F);
-            } else if (held >= AVATAR_HOLD && p.tickCount % 20 == 0) {
-                p.displayClientMessage(Component.translatable("message.enlightened.avatar.rest", (data.avatarCooldownUntil() - now) / 20).withStyle(ChatFormatting.GRAY), true);
-            }
-        }
         if (!taught(data)) {
             // No guru has shown him the way: the meditation calms him, but his chakras stay closed.
             if (p.tickCount % 80 == 0) {
@@ -214,7 +218,7 @@ public final class Chakras {
     }
 
     /**
-     * The master Avatar enters the Avatar State by his own will, for the configured time times {@code scale}; he
+     * The master Avatar enters the Avatar State by his own will (his art), for the configured time times {@code scale}; he
      * will rest three times as long as he stays in it.
      */
     public static void enterAtWill(ServerPlayer p, BendingData data, float scale) {
@@ -234,6 +238,9 @@ public final class Chakras {
         p.serverLevel().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), SoundSource.PLAYERS, 1.0F, 1.4F);
         Benders.syncIfDirty(p);
     }
+
+    /** Where each meditating bender sat down: walking away from it ends the meditation. */
+    private static final java.util.Map<java.util.UUID, Vec3> SEAT = new java.util.HashMap<>();
 
     /** When each master Avatar entered the State at will (for his rest when he leaves it). */
     private static final java.util.Map<java.util.UUID, Long> ENTERED = new java.util.HashMap<>();

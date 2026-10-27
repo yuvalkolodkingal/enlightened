@@ -455,7 +455,7 @@
   "message.enlightened.fire.heat_off": "החום שלך שוכך.",
   "message.enlightened.combo": "קומבו: %s!",
   "message.enlightened.meditate.ground": "שב על הקרקע כדי למדוט.",
-  "message.enlightened.meditate.begin": "אתה נושם, והעולם נעשה שקט...",
+  "message.enlightened.meditate.begin": "אתה מתיישב ונושם, והעולם משתתק... (לחיצה נוספת על מדיטציה, או תזוזה, כדי לקום)",
   "message.enlightened.chakra.points": "צ'אקרת %s מחכה: השקע קודם %s נקודות ביסוד שלך.",
   "message.enlightened.chakra.open": "צ'אקרת %s נפתחת (%s מתוך %s).",
   "message.enlightened.chakra.all": "כל שבע הצ'אקרות פתוחות. האנרגיה שלך זורמת חופשי.",
@@ -472,7 +472,7 @@
   "hud.enlightened.chakras": "צ'אקרות %s/7",
   "hud.enlightened.avatar": "מצב האווטאר %s שנ'",
   "hud.enlightened.meditating": "מדיטציה %s%%",
-  "key.enlightened.meditate": "מדיטציה / מצב האווטאר",
+  "key.enlightened.meditate": "מדיטציה (לחיצה כדי לשבת, שוב כדי לקום)",
   "combo.enlightened.twister": "טוויסטר",
   "combo.enlightened.twister.desc": "מגן אוויר, טורנדו, הדף אוויר: ציקלון שרץ על הקרקע.",
   "combo.enlightened.air_sweep": "סחיפת אוויר",
@@ -509,7 +509,7 @@
   "command.enlightened.chakras": "נקבעו %s צ'אקרות פתוחות.",
   "message.enlightened.water.octopus_body": "תמנון מים: כל הגוף עטוף במים",
   "message.enlightened.water.octopus_arms": "תמנון מים: רק הזרועות",
-  "message.enlightened.chakra.all_avatar": "כל שבע הצ'אקרות פתוחות. מצב האווטאר שלך: האומנות (או מדיטציה ארוכה) מכניסה אותך, והאומנות שוב מוציאה.",
+  "message.enlightened.chakra.all_avatar": "כל שבע הצ'אקרות פתוחות. מצב האווטאר שלך: אומנות מצב האווטאר מכניסה אותך, ומוציאה אותך שוב.",
   "message.enlightened.chakra.closed": "הצ'אקרות שלך נשארות סגורות. חפש את גורו פאתיק במקדש האוויר הדרומי, גבוה בהרים.",
   "message.enlightened.avatar.guru": "גורו פאתיק צריך ללמד אותך את הצ'אקרות קודם. עד אז מצב האווטאר בא רק כשהמוות קרוב.",
   "message.enlightened.avatar.no_control": "עוד לא שלטת במצב האווטאר: אי אפשר לצאת ממנו מרצון.",
@@ -556,5 +556,6 @@
   "command.enlightened.temple": "מקדש האוויר הדרומי עומד ב-%s %s %s.",
   "message.enlightened.bison.full": "כל המקומות על הביזון תפוסים.",
   "message.enlightened.bison.needs_saddle": "רק הבעלים רוכב על ביזון בלי אוכף: שים עליו אוכף כדי לשאת אחרים.",
-  "message.enlightened.bison.wild": "הביזון עוד לא סומך עליך: האכל אותו חיטה (%s מתוך %s)."
+  "message.enlightened.bison.wild": "הביזון עוד לא סומך עליך: האכל אותו חיטה (%s מתוך %s).",
+  "message.enlightened.meditate.end": "אתה פוקח את העיניים וקם."
 }

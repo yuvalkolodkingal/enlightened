@@ -9,7 +9,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A low stone mat with a lotus: a bender who meditates on it opens his chakras three times as fast. Right-click it
- * and you sit down on it in the lotus and begin to meditate (as with the Meditate key), until you move.
+ * and you sit down on it in the lotus and begin to meditate (as with the Meditate key), until you move or press it.
  */
 public class MeditationPointBlock extends Block {
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 2, 16);
@@ -32,7 +32,10 @@ public class MeditationPointBlock extends Block {
         server.teleportTo(pos.getX() + 0.5, pos.getY() + 0.125, pos.getZ() + 0.5);
         server.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
         server.setOnGround(true);
-        com.kolodkingal.enlightened.bending.Chakras.meditate(server, true);
+        com.kolodkingal.enlightened.bending.BendingData data = com.kolodkingal.enlightened.bending.Benders.get(server);
+        if (!data.meditating()) {
+            com.kolodkingal.enlightened.bending.Chakras.startMeditation(server, data, true);
+        }
         return net.minecraft.world.InteractionResult.CONSUME;
     }
 

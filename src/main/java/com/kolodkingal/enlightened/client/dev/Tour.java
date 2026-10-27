@@ -149,6 +149,16 @@ public final class Tour {
         STEPS.add(new Step(delay, () -> Minecraft.getInstance().options.keyUp.setDown(on)));
     }
 
+    private static void logMeditation() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        com.kolodkingal.enlightened.bending.BendingData d = com.kolodkingal.enlightened.bending.Benders.get(mc.player);
+        com.kolodkingal.enlightened.Enlightened.LOGGER.info("[tour] meditating={} progress={} chakras={} taught={} onGround={} key={} pos={}", d.meditating(), d.meditation(),
+                d.chakras(), d.guruTaught(), mc.player.onGround(), com.kolodkingal.enlightened.client.KeyBindings.MEDITATE.isDown(), mc.player.position());
+    }
+
     /** Right-clicks the nearest sky bison, through the client as a player does. */
     private static void interactBison() {
         Minecraft mc = Minecraft.getInstance();
@@ -284,6 +294,40 @@ public final class Tour {
             cmd("tp @s 0 -60 0 0 -5", 5);
             camera(CameraType.FIRST_PERSON, 2);
             held("suffocate", "153_suffocate", 20, 40);
+            return;
+        }
+        if ("meditate".equals(System.getProperty("enlightened.tour.only", ""))) {
+            element("air", "aang", "air_blast");
+            cmd("enlightened guru @s taught", 2);
+            cmd("gamemode survival", 5);
+            for (int i = 0; i < 8; i++) {
+                STEPS.add(new Step(5, Tour::logMeditation));
+            }
+            // One press of the key, let go at once: it sits him down until the next press.
+            STEPS.add(new Step(2, () -> com.kolodkingal.enlightened.client.KeyBindings.MEDITATE.setDown(true)));
+            STEPS.add(new Step(2, () -> com.kolodkingal.enlightened.client.KeyBindings.MEDITATE.setDown(false)));
+            for (int i = 0; i < 12; i++) {
+                STEPS.add(new Step(5, Tour::logMeditation));
+            }
+            camera(CameraType.THIRD_PERSON_FRONT, 2);
+            shot("180_meditate_key", 5);
+            camera(CameraType.THIRD_PERSON_BACK, 2);
+            STEPS.add(new Step(2, () -> com.kolodkingal.enlightened.client.KeyBindings.MEDITATE.setDown(true)));
+            STEPS.add(new Step(2, () -> com.kolodkingal.enlightened.client.KeyBindings.MEDITATE.setDown(false)));
+            STEPS.add(new Step(10, Tour::logMeditation));
+            cmd("setblock 0 -60 3 enlightened:meditation_point", 10);
+            STEPS.add(new Step(5, () -> {
+                Minecraft mc = Minecraft.getInstance();
+                net.minecraft.core.BlockPos pos = new net.minecraft.core.BlockPos(0, -60, 3);
+                net.minecraft.world.phys.BlockHitResult hit = new net.minecraft.world.phys.BlockHitResult(
+                        net.minecraft.world.phys.Vec3.atCenterOf(pos), net.minecraft.core.Direction.UP, pos, false);
+                net.minecraft.world.InteractionResult r = mc.gameMode.useItemOn(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND, hit);
+                com.kolodkingal.enlightened.Enlightened.LOGGER.info("[tour] use mat -> {}", r);
+            }));
+            for (int i = 0; i < 12; i++) {
+                STEPS.add(new Step(5, Tour::logMeditation));
+            }
+            shot("181_meditate_mat", 5);
             return;
         }
         if ("cosmic".equals(System.getProperty("enlightened.tour.only", ""))) {

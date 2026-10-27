@@ -455,7 +455,7 @@
   "message.enlightened.fire.heat_off": "Your heat settles.",
   "message.enlightened.combo": "Combo: %s!",
   "message.enlightened.meditate.ground": "Sit down on the ground to meditate.",
-  "message.enlightened.meditate.begin": "You breathe, and the world goes quiet...",
+  "message.enlightened.meditate.begin": "You sit and breathe, and the world goes quiet... (press Meditate again, or move, to stand)",
   "message.enlightened.chakra.points": "The %s chakra waits: spend %s points on your element first.",
   "message.enlightened.chakra.open": "The %s chakra opens (%s of %s).",
   "message.enlightened.chakra.all": "All seven chakras are open. Your energy flows freely.",
@@ -472,7 +472,7 @@
   "hud.enlightened.chakras": "Chakras %s/7",
   "hud.enlightened.avatar": "AVATAR STATE %ss",
   "hud.enlightened.meditating": "meditating %s%%",
-  "key.enlightened.meditate": "Meditate / Avatar State",
+  "key.enlightened.meditate": "Meditate (press to sit, again to stand)",
   "combo.enlightened.twister": "Twister",
   "combo.enlightened.twister.desc": "Air Shield, Tornado, Air Blast: a cyclone that runs along the ground.",
   "combo.enlightened.air_sweep": "Air Sweep",
@@ -509,7 +509,7 @@
   "command.enlightened.chakras": "Set %s chakras open.",
   "message.enlightened.water.octopus_body": "Octopus form: the whole body wrapped in water",
   "message.enlightened.water.octopus_arms": "Octopus form: the arms alone",
-  "message.enlightened.chakra.all_avatar": "All seven chakras are open. The Avatar State is yours: your art (or a long meditation) takes you in, and the art again brings you out.",
+  "message.enlightened.chakra.all_avatar": "All seven chakras are open. The Avatar State is yours: your Avatar State art takes you in, and brings you out again.",
   "message.enlightened.chakra.closed": "Your chakras stay closed. Seek Guru Pathik at the Southern Air Temple, high in the mountains.",
   "message.enlightened.avatar.guru": "Guru Pathik must teach you the chakras first. Until then the Avatar State comes only when death is near.",
   "message.enlightened.avatar.no_control": "You have not mastered the Avatar State: you cannot leave it at will yet.",
@@ -556,5 +556,6 @@
   "command.enlightened.temple": "The Southern Air Temple stands at %s %s %s.",
   "message.enlightened.bison.full": "Every seat on the bison is taken.",
   "message.enlightened.bison.needs_saddle": "Only its owner rides a bison without a saddle: saddle it to carry others.",
-  "message.enlightened.bison.wild": "The bison does not trust you yet: feed it wheat (%s of %s)."
+  "message.enlightened.bison.wild": "The bison does not trust you yet: feed it wheat (%s of %s).",
+  "message.enlightened.meditate.end": "You open your eyes and stand."
 }

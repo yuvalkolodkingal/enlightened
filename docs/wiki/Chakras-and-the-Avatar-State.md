@@ -19,8 +19,9 @@ Untaught, meditation calms you and earns experience, but your chakras stay close
 
 ## Meditation
 
-Press **Meditate** (default **M**) standing on the ground or in water, or **right-click a Meditation Point** to sit
-down on it: the bender sits in the lotus and breathes.
+Press **Meditate** (default **M**) once, standing on the ground or in water, or **right-click a Meditation Point** to
+sit down on it: the bender sits in the lotus and breathes until you press Meditate again or move. The panel shows
+**Chakras n/7 meditating x%**, the way to the next chakra.
 Moving, swinging, falling or dying ends it. Meditation earns one experience every `meditationXpSeconds` (15 s) and,
 after `chakraMeditationSeconds` (60 s) of it, opens the next chakra, if you have spent enough points on your element:
 the n-th chakra asks for n × `chakraPointsEach` (2) points (none before the guru). On a **Meditation Point** (a block:
@@ -52,8 +53,7 @@ glow with your element's light; everyone near is thrown back as you rise. The se
 
 * **Untaught**, it takes the Avatar only by itself, when a blow would kill him (`avatarStateOnLowHealth`), and then
   rests `avatarStateCooldownSeconds` (5 min).
-* **Taught by the guru, with all seven chakras open**, the Avatar enters it **at will**: the Avatar State art, or
-  keeping on meditating a breath longer. Pressed again inside it, the art **brings him out**. He rests three times
+* **Taught by the guru, with all seven chakras open**, the Avatar enters it **at will**: the Avatar State art. Pressed again inside it, the art **brings him out**. He rests three times
   as long as he stayed in it (at least 10 s).
 
 `/enlightened chakras <players> <0-7>` sets the open chakras; `/enlightened avatar <players> enter|leave|rest` works

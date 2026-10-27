@@ -60,17 +60,32 @@ public final class AvatarBending {
         return best;
     }
 
-    /** The Avatar State at will: all seven chakras open, and rested. 12 / 18 / 24 seconds by level. */
+    /**
+     * The Avatar State at will, for the master Avatar (Guru Pathik's lessons, all seven chakras open), rested: 12 / 18 /
+     * 24 seconds by level. Pressed again inside it, he leaves it.
+     */
     static final class State implements AbilityLogic {
         @Override
         public void key(Cast c, boolean down) {
-            if (!down || !c.ready()) {
+            if (!down) {
                 return;
             }
             ServerPlayer p = c.player;
             BendingData data = c.data;
             long now = c.now();
             if (data.avatar(now)) {
+                if (Chakras.masters(data)) {
+                    Chakras.leaveAtWill(p, data);
+                } else {
+                    c.refuse("message.enlightened.avatar.no_control");
+                }
+                return;
+            }
+            if (!c.ready()) {
+                return;
+            }
+            if (!Chakras.taught(data)) {
+                c.refuse("message.enlightened.avatar.guru");
                 return;
             }
             if (data.chakras() < Chakras.COUNT) {
@@ -81,7 +96,7 @@ public final class AvatarBending {
                 c.refuse("message.enlightened.avatar.rest", (data.avatarCooldownUntil() - now) / 20);
                 return;
             }
-            Chakras.enterAvatar(p, data, false, c.byF(1.0, 1.5, 2.0));
+            Chakras.enterAtWill(p, data, c.byF(1.0, 1.5, 2.0));
             c.exhaust(0.5F);
             c.cooldownSeconds(5);
         }

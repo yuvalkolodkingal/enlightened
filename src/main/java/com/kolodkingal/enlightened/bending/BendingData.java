@@ -37,16 +37,21 @@ public final class BendingData {
     private int kills;
     /** The ability on each slot (an ordinal), or -1. Slot {@code (key - 1) * 2} is the plain key, {@code + 1} its Sneak. */
     private final int[] slots = new int[SLOTS];
-    private long toggles;
+    /** The toggles that are on, one bit per ability (two words: there are more than 64 abilities). */
+    private final long[] toggles = new long[2];
     private boolean tetherless;
     private float water;
     /** The chakras open (0..7), the meditation toward the next (ticks), and when the Avatar State may come again. */
     private int chakras;
     private int meditation;
     private long avatarCooldownUntil;
+    /** The waterbender keeps his mastered octopus form to the arms alone, not wrapping his whole body (saved, synced). */
+    private boolean octopusArms;
+    /** Guru Pathik has taught him to open his chakras (saved, synced). */
+    private boolean guruTaught;
 
     // ---- runtime (synced, not saved) ----
-    private long active;
+    private final long[] active = new long[2];
     private final long[] cooldownUntil = new long[COUNT];
     private int heldEntityId = -1;
     private long suppressedUntil;
@@ -71,13 +76,16 @@ public final class BendingData {
             Codec.INT.optionalFieldOf("xp", 0).forGetter(d -> d.xp),
             Codec.INT.optionalFieldOf("kills", 0).forGetter(d -> d.kills),
             Codec.STRING.listOf().optionalFieldOf("slots", List.of()).forGetter(BendingData::slotList),
-            Codec.LONG.optionalFieldOf("toggles", 0L).forGetter(d -> d.toggles),
+            Codec.LONG.optionalFieldOf("toggles", 0L).forGetter(d -> d.toggles[0]),
+            Codec.LONG.optionalFieldOf("toggles2", 0L).forGetter(d -> d.toggles[1]),
             Codec.BOOL.optionalFieldOf("tetherless", false).forGetter(d -> d.tetherless),
             Codec.FLOAT.optionalFieldOf("water", 0F).forGetter(d -> d.water),
             Codec.INT.optionalFieldOf("chakras", 0).forGetter(d -> d.chakras),
             Codec.INT.optionalFieldOf("meditation", 0).forGetter(d -> d.meditation),
-            Codec.LONG.optionalFieldOf("avatarCooldownUntil", 0L).forGetter(d -> d.avatarCooldownUntil)
-    ).apply(i, (element, variant, levels, points, xp, kills, slots, toggles, tetherless, water, chakras, meditation, avatarCooldownUntil) -> {
+            Codec.LONG.optionalFieldOf("avatarCooldownUntil", 0L).forGetter(d -> d.avatarCooldownUntil),
+            Codec.BOOL.optionalFieldOf("octopusArms", false).forGetter(d -> d.octopusArms),
+            Codec.BOOL.optionalFieldOf("guruTaught", false).forGetter(d -> d.guruTaught)
+    ).apply(i, (element, variant, levels, points, xp, kills, slots, toggles, toggles2, tetherless, water, chakras, meditation, avatarCooldownUntil, octopusArms, guruTaught) -> {
         BendingData d = new BendingData();
         d.element = element;
         d.variant = variant;
@@ -94,12 +102,15 @@ public final class BendingData {
             Ability a = Ability.byId(slots.get(s));
             d.slots[s] = a == null ? -1 : a.ordinal();
         }
-        d.toggles = toggles;
+        d.toggles[0] = toggles;
+        d.toggles[1] = toggles2;
         d.tetherless = tetherless;
         d.water = water;
         d.chakras = Math.max(0, Math.min(7, chakras));
         d.meditation = meditation;
         d.avatarCooldownUntil = avatarCooldownUntil;
+        d.octopusArms = octopusArms;
+        d.guruTaught = guruTaught;
         return d;
     }));
 
@@ -136,10 +147,12 @@ public final class BendingData {
         for (int s = 0; s < SLOTS; s++) {
             ByteBufCodecs.VAR_INT.encode(buf, slots[s] + 1);
         }
-        ByteBufCodecs.VAR_LONG.encode(buf, toggles);
+        ByteBufCodecs.VAR_LONG.encode(buf, toggles[0]);
+        ByteBufCodecs.VAR_LONG.encode(buf, toggles[1]);
         ByteBufCodecs.BOOL.encode(buf, tetherless);
         ByteBufCodecs.FLOAT.encode(buf, water);
-        ByteBufCodecs.VAR_LONG.encode(buf, active);
+        ByteBufCodecs.VAR_LONG.encode(buf, active[0]);
+        ByteBufCodecs.VAR_LONG.encode(buf, active[1]);
         for (int k = 0; k < COUNT; k++) {
             ByteBufCodecs.VAR_LONG.encode(buf, cooldownUntil[k]);
         }
@@ -153,6 +166,8 @@ public final class BendingData {
         ByteBufCodecs.VAR_LONG.encode(buf, meditateSince);
         ByteBufCodecs.VAR_LONG.encode(buf, avatarUntil);
         ByteBufCodecs.BOOL.encode(buf, gliderOpen);
+        ByteBufCodecs.BOOL.encode(buf, octopusArms);
+        ByteBufCodecs.BOOL.encode(buf, guruTaught);
     }
 
     private static BendingData read(ByteBuf buf) {
@@ -171,10 +186,12 @@ public final class BendingData {
             int v = ByteBufCodecs.VAR_INT.decode(buf) - 1;
             d.slots[s] = v >= 0 && v < COUNT ? v : -1;
         }
-        d.toggles = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.toggles[0] = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.toggles[1] = ByteBufCodecs.VAR_LONG.decode(buf);
         d.tetherless = ByteBufCodecs.BOOL.decode(buf);
         d.water = ByteBufCodecs.FLOAT.decode(buf);
-        d.active = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.active[0] = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.active[1] = ByteBufCodecs.VAR_LONG.decode(buf);
         for (int k = 0; k < COUNT; k++) {
             d.cooldownUntil[k] = ByteBufCodecs.VAR_LONG.decode(buf);
         }
@@ -188,6 +205,8 @@ public final class BendingData {
         d.meditateSince = ByteBufCodecs.VAR_LONG.decode(buf);
         d.avatarUntil = ByteBufCodecs.VAR_LONG.decode(buf);
         d.gliderOpen = ByteBufCodecs.BOOL.decode(buf);
+        d.octopusArms = ByteBufCodecs.BOOL.decode(buf);
+        d.guruTaught = ByteBufCodecs.BOOL.decode(buf);
         return d;
     }
 
@@ -206,10 +225,10 @@ public final class BendingData {
         this.points = 0;
         this.xp = 0;
         this.kills = 0;
-        this.toggles = 0;
+        java.util.Arrays.fill(this.toggles, 0L);
         this.tetherless = false;
         this.water = 0;
-        this.active = 0;
+        java.util.Arrays.fill(this.active, 0L);
         Arrays.fill(cooldownUntil, 0L);
         this.heldEntityId = -1;
         this.suppressedUntil = 0;
@@ -337,49 +356,62 @@ public final class BendingData {
 
     // ---- toggles, active states, cooldowns ----
 
+    private static boolean bit(long[] bits, Ability a) {
+        int o = a.ordinal();
+        return (bits[o >> 6] & (1L << (o & 63))) != 0;
+    }
+
+    /** Sets one ability's bit; returns whether it changed. */
+    private static boolean setBit(long[] bits, Ability a, boolean on) {
+        int o = a.ordinal();
+        long mask = 1L << (o & 63);
+        long old = bits[o >> 6];
+        long updated = on ? old | mask : old & ~mask;
+        bits[o >> 6] = updated;
+        return updated != old;
+    }
+
     public boolean on(Ability a) {
-        return (toggles & (1L << a.ordinal())) != 0;
+        return bit(toggles, a);
     }
 
     public void setOn(Ability a, boolean on) {
-        long updated = on ? toggles | (1L << a.ordinal()) : toggles & ~(1L << a.ordinal());
-        if (updated != toggles) {
-            toggles = updated;
+        if (setBit(toggles, a, on)) {
             dirty = true;
         }
     }
 
-    public long toggleBits() {
-        return toggles;
+    /** A copy of the toggle bits (bit {@code ordinal & 63} of word {@code ordinal >> 6}). */
+    public long[] toggleBits() {
+        return toggles.clone();
     }
 
     public void clearToggles() {
-        if (toggles != 0) {
-            toggles = 0;
+        if (toggles[0] != 0 || toggles[1] != 0) {
+            java.util.Arrays.fill(toggles, 0L);
             dirty = true;
         }
     }
 
     /** Whether an ability is running right now (its key is held, or its effect is on). */
     public boolean active(Ability a) {
-        return (active & (1L << a.ordinal())) != 0;
+        return bit(active, a);
     }
 
     public void setActive(Ability a, boolean on) {
-        long updated = on ? active | (1L << a.ordinal()) : active & ~(1L << a.ordinal());
-        if (updated != active) {
-            active = updated;
+        if (setBit(active, a, on)) {
             dirty = true;
         }
     }
 
-    public long activeBits() {
-        return active;
+    /** A copy of the active bits (laid out as {@link #toggleBits}). */
+    public long[] activeBits() {
+        return active.clone();
     }
 
     public void clearActive() {
-        if (active != 0) {
-            active = 0;
+        if (active[0] != 0 || active[1] != 0) {
+            java.util.Arrays.fill(active, 0L);
             dirty = true;
         }
     }
@@ -500,6 +532,28 @@ public final class BendingData {
     public void setGliderOpen(boolean v) {
         if (v != gliderOpen) {
             gliderOpen = v;
+            dirty = true;
+        }
+    }
+
+    public boolean octopusArms() {
+        return octopusArms;
+    }
+
+    public void setOctopusArms(boolean v) {
+        if (v != octopusArms) {
+            octopusArms = v;
+            dirty = true;
+        }
+    }
+
+    public boolean guruTaught() {
+        return guruTaught;
+    }
+
+    public void setGuruTaught(boolean v) {
+        if (v != guruTaught) {
+            guruTaught = v;
             dirty = true;
         }
     }

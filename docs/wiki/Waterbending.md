@@ -88,3 +88,14 @@ game's water texture, the healing a glow of it, the ice a sheet of ice.
 
 The water spout is the show's column now: a thick body of flowing water wound with froth, foam flung off it, spray at
 its foot. The water whip and arms carry the show's near-white rim.
+
+## New in 1.4
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Frost Walk** | toggle | The water freezes under your feet as you walk, a disc of ice **2 / 3 / 4** blocks round you, so you walk over lakes and the sea; the ice melts back a few seconds after you pass. |
+| **Water Spout** (changed) | toggle | It rises off **ice** as well as water, and you ride it **fast in every direction**: forward, back and to either side with the movement keys (**0.55 / 0.7 / 0.85** blocks a tick; a sprint is 0.28). |
+| **Octopus Form** (changed) | toggle | **Mastered** (level 3), it wraps your **whole body** in a great bulb of water, the arms reaching out from its foot: it guards more and nothing burns on you. The **Change Look** key, while the form is up, switches to **the arms alone** and back. |
+
+Every spout now looks like the show's: a twisting column narrowing to the feet, a wide whirl at its foot, broad
+streamers sweeping round it, and tilted rings of the element circling the rider.

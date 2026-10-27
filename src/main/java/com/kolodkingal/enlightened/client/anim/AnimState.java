@@ -108,8 +108,8 @@ public final class AnimState {
 
     // ---- edge memory ----
     public final long[] cooldowns = new long[ABILITIES];
-    public long toggles;
-    public long active;
+    public long[] toggles = new long[2];
+    public long[] active = new long[2];
     /** The tick each ability last went active (for how long a charge was held). */
     public final int[] activeSince = new int[ABILITIES];
     public int lastHeld = -1;
@@ -166,8 +166,8 @@ public final class AnimState {
         Arrays.fill(stanceOn, false);
         Arrays.fill(cooldowns, 0L);
         Arrays.fill(activeSince, 0);
-        toggles = 0L;
-        active = 0L;
+        toggles = new long[2];
+        active = new long[2];
         heldEntity = null;
         fresh = true;
         seeded = false;

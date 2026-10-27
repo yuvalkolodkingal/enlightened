@@ -33,6 +33,10 @@ public final class ModItems {
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> LEMUR_SPAWN_EGG = ITEMS.register("flying_lemur_spawn_egg",
             () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.LEMUR, 0xEDE3C8, 0x4A4A4A, new Item.Properties()));
 
+    /** The sky bison's spawn egg (white with the brown of its arrow). */
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> SKY_BISON_SPAWN_EGG = ITEMS.register("sky_bison_spawn_egg",
+            () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.SKY_BISON, 0xEEEADE, 0x7A5032, new Item.Properties()));
+
     private static DeferredItem<BendingScrollItem> scroll(String name, Element element) {
         return ITEMS.register(name, () -> new BendingScrollItem(element, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     }

@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "enlightened:southern_air_temple",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 40,
+    "separation": 16,
+    "salt": 748392011
+  }
+}

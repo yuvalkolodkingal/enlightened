@@ -32,6 +32,8 @@ public class Enlightened {
         ModItems.ITEMS.register(modBus);
         ModEffects.EFFECTS.register(modBus);
         ModEntities.ENTITIES.register(modBus);
+        com.kolodkingal.enlightened.world.ModStructures.TYPES.register(modBus);
+        com.kolodkingal.enlightened.world.ModStructures.PIECES.register(modBus);
         ModAttachments.ATTACHMENTS.register(modBus);
         ModParticles.PARTICLES.register(modBus);
         ModSounds.SOUNDS.register(modBus);

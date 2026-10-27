@@ -137,17 +137,18 @@ public final class Animator {
     /** The edges in the synced data since last tick, and what they start. */
     private static void edges(AnimState s, AbstractClientPlayer p, BendingData data, long now) {
         float age = p.tickCount;
-        long toggles = data.toggleBits();
-        long active = data.activeBits();
+        long[] toggles = data.toggleBits();
+        long[] active = data.activeBits();
         for (Ability a : Ability.values()) {
             int i = a.ordinal();
-            long bit = 1L << i;
+            int w = i >> 6;
+            long bit = 1L << (i & 63);
             long until = data.cooldownUntil(a);
             boolean cooled = until > s.cooldowns[i] && until > now;
-            boolean turnedOn = (toggles & bit) != 0 && (s.toggles & bit) == 0;
-            boolean turnedOff = (toggles & bit) == 0 && (s.toggles & bit) != 0;
-            boolean rose = (active & bit) != 0 && (s.active & bit) == 0;
-            boolean fell = (active & bit) == 0 && (s.active & bit) != 0;
+            boolean turnedOn = (toggles[w] & bit) != 0 && (s.toggles[w] & bit) == 0;
+            boolean turnedOff = (toggles[w] & bit) == 0 && (s.toggles[w] & bit) != 0;
+            boolean rose = (active[w] & bit) != 0 && (s.active[w] & bit) == 0;
+            boolean fell = (active[w] & bit) == 0 && (s.active[w] & bit) != 0;
             if (rose) {
                 s.activeSince[i] = p.tickCount;
                 s.chargeAge = age;
@@ -175,7 +176,7 @@ public final class Animator {
                     start(s, p, g, age, false);
                 }
             }
-            if (cooled && a == Ability.LIGHTNING && data.on(Ability.LIGHTNING_REDIRECT) && (s.active & bit) == 0 && (active & bit) == 0) {
+            if (cooled && a == Ability.LIGHTNING && data.on(Ability.LIGHTNING_REDIRECT) && (s.active[w] & bit) == 0 && (active[w] & bit) == 0) {
                 // Lightning left him without a charge: it was someone else's, redirected.
                 start(s, p, Gesture.FIRE_REDIRECTED, age, false);
             }

@@ -23,3 +23,13 @@ Numbers are *novice / adept / master*.
 
 Default keys: R Avatar State, Sneak+R Energybending, G Spiritbending, Sneak+G Elemental Sphere; then the four
 elements' arts in their usual order.
+
+## New in 1.4
+
+- **Only the Avatar has the Avatar State.** Before Guru Pathik's lessons it takes the Avatar only when death is near;
+  taught, with all seven chakras open, he **enters it and leaves it at will** (press the art again to leave). See
+  [Chakras and the Avatar State](Chakras-and-the-Avatar-State).
+- **The seventh chakra** sends the spirit to the cosmic plane, where the Avatar walks a path of light to his own vast,
+  glowing self.
+- **Each element in its own colour**: the Avatar's fire is fire (no longer blue), his water water, his earth and air
+  their own; only the Avatar's own arts shine in his light.

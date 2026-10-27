@@ -4,6 +4,8 @@
   "package": "com.kolodkingal.enlightened.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LivingEntityAccessor",
+    "ServerGamePacketListenerImplAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",

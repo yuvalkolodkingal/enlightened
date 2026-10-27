@@ -42,7 +42,19 @@ public final class BendingTicker {
             }
         }
         data.setFlying(player.getAbilities().flying);
+        if (carried(data) && player.connection != null) {
+            ((com.kolodkingal.enlightened.mixin.ServerGamePacketListenerImplAccessor) player.connection).enlightened$setAboveGroundTickCount(0);
+        }
         Benders.syncIfDirty(player);
+    }
+
+    /** Whether his bending holds him up off the ground (a spout, the glider, the scooter, a vortex): no kick for flying. */
+    private static boolean carried(BendingData data) {
+        return data.has(Ability.AIR_SPOUT) && data.on(Ability.AIR_SPOUT)
+                || data.has(Ability.WATER_SPOUT) && data.on(Ability.WATER_SPOUT)
+                || data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER)
+                || data.active(Ability.WATER_VORTEX)
+                || data.gliderOpen();
     }
 
     /** Flight permission and speed, and the body modifiers of armour, arms and scooter. */

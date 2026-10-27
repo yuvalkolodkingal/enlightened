@@ -20,3 +20,8 @@ feeding in three tames it (hearts). A tamed lemur:
 The lemur flies and glides (it takes no fall damage), chirps, scolds when hurt, twitches its ears, tilts its head at
 you and perches with its wings folded and its tail curled round. Its wings beat in flight, spread flat in a glide and
 fold on the ground; it banks into its turns.
+
+## As the show draws it
+
+Momo's look: white fur, huge bat ears brown outside with a cream band inside, big green eyes ringed in black, tan
+wing membranes and a long white tail ringed in brown. Lemurs also live at the [Southern Air Temple](Southern-Air-Temple).

@@ -88,11 +88,21 @@ public final class Cast {
         }
     }
 
+    /**
+     * The colour of the art: the look's colour; but the Avatar bends each element in its own colour (his fire is
+     * fire, his water water), the Avatar's own light only for the Avatar's own arts.
+     */
     public int color() {
+        if (data.element() == Element.AVATAR && ability.element != Element.AVATAR) {
+            return ability.element.color;
+        }
         return Benders.color(player);
     }
 
     public int glow() {
+        if (data.element() == Element.AVATAR && ability.element != Element.AVATAR) {
+            return ability.element.glow;
+        }
         return Benders.glow(player);
     }
 

@@ -149,6 +149,23 @@ public final class Tour {
         STEPS.add(new Step(delay, () -> Minecraft.getInstance().options.keyUp.setDown(on)));
     }
 
+    /** Runs on the integrated server, with the tour's player (what no command can do: tame and saddle a bison). */
+    private static void server(java.util.function.Consumer<net.minecraft.server.level.ServerPlayer> action, int delay) {
+        STEPS.add(new Step(delay, () -> {
+            Minecraft mc = Minecraft.getInstance();
+            net.minecraft.server.MinecraftServer server = mc.getSingleplayerServer();
+            if (server != null && mc.player != null) {
+                java.util.UUID id = mc.player.getUUID();
+                server.execute(() -> {
+                    net.minecraft.server.level.ServerPlayer p = server.getPlayerList().getPlayer(id);
+                    if (p != null) {
+                        action.accept(p);
+                    }
+                });
+            }
+        }));
+    }
+
     private static void wait(int delay) {
         STEPS.add(new Step(delay, () -> {
         }));
@@ -498,6 +515,72 @@ public final class Tour {
         camera(CameraType.THIRD_PERSON_BACK, 2);
         held("fire_fist", "144_avatar_fire_fist", 15, 30);
         cast("water_whip", "145_avatar_water_whip", 5);
+
+        // ---- 1.4: the spouts, the octopus body, frost walk, suffocation, the temple, the bison, the cosmic plane ----
+        element("water", "katara", "water_spout", "octopus_form", "frost_walk", "water_whip");
+        cmd("fill -2 -61 -2 2 -61 2 ice", 3);
+        toggled("water_spout", "150_water_spout_ice", 40);
+        cmd("tp @s 0 -60 0 0 10", 10);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        toggled("octopus_form", "151_octopus_body", 30);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        cmd("fill -6 -61 5 6 -61 17 water", 3);
+        cmd("tp @s 0 -60 7 0 35", 5);
+        cmd("enlightened loadout @s 1 frost_walk", 6);
+        press(1, 25);
+        shot("152_frost_walk", 5);
+        press(1, 4);
+        cmd("tp @s 0 -60 0 0 10", 5);
+        element("air", "zaheer", "suffocate", "air_spout", "air_blast");
+        cmd("summon zombie 0 -60 4 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
+        held("suffocate", "153_suffocate", 20, 40);
+        cmd("kill @e[type=zombie]", 2);
+        toggled("air_spout", "154_air_spout", 40);
+        cmd("tp @s 0 -60 0 0 10", 10);
+        // The temple, built on the flat world by its command.
+        cmd("enlightened temple 0 -60 80", 60);
+        cmd("tp @s 0 -38 36 0 22", 30);
+        shot("160_temple", 40);
+        cmd("tp @s -30 -40 60 -60 18", 30);
+        shot("161_temple_side", 20);
+        cmd("tp @s 0 -59 75 0 15", 30);
+        shot("162_pathik", 20);
+        cmd("tp @s 0 -52 86 0 50", 20);
+        shot("163_bison_calves", 20);
+        cmd("tp @s 0 -59 64 0 10", 10);
+        server(p -> {
+            com.kolodkingal.enlightened.entity.SkyBisonEntity b = com.kolodkingal.enlightened.registry.ModEntities.SKY_BISON.get().create(p.serverLevel());
+            if (b != null) {
+                b.moveTo(p.getX(), p.getY(), p.getZ() - 4, 0.0F, 0.0F);
+                b.tame(p);
+                b.equipSaddle(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE), null);
+                p.serverLevel().addFreshEntity(b);
+                p.startRiding(b);
+            }
+        }, 20);
+        shot("164_bison_ride", 20);
+        server(p -> {
+            if (p.getVehicle() != null) {
+                p.getVehicle().teleportTo(p.getVehicle().getX(), p.getVehicle().getY() + 12, p.getVehicle().getZ());
+            }
+        }, 15);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        shot("165_bison_flying", 10);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        server(p -> p.stopRiding(), 5);
+        cmd("tp @s 0 -60 0 0 10", 10);
+        // The cosmic plane of the seventh chakra.
+        element("avatar", "aang", "avatar_state", "fire_fist");
+        cmd("enlightened chakras @s 6", 2);
+        server(com.kolodkingal.enlightened.world.Cosmic::send, 40);
+        shot("170_cosmic_path", 20);
+        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.pathX(44) + " 101 44 0 0", 30);
+        shot("171_cosmic_giant", 10);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        shot("172_cosmic_front", 5);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        cmd("tp @s " + (int) Math.floor(com.kolodkingal.enlightened.world.Cosmic.END.x) + " 101 66", 40);
+        cmd("tp @s 0 -60 0 0 10", 10);
 
         cmd("summon enlightened:flying_lemur 1 -60 3", 5);
         cmd("summon enlightened:flying_lemur -1 -58 3", 5);

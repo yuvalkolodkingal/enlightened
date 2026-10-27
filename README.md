@@ -55,11 +55,15 @@ panel in the top-left corner, items that awaken the power, a server config, oper
 6. **Combos and steps.** Cast the right abilities within three seconds of each other for a combo (Earth Dome, Ice
    Wave, Fire Spin, Twister...); double-tap a direction to dash with your element's step.
 7. **The Avatar.** Bind the four scrolls round a nether star into the **Avatar Scroll** and read it: you bend all four
-   elements, enter the Avatar State at will with the seven chakras open, take or give back bending by touch,
-   calm creatures with spiritbending and fly inside the elemental sphere.
-8. **Chakras.** Press **M** to meditate (faster on a **Meditation Point**: cyan dye, paper, cyan dye over three
-   smooth stone slabs). Each minute opens a chakra; with all seven open, a breath more takes you into the
-   **Avatar State**: invincible, twice as strong, for twelve seconds.
+   elements, take or give back bending by touch, calm creatures with spiritbending and fly inside the elemental
+   sphere. Only the Avatar has the **Avatar State**: near death at first, and at will once the guru has taught you.
+8. **The Southern Air Temple.** On the mountain tops: **sky bison** calves to tame with wheat, raise, saddle and fly
+   with up to six riders; **Guru Pathik**, who teaches the seven chakras; flying lemurs; gliders and saddles in its
+   chests.
+9. **Chakras.** After the guru's lesson, press **M** to meditate (faster on a **Meditation Point**, six times as fast
+   before the guru). Each minute opens a chakra, each a little gift; the seventh sends your spirit to the cosmic plane,
+   where you walk a path of light to your own vast self. For the Avatar, all seven open the **Avatar State at will**:
+   invincible, twice as strong, in and out as he chooses.
 
 Every effect is drawn after the series itself (see `docs/SHOW-REFERENCE.md`), and bending hits every creature in
 its way, pets and villagers included (`general.hurtEverything`).
@@ -133,13 +137,15 @@ Enlightened בנוי על אותה מסגרת כמו [Enhanced](https://github.c
 5. **פריטים.** **נאד המים** (4 עור, חוט) נושא עשר מנות מים; קליק ימני על מים ממלא אותו. **דאון האוויר** (2 עור,
    מוט בריז, 2 מקלות) נפתח כשכשף אוויר נופל; צובעים אותו בשולחן עבודה.
 6. **האווטאר.** קושרים את ארבע המגילות סביב כוכב נת'ר ל**מגילת האווטאר** וקוראים אותה: מכשפים את כל ארבעת
-   היסודות, נכנסים למצב האווטאר מרצון כשכל שבע הצ'אקרות פתוחות, לוקחים או מחזירים כישוף במגע, מרגיעים יצורים
-   בכשפות רוח וטסים בתוך כדור היסודות.
+   היסודות, לוקחים או מחזירים כישוף במגע, מרגיעים יצורים בכשפות רוח וטסים בתוך כדור היסודות. רק לאווטאר יש את
+   **מצב האווטאר**: בהתחלה רק על סף מוות, ומרצון אחרי השיעור של הגורו.
+7. **מקדש האוויר הדרומי.** על פסגות ההרים: גורי **ביזון אוויר** שמאלפים בחיטה, מגדלים, שמים עליהם אוכף וטסים עם עד
+   שישה רוכבים; **גורו פאתיק**, שמלמד את שבע הצ'אקרות; למורים מעופפים; דאונים ואוכפים בתיבות.
 6. **קומבואים וצעדים.** מטילים את היכולות הנכונות בתוך שלוש שניות זו מזו לקומבו (כיפת אדמה, גל קרח, סחרור אש,
    טוויסטר...); לחיצה כפולה על כיוון מזניקה אתכם בצעד של היסוד שלכם.
-7. **צ'אקרות.** **M** למדיטציה (מהר יותר על **נקודת מדיטציה**: צבע טורקיז, נייר, צבע טורקיז מעל שלושה לוחות אבן
-   חלקה). כל דקה פותחת צ'אקרה; כשכל השבע פתוחות, עוד נשימה מכניסה אתכם ל**מצב האווטאר**: בלתי פגיעים, חזקים פי
-   שניים, לשתים עשרה שניות.
+8. **צ'אקרות.** אחרי השיעור של הגורו, **M** למדיטציה (מהר יותר על **נקודת מדיטציה**, פי שישה ליד הגורו). כל דקה
+   פותחת צ'אקרה, כל אחת מתנה קטנה; השביעית שולחת את הרוח למישור הקוסמי, שם הולכים בשביל של אור אל עצמכם, ענקיים.
+   לאווטאר, כל השבע פותחות את **מצב האווטאר מרצון**: בלתי פגיע, חזק פי שניים, נכנס ויוצא כרצונו.
 
 המדריך המלא (כל יכולת והמספרים שלה, הנראויות, הפקודות, כל אפשרות שרת) נמצא ב[ויקי](../../wiki), באנגלית ובעברית.
 

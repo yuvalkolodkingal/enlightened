@@ -145,7 +145,8 @@ public enum Combos {
 
     private void perform(ServerPlayer p, BendingData data) {
         ServerLevel level = p.serverLevel();
-        int color = Benders.color(p);
+        // The Avatar's combos take their element's own colour (his fire combos are fire, not his light).
+        int color = data.element() == Element.AVATAR ? element.color : Benders.color(p);
         Vec3 facing = Shots.facing(p);
         int strength = Math.max(1, Math.min(3, 1 + Mastery.strength(p) / 6));
         switch (this) {

@@ -92,7 +92,29 @@ public final class WaterBending {
         if (!data.has(Ability.OCTOPUS_FORM) || !data.on(Ability.OCTOPUS_FORM)) {
             return 0F;
         }
-        return 0.1F + 0.1F * data.level(Ability.OCTOPUS_FORM);
+        return 0.1F + 0.1F * data.level(Ability.OCTOPUS_FORM) + (octopusBody(data) ? 0.15F : 0F);
+    }
+
+    /**
+     * Whether the octopus form wraps his whole body in water: the form mastered (level 3) and not kept to the arms by
+     * his choice (the Change Look key while the form is up switches between the two).
+     */
+    public static boolean octopusBody(BendingData data) {
+        return data.has(Ability.OCTOPUS_FORM) && data.on(Ability.OCTOPUS_FORM) && data.level(Ability.OCTOPUS_FORM) >= 3 && !data.octopusArms();
+    }
+
+    /** The Change Look key while a mastered octopus form is up: body and arms, or the arms alone. Returns whether it switched. */
+    public static boolean switchOctopus(ServerPlayer p) {
+        BendingData data = Benders.get(p);
+        if (!data.has(Ability.OCTOPUS_FORM) || !data.on(Ability.OCTOPUS_FORM) || data.level(Ability.OCTOPUS_FORM) < 3) {
+            return false;
+        }
+        data.setOctopusArms(!data.octopusArms());
+        p.displayClientMessage(net.minecraft.network.chat.Component.translatable(data.octopusArms()
+                ? "message.enlightened.water.octopus_arms" : "message.enlightened.water.octopus_body"), true);
+        p.level().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.OCTOPUS.get(), net.minecraft.sounds.SoundSource.PLAYERS, 0.8F, data.octopusArms() ? 1.2F : 0.9F);
+        Benders.syncIfDirty(p);
+        return true;
     }
 
     /** The octopus form strikes back at whoever the bender hits (and whoever is next to them). */
@@ -285,6 +307,10 @@ public final class WaterBending {
             if (p.tickCount % 10 == 0) {
                 tentacles(c.level(), p, 1);
             }
+            // Wrapped in water, nothing burns on him.
+            if (octopusBody(c.data) && p.isOnFire()) {
+                p.clearFire();
+            }
             // The arms strike by themselves whoever comes within their reach, and swat shots and arrows aside.
             if (p.tickCount % 15 == 0) {
                 float damage = 1.0F + c.level;
@@ -349,7 +375,7 @@ public final class WaterBending {
                 c.sound(ModSounds.SPOUT.get(), 0.8F, 0.7F);
                 return;
             }
-            if (waterBelow(c.level(), c.player, 3) == null) {
+            if (Double.isNaN(com.kolodkingal.enlightened.bending.Spouts.base(c.level(), c.player, 3, true))) {
                 c.refuse("message.enlightened.water.no_water_below");
                 return;
             }
@@ -363,20 +389,17 @@ public final class WaterBending {
                 return;
             }
             ServerPlayer p = c.player;
-            int height = c.by(6, 12, 20);
-            BlockPos water = waterBelow(c.level(), p, height + 2);
-            if (water == null || !c.fed()) {
+            int height = com.kolodkingal.enlightened.bending.Spouts.height(true, c.level);
+            // Water or ice under him: the column rises off a frozen lake as well as the sea. The ride itself is driven
+            // on his client (Spouts.drive).
+            double base = com.kolodkingal.enlightened.bending.Spouts.base(c.level(), p, height + 2, true);
+            if (Double.isNaN(base) || !c.fed()) {
                 c.setOn(false);
                 p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, false, false, false));
                 return;
             }
-            double top = water.getY() + 1 + height;
+            BlockPos water = BlockPos.containing(p.getX(), base - 1.0, p.getZ());
             double y = p.getY();
-            Vec3 v = p.getDeltaMovement();
-            double wanted = p.isShiftKeyDown() ? Math.max(-0.3, (water.getY() + 1 - y) * 0.1) : (top - y) * 0.12;
-            wanted = Math.max(-0.5, Math.min(0.6, wanted));
-            p.setDeltaMovement(v.x, wanted, v.z);
-            p.hurtMarked = true;
             p.fallDistance = 0;
             // The column of water: a spiral of splashes from the surface to his feet, and whoever stands in it is thrown.
             double column = y - water.getY();

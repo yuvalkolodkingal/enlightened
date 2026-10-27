@@ -501,23 +501,20 @@ public final class EnlightenedTests {
         });
     }
 
-    @GameTest(template = ARENA, timeoutTicks = 140)
-    public static void meditationOpensTheLastChakraAndTheAvatarStateShields(GameTestHelper helper) {
+    @GameTest(template = ARENA, timeoutTicks = 100)
+    public static void theMasterAvatarMeditatesIntoTheAvatarStateAndItShields(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer player = f.player(10, FLOOR, 8);
-        BendingData data = f.bender(player, Element.FIRE, Ability.FIRE_BALL, 3, Ability.FIRE_FIST, 3, Ability.FIRE_WHIP, 3);
-        check(data.spent() >= com.kolodkingal.enlightened.bending.Chakras.pointsFor(7), "enough points are spent for the seventh chakra");
-        data.setChakras(6);
-        data.setMeditation(com.kolodkingal.enlightened.bending.Chakras.ticksPerChakra() - 2);
+        BendingData data = f.bender(player, Element.AVATAR, Ability.FIRE_BALL, 3, Ability.ROCK_THROW, 3);
+        data.setGuruTaught(true);
+        data.setChakras(7);
         // The awakening swings the arm, and a swing ends a meditation: so it begins once the arm is still.
         helper.runAtTickTime(10, () -> {
             com.kolodkingal.enlightened.bending.Chakras.meditate(player, true);
-            check(data.meditating(), "the bender meditates");
+            check(data.meditating(), "the Avatar meditates");
         });
-        helper.runAtTickTime(16, () -> check(data.chakras() == 7, "the seventh chakra opened by meditation (meditating " + data.meditating()
-                + ", progress " + data.meditation() + ", swinging " + player.swinging + ")"));
         // Still meditating with all seven open: the Avatar State comes after a breath.
-        helper.runAtTickTime(50, () -> {
+        helper.runAtTickTime(40, () -> {
             check(data.avatar(player.level().getGameTime()), "the Avatar State was entered");
             float health = player.getHealth();
             player.hurt(player.damageSources().generic(), 6.0F);

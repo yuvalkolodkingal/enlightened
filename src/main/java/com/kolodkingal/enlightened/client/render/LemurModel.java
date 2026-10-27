@@ -56,11 +56,12 @@ public class LemurModel extends HierarchicalModel<FlyingLemurEntity> {
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
                 .texOffs(0, 0).addBox(-3.0F, -2.0F, -4.0F, 6.0F, 4.0F, 8.0F), PartPose.offset(0.0F, 19.0F, 0.0F));
         PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
-                .texOffs(0, 13).addBox(-2.0F, -3.0F, -4.0F, 4.0F, 4.0F, 4.0F), PartPose.offset(0.0F, -1.0F, -3.0F));
+                .texOffs(0, 13).addBox(-3.0F, -4.0F, -4.0F, 6.0F, 5.0F, 4.0F), PartPose.offset(0.0F, -1.0F, -3.0F));
+        // Momo's great bat ears, half as tall again as his head, standing out to the sides.
         head.addOrReplaceChild("left_ear", CubeListBuilder.create()
-                .texOffs(16, 13).addBox(0.0F, -3.0F, 0.0F, 3.0F, 3.0F, 1.0F), PartPose.offsetAndRotation(1.0F, -2.5F, -1.5F, 0.0F, 0.0F, 0.35F));
+                .texOffs(28, 0).addBox(0.0F, -6.0F, -0.5F, 4.0F, 6.0F, 1.0F), PartPose.offsetAndRotation(2.0F, -3.5F, -1.5F, 0.0F, 0.0F, 0.35F));
         head.addOrReplaceChild("right_ear", CubeListBuilder.create()
-                .texOffs(24, 13).addBox(-3.0F, -3.0F, 0.0F, 3.0F, 3.0F, 1.0F), PartPose.offsetAndRotation(-1.0F, -2.5F, -1.5F, 0.0F, 0.0F, -0.35F));
+                .texOffs(40, 0).addBox(-4.0F, -6.0F, -0.5F, 4.0F, 6.0F, 1.0F), PartPose.offsetAndRotation(-2.0F, -3.5F, -1.5F, 0.0F, 0.0F, -0.35F));
         body.addOrReplaceChild("left_wing", CubeListBuilder.create()
                 .texOffs(0, 22).addBox(0.0F, 0.0F, -3.0F, 8.0F, 1.0F, 6.0F), PartPose.offset(3.0F, -1.5F, 0.0F));
         body.addOrReplaceChild("right_wing", CubeListBuilder.create()
@@ -103,8 +104,8 @@ public class LemurModel extends HierarchicalModel<FlyingLemurEntity> {
         // The ears twitch, and flatten back in the wind of a fast flight.
         float twitch = lemur.earTwitch * Mth.sin(ageInTicks * 1.2F) * 0.3F;
         float flatten = 0.5F * fly * flapSpeed;
-        leftEar.zRot = 0.35F + twitch + 0.1F * sit;
-        rightEar.zRot = -0.35F - twitch - 0.1F * sit;
+        leftEar.zRot = 0.55F + twitch + 0.1F * sit;
+        rightEar.zRot = -0.55F - twitch - 0.1F * sit;
         leftEar.xRot = flatten;
         rightEar.xRot = flatten;
 

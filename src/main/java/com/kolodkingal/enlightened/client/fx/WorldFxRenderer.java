@@ -190,6 +190,9 @@ public final class WorldFxRenderer {
         }
         if ((w = stance(st, data, Stance.OCTOPUS, data.has(Ability.OCTOPUS_FORM) && data.on(Ability.OCTOPUS_FORM))) > 0.01F) {
             octopus(p, w);
+            if (com.kolodkingal.enlightened.water.WaterBending.octopusBody(data)) {
+                octopusBody(p, w);
+            }
         }
         if (data.has(Ability.WATER_SPOUT) && data.on(Ability.WATER_SPOUT)) {
             spout(p, data, 1.0F);
@@ -333,39 +336,100 @@ public final class WorldFxRenderer {
     /** The air spout: a column of spinning wind from the ground to the feet. */
     private static void airSpout(AbstractClientPlayer p) {
         Vec3 feet = p.getPosition(partial);
-        BlockPos.MutableBlockPos pos = BlockPos.containing(feet).mutable();
-        int ground = Integer.MIN_VALUE;
-        for (int i = 0; i < 20; i++) {
-            if (level.getBlockState(pos).isSolid()) {
-                ground = pos.getY() + 1;
-                break;
-            }
-            pos.move(0, -1, 0);
-        }
-        if (ground == Integer.MIN_VALUE || feet.y - ground < 0.3) {
+        double base = com.kolodkingal.enlightened.bending.Spouts.base(level, p, 20, false);
+        if (Double.isNaN(base) || feet.y - base < 0.3) {
             return;
         }
-        double bottom = ground;
+        double bottom = base;
         VertexConsumer light = vc(FxGeometry.light());
         List<Vec3> pts = new ArrayList<>();
         int n = Math.max(4, (int) ((feet.y - bottom) * 2));
         for (int k = 0; k <= n; k++) {
             float t = (float) k / n;
-            pts.add(rel(new Vec3(feet.x, bottom + (feet.y - bottom) * t, feet.z)));
+            double a = age * 0.3 + t * 6;
+            pts.add(rel(new Vec3(feet.x + Math.cos(a) * 0.15 * (1 - t), bottom + (feet.y - bottom) * t, feet.z + Math.sin(a) * 0.15 * (1 - t))));
         }
-        FxGeometry.tube(pose, light, pts, 0.9F, 0.45F, 12, 0, 1, 1, 0, AIR[0], AIR[1], AIR[2], 0.22F, 0.30F, FULL, false);
-        for (int i = 0; i < 4; i++) {
+        // The twisting column, wide at the ground and narrowing to the feet, a paler core inside it.
+        FxGeometry.tube(pose, light, pts, 1.1F, 0.3F, 12, 0, 1, 1, 0, AIR[0], AIR[1], AIR[2], 0.20F, 0.28F, FULL, false);
+        FxGeometry.tube(pose, light, pts, 0.45F, 0.15F, 8, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.18F, 0.25F, FULL, false);
+        for (int i = 0; i < 3; i++) {
             List<Vec3> rope = new ArrayList<>();
             for (int k = 0; k <= n * 2; k++) {
                 float t = (float) k / (n * 2);
                 double y = bottom + (feet.y - bottom) * t;
-                double a = i * 1.57 - age * 0.45 + t * 10;
-                double r = 0.95 - 0.45 * t;
+                double a = i * 2.09 - age * 0.45 + t * 10;
+                double r = 1.05 - 0.75 * t;
                 rope.add(rel(new Vec3(feet.x + Math.cos(a) * r, y, feet.z + Math.sin(a) * r)));
             }
-            FxGeometry.ribbon(pose, light, rope, 0.12F, 0.05F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.35F, 0.5F, FULL, false);
+            FxGeometry.ribbon(pose, light, rope, 0.12F, 0.04F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.35F, 0.5F, FULL, false);
         }
-        FxGeometry.disc(pose, light, rel(new Vec3(feet.x, bottom + 0.05, feet.z)), 0.6F, 1.8F, 20, 0, 1, AIR[0], AIR[1], AIR[2], 0.25F, 0.0F, FULL, false, age * 0.4F);
+        spoutWhirl(feet, bottom, light, false, 0, 1, 1.0F, 1.0F, 1.0F, 0.55F, FULL, 1.0F);
+        spoutWhirl(feet, bottom, light, false, 0, 1, AIR[0], AIR[1], AIR[2], 0.25F, FULL, 2.2F);
+        // The dust and cloud it stirs at the ground.
+        net.minecraft.util.RandomSource rnd = net.minecraft.util.RandomSource.create(now / 3);
+        VertexConsumer snow = vc(FxGeometry.snow());
+        for (int i = 0; i < 8; i++) {
+            double ang = rnd.nextDouble() * Math.PI * 2 + age * 0.1;
+            double r = 0.8 + rnd.nextDouble() * 1.8;
+            FxGeometry.billboard(pose, snow, rel(new Vec3(feet.x + Math.cos(ang) * r, bottom + 0.2 + rnd.nextDouble() * 0.6, feet.z + Math.sin(ang) * r)),
+                    0.4F + rnd.nextFloat() * 0.5F, 0, 1, 0.95F, 0.97F, 1.0F, 0.35F, FULL, true, rnd.nextFloat() * 6);
+        }
+        FxGeometry.disc(pose, light, rel(new Vec3(feet.x, bottom + 0.05, feet.z)), 0.6F, 2.4F, 24, 0, 1, AIR[0], AIR[1], AIR[2], 0.25F, 0.0F, FULL, false, age * 0.4F);
+    }
+
+    /**
+     * What every spout of the show carries, after the image the player sent: a wide whirl spiralling out over the
+     * ground at its foot, broad streamers sweeping round the column on its way up, and tilted comet rings circling the
+     * rider at his shins, his waist and his head, each turning its own way. Drawn in the element's colour and
+     * texture; {@code width} scales every band (a thin bright pass over a broad soft one gives the arcs a rim).
+     */
+    private static void spoutWhirl(Vec3 feet, double bottom, VertexConsumer vc, boolean textured, float v0, float v1,
+                                   float r, float g, float b, float a, int lit, float width) {
+        float height = (float) (feet.y - bottom);
+        float spin = age * 0.22F;
+        // The whirl at the foot: three arms spiralling outward over the surface.
+        for (int i = 0; i < 3; i++) {
+            List<Vec3> arm = new ArrayList<>();
+            for (int k = 0; k <= 16; k++) {
+                float t = k / 16.0F;
+                double ang = i * 2.094 + spin * 1.3 + t * 3.6;
+                double rad = 0.5 + t * 2.4;
+                arm.add(rel(new Vec3(feet.x + Math.cos(ang) * rad, bottom + 0.1 + t * 0.3, feet.z + Math.sin(ang) * rad)));
+            }
+            FxGeometry.ribbon(pose, vc, arm, 0.22F * width, 0.05F * width, v0, v1, 1, spin * 0.1F, r, g, b, a, 0.0F, lit, textured);
+        }
+        // Streamers sweeping wide round the column on its way up, every other one the other way.
+        int bands = Math.max(1, Math.round(height / 2.5F));
+        for (int j = 0; j < bands; j++) {
+            double y = bottom + height * (j + 0.6) / (bands + 0.6);
+            double radius = 1.3 + 0.6 * ((j + 1) % 2) + 0.15 * Math.sin(spin + j);
+            arc(vc, feet.x, y, feet.z, radius, 0.35, (j % 2 == 0 ? spin * 1.5 : -spin * 1.2) + j * 1.7, j % 2 == 0, 4.0, 0.16F * width, textured, v0, v1, r, g, b, a * 0.9F, lit);
+        }
+        // The rings round the rider: tilted comets at the shins, the waist and the head.
+        double[] hs = {0.15, 0.95, 1.8};
+        double[] rs = {0.95, 1.25, 0.85};
+        for (int j = 0; j < 3; j++) {
+            boolean ccw = j != 1;
+            double start = (ccw ? spin * (2.2 - j * 0.3) : -spin * 2.0) + j * 2.1;
+            arc(vc, feet.x, feet.y + hs[j], feet.z, rs[j], 0.28, start, ccw, 4.4, 0.13F * width, textured, v0, v1, r, g, b, a, lit);
+        }
+    }
+
+    /**
+     * A comet arc round a vertical axis: the head at angle {@code start}, the tail trailing {@code span} radians
+     * behind it and fading out; tilted, so it rises {@code tilt} on one side and dips on the other.
+     */
+    private static void arc(VertexConsumer vc, double cx, double cy, double cz, double radius, double tilt, double start, boolean ccw, double span,
+                            float width, boolean textured, float v0, float v1, float r, float g, float b, float a, int lit) {
+        List<Vec3> pts = new ArrayList<>();
+        int segs = 20;
+        for (int k = 0; k <= segs; k++) {
+            double t = (double) k / segs;
+            double ang = start + (ccw ? -t : t) * span;
+            double y = cy + Math.sin(ang - start * 0.3) * tilt;
+            pts.add(rel(new Vec3(cx + Math.cos(ang) * radius, y, cz + Math.sin(ang) * radius)));
+        }
+        FxGeometry.ribbon(pose, vc, pts, width, width * 0.15F, v0, v1, 1, 0, r, g, b, a, 0.0F, lit, textured);
     }
 
     /** The tunnel: dust streaming back past the digger. */
@@ -714,26 +778,60 @@ public final class WorldFxRenderer {
         FxGeometry.ringBand(pose, water, rel(base.add(0, -0.25, 0)), 0.5F, 0.4F, 16, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.6F * w, lit, true, age * 0.2F, 0.2F);
     }
 
+    /**
+     * The mastered octopus form wraps the whole body in water, as Katara's does in the show: a great bulb of flowing
+     * water over the bender from the ground to above the head, widest at the chest, the bender seen through it, the
+     * arms reaching out from its foot.
+     */
+    private static void octopusBody(AbstractClientPlayer p, float w) {
+        Vec3 feet = p.getPosition(partial);
+        float tall = p.getBbHeight() + 0.7F;
+        float[] fr = waterFrame();
+        int lit = lightAt(feet.add(0, 1, 0));
+        VertexConsumer flow = vc(FxGeometry.flow());
+        VertexConsumer water = vc(FxGeometry.water());
+        VertexConsumer light = vc(FxGeometry.light());
+        int n = 14;
+        List<Vec3> spine = new ArrayList<>();
+        float[] radii = new float[n + 1];
+        for (int k = 0; k <= n; k++) {
+            float t = (float) k / n;
+            double sway = Math.sin(age * 0.12 + t * 3) * 0.05;
+            spine.add(rel(feet.add(sway, -0.1 + tall * t, -sway)));
+            radii[k] = shellRadius(t, k);
+        }
+        for (int k = 0; k < n; k++) {
+            FxGeometry.tube(pose, flow, spine.subList(k, k + 2), radii[k], radii[k + 1], 18, fr[0], fr[1], 0.5F, -age * 0.05F + (float) k / n,
+                    WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.42F * w, 0.42F * w, lit, true);
+        }
+        // A bright skin where the light catches the water, and currents running up the bulb.
+        FxGeometry.ribbon(pose, light, spine.subList(0, n), 2.2F, 1.0F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.08F * w, 0.12F * w, FULL, false);
+        for (int i = 0; i < 3; i++) {
+            float t = (age * 0.015F + i / 3.0F) % 0.9F;
+            float r = shellRadius(t, 0) + 0.03F;
+            FxGeometry.ringBand(pose, light, rel(feet.add(0, -0.1 + tall * t, 0)), r, 0.06F, 20, 0, 1, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.3F * w, FULL, false, age * 0.3F, 0.3F);
+        }
+        // The pool it stands in.
+        FxGeometry.disc(pose, water, rel(feet.add(0, 0.03, 0)), 0.0F, 1.5F, 24, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.6F * w, 0.0F, lit, true, age * 0.1F);
+    }
+
+    /** The radius of the octopus bulb at height {@code t} (0 the ground, 1 its crown): widest at the chest, rippling. */
+    private static float shellRadius(float t, int k) {
+        double e = (t - 0.42) / 0.58;
+        float shape = (float) (1.15 * Math.sqrt(Math.max(0.0, 1.0 - e * e)));
+        return Math.max(0.02F, shape + 0.04F * Mth.sin(age * 0.22F + k * 1.3F) * shape);
+    }
+
     /** The water spout: a column of water from the surface to the feet, spiralling up, with a crown of spray. */
     private static void spout(AbstractClientPlayer p, BendingData data, float girth) {
         Vec3 feet = p.getPosition(partial);
-        BlockPos.MutableBlockPos pos = BlockPos.containing(feet).mutable();
-        int surface = Integer.MIN_VALUE;
-        for (int i = 0; i < 26; i++) {
-            if (level.getFluidState(pos).is(FluidTags.WATER)) {
-                surface = pos.getY();
-                break;
-            }
-            if (level.getBlockState(pos).isSolid()) {
-                return;
-            }
-            pos.move(0, -1, 0);
-        }
-        if (surface == Integer.MIN_VALUE) {
+        // Water or ice under him (a waterbender raises his spout off a frozen lake too).
+        double base = com.kolodkingal.enlightened.bending.Spouts.base(level, p, 26, true);
+        if (Double.isNaN(base)) {
             return;
         }
         double top = feet.y + 0.1;
-        double bottom = surface + 1.0;
+        double bottom = base;
         if (top - bottom < 0.3) {
             return;
         }
@@ -748,34 +846,39 @@ public final class WorldFxRenderer {
             float t = (float) k / n;
             double y = bottom + (top - bottom) * t;
             double a = age * 0.25 + t * 5;
-            pts.add(rel(new Vec3(feet.x + Math.cos(a) * 0.12 * (1 - t), y, feet.z + Math.sin(a) * 0.12 * (1 - t))));
+            pts.add(rel(new Vec3(feet.x + Math.cos(a) * 0.15 * (1 - t), y, feet.z + Math.sin(a) * 0.15 * (1 - t))));
         }
         float height = (float) (top - bottom);
-        FxGeometry.tube(pose, flow, pts, 0.85F * girth, 0.5F * girth, 14, fr[0], fr[1], height * 0.5F, -age * 0.08F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F, 0.8F, lit, true);
-        // Three ropes of foam winding up the column.
+        // The twisting body of water, wide at the surface and narrowing to the feet.
+        FxGeometry.tube(pose, flow, pts, 1.05F * girth, 0.35F * girth, 14, fr[0], fr[1], height * 0.5F, -age * 0.08F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F, 0.8F, lit, true);
+        FxGeometry.ribbon(pose, light, pts, 1.6F * girth, 0.5F * girth, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.12F, 0.18F, FULL, false);
+        // Ropes of foam winding up the column.
         for (int i = 0; i < 3; i++) {
             List<Vec3> rope = new ArrayList<>();
             for (int k = 0; k <= n * 2; k++) {
                 float t = (float) k / (n * 2);
                 double y = bottom + (top - bottom) * t;
                 double a = i * 2.1 - age * 0.3 + t * 9;
-                double r = 0.78 - 0.3 * t;
+                double r = (0.95 - 0.6 * t) * girth;
                 rope.add(rel(new Vec3(feet.x + Math.cos(a) * r, y, feet.z + Math.sin(a) * r)));
             }
             FxGeometry.ribbon(pose, light, rope, 0.10F, 0.05F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.35F, 0.45F, FULL, false);
         }
+        // The whirl, the streamers and the rings round the rider: water with a bright foaming rim.
+        spoutWhirl(feet, bottom, water, true, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.85F, lit, 2.0F * girth);
+        spoutWhirl(feet, bottom, light, false, 0, 1, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.45F, FULL, 0.8F * girth);
         // Chunks of foam flung off the twisting body, as in the show, and droplets round the crown.
         net.minecraft.util.RandomSource rnd = net.minecraft.util.RandomSource.create(now / 3);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 12; i++) {
             double ang = rnd.nextDouble() * Math.PI * 2;
             double h = bottom + rnd.nextDouble() * height;
-            double r = 0.85 + rnd.nextDouble() * 0.5;
+            double r = 0.9 + rnd.nextDouble() * 0.9;
             FxGeometry.billboard(pose, vc(FxGeometry.snow()), rel(new Vec3(feet.x + Math.cos(ang) * r, h, feet.z + Math.sin(ang) * r)), 0.14F + rnd.nextFloat() * 0.22F, 0, 1, 0.95F, 0.98F, 1.0F, 0.85F, lit, true, rnd.nextFloat() * 6);
         }
-        // The crown of spray at the surface, and the swell under the feet.
+        // The swell at the surface, and the cup of water under the feet.
         Vec3 foot = rel(new Vec3(feet.x, bottom + 0.05, feet.z));
-        FxGeometry.disc(pose, water, foot, 0.5F, 1.7F, 20, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.7F, 0.0F, lit, true, age * 0.1F);
-        FxGeometry.ringBand(pose, water, foot, 1.2F, 0.5F, 20, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.5F, lit, true, age * 0.4F, 0.5F);
+        FxGeometry.disc(pose, water, foot, 0.5F, 2.2F * girth, 24, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.7F, 0.0F, lit, true, age * 0.1F);
+        FxGeometry.ringBand(pose, water, foot, 1.3F * girth, 0.5F, 20, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.5F, lit, true, age * 0.4F, 0.5F);
         FxGeometry.disc(pose, water, rel(new Vec3(feet.x, top - 0.02, feet.z)), 0.2F, 0.8F, 16, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.8F, 0.3F, lit, true, -age * 0.2F);
     }
 
@@ -804,10 +907,56 @@ public final class WorldFxRenderer {
         if (!(held instanceof LivingEntity victim)) {
             return;
         }
-        Vec3 head = rel(victim.getEyePosition(partial));
+        // After Zaheer's suffocation of the Earth Queen: a clear bubble of air round the whole head, a bright rim where
+        // the eye meets its edge, streaks of air whirling inside it as the breath is drawn out, a glint on the glass,
+        // and a thin stream from the mouth to the airbender's hand.
+        float radius = Math.max(0.42F, victim.getBbWidth() * 0.85F);
+        Vec3 headWorld = victim.getEyePosition(partial).add(0, -0.05, 0);
+        Vec3 head = rel(headWorld);
         VertexConsumer light = vc(FxGeometry.light());
-        Quaternionf rot = new Quaternionf().rotationY(age * 0.6F).mul(new Quaternionf().rotationX(0.5F));
-        FxGeometry.sphere(pose, light, head, 0.45F, 6, 12, 0, 1, AIR[0], AIR[1], AIR[2], 0.22F * w, 2.2F, age * 0.8F, FULL, false, rot);
+        Quaternionf rot = new Quaternionf().rotationY(age * 0.3F);
+        FxGeometry.sphere(pose, light, head, radius, 8, 16, 0, 1, 0.85F, 0.95F, 1.0F, 0.07F * w, 0.0F, 0.0F, FULL, false, rot);
+        FxGeometry.sphere(pose, light, head, radius * 0.97F, 8, 16, 0, 1, AIR[0], AIR[1], AIR[2], 0.10F * w, 3.0F, age * 0.6F, FULL, false, rot);
+        // The rim: a ring facing the camera.
+        Vec3 toCam = head.scale(-1.0).normalize();
+        Vec3 u = toCam.cross(new Vec3(0, 1, 0));
+        if (u.lengthSqr() < 1.0E-6) {
+            u = new Vec3(1, 0, 0);
+        }
+        u = u.normalize();
+        Vec3 v = u.cross(toCam).normalize();
+        List<Vec3> rim = new ArrayList<>();
+        for (int k = 0; k <= 32; k++) {
+            double a = Math.PI * 2 * k / 32;
+            rim.add(head.add(u.scale(Math.cos(a) * radius)).add(v.scale(Math.sin(a) * radius)));
+        }
+        FxGeometry.ribbon(pose, light, rim, 0.07F, 0.07F, 0, 1, 1, 0, 0.9F, 0.97F, 1.0F, 0.55F * w, 0.55F * w, FULL, false);
+        FxGeometry.ribbon(pose, light, rim, 0.22F, 0.22F, 0, 1, 1, 0, AIR[0], AIR[1], AIR[2], 0.15F * w, 0.15F * w, FULL, false);
+        // Streaks of air whirling inside, each on its own tilt.
+        for (int i = 0; i < 5; i++) {
+            Quaternionf tilt = new Quaternionf().rotationY(i * 1.26F + age * (0.35F + i * 0.05F)).mul(new Quaternionf().rotationX(0.5F + i * 0.45F));
+            List<Vec3> streak = new ArrayList<>();
+            for (int k = 0; k <= 14; k++) {
+                double a = k / 14.0 * 3.4;
+                org.joml.Vector3f pt = new org.joml.Vector3f((float) (Math.cos(a) * radius * 0.78), 0, (float) (Math.sin(a) * radius * 0.78));
+                tilt.transform(pt);
+                streak.add(head.add(pt.x, pt.y, pt.z));
+            }
+            FxGeometry.ribbon(pose, light, streak, 0.06F, 0.01F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.6F * w, 0.0F, FULL, false);
+        }
+        // The glint, up and to one side.
+        FxGeometry.billboard(pose, light, head.add(u.scale(-radius * 0.45)).add(v.scale(radius * 0.5)), radius * 0.35F, 0, 1, 1.0F, 1.0F, 1.0F, 0.5F * w, FULL, false, 0);
+        // The breath drawn out to the bender's hand.
+        Vec3 mouth = headWorld.add(victim.getLookAngle().scale(radius * 0.6)).add(0, -0.12, 0);
+        Vec3 h = hand(p, HumanoidArm.RIGHT);
+        List<Vec3> breath = new ArrayList<>();
+        for (int k = 0; k <= 16; k++) {
+            float t = k / 16.0F;
+            Vec3 at = mouth.lerp(h, t);
+            double wob = Math.sin(t * 9 - age * 0.6) * 0.06 * (1 - t);
+            breath.add(rel(at.add(0, wob, wob)));
+        }
+        FxGeometry.ribbon(pose, light, breath, 0.10F, 0.03F, 0, 1, 1, 0, AIR[0], AIR[1], AIR[2], 0.35F * w, 0.1F * w, FULL, false);
     }
 
     /** The fire fist: streams of fire from the fists (or the mouth, for a master's breath). */

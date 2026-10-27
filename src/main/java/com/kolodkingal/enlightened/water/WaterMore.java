@@ -52,6 +52,7 @@ public final class WaterMore {
         logic.put(Ability.WATER_SHIELD, new Shield());
         logic.put(Ability.WATER_BUBBLE, new Bubble());
         logic.put(Ability.WATER_VORTEX, new Vortex());
+        logic.put(Ability.FROST_WALK, new FrostWalk());
         logic.put(Ability.PHASE_CHANGE, new PhaseChange());
         logic.put(Ability.FROST_BREATH, new FrostBreath());
         logic.put(Ability.PLANT_TETHER, new Tether());
@@ -372,6 +373,67 @@ public final class WaterMore {
         public void clear() {
             SPINS.clear();
             RIDERS.clear();
+        }
+    }
+
+    /**
+     * Frost Walk, a toggle: the water freezes under the waterbender's feet as he walks, a disc of ice 2 / 3 / 4 blocks
+     * round him (radius by level), so he walks over lakes and the sea; the ice melts back a few seconds after he passed.
+     */
+    static final class FrostWalk implements AbilityLogic {
+        @Override
+        public void key(Cast c, boolean down) {
+            if (!down) {
+                return;
+            }
+            c.setOn(!c.on());
+            c.sound(net.minecraft.sounds.SoundEvents.GLASS_PLACE, 0.8F, c.on() ? 1.3F : 0.8F);
+            c.say(c.on() ? "message.enlightened.water.frost_walk_on" : "message.enlightened.water.frost_walk_off");
+        }
+
+        @Override
+        public void tick(Cast c) {
+            if (!c.on()) {
+                return;
+            }
+            ServerPlayer p = c.player;
+            if (p.isSpectator() || p.isInWater() && p.isUnderWater() || p.getAbilities().flying) {
+                return;
+            }
+            ServerLevel level = c.level();
+            int radius = 1 + c.level;
+            BlockPos center = BlockPos.containing(p.getX(), p.getY() - 0.2, p.getZ()).below(p.isInWater() ? 0 : 1);
+            // Standing in water up to the ankles (he just stepped in): freeze the surface he is in, and lift him onto it.
+            boolean wading = p.isInWater();
+            BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
+            int lasting = 120 + c.level * 40;
+            for (int dx = -radius; dx <= radius; dx++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    if (dx * dx + dz * dz > radius * radius + radius) {
+                        continue;
+                    }
+                    at.set(center.getX() + dx, center.getY(), center.getZ() + dz);
+                    net.minecraft.world.level.block.state.BlockState state = level.getBlockState(at);
+                    if (TempBlocks.isRaised(level, at) && state.is(Blocks.ICE)) {
+                        TempBlocks.extend(level, at, lasting);
+                        continue;
+                    }
+                    if (state.is(Blocks.WATER) && level.getFluidState(at).isSource() && level.getBlockState(at.above()).isAir()) {
+                        TempBlocks.place(p, level, at.immutable(), Blocks.ICE.defaultBlockState(), lasting);
+                    }
+                }
+            }
+            if (wading && level.getBlockState(center).is(Blocks.ICE)) {
+                p.teleportTo(p.getX(), center.getY() + 1.0, p.getZ());
+            }
+            if (p.tickCount % 6 == 0 && p.getDeltaMovement().horizontalDistanceSqr() > 0.001) {
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.SNOWFLAKE, p.getX(), p.getY() + 0.1, p.getZ(), 3, 0.4, 0.05, 0.4, 0.01);
+            }
+        }
+
+        @Override
+        public void end(Cast c) {
+            c.setOn(false);
         }
     }
 

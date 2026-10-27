@@ -39,7 +39,19 @@ public final class ModEntities {
             () -> EntityType.Builder.of(FlyingLemurEntity::new, MobCategory.CREATURE)
                     .sized(0.5F, 0.6F).clientTrackingRange(8).build("flying_lemur"));
 
+    /** Guru Pathik, who sits in the lotus at the Southern Air Temple and teaches the seven chakras. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.GuruPathikEntity>> GURU_PATHIK = ENTITIES.register("guru_pathik",
+            () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.GuruPathikEntity>of(com.kolodkingal.enlightened.entity.GuruPathikEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.2F).clientTrackingRange(10).build("guru_pathik"));
+
+    /** The sky bison of the Air Nomads: a calf at the Southern Air Temple, tamed with wheat, saddled and flown with up to six riders. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.SkyBisonEntity>> SKY_BISON = ENTITIES.register("sky_bison",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.SkyBisonEntity::new, MobCategory.CREATURE)
+                    .sized(3.0F, 2.5F).eyeHeight(2.0F).clientTrackingRange(12).build("sky_bison"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
+        event.put(SKY_BISON.get(), com.kolodkingal.enlightened.entity.SkyBisonEntity.createAttributes().build());
+        event.put(GURU_PATHIK.get(), com.kolodkingal.enlightened.entity.GuruPathikEntity.createAttributes().build());
         event.put(MEDITATING_BODY.get(), MeditatingBodyEntity.createAttributes().build());
         event.put(LEMUR.get(), FlyingLemurEntity.createAttributes().build());
     }

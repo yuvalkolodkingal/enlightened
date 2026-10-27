@@ -24,7 +24,7 @@ public final class Loadout {
             case WATER -> List.of(Ability.WATER_WHIP, Ability.ICE_KNIVES, Ability.WATER_HEALING, Ability.FREEZE,
                     Ability.OCTOPUS_FORM, Ability.WATER_ARMS, Ability.WATER_SPOUT, Ability.ICE_WALL,
                     Ability.BLOODBENDING, Ability.BLOOD_SUPPRESS, Ability.SNOW_THROW, Ability.WATER_SHIELD, Ability.WATER_BUBBLE,
-                    Ability.PHASE_CHANGE, Ability.FROST_BREATH, Ability.PLANT_TETHER, Ability.WATER_VORTEX);
+                    Ability.PHASE_CHANGE, Ability.FROST_BREATH, Ability.PLANT_TETHER, Ability.WATER_VORTEX, Ability.FROST_WALK);
             case FIRE -> List.of(Ability.FIRE_BALL, Ability.FIRE_FIST, Ability.FIRE_WHIP, Ability.FIRE_RING,
                     Ability.LIGHTNING, Ability.LIGHTNING_REDIRECT, Ability.FIRE_HEALING, Ability.FIRE_JET, Ability.FIRE_SHIELD,
                     Ability.WALL_OF_FIRE, Ability.BLAZE, Ability.COMBUSTION, Ability.HEAT_CONTROL, Ability.ILLUMINATION, Ability.PALM_FORGE);

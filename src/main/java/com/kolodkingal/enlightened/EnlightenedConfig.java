@@ -83,6 +83,7 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue AVATAR_STATE_SECONDS;
     public static final ModConfigSpec.IntValue AVATAR_STATE_COOLDOWN_SECONDS;
     public static final ModConfigSpec.BooleanValue AVATAR_STATE_ON_LOW_HEALTH;
+    public static final ModConfigSpec.BooleanValue GURU_REQUIRED;
     public static final ModConfigSpec.IntValue ENERGYBENDING_MINUTES;
     public static final ModConfigSpec.BooleanValue COMBOS;
     public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
@@ -180,8 +181,10 @@ public final class EnlightenedConfig {
         MEDITATION_XP_SECONDS = B.comment("Seconds of meditation that earn one experience (0: meditation earns none).").defineInRange("meditationXpSeconds", 15, 0, 3600);
         AVATAR_STATE_SECONDS = B.comment("How long the Avatar State lasts.").defineInRange("avatarStateSeconds", 12, 1, 600);
         AVATAR_STATE_COOLDOWN_SECONDS = B.comment("Seconds before the Avatar State can be entered again.").defineInRange("avatarStateCooldownSeconds", 300, 0, 86400);
-        AVATAR_STATE_ON_LOW_HEALTH = B.comment("Whether a bender with all seven chakras open enters the Avatar State by himself when near death.")
+        AVATAR_STATE_ON_LOW_HEALTH = B.comment("Whether the Avatar enters the Avatar State by himself when near death (before Guru Pathik's lessons, the only way in).")
                 .define("avatarStateOnLowHealth", true);
+        GURU_REQUIRED = B.comment("Whether the chakras open only for a bender Guru Pathik has taught (he meditates at the Southern Air Temple).")
+                .define("guruRequired", true);
         ENERGYBENDING_MINUTES = B.comment("Minutes the Avatar's energybending takes a bender's bending for.").defineInRange("energybendingMinutes", 30, 1, 100000);
         COMBOS = B.comment("Whether sequences of casts trigger the combos (Twister, Earth Dome, Ice Wave, Fire Spin...).").define("combos", true);
         COMBO_WINDOW_TICKS = B.comment("Ticks between the casts of a combo (60 = 3 s).").defineInRange("comboWindowTicks", 60, 10, 600);

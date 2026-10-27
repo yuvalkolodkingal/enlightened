@@ -92,7 +92,28 @@ public final class ClientEvents {
             if (data.has(com.kolodkingal.enlightened.bending.Ability.AIR_SCOOTER) && data.on(com.kolodkingal.enlightened.bending.Ability.AIR_SCOOTER)) {
                 com.kolodkingal.enlightened.air.AirBending.skimWater(mc.player);
             }
+            driveSpout(mc.player, data);
         }
+    }
+
+    /** The spouts are ridden on this client: up the column and where the movement keys point, fast. */
+    private static void driveSpout(LocalPlayer player, BendingData data) {
+        com.kolodkingal.enlightened.bending.Ability spout = data.has(com.kolodkingal.enlightened.bending.Ability.WATER_SPOUT) && data.on(com.kolodkingal.enlightened.bending.Ability.WATER_SPOUT)
+                ? com.kolodkingal.enlightened.bending.Ability.WATER_SPOUT
+                : data.has(com.kolodkingal.enlightened.bending.Ability.AIR_SPOUT) && data.on(com.kolodkingal.enlightened.bending.Ability.AIR_SPOUT)
+                ? com.kolodkingal.enlightened.bending.Ability.AIR_SPOUT : null;
+        if (spout == null || player.getAbilities().flying || player.isPassenger()) {
+            return;
+        }
+        boolean water = spout == com.kolodkingal.enlightened.bending.Ability.WATER_SPOUT;
+        int lvl = data.level(spout);
+        int height = com.kolodkingal.enlightened.bending.Spouts.height(water, lvl);
+        double base = com.kolodkingal.enlightened.bending.Spouts.base(player.level(), player, height + 2, water);
+        if (Double.isNaN(base)) {
+            return;
+        }
+        com.kolodkingal.enlightened.bending.Spouts.drive(player, player.input.forwardImpulse, player.input.leftImpulse, base, height,
+                com.kolodkingal.enlightened.bending.Spouts.speed(lvl));
     }
 
     private static void handleKeys(Minecraft mc, LocalPlayer player) {
@@ -187,6 +208,7 @@ public final class ClientEvents {
     public static void onRenderLevel(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             WorldFxRenderer.render(event);
+            com.kolodkingal.enlightened.client.cosmic.CosmicRenderer.render(event);
         }
     }
 

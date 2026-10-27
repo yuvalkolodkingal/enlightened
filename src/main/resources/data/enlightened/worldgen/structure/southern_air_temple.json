@@ -1,0 +1,7 @@
+{
+  "type": "enlightened:air_temple",
+  "biomes": "#enlightened:has_structure/southern_air_temple",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

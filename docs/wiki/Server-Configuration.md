@@ -52,7 +52,8 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 | `meditationXpSeconds` | 15 | Seconds of meditation that earn one experience (0: none). |
 | `avatarStateSeconds` | 12 | How long the Avatar State lasts. |
 | `avatarStateCooldownSeconds` | 300 | Seconds before it can be entered again. |
-| `avatarStateOnLowHealth` | true | Whether a bender with all seven chakras open enters it by himself when near death. |
+| `avatarStateOnLowHealth` | true | Whether the Avatar enters it by himself when near death (before Guru Pathik's lessons, the only way in). |
+| `guruRequired` | true | Whether the chakras open only for a bender Guru Pathik has taught. |
 | `combos` | true | Whether sequences of casts trigger the combos. |
 | `comboWindowTicks` | 60 | Ticks between the casts of a combo. |
 | `energybendingMinutes` | 30 | Minutes the Avatar's energybending takes a bender's bending for. |

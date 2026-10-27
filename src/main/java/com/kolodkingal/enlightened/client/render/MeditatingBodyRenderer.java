@@ -19,14 +19,14 @@ import java.util.UUID;
  * Draws the body an airbender left in meditation: his own skin (the look he wears, if he is in view; else the skin
  * of his account), sitting still with his arms at rest.
  */
-public class MeditatingBodyRenderer extends LivingEntityRenderer<MeditatingBodyEntity, MeditatingBodyModel> {
+public class MeditatingBodyRenderer extends LivingEntityRenderer<MeditatingBodyEntity, MeditatingBodyModel<MeditatingBodyEntity>> {
     public MeditatingBodyRenderer(EntityRendererProvider.Context context) {
-        super(context, new MeditatingBodyModel(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
+        super(context, new MeditatingBodyModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
     }
 
     @Override
     public void render(MeditatingBodyEntity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        MeditatingBodyModel model = getModel();
+        MeditatingBodyModel<MeditatingBodyEntity> model = getModel();
         model.hat.visible = true;
         model.jacket.visible = true;
         model.leftSleeve.visible = true;

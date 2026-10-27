@@ -406,7 +406,7 @@ def paint_body(p, s, slim):
 LOOKS = {
     # name: (slim, spec)
     'toph': (True, dict(garment='robe', skin=(236, 208, 176), eyes=(190, 205, 195), hair=(28, 26, 28), style='bun', shirt=(96, 136, 72), pants=(226, 212, 168),
-                        boots=(236, 208, 176), sleeves=(236, 208, 176), bare=True, belt=(60, 92, 50), trim=(224, 204, 124), headband=(60, 92, 50), headband_row=1)),
+                        boots=(236, 208, 176), sleeves=(70, 108, 58), belt=(60, 92, 50), trim=(224, 204, 124), headband=(60, 92, 50), headband_row=1)),
     'bumi': (False, dict(garment='robe', skin=(226, 190, 152), eyes=(70, 60, 50), hair=(236, 236, 236), style='wild', shirt=(74, 112, 62), pants=(58, 88, 50),
                          boots=(92, 70, 48), bare=True, belt=(204, 170, 80), trim=(204, 170, 80), beard=True, bigbeard=True)),
     'lin': (True, dict(garment='armor', skin=(230, 200, 170), eyes=(84, 102, 92), hair=(176, 176, 182), style='short', shirt=(60, 64, 60), pants=(52, 56, 52),
@@ -515,71 +515,196 @@ def paint_shell(name, base, crack):
 
 
 def paint_lemur():
-    """The flying lemur's 64x32 texture, drawn over its model's layout (LemurModel.createBodyLayer)."""
+    """Momo, the flying lemur: his 64x32 texture over his model's layout (LemurModel.createBodyLayer). White fur, huge
+    bat ears brown outside with a cream band inside and dark tips, big green eyes ringed in black, tan wing membranes,
+    a long white tail ringed in brown."""
     p = Painter('lemur', (64, 32))
-    cream = (236, 226, 200)
-    dark = (74, 70, 66)
-    mid = (150, 140, 128)
-    pink = (214, 150, 150)
+    white = (240, 238, 232)
+    brown = (128, 96, 70)
+    tan = (176, 144, 112)
+    dark = (40, 34, 30)
+    pink = (204, 150, 140)
     body = cube(0, 0, 6, 4, 8)
-    head = cube(0, 13, 4, 4, 4)
-    ears = (cube(16, 13, 3, 3, 1), cube(24, 13, 3, 3, 1))
+    head = cube(0, 13, 6, 5, 4)
+    ears = (cube(28, 0, 4, 6, 1), cube(40, 0, 4, 6, 1))
     wings = (cube(0, 22, 8, 1, 6), cube(28, 22, 8, 1, 6))
     tail = cube(34, 13, 1, 1, 6)
     legs = [cube(48 + 4 * i, 13, 1, 3, 1) for i in range(4)]
-    # Body: cream with a dark saddle down the back and dark flanks fading to cream underneath.
-    p.faces(body, cream, grain=0.05, vgrad=0.0)
-    p.fill(body['top'], dark, 0.06)
-    p.fill((body['top'][0] + 2, body['top'][1], 2, 8), shade(dark, 1.25), 0.06)
-    for name in ('left', 'right'):
-        x, y, w, h = body[name]
-        p.fill((x, y, w, 2), dark, 0.06, 0.95)
-        p.fill((x, y + 2, w, 1), mid, 0.06)
-    x, y, w, h = body['back']
-    p.fill((x, y, w, 2), dark, 0.06, 0.9)
-    # Head: dark cap and cheeks, a cream face with two big green eyes and a pink nose.
-    p.faces(head, cream, grain=0.05, vgrad=0.0)
-    p.fill(head['top'], dark, 0.06)
-    for name in ('left', 'right', 'back'):
-        x, y, w, h = head[name]
-        p.fill((x, y, w, 2), dark, 0.06, 0.9)
+    # Body: white all over, a faint grey down the spine.
+    p.faces(body, white, grain=0.04, vgrad=0.0)
+    x, y, w, h = body['top']
+    p.fill((x + 2, y, 2, h), shade(white, 0.9), 0.04)
+    # Head: white, the big green eyes ringed in black, a small dark nose.
+    p.faces(head, white, grain=0.04, vgrad=0.0)
     fx, fy = head['front'][0], head['front'][1]
-    p.fill((fx, fy, 4, 1), dark, 0.06)
-    p.dot(fx, fy + 1, (96, 176, 84))
-    p.dot(fx + 3, fy + 1, (96, 176, 84))
-    p.dot(fx, fy + 2, (40, 60, 40))
-    p.dot(fx + 3, fy + 2, (40, 60, 40))
-    p.dot(fx + 1, fy + 2, pink)
-    p.dot(fx + 2, fy + 2, pink)
-    # Ears: dark outside, pink inside, a dark rim.
+    green = (110, 190, 90)
+    for ex in (0, 4):
+        p.fill((fx + ex, fy, 2, 1), dark, 0.0)
+        p.fill((fx + ex, fy + 1, 2, 2), green, 0.03)
+        p.dot(fx + ex + (1 if ex == 0 else 0), fy + 2, dark)
+        p.fill((fx + ex, fy + 3, 2, 1), shade(white, 0.85), 0.0)
+    p.dot(fx + 2, fy + 3, dark)
+    p.dot(fx + 3, fy + 3, dark)
+    p.dot(fx + 2, fy + 4, pink)
+    p.dot(fx + 3, fy + 4, pink)
+    # Ears: brown outside with a cream band inside, dark tips.
     for ear in ears:
-        p.faces(ear, dark, grain=0.06, vgrad=0.0)
-        x, y, w, h = ear['front']
-        p.fill((x + 1, y + 1, 1, 1), pink, 0.0)
-        p.dot(x + 1, y, mid)
-    # Wings: dark membrane above with lighter ribs, pale below.
+        p.faces(ear, brown, grain=0.06, vgrad=0.0)
+        for face in ('front', 'back'):
+            x, y, w, h = ear[face]
+            p.fill((x + 1, y + 1, 2, h - 1), (226, 206, 170), 0.05)
+            p.fill((x, y, w, 1), dark, 0.03)
+    # Wings: tan membranes with brown ribs, paler below.
     for wing in wings:
-        p.faces(wing, dark, grain=0.06, vgrad=0.0)
+        p.faces(wing, tan, grain=0.06, vgrad=0.0)
         x, y, w, h = wing['top']
         for i in range(0, w, 2):
-            p.fill((x + i, y, 1, h), mid, 0.06, 0.9)
-        p.fill(wing['bottom'], shade(cream, 0.9), 0.05)
-        x, y, w, h = wing['bottom']
-        for i in range(0, w, 2):
-            p.fill((x + i, y, 1, h), mid, 0.06, 1.1)
-    # Tail: cream and dark rings.
+            p.fill((x + i, y, 1, h), brown, 0.06)
+        p.fill(wing['bottom'], shade(tan, 1.15), 0.05)
+    # Tail: white with brown rings.
     for name, rect in tail.items():
         x, y, w, h = rect
         for k in range(max(w, h)):
-            ring = dark if (k // 1) % 2 == 0 else cream
+            ring = brown if k % 2 == 0 else white
             if w >= h:
                 p.fill((x + k, y, 1, h), ring, 0.05)
             else:
                 p.fill((x, y + k, w, 1), ring, 0.05)
     for leg in legs:
-        p.faces(leg, dark, grain=0.06, vgrad=0.0)
-        p.rows(leg, shade(dark, 0.7), (2,))
+        p.faces(leg, white, grain=0.04, vgrad=0.0)
+        p.rows(leg, shade(white, 0.8), (2,))
     p.save(os.path.join(ENTITY, 'lemur.png'))
+
+def paint_pathik():
+    """Guru Pathik: an old, thin, bald hermit, brown from the sun, a long white beard down his chest, bushy white brows,
+    a saffron-orange loincloth and sash, bare legs and feet (64x64 on the wide player model, entity/guru_pathik.png)."""
+    p = Painter('guru_pathik')
+    skin = (128, 78, 44)
+    white = (238, 232, 216)
+    cloth = (214, 170, 60)
+    paint_head(p, skin, (60, 50, 44), brows=white)
+    paint_hair(p, white, 'bald')
+    # Deep lines of age on the brow and the cheeks.
+    fx, fy = HEAD['front'][0], HEAD['front'][1]
+    for i in range(1, 7):
+        p.dot(fx + i, fy + 1, skin, 0.86)
+    p.dot(fx + 1, fy + 5, skin, 0.85)
+    p.dot(fx + 6, fy + 5, skin, 0.85)
+    # Bushy white brows over the eyes.
+    for i in (0, 1, 2, 5, 6, 7):
+        p.dot(fx + i, fy + 2, white)
+    paint_beard(p, white, big=True, full=True)
+    paint_mustache(p, white)
+    for side in ('left', 'right'):
+        sx, sy = HEAD[side][0], HEAD[side][1]
+        for j in (5, 6, 7):
+            for i in range(2, 8) if side == 'right' else range(0, 6):
+                p.dot(sx + i, sy + j, white, 0.95)
+    # The bare body, thin: the ribs shaded.
+    p.faces(BODY, skin, grain=0.03)
+    bx, by = BODY['front'][0], BODY['front'][1]
+    for j in (4, 6):
+        for i in (1, 2, 5, 6):
+            p.dot(bx + i, by + j, skin, 0.88)
+    # The loincloth and the sash from the left shoulder.
+    p.rows(BODY, cloth, (8, 9, 10, 11), names=('front', 'left', 'right', 'back'))
+    p.rows(BODY, shade(cloth, 0.75), (8,), names=('front', 'left', 'right', 'back'))
+    for k in range(8):
+        p.dot(bx + 7 - k, by + k, shade(cloth, 0.9))
+    # The beard falls down the chest, narrowing to a point.
+    for j, (a, b) in enumerate([(0, 8), (1, 7), (1, 7), (2, 6), (2, 6), (3, 5), (3, 5), (3, 5), (3, 5)]):
+        for i in range(a, b):
+            p.dot(bx + i, by + j, white, 0.92 + 0.08 * ((i + j) % 2))
+    arms = (arm(40, 16, False), arm(32, 48, False))
+    for a in arms:
+        p.faces(a, skin, grain=0.03)
+    for leg in (R_LEG, L_LEG):
+        p.faces(leg, skin, grain=0.03)
+        p.rows(leg, cloth, (0, 1, 2), names=('front', 'left', 'right', 'back'))
+        p.rows(leg, shade(skin, 0.85), (11,))
+    p.save(os.path.join(ENTITY, 'guru_pathik.png'))
+
+
+def paint_bison():
+    """The sky bison (Appa): 256x256 over SkyBisonModel.createBodyLayer. White fur, the brown arrow from the tail over
+    the back to the brow, tan horns, a dark nose, small brown eyes, grey toes; the saddle brown leather with a red
+    blanket edge and a wooden rim."""
+    p = Painter('sky_bison', (256, 256))
+    fur = (238, 234, 222)
+    brown = (122, 82, 52)
+    body = cube(0, 0, 40, 26, 56)
+    head = cube(0, 82, 26, 20, 16)
+    bangs = cube(84, 82, 24, 5, 6)
+    nose = cube(84, 93, 12, 6, 3)
+    horn = cube(144, 82, 4, 4, 4)
+    tip = cube(160, 82, 3, 5, 3)
+    leg = cube(192, 0, 10, 12, 10)
+    tail = cube(114, 93, 28, 4, 22)
+    pad = cube(0, 128, 32, 4, 28)
+    rim_end = cube(120, 128, 32, 5, 2)
+    rim_side = cube(120, 136, 2, 5, 24)
+    for c in (body, head, bangs, leg, tail):
+        p.faces(c, fur, grain=0.06, vgrad=0.1)
+    # The tufts of a shaggy coat.
+    for c in (body, head, bangs, tail):
+        for face, rect in c.items():
+            p.speckle(rect, shade(fur, 0.88), 0.12)
+    # The belly a little grey.
+    p.fill(body['bottom'], shade(fur, 0.86), 0.06)
+    # The arrow down the back: the body's top face runs 40 across and 56 from front (row 0) to back.
+    x, y, w, h = body['top']
+    p.fill((x + 14, y + 10, 12, h - 10), brown, 0.07)
+    for k in range(10):
+        p.fill((x + 14 - (10 - k), y + k, 12 + 2 * (10 - k), 1), brown, 0.07)
+    # ...and over the brow: the head's top and the upper front, pointing down at the nose.
+    x, y, w, h = head['top']
+    p.fill((x + 8, y, 10, h), brown, 0.07)
+    x, y, w, h = head['front']
+    for k in range(7):
+        p.fill((x + 6 + k, y + k, w - 12 - 2 * k, 1), brown, 0.07)
+    x, y, w, h = bangs['top']
+    p.fill((x + 7, y, 10, h), brown, 0.07)
+    x, y, w, h = bangs['front']
+    p.fill((x + 7, y, 10, 2), brown, 0.07)
+    # The eyes: small and kind, low on the broad face.
+    x, y, w, h = head['front']
+    for ex in (5, 19):
+        p.fill((x + ex, y + 9, 3, 3), (60, 40, 28), 0.0)
+        p.dot(x + ex + 1, y + 9, (230, 230, 230))
+        p.fill((x + ex - 1, y + 8, 5, 1), shade(fur, 0.8), 0.0)
+    # The mouth.
+    p.fill((x + 8, y + 17, 10, 1), shade(fur, 0.6), 0.0)
+    # The nose: dark, with two nostrils.
+    p.faces(nose, (96, 86, 80), grain=0.05, vgrad=0.0)
+    x, y, w, h = nose['front']
+    p.fill((x + 2, y + 2, 2, 2), (40, 34, 30), 0.0)
+    p.fill((x + 8, y + 2, 2, 2), (40, 34, 30), 0.0)
+    # Horns: tan, darker at the tip.
+    p.faces(horn, (204, 176, 128), grain=0.05)
+    p.faces(tip, (176, 146, 100), grain=0.05)
+    # Legs: grey toes.
+    p.rows(leg, (120, 112, 104), (10, 11))
+    p.fill(leg['bottom'], (110, 100, 94), 0.05)
+    x, y, w, h = leg['front']
+    for k in (2, 5, 8):
+        p.fill((x + k, y + h - 2, 1, 2), (80, 74, 70), 0.0)
+    # The tail: white, the arrow's end in brown.
+    x, y, w, h = tail['top']
+    p.fill((x + 9, y, 10, 6), brown, 0.07)
+    # The saddle: leather, a red blanket edge, a wooden rim.
+    p.faces(pad, (128, 74, 42), grain=0.06, vgrad=0.0)
+    for face in ('front', 'back', 'left', 'right'):
+        x, y, w, h = pad[face]
+        p.fill((x, y, w, h), (176, 56, 40), 0.05)
+    x, y, w, h = pad['top']
+    p.fill((x, y, w, 2), (176, 56, 40), 0.05)
+    p.fill((x, y + h - 2, w, 2), (176, 56, 40), 0.05)
+    for c in (rim_end, rim_side):
+        p.faces(c, (196, 156, 92), grain=0.06, vgrad=0.0)
+        for face in ('front', 'back', 'left', 'right'):
+            x, y, w, h = c[face]
+            p.fill((x, y + h - 1, w, 1), (150, 110, 60), 0.05)
+    p.save(os.path.join(ENTITY, 'sky_bison.png'))
 
 
 def paint_items():
@@ -621,6 +746,8 @@ def main():
     paint_shell('earth_armor', (120, 105, 85), (80, 70, 55))
     paint_shell('metal_armor', (170, 175, 180), (110, 115, 120))
     paint_lemur()
+    paint_pathik()
+    paint_bison()
     paint_items()
     print('wrote', len(LOOKS), 'skins, 2 shells, the lemur, 7 item icons')
 

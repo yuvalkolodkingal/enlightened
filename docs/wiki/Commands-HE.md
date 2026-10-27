@@ -16,7 +16,9 @@
 | `/enlightened loadout <player> <slot 1-10> <ability\|none>` | שם יכולת על משבצת (משבצת 1 היא R, 2 היא התכופפות + R, 3 היא G, ... 10 היא התכופפות + N). |
 | `/enlightened tetherless <players> <true\|false>` | הופך כשף אוויר ל[משוחרר מכבלים](Airbending-HE#כשף-האוויר-המשוחרר-מכבלים), או מבטל (תעופה וחנק נשכחים). |
 | `/enlightened reset <players>` | לוקח בחזרה כל רמה מלבד של יכולת הפתיחה ומחזיר את הנקודות. |
-| `/enlightened avatar <players> <enter\|leave\|rest>` | נכנס או יוצא מ[מצב האווטאר](Chakras-and-the-Avatar-State-HE) (בלי קשר לצ'אקרות), או מסיים את המנוחה שלו. |
+| `/enlightened avatar <players> <enter\|leave\|rest>` | נכנס או יוצא מ[מצב האווטאר](Chakras-and-the-Avatar-State-HE) (בלי קשר לצ'אקרות), או מסיים את המנוחה שלו. אווטארים בלבד. |
+| `/enlightened guru <players> <taught\|untaught>` | מסמן שחקנים כתלמידים (או לא) של גורו פאתיק. |
+| `/enlightened temple [pos]` | בונה את [מקדש האוויר הדרומי](Southern-Air-Temple-HE) עם רצפת הטרסה במיקום (ברירת מחדל: היכן שאתה עומד). |
 | `/enlightened chakras <players> <0-7>` | קובע כמה [צ'אקרות](Chakras-and-the-Avatar-State-HE) פתוחות. |
 | `/enlightened info [player]` | יסוד, נקודות, ניסיון, נקודות שהושקעו, הריגות, וכל יכולת שנלמדה עם הרמה והמשבצת שלה. |
 

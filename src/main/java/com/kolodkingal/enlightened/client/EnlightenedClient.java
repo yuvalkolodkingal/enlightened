@@ -44,6 +44,8 @@ public final class EnlightenedClient {
         modBus.addListener(EnlightenedClient::onRenderers);
         modBus.addListener(EnlightenedClient::onLayerDefinitions);
         modBus.addListener(EnlightenedClient::onAddLayers);
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent e) ->
+                e.register(Enlightened.id("cosmic"), new com.kolodkingal.enlightened.client.cosmic.CosmicEffects()));
         modBus.addListener(EnlightenedClient::onItemColors);
         container.registerConfig(ModConfig.Type.CLIENT, EnlightenedClientConfig.SPEC);
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
@@ -72,11 +74,15 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.MEDITATING_BODY.get(), MeditatingBodyRenderer::new);
         event.registerEntityRenderer(ModEntities.LEMUR.get(), com.kolodkingal.enlightened.client.render.LemurRenderer::new);
         event.registerEntityRenderer(ModEntities.FIRE_WALL.get(), com.kolodkingal.enlightened.client.render.FireWallRenderer::new);
+        event.registerEntityRenderer(ModEntities.GURU_PATHIK.get(), com.kolodkingal.enlightened.client.render.GuruPathikRenderer::new);
+        event.registerEntityRenderer(ModEntities.SKY_BISON.get(), com.kolodkingal.enlightened.client.render.SkyBisonRenderer::new);
     }
 
     private static void onLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.LemurRenderer.LAYER,
                 com.kolodkingal.enlightened.client.render.LemurModel::createBodyLayer);
+        event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.SkyBisonRenderer.LAYER,
+                com.kolodkingal.enlightened.client.render.SkyBisonModel::createBodyLayer);
         event.registerLayerDefinition(SHELL_WIDE, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.6F), false), 64, 64));
         event.registerLayerDefinition(SHELL_SLIM, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.6F), true), 64, 64));
     }

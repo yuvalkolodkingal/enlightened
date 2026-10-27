@@ -1,6 +1,5 @@
 package com.kolodkingal.enlightened.client.render;
 
-import com.kolodkingal.enlightened.entity.MeditatingBodyEntity;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
@@ -9,13 +8,21 @@ import net.minecraft.util.Mth;
  * The body an airbender left behind, sitting in the lotus: the legs crossed, the hands resting together at the lap,
  * the back straight, breathing slowly; the head nods a touch with each breath and settles.
  */
-public class MeditatingBodyModel extends PlayerModel<MeditatingBodyEntity> {
+public class MeditatingBodyModel<T extends net.minecraft.world.entity.LivingEntity> extends PlayerModel<T> {
+    /** Whether the head still turns to look about (the guru watches who comes; a left body does not). */
+    private final boolean watching;
+
     public MeditatingBodyModel(ModelPart root) {
+        this(root, false);
+    }
+
+    public MeditatingBodyModel(ModelPart root, boolean watching) {
         super(root, false);
+        this.watching = watching;
     }
 
     @Override
-    public void setupAnim(MeditatingBodyEntity body, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(T body, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(body, 0.0F, 0.0F, ageInTicks, netHeadYaw, headPitch);
         float breath = Mth.sin(ageInTicks * 0.08F);
         float rad = Mth.DEG_TO_RAD;
@@ -28,6 +35,10 @@ public class MeditatingBodyModel extends PlayerModel<MeditatingBodyEntity> {
         this.head.xRot = (6.0F + 2.0F * breath) * rad * settle + headPitch * rad * (1.0F - settle);
         this.head.yRot = netHeadYaw * rad * (1.0F - settle) + 2.0F * rad * Mth.sin(ageInTicks * 0.03F) * settle;
         this.head.zRot = 0.0F;
+        if (watching) {
+            this.head.xRot = headPitch * rad * 0.6F + 8.0F * rad;
+            this.head.yRot = netHeadYaw * rad;
+        }
 
         // The lotus: the thighs out and up, the shins crossed in front.
         float legX = -92.0F * rad;

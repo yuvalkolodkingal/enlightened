@@ -163,30 +163,17 @@ public final class AirMore {
                 c.setOn(false);
                 return;
             }
-            int height = c.by(6, 10, 15);
+            int height = com.kolodkingal.enlightened.bending.Spouts.height(false, c.level);
             ServerLevel level = c.level();
-            // The ground under him, within the spout's reach.
-            BlockPos.MutableBlockPos pos = p.blockPosition().mutable();
-            int ground = Integer.MIN_VALUE;
-            for (int i = 0; i <= height + 2; i++) {
-                if (level.getBlockState(pos).isSolid()) {
-                    ground = pos.getY() + 1;
-                    break;
-                }
-                pos.move(0, -1, 0);
-            }
-            if (ground == Integer.MIN_VALUE) {
+            // The ground under him, within the spout's reach. The ride itself is driven on his client (Spouts.drive).
+            double base = com.kolodkingal.enlightened.bending.Spouts.base(level, p, height + 2, false);
+            if (Double.isNaN(base)) {
                 c.setOn(false);
                 p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, 60, 0, false, false, false));
                 return;
             }
-            double top = ground + height;
+            int ground = (int) base;
             double y = p.getY();
-            Vec3 v = p.getDeltaMovement();
-            double wanted = p.isShiftKeyDown() ? Math.max(-0.3, (ground - y) * 0.1) : (top - y) * 0.12;
-            wanted = Math.max(-0.5, Math.min(0.6, wanted));
-            p.setDeltaMovement(v.x, wanted, v.z);
-            p.hurtMarked = true;
             p.fallDistance = 0;
             if (p.tickCount % 3 == 0) {
                 double h = level.random.nextDouble() * (y - ground);

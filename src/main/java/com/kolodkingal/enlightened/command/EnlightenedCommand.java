@@ -104,6 +104,14 @@ public final class EnlightenedCommand {
                                 .then(Commands.literal("enter").executes(ctx -> avatar(ctx, "enter")))
                                 .then(Commands.literal("leave").executes(ctx -> avatar(ctx, "leave")))
                                 .then(Commands.literal("rest").executes(ctx -> avatar(ctx, "rest")))))
+                .then(Commands.literal("temple")
+                        .executes(ctx -> temple(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition())))
+                        .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
+                                .executes(ctx -> temple(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos")))))
+                .then(Commands.literal("guru")
+                        .then(Commands.argument("players", EntityArgument.players())
+                                .then(Commands.literal("taught").executes(ctx -> guru(ctx, true)))
+                                .then(Commands.literal("untaught").executes(ctx -> guru(ctx, false)))))
                 .then(Commands.literal("reset")
                         .then(Commands.argument("players", EntityArgument.players())
                                 .executes(EnlightenedCommand::reset)))
@@ -126,12 +134,44 @@ public final class EnlightenedCommand {
         return count;
     }
 
+    /** Builds the Southern Air Temple with its terrace floor at {@code pos}, wherever that is (no mountain needed). */
+    private static int temple(CommandContext<CommandSourceStack> ctx, net.minecraft.core.BlockPos pos) {
+        net.minecraft.server.level.ServerLevel level = ctx.getSource().getLevel();
+        com.kolodkingal.enlightened.world.AirTemplePiece piece = new com.kolodkingal.enlightened.world.AirTemplePiece(pos);
+        net.minecraft.world.level.levelgen.structure.BoundingBox box = piece.getBoundingBox();
+        net.minecraft.util.RandomSource random = level.getRandom();
+        for (int cx = box.minX() >> 4; cx <= box.maxX() >> 4; cx++) {
+            for (int cz = box.minZ() >> 4; cz <= box.maxZ() >> 4; cz++) {
+                net.minecraft.world.level.ChunkPos chunk = new net.minecraft.world.level.ChunkPos(cx, cz);
+                net.minecraft.world.level.levelgen.structure.BoundingBox chunkBox = new net.minecraft.world.level.levelgen.structure.BoundingBox(
+                        chunk.getMinBlockX(), level.getMinBuildHeight(), chunk.getMinBlockZ(), chunk.getMaxBlockX(), level.getMaxBuildHeight() - 1, chunk.getMaxBlockZ());
+                piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), random, chunkBox, chunk, pos);
+            }
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.temple", pos.getX(), pos.getY(), pos.getZ()), true);
+        return 1;
+    }
+
+    /** Marks players as taught (or untaught) by Guru Pathik, as if they had spoken to him. */
+    private static int guru(CommandContext<CommandSourceStack> ctx, boolean taught) throws CommandSyntaxException {
+        int n = 0;
+        for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
+            Benders.get(player).setGuruTaught(taught);
+            Benders.syncIfDirty(player);
+            n++;
+        }
+        int count = n;
+        ctx.getSource().sendSuccess(() -> Component.translatable(taught ? "command.enlightened.guru.taught" : "command.enlightened.guru.untaught", count), true);
+        return n;
+    }
+
     /** Enters or leaves the Avatar State, or ends its rest, for players (whatever their chakras). */
     private static int avatar(CommandContext<CommandSourceStack> ctx, String what) throws CommandSyntaxException {
         int n = 0;
         for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
             BendingData data = Benders.get(player);
-            if (!data.element().bends()) {
+            // Only the Avatar has an Avatar State.
+            if (data.element() != Element.AVATAR) {
                 continue;
             }
             switch (what) {

@@ -17,12 +17,16 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * The seven chakras and the Avatar State, after the Bedrock add-on and the guru's lessons: a bender who meditates
- * (the Meditate key, still, on the ground; faster on a Meditation Point) opens his chakras one by one, each asking
- * for points spent on his element and a stretch of meditation. Each open chakra strengthens him (a heart, quicker
- * cooldowns, stronger bending); with all seven open he may enter the <b>Avatar State</b>: a few seconds in which
- * nothing can hurt him and his bending is twice as strong, then a long rest. Meditation also earns a little
- * experience.
+ * The seven chakras and the Avatar State, after the guru's lessons in the show. Guru Pathik, who meditates at the
+ * Southern Air Temple, teaches a bender to open his chakras ({@code avatar.guruRequired}: none open before). Then
+ * meditation (the Meditate key, still, on the ground; faster on a Meditation Point, six times as fast before the guru
+ * himself, who asks no points) opens them one by one, each asking for points spent on his element and a stretch of
+ * meditation. Each open chakra strengthens him a little (a heart, quicker cooldowns, stronger bending).
+ *
+ * <p>The <b>Avatar State</b> is the Avatar's alone: a few seconds in which nothing can hurt him and his bending is twice
+ * as strong. Untaught, it takes him only when he is near death, and leaves him to a long rest. Taught by the guru with
+ * all seven chakras open, he enters it at will (his art, or a long meditation) and leaves it at will, and rests three
+ * times as long as he spent in it. Meditation also earns a little experience.
  */
 public final class Chakras {
     public static final int COUNT = 7;
@@ -100,6 +104,9 @@ public final class Chakras {
 
     /** Every tick of a bender: the meditation's progress, the chakras it opens, the Avatar State's course. */
     public static void tick(ServerPlayer p, BendingData data) {
+        if (com.kolodkingal.enlightened.world.Cosmic.in(p)) {
+            com.kolodkingal.enlightened.world.Cosmic.tick(p, data);
+        }
         long now = p.level().getGameTime();
         if (data.avatar(now)) {
             avatarTick(p, data, now);
@@ -118,17 +125,30 @@ public final class Chakras {
             return;
         }
         boolean point = onMeditationPoint(p);
+        boolean guru = Guru.near(p);
         long held = now - data.meditateSince();
-        // All seven open: holding on enters the Avatar State.
-        if (data.chakras() >= COUNT) {
+        // The master Avatar: holding on enters the Avatar State.
+        if (masters(data)) {
             if (held >= AVATAR_HOLD && now >= data.avatarCooldownUntil()) {
                 data.setMeditating(false);
-                enterAvatar(p, data, false);
+                enterAtWill(p, data, 1.0F);
             } else if (held >= AVATAR_HOLD && p.tickCount % 20 == 0) {
                 p.displayClientMessage(Component.translatable("message.enlightened.avatar.rest", (data.avatarCooldownUntil() - now) / 20).withStyle(ChatFormatting.GRAY), true);
             }
         }
-        int step = point ? 3 : 1;
+        if (!taught(data)) {
+            // No guru has shown him the way: the meditation calms him, but his chakras stay closed.
+            if (p.tickCount % 80 == 0) {
+                p.displayClientMessage(Component.translatable("message.enlightened.chakra.closed").withStyle(ChatFormatting.GRAY), true);
+            }
+            int xpSeconds = seconds(EnlightenedConfig.MEDITATION_XP_SECONDS, 15);
+            data.setMeditation(Math.min(data.meditation() + 1, ticksPerChakra() - 1));
+            if (xpSeconds > 0 && p.tickCount % (xpSeconds * 20) == 0) {
+                Mastery.earn(p, 1);
+            }
+            return;
+        }
+        int step = guru ? 6 : point ? 3 : 1;
         data.setMeditation(data.meditation() + step);
         // Experience for the patient.
         int xpSeconds = seconds(EnlightenedConfig.MEDITATION_XP_SECONDS, 15);
@@ -143,24 +163,80 @@ public final class Chakras {
         }
         int next = data.chakras() + 1;
         if (next <= COUNT && data.meditation() >= ticksPerChakra()) {
-            if (data.spent() < pointsFor(next)) {
+            if (!guru && data.spent() < pointsFor(next)) {
                 if (p.tickCount % 60 == 0) {
                     p.displayClientMessage(Component.translatable("message.enlightened.chakra.points", name(next), pointsFor(next)).withStyle(ChatFormatting.GRAY), true);
                 }
                 return;
             }
             data.setMeditation(0);
-            data.setChakras(next);
-            BendingTicker.applyPassives(p, data);
-            ServerLevel level = p.serverLevel();
-            level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), SoundSource.PLAYERS, 1.0F, 0.8F + next * 0.1F);
-            Fx.send(level, Fx.CHAKRA, p.position(), p.position().add(0, 2.0, 0), Benders.color(p), next);
-            p.displayClientMessage(Component.translatable("message.enlightened.chakra.open", name(next), next, COUNT).withStyle(ChatFormatting.LIGHT_PURPLE), false);
             if (next == COUNT) {
-                p.displayClientMessage(Component.translatable("message.enlightened.chakra.all").withStyle(ChatFormatting.GOLD), false);
+                // The Thought chakra: his spirit goes out to the cosmic plane, and opens it at the end of the path there.
+                data.setMeditating(false);
+                if (guru) {
+                    Guru.lesson(p, next);
+                }
+                if (com.kolodkingal.enlightened.world.Cosmic.send(p)) {
+                    return;
+                }
             }
+            open(p, data, next, guru);
         }
     }
+
+    /** The n-th chakra opens: its bonuses, its sound and light, the word of it (and the guru's lesson, before him). */
+    public static void open(ServerPlayer p, BendingData data, int next, boolean guru) {
+        data.setChakras(next);
+        BendingTicker.applyPassives(p, data);
+        ServerLevel level = p.serverLevel();
+        level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), SoundSource.PLAYERS, 1.0F, 0.8F + next * 0.1F);
+        Fx.send(level, Fx.CHAKRA, p.position(), p.position().add(0, 2.0, 0), Benders.color(p), next);
+        p.displayClientMessage(Component.translatable("message.enlightened.chakra.open", name(next), next, COUNT).withStyle(ChatFormatting.LIGHT_PURPLE), false);
+        if (guru && next < COUNT) {
+            Guru.lesson(p, next);
+        }
+        if (next == COUNT) {
+            p.displayClientMessage(Component.translatable(data.element() == Element.AVATAR
+                    ? "message.enlightened.chakra.all_avatar" : "message.enlightened.chakra.all").withStyle(ChatFormatting.GOLD), false);
+        }
+        Benders.syncIfDirty(p);
+    }
+
+    /** Whether his chakras may open: Guru Pathik taught him (or the server asks for no guru). */
+    public static boolean taught(BendingData data) {
+        boolean required = !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.GURU_REQUIRED.get();
+        return data.guruTaught() || !required;
+    }
+
+    /** The master Avatar: taught, all seven chakras open. He enters and leaves the Avatar State at will. */
+    public static boolean masters(BendingData data) {
+        return data.element() == Element.AVATAR && data.chakras() >= COUNT && taught(data);
+    }
+
+    /**
+     * The master Avatar enters the Avatar State by his own will, for the configured time times {@code scale}; he
+     * will rest three times as long as he stays in it.
+     */
+    public static void enterAtWill(ServerPlayer p, BendingData data, float scale) {
+        enterAvatar(p, data, false, scale);
+        long now = p.level().getGameTime();
+        ENTERED.put(p.getUUID(), now);
+        data.setAvatarCooldownUntil(data.avatarUntil() + (data.avatarUntil() - now) * 2);
+    }
+
+    /** He leaves the Avatar State by his own will, and rests three times as long as he spent in it (at least 10 s). */
+    public static void leaveAtWill(ServerPlayer p, BendingData data) {
+        long now = p.level().getGameTime();
+        Long since = ENTERED.remove(p.getUUID());
+        long spent = since == null ? 0 : now - since;
+        data.setAvatarUntil(now);
+        data.setAvatarCooldownUntil(now + Math.max(200L, spent * 3));
+        p.serverLevel().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), SoundSource.PLAYERS, 1.0F, 1.4F);
+        Benders.syncIfDirty(p);
+    }
+
+    /** When each master Avatar entered the State at will (for his rest when he leaves it). */
+    private static final java.util.Map<java.util.UUID, Long> ENTERED = new java.util.HashMap<>();
 
     public static boolean onMeditationPoint(ServerPlayer p) {
         return p.serverLevel().getBlockState(p.blockPosition()).is(ModTags.MEDITATION_POINT)
@@ -176,6 +252,10 @@ public final class Chakras {
 
     /** Enters the Avatar State for the configured time times {@code scale} (the Avatar's own art lasts longer). */
     public static void enterAvatar(ServerPlayer p, BendingData data, boolean dire, float scale) {
+        // The Avatar State is the Avatar's alone: no other bender ever enters it, by any road.
+        if (data.element() != Element.AVATAR) {
+            return;
+        }
         long now = p.level().getGameTime();
         int seconds = Math.round(seconds(EnlightenedConfig.AVATAR_STATE_SECONDS, 12) * scale);
         data.setAvatarUntil(now + seconds * 20L);
@@ -208,11 +288,14 @@ public final class Chakras {
         }
     }
 
-    /** Near death with all seven chakras open: the Avatar State takes him, if it is rested. Returns whether it did. */
+    /**
+     * The Avatar near death: the Avatar State takes him by itself, if it is rested, taught or not (the way it took
+     * Aang before the guru). Only the Avatar has it. Returns whether it did.
+     */
     public static boolean dire(ServerPlayer p, BendingData data) {
         boolean allowed = !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.AVATAR_STATE_ON_LOW_HEALTH.get();
         long now = p.level().getGameTime();
-        if (!allowed || data.chakras() < COUNT || data.avatar(now) || now < data.avatarCooldownUntil()) {
+        if (!allowed || data.element() != Element.AVATAR || data.avatar(now) || now < data.avatarCooldownUntil()) {
             return false;
         }
         enterAvatar(p, data, true);

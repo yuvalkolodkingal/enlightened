@@ -68,3 +68,12 @@ over gaps, drawn as real swirling air.
   your fall: an **airbender never takes fall damage** at all.
 - **The scooter** stands on the ground (the rider sits on top of it) and **skims the water**: ride it over rivers and
   seas. It is the show's cyan ball wrapped in white spinning bands, with a trail of dust.
+
+## New in 1.4
+
+- **The air spout** carries you **fast in every direction**: forward, back and to either side with the movement keys,
+  and looks like the show's (a twisting column of wind narrowing to the feet, a whirl of dust at its foot, streamers
+  and tilted rings of air circling the rider).
+- **Suffocation** looks like Zaheer's: a clear bubble of air round the victim's whole head, a bright rim, streaks of air
+  whirling inside it, and a thin stream of breath drawn out to your hand.
+- The [Southern Air Temple](Southern-Air-Temple) stands on the mountains, with its sky bison, Guru Pathik and gliders.

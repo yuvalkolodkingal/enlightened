@@ -105,7 +105,9 @@ public enum Ability {
     AVATAR_STATE(Element.AVATAR, Gate.NONE, Kind.PRESS, true),
     ENERGYBENDING(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
     SPIRITBENDING(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
-    ELEMENTAL_SPHERE(Element.AVATAR, Gate.NONE, Kind.TOGGLE, false);
+    ELEMENTAL_SPHERE(Element.AVATAR, Gate.NONE, Kind.TOGGLE, false),
+    // Added last, so the arts before it keep their places in saved data.
+    FROST_WALK(Element.WATER, Gate.NONE, Kind.TOGGLE, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }

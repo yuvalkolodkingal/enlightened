@@ -26,6 +26,9 @@ public record ChangeLookPayload(int step) implements CustomPacketPayload {
     static void handle(ChangeLookPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player && player.isAlive() && !player.isSpectator()) {
+                if (com.kolodkingal.enlightened.water.WaterBending.switchOctopus(player)) {
+                    return;
+                }
                 if (!Benders.cycleVariant(player, payload.step() < 0 ? -1 : 1) && Benders.element(player).bends()) {
                     player.displayClientMessage(Component.translatable("message.enlightened.look.none"), true);
                 }

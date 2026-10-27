@@ -244,11 +244,15 @@ public final class TempleTests {
         check(data.on(Ability.WATER_BUBBLE), "the bubble is on");
         // Three seconds on, the pocket is still open: water flowing back would fill it within a second.
         helper.runAtTickTime(60, () -> {
-            BlockPos center = new BlockPos(10, 5, 10);
-            check(helper.getBlockState(center).isAir(), "air at the heart");
-            check(helper.getBlockState(center.east(2)).isAir() && helper.getBlockState(center.above(2)).isAir(), "air two blocks out");
-            check(helper.getBlockState(center.west(4)).is(Blocks.STRUCTURE_VOID), "an invisible wall holds the water back at the edge");
-            check(helper.getBlockState(center.west(6)).is(Blocks.WATER), "and the sea beyond");
+            ServerLevel level = helper.getLevel();
+            // The pocket is centred on the bender (he sank to the floor of the tank meanwhile).
+            BlockPos center = BlockPos.containing(player.getX(), player.getY() + 0.9, player.getZ());
+            check(level.getBlockState(center).isAir(), "air at the heart");
+            check(level.getBlockState(center.east(2)).isAir() && level.getBlockState(center.above(2)).isAir() && level.getBlockState(center.north(2)).isAir(),
+                    "air two blocks out (east " + level.getBlockState(center.east(2)) + ", above " + level.getBlockState(center.above(2)) + ")");
+            check(level.getBlockState(center.west(4)).is(Blocks.STRUCTURE_VOID) && level.getBlockState(center.above(4)).is(Blocks.STRUCTURE_VOID),
+                    "an invisible wall holds the water back at the edge (" + level.getBlockState(center.west(4)) + ")");
+            check(level.getBlockState(center.west(6).above(2)).is(Blocks.WATER), "and the sea beyond");
             f.press(player, Ability.WATER_BUBBLE, false);
             helper.succeed();
         });

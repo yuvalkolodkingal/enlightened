@@ -619,6 +619,8 @@ public final class AirBending {
                 return;
             }
             SUFFOCATING.put(p.getUUID(), target.getId());
+            // The victim is synced, so every client draws the bubble of air round his head.
+            c.data.setHeldEntityId(target.getId());
             c.setActive(true);
             c.sound(ModSounds.SUFFOCATE.get(), 1.0F, 1.0F);
         }
@@ -627,6 +629,7 @@ public final class AirBending {
             if (c.active()) {
                 c.setActive(false);
                 SUFFOCATING.remove(c.player.getUUID());
+                c.data.setHeldEntityId(-1);
                 c.cooldownSeconds(6);
             }
         }
@@ -660,7 +663,9 @@ public final class AirBending {
 
         @Override
         public void end(Cast c) {
-            SUFFOCATING.remove(c.player.getUUID());
+            if (SUFFOCATING.remove(c.player.getUUID()) != null) {
+                c.data.setHeldEntityId(-1);
+            }
             c.setActive(false);
         }
 

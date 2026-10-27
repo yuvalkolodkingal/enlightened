@@ -258,6 +258,15 @@ public final class Tour {
             v14();
             return;
         }
+        if ("suffocate".equals(System.getProperty("enlightened.tour.only", ""))) {
+            element("air", "zaheer", "suffocate");
+            cmd("setblock 0 -60 6 stone", 2);
+            cmd("summon zombie 0 -59 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+            cmd("tp @s 0 -60 0 0 -5", 5);
+            camera(CameraType.FIRST_PERSON, 2);
+            held("suffocate", "153_suffocate", 20, 40);
+            return;
+        }
         if ("cosmic".equals(System.getProperty("enlightened.tour.only", ""))) {
             cosmic();
             return;
@@ -574,7 +583,9 @@ public final class Tour {
         cmd("setblock 0 -60 6 stone", 2);
         cmd("summon zombie 0 -59 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         cmd("tp @s 0 -60 0 0 -5", 5);
+        camera(CameraType.FIRST_PERSON, 2);
         held("suffocate", "153_suffocate", 20, 40);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
         cmd("setblock 0 -60 6 air", 2);
         cmd("kill @e[type=zombie]", 2);
         cmd("enlightened loadout @s 1 air_spout", 6);

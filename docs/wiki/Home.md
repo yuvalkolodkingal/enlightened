@@ -21,6 +21,7 @@ same authors, and plays the same way.
 * [Airbending](Airbending): blast, shield, jump and glide, blades, spirit projection, scooter, tornado; the tetherless
 * [Waterbending](Waterbending): whip, healing, octopus form, spout, water arms; ice; bloodbending
 * [Firebending](Firebending): the skin, fire ball, fist, whip, ring, healing; lightning and its redirection; combustion
+* [The Avatar](The-Avatar): all four elements, energybending, spiritbending, the elemental sphere
 * [Combos and Steps](Combos-and-Steps): sequences of casts that end in a greater art; the double-tap dash
 * [Chakras and the Avatar State](Chakras-and-the-Avatar-State): meditation, the seven chakras, the Avatar State
 

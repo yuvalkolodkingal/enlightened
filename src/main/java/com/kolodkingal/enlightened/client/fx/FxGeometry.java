@@ -345,6 +345,17 @@ public final class FxGeometry {
     }
 
     /** A square facing the camera at {@code c}, {@code size} across, turned by {@code roll}. */
+    /** A flat textured quad in its own plane, lit, drawn from both sides (the snow texture gives a plain cloth). */
+    public static void flatQuad(PoseStack.Pose pose, VertexConsumer vc, Vec3 a, Vec3 b, Vec3 c, Vec3 d, float r, float g, float bl, float al, int light) {
+        float[] col = rgba(r, g, bl, al);
+        quad(pose, vc, a, b, c, d, new float[]{0, 0, 1, 1}, col, col, light, true);
+    }
+
+    public static float easeOut(float f) {
+        float v = 1.0F - Mth.clamp(f, 0.0F, 1.0F);
+        return 1.0F - v * v * v;
+    }
+
     public static void billboard(PoseStack.Pose pose, VertexConsumer vc, Vec3 c, float size, float v0, float v1,
                                  float r, float g, float b, float a, int light, boolean textured, float roll) {
         billboardTowards(pose, vc, c, c.scale(-1.0), size, v0, v1, r, g, b, a, light, textured, roll);

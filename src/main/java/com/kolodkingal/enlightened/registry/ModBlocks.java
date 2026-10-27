@@ -16,6 +16,10 @@ public final class ModBlocks {
     public static final DeferredBlock<MeditationPointBlock> MEDITATION_POINT = BLOCKS.register("meditation_point",
             () -> new MeditationPointBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SMOOTH_STONE).strength(1.5F).noOcclusion()));
 
+    /** Azula's blue fire where it lands: looks like soul fire, stands where fire does, burns out by itself. */
+    public static final DeferredBlock<com.kolodkingal.enlightened.block.BlueFireBlock> BLUE_FIRE = BLOCKS.register("blue_fire",
+            () -> new com.kolodkingal.enlightened.block.BlueFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_FIRE)));
+
     public static void registerItems() {
         ModItems.ITEMS.register("meditation_point", () -> new BlockItem(MEDITATION_POINT.get(), new Item.Properties()));
     }

@@ -44,7 +44,7 @@ public class AvatarGlowLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
         int white = FastColor.ARGB32.colorFromFloat(1.0F, pulse, pulse, 1.0F);
         VertexConsumer eyes = buffer.getBuffer(RenderType.eyes(EYES));
         getParentModel().renderToBuffer(poseStack, eyes, 0xF000F0, OverlayTexture.NO_OVERLAY, white);
-        boolean arrows = data.element() == Element.AIR && !"zaheer".equals(data.variant());
+        boolean arrows = data.element() == Element.AIR && !"zaheer".equals(data.variant()) || data.element() == Element.AVATAR && "aang".equals(data.variant());
         if (arrows) {
             int blue = FastColor.ARGB32.colorFromFloat(1.0F, 0.75F * pulse, 0.9F * pulse, 1.0F);
             VertexConsumer tattoos = buffer.getBuffer(RenderType.eyes(ARROWS));

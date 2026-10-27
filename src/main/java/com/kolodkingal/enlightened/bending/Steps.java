@@ -17,6 +17,21 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class Steps {
 
+    /** The step a bender uses: his element's, or, for the Avatar, the first of the four he learned. */
+    @Nullable
+    public static Ability stepOf(BendingData data) {
+        if (data.element() == Element.AVATAR) {
+            for (Element e : Element.FOUR) {
+                Ability s = stepOf(e);
+                if (s != null && data.has(s)) {
+                    return s;
+                }
+            }
+            return null;
+        }
+        return stepOf(data.element());
+    }
+
     @Nullable
     public static Ability stepOf(Element element) {
         return switch (element) {
@@ -31,7 +46,7 @@ public final class Steps {
     /** A step along {@code dir} (horizontal, or up for a hop): if he learned it and it is ready. */
     public static void step(ServerPlayer p, Vec3 dir) {
         BendingData data = Benders.get(p);
-        Ability step = stepOf(data.element());
+        Ability step = stepOf(data);
         if (step == null || !data.has(step) || !p.isAlive() || !BendingHandler.mayBend(p, data)) {
             return;
         }
@@ -55,8 +70,8 @@ public final class Steps {
         SoftLanding.grant(p, 40);
         ServerLevel level = c.level();
         Vec3 at = p.position().add(0, 0.9, 0);
-        Fx.send(level, Fx.STEP, at, at.add(v.scale(2.5)), c.color(), data.element().ordinal());
-        switch (data.element()) {
+        Fx.send(level, Fx.STEP, at, at.add(v.scale(2.5)), c.color(), step.element.ordinal());
+        switch (step.element) {
             case EARTH -> {
                 level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(p.blockPosition().below())),
                         p.getX(), p.getY() + 0.1, p.getZ(), 20, 0.4, 0.2, 0.4, 0.1);

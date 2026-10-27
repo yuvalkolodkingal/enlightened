@@ -34,6 +34,8 @@ The panel in the top-left corner shows:
 
 A key with nothing on it says so; open the scroll to put an ability there.
 
+**Right-click the Air Glider** opens or folds its wings. **Octopus Form**: the key lashes while the form is up, a held key folds it.
+
 A **double tap of a direction** (or of Jump) is a [step](Combos-and-Steps#steps) for a bender who learned his element's; a sequence of casts within three seconds may be a [combo](Combos-and-Steps).
 
 ## Body language

@@ -79,6 +79,7 @@ public enum Ability {
     PHASE_CHANGE(Element.WATER, Gate.ICE, Kind.PRESS, false),
     FROST_BREATH(Element.WATER, Gate.ICE, Kind.HOLD, false),
     PLANT_TETHER(Element.WATER, Gate.NONE, Kind.PRESS, false),
+    WATER_VORTEX(Element.WATER, Gate.NONE, Kind.PRESS, false),
     FAST_SWIM(Element.WATER, Gate.NONE, Kind.PASSIVE, false),
     WATER_STEP(Element.WATER, Gate.NONE, Kind.PASSIVE, false),
 
@@ -98,7 +99,13 @@ public enum Ability {
     HEAT_CONTROL(Element.FIRE, Gate.NONE, Kind.TOGGLE, false),
     ILLUMINATION(Element.FIRE, Gate.NONE, Kind.TOGGLE, false),
     FIRE_STEP(Element.FIRE, Gate.NONE, Kind.PASSIVE, false),
-    COMBUSTION(Element.FIRE, Gate.COMBUSTION, Kind.PRESS, false);
+    PALM_FORGE(Element.FIRE, Gate.NONE, Kind.HOLD, false),
+    COMBUSTION(Element.FIRE, Gate.COMBUSTION, Kind.PRESS, false),
+    // ---- the Avatar ----
+    AVATAR_STATE(Element.AVATAR, Gate.NONE, Kind.PRESS, true),
+    ENERGYBENDING(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
+    SPIRITBENDING(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
+    ELEMENTAL_SPHERE(Element.AVATAR, Gate.NONE, Kind.TOGGLE, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }
@@ -153,7 +160,7 @@ public enum Ability {
     public static List<Ability> of(Element element) {
         List<Ability> list = new ArrayList<>();
         for (Ability a : values()) {
-            if (a.element == element) {
+            if (element.commands(a.element)) {
                 list.add(a);
             }
         }

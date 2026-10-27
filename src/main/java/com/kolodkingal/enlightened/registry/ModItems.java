@@ -18,6 +18,8 @@ public final class ModItems {
     public static final DeferredItem<BendingScrollItem> AIR_SCROLL = scroll("air_scroll", Element.AIR);
     public static final DeferredItem<BendingScrollItem> WATER_SCROLL = scroll("water_scroll", Element.WATER);
     public static final DeferredItem<BendingScrollItem> FIRE_SCROLL = scroll("fire_scroll", Element.FIRE);
+    /** The four scrolls bound round a star: whoever reads it becomes the Avatar, a bender of all four. */
+    public static final DeferredItem<BendingScrollItem> AVATAR_SCROLL = scroll("avatar_scroll", Element.AVATAR);
 
     /** The waterbender's water skin: filled at any water, it carries ten uses of water. */
     public static final DeferredItem<WaterSkinItem> WATER_SKIN = ITEMS.register("water_skin",

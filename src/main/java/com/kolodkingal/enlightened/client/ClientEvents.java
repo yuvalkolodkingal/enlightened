@@ -64,6 +64,17 @@ public final class ClientEvents {
         }
     }
 
+    /** The local player burning blue sees blue flames over the screen instead of orange. */
+    @SubscribeEvent
+    public static void onScreenFire(net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent event) {
+        if (event.getOverlayType() != net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent.OverlayType.FIRE
+                || !com.kolodkingal.enlightened.client.fx.BlueBurning.isBlue(event.getPlayer())) {
+            return;
+        }
+        event.setCanceled(true);
+        com.kolodkingal.enlightened.client.fx.BlueScreenFire.render(event.getPoseStack());
+    }
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
@@ -76,6 +87,12 @@ public final class ClientEvents {
         handleSteps(mc, player);
         BodyLean.tick(mc.level);
         WorldFx.tick(mc.level);
+        if (mc.player != null) {
+            com.kolodkingal.enlightened.bending.BendingData data = com.kolodkingal.enlightened.bending.Benders.get(mc.player);
+            if (data.has(com.kolodkingal.enlightened.bending.Ability.AIR_SCOOTER) && data.on(com.kolodkingal.enlightened.bending.Ability.AIR_SCOOTER)) {
+                com.kolodkingal.enlightened.air.AirBending.skimWater(mc.player);
+            }
+        }
     }
 
     private static void handleKeys(Minecraft mc, LocalPlayer player) {
@@ -178,6 +195,7 @@ public final class ClientEvents {
         SeismicGlow.clear();
         BodyLean.clear();
         WorldFx.clear();
+        com.kolodkingal.enlightened.client.fx.BlueBurning.clear();
         java.util.Arrays.fill(SENT_DOWN, false);
     }
 

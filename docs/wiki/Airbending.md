@@ -58,3 +58,13 @@ Tenzin (default), Zaheer, Jinora, Monk Gyatso, Jae and Kartik of the Seven Haven
 
 The **scooter** is now a ball of air you ride like Aang: you sit on a rolling sphere of wind that carries you
 over gaps, drawn as real swirling air.
+
+## New in 1.3
+
+- **The glider is the show's.** A wooden staff over the hands from which two fans of orange fabric open on radial
+  ribs, with a tail fin; the bender hangs under it. **Right-click** the Air Glider to open its wings (they open by
+  themselves in a real fall); steer with your look: **dive for speed, climb to spend it** (a master's top speed is
+  higher); the **Air Jump key pumps** the wings for a lift; **Sneak** or the ground folds them. Air Jump no longer slows
+  your fall: an **airbender never takes fall damage** at all.
+- **The scooter** stands on the ground (the rider sits on top of it) and **skims the water**: ride it over rivers and
+  seas. It is the show's cyan ball wrapped in white spinning bands, with a trail of dust.

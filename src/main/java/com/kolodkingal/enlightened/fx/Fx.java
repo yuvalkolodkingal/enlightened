@@ -65,6 +65,16 @@ public enum Fx {
     ICE_WAVE(16),
     /** A whirl of flame spinning out from the bender (radius). */
     FIRE_SPIN(18),
+    /** A vortex of water twisting up from a point (data: radius; to: its top). */
+    WATER_VORTEX(100),
+    /** A creature set alight by blue fire burns blue for data ticks (entity); drawn as no effect of its own. */
+    BLUE_BURN(1),
+    /** Energybending: light rising from the Avatar (from) and the one he touches (to; entity: the touched). */
+    ENERGYBEND(70),
+    /** Spiritbending: a spiral of golden light calming a creature (entity). */
+    SPIRITBEND(50),
+    /** The octopus form's arms lashing out at a mark (from the bender to the mark). */
+    OCTOPUS_LASH(10),
     /** Metal drawn out of an ore (at). */
     EXTRACT(12),
     /** The Avatar State entered: light bursting out. */

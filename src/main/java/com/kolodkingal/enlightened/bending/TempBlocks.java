@@ -49,6 +49,21 @@ public final class TempBlocks {
         return true;
     }
 
+    /** Keeps a raised block up for at least {@code ticks} more (the bubble of air that follows a swimmer). Returns whether it was raised. */
+    public static boolean extend(ServerLevel level, BlockPos pos, int ticks) {
+        long until = level.getGameTime() + ticks;
+        for (int i = 0; i < PLACED.size(); i++) {
+            Placed p = PLACED.get(i);
+            if (p.dimension == level.dimension() && p.pos.equals(pos)) {
+                if (p.until < until) {
+                    PLACED.set(i, new Placed(p.dimension, p.pos, p.before, p.placed, until, p.owner));
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Whether the cell holds a block bending raised and has not yet put back. */
     public static boolean isRaised(ServerLevel level, BlockPos pos) {
         for (Placed p : PLACED) {

@@ -47,13 +47,15 @@ public final class BendingTicker {
 
     /** Flight permission and speed, and the body modifiers of armour, arms and scooter. */
     public static void applyPassives(ServerPlayer player, BendingData data) {
-        boolean canFly = data.element() == Element.AIR && data.has(Ability.FLIGHT) && data.on(Ability.FLIGHT)
-                && !data.suppressed(player.level().getGameTime());
+        long now = player.level().getGameTime();
+        boolean sphere = data.has(Ability.ELEMENTAL_SPHERE) && data.on(Ability.ELEMENTAL_SPHERE) && data.avatar(now);
+        boolean canFly = (data.element().commands(Element.AIR) && data.has(Ability.FLIGHT) && data.on(Ability.FLIGHT) || sphere)
+                && !data.suppressed(now);
         setModifier(player, NeoForgeMod.CREATIVE_FLIGHT, FLIGHT_ID, 1.0, canFly);
 
         Abilities abilities = player.getAbilities();
         boolean survivalLike = !player.isCreative() && !player.isSpectator();
-        float speed = !survivalLike || !canFly ? 0.05F : 0.08F;
+        float speed = !survivalLike || !canFly ? 0.05F : sphere ? 0.11F : 0.08F;
         boolean changed = false;
         if (Math.abs(abilities.getFlyingSpeed() - speed) > 1.0E-4F) {
             abilities.setFlyingSpeed(speed);

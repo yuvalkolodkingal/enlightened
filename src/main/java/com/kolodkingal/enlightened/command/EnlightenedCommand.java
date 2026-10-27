@@ -99,6 +99,11 @@ public final class EnlightenedCommand {
                         .then(Commands.argument("players", EntityArgument.players())
                                 .then(Commands.argument("count", IntegerArgumentType.integer(0, 7))
                                         .executes(EnlightenedCommand::chakras))))
+                .then(Commands.literal("avatar")
+                        .then(Commands.argument("players", EntityArgument.players())
+                                .then(Commands.literal("enter").executes(ctx -> avatar(ctx, "enter")))
+                                .then(Commands.literal("leave").executes(ctx -> avatar(ctx, "leave")))
+                                .then(Commands.literal("rest").executes(ctx -> avatar(ctx, "rest")))))
                 .then(Commands.literal("reset")
                         .then(Commands.argument("players", EntityArgument.players())
                                 .executes(EnlightenedCommand::reset)))
@@ -119,6 +124,31 @@ public final class EnlightenedCommand {
         }
         ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.chakras", count), true);
         return count;
+    }
+
+    /** Enters or leaves the Avatar State, or ends its rest, for players (whatever their chakras). */
+    private static int avatar(CommandContext<CommandSourceStack> ctx, String what) throws CommandSyntaxException {
+        int n = 0;
+        for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
+            BendingData data = Benders.get(player);
+            if (!data.element().bends()) {
+                continue;
+            }
+            switch (what) {
+                case "enter" -> {
+                    data.setAvatarCooldownUntil(0);
+                    com.kolodkingal.enlightened.bending.Chakras.enterAvatar(player, data, false);
+                }
+                case "leave" -> data.setAvatarUntil(0);
+                default -> data.setAvatarCooldownUntil(0);
+            }
+            BendingTicker.applyPassives(player, data);
+            Benders.syncIfDirty(player);
+            n++;
+        }
+        int count = n;
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.avatar." + what, count), true);
+        return n;
     }
 
     private static Element element(String name) {
@@ -188,7 +218,7 @@ public final class EnlightenedCommand {
         }
         for (ServerPlayer player : players) {
             BendingData data = Benders.get(player);
-            if (data.element() != ability.element) {
+            if (!data.element().commands(ability.element)) {
                 continue;
             }
             int target = level < 0 ? Math.min(Ability.MAX_LEVEL, data.level(ability) + 1) : level;

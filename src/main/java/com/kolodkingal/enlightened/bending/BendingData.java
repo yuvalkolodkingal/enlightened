@@ -52,6 +52,8 @@ public final class BendingData {
     private long suppressedUntil;
     private boolean flying;
     private boolean meditating;
+    /** Whether the airbender's glider staff is open (runtime, synced). */
+    private boolean gliderOpen;
     private long meditateSince;
     private long avatarUntil;
 
@@ -150,6 +152,7 @@ public final class BendingData {
         ByteBufCodecs.BOOL.encode(buf, meditating);
         ByteBufCodecs.VAR_LONG.encode(buf, meditateSince);
         ByteBufCodecs.VAR_LONG.encode(buf, avatarUntil);
+        ByteBufCodecs.BOOL.encode(buf, gliderOpen);
     }
 
     private static BendingData read(ByteBuf buf) {
@@ -184,6 +187,7 @@ public final class BendingData {
         d.meditating = ByteBufCodecs.BOOL.decode(buf);
         d.meditateSince = ByteBufCodecs.VAR_LONG.decode(buf);
         d.avatarUntil = ByteBufCodecs.VAR_LONG.decode(buf);
+        d.gliderOpen = ByteBufCodecs.BOOL.decode(buf);
         return d;
     }
 
@@ -231,7 +235,7 @@ public final class BendingData {
     }
 
     public boolean has(Ability a) {
-        return element == a.element && levels[a.ordinal()] > 0;
+        return element.commands(a.element) && levels[a.ordinal()] > 0;
     }
 
     public void setLevel(Ability a, int level) {
@@ -243,10 +247,23 @@ public final class BendingData {
     }
 
     /** The points spent on the element so far: the sum of every level (what a sub-bending gate counts). */
+    /** The points spent on this one element's abilities (the Avatar's sub-arts open by the points of their element). */
+    public int spent(Element of) {
+        int sum = 0;
+        for (Ability a : Ability.values()) {
+            if (a.element == of) {
+                for (int l = 1; l <= levels[a.ordinal()]; l++) {
+                    sum += Ability.cost(l);
+                }
+            }
+        }
+        return sum;
+    }
+
     public int spent() {
         int sum = 0;
         for (Ability a : Ability.values()) {
-            if (a.element == element) {
+            if (element.commands(a.element)) {
                 for (int l = 1; l <= levels[a.ordinal()]; l++) {
                     sum += Ability.cost(l);
                 }
@@ -472,6 +489,17 @@ public final class BendingData {
     public void setMeditating(boolean v) {
         if (v != meditating) {
             meditating = v;
+            dirty = true;
+        }
+    }
+
+    public boolean gliderOpen() {
+        return gliderOpen;
+    }
+
+    public void setGliderOpen(boolean v) {
+        if (v != gliderOpen) {
+            gliderOpen = v;
             dirty = true;
         }
     }

@@ -24,10 +24,17 @@ public final class Loadout {
             case WATER -> List.of(Ability.WATER_WHIP, Ability.ICE_KNIVES, Ability.WATER_HEALING, Ability.FREEZE,
                     Ability.OCTOPUS_FORM, Ability.WATER_ARMS, Ability.WATER_SPOUT, Ability.ICE_WALL,
                     Ability.BLOODBENDING, Ability.BLOOD_SUPPRESS, Ability.SNOW_THROW, Ability.WATER_SHIELD, Ability.WATER_BUBBLE,
-                    Ability.PHASE_CHANGE, Ability.FROST_BREATH, Ability.PLANT_TETHER);
+                    Ability.PHASE_CHANGE, Ability.FROST_BREATH, Ability.PLANT_TETHER, Ability.WATER_VORTEX);
             case FIRE -> List.of(Ability.FIRE_BALL, Ability.FIRE_FIST, Ability.FIRE_WHIP, Ability.FIRE_RING,
                     Ability.LIGHTNING, Ability.LIGHTNING_REDIRECT, Ability.FIRE_HEALING, Ability.FIRE_JET, Ability.FIRE_SHIELD,
-                    Ability.WALL_OF_FIRE, Ability.BLAZE, Ability.COMBUSTION, Ability.HEAT_CONTROL, Ability.ILLUMINATION);
+                    Ability.WALL_OF_FIRE, Ability.BLAZE, Ability.COMBUSTION, Ability.HEAT_CONTROL, Ability.ILLUMINATION, Ability.PALM_FORGE);
+            case AVATAR -> {
+                List<Ability> all = new java.util.ArrayList<>(List.of(Ability.AVATAR_STATE, Ability.ENERGYBENDING, Ability.SPIRITBENDING, Ability.ELEMENTAL_SPHERE));
+                for (Element e : Element.FOUR) {
+                    all.addAll(order(e));
+                }
+                yield all;
+            }
             case NONE -> List.of();
         };
     }

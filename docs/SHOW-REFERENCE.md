@@ -93,3 +93,17 @@ A condensed reference, gathered from the Avatar wiki and the animation of *Avata
 - **The elemental sphere.** Rings of earth, water, air and fire orbiting the body at different tilts, like a gyroscope.
 - **The chakras.** Each vision in its chakra's colour: earth red, water orange, fire yellow, air green, sound blue,
   light indigo, thought violet; the seventh opens on a violet stream of cosmic energy.
+
+## The Avatar's own arts
+
+- **All four elements.** The Avatar learns them in the cycle water, earth, fire, air; in the show the elements are
+  drawn exactly as for their benders, only the Avatar State makes them larger and stronger.
+- **Energybending.** The lion turtle's gift. Aang touches Ozai's forehead and chest: Aang glows blue-white, Ozai
+  orange-red, and columns of light rise from both into the sky; whoever's will is weaker is overcome. Korra gives
+  bending back the same way (Lin, the pro-benders): the touched one glows and breathes again.
+- **Spiritbending.** Unalaq's art: a spiral of water circling a dark spirit turns golden and the spirit calms and
+  shines (purple when it is used to corrupt); Korra uses it to pacify.
+- **The elemental sphere.** Sozin's Comet: inside out, compressed boulders, a band of water, a grey spiral of air and a
+  broad ring of fire, each ring tilted its own way and spinning like a gyroscope, carrying Aang through the air.
+- **The Avatar State at will.** Once the chakras are open the glow of the eyes comes and goes as the Avatar wishes;
+  entering it is a flash of white light and a wind that throws everyone near.

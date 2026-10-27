@@ -125,6 +125,9 @@ public class FireWallEntity extends Entity {
                 if (tickCount % 10 == 0) {
                     living.hurt(ModDamageTypes.source(level, ModDamageTypes.FLAME, this, owner), damage);
                     living.igniteForSeconds(4);
+                    if (blue()) {
+                        com.kolodkingal.enlightened.fire.FireBending.markBlue(level, living, 4);
+                    }
                 }
                 Shots.push(living, position().add(along.scale(alongDist)), 0.4, 0.2);
             }

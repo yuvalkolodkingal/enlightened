@@ -217,15 +217,25 @@ public final class WaterBending {
 
     // ---- Octopus Form ----
 
+    /**
+     * The octopus form, as Katara fights in it: eight arms of water round the bender. While it is up, the key lashes
+     * the arms at whatever he looks at (a cone of five blocks, with knockback); the arms strike by themselves whoever
+     * comes within reach and swat arrows and shots aside; holding the key for a moment folds the form away.
+     */
     static final class Octopus implements AbilityLogic {
+        private static final java.util.Map<java.util.UUID, Long> PRESSED = new java.util.HashMap<>();
+        private static final int FOLD_HOLD = 12;
+
         @Override
         public void key(Cast c, boolean down) {
+            ServerPlayer p = c.player;
             if (!down) {
+                PRESSED.remove(p.getUUID());
                 return;
             }
             if (c.on()) {
-                c.setOn(false);
-                c.sound(ModSounds.OCTOPUS.get(), 0.8F, 0.7F);
+                PRESSED.put(p.getUUID(), c.now());
+                lash(c);
                 return;
             }
             if (!WaterSources.take(c)) {
@@ -236,23 +246,58 @@ public final class WaterBending {
             c.say("message.enlightened.water.octopus_on");
         }
 
+        /** The arms lash at what he looks at. */
+        private static void lash(Cast c) {
+            if (!c.ready()) {
+                return;
+            }
+            ServerPlayer p = c.player;
+            float damage = 3.0F + c.level;
+            java.util.List<LivingEntity> hit = Shots.cone(p, 5.0, 70.0);
+            Vec3 base = p.position().add(0, 1.1, 0);
+            for (LivingEntity e : hit) {
+                Shots.hurt(p, e, damage, ModDamageTypes.WATER);
+                Shots.push(e, p.position(), 0.9, 0.35);
+                Fx.send(c.level(), Fx.OCTOPUS_LASH, base, e.position().add(0, e.getBbHeight() * 0.5, 0), c.color(), 0);
+            }
+            if (hit.isEmpty()) {
+                Shots.Aim aim = Shots.aim(p, 5);
+                Fx.send(c.level(), Fx.OCTOPUS_LASH, base, aim.end(), c.color(), 0);
+            }
+            c.sound(ModSounds.WATER_WHIP.get(), 1.0F, hit.isEmpty() ? 1.2F : 0.9F);
+            c.exhaust(0.1F);
+            c.cooldown(8);
+        }
+
         @Override
         public void tick(Cast c) {
             if (!c.on()) {
                 return;
             }
             ServerPlayer p = c.player;
+            Long pressed = PRESSED.get(p.getUUID());
+            if (pressed != null && c.now() - pressed >= FOLD_HOLD) {
+                PRESSED.remove(p.getUUID());
+                c.setOn(false);
+                c.sound(ModSounds.OCTOPUS.get(), 0.8F, 0.7F);
+                return;
+            }
             if (p.tickCount % 10 == 0) {
                 tentacles(c.level(), p, 1);
             }
-            if (p.tickCount % 30 == 0) {
+            // The arms strike by themselves whoever comes within their reach, and swat shots and arrows aside.
+            if (p.tickCount % 15 == 0) {
                 float damage = 1.0F + c.level;
-                for (LivingEntity e : Shots.area(p, p.position().add(0, 1, 0), 3.0)) {
-                    if (e instanceof net.minecraft.world.entity.monster.Enemy || e instanceof net.minecraft.world.entity.Mob m && m.getTarget() == p) {
-                        Shots.hurt(p, e, damage, ModDamageTypes.WATER);
-                        Shots.push(e, p.position(), 0.3, 0.1);
-                    }
+                for (LivingEntity e : Shots.area(p, p.position().add(0, 1, 0), 2.6)) {
+                    Shots.hurt(p, e, damage, ModDamageTypes.WATER);
+                    Shots.push(e, p.position(), 0.5, 0.15);
+                    Fx.send(c.level(), Fx.OCTOPUS_LASH, p.position().add(0, 1.1, 0), e.position().add(0, e.getBbHeight() * 0.5, 0), c.color(), 0);
                 }
+            }
+            for (net.minecraft.world.entity.Entity e : c.level().getEntities(p, p.getBoundingBox().inflate(3.0),
+                    e -> e instanceof net.minecraft.world.entity.projectile.Projectile pr && pr.getOwner() != p)) {
+                c.level().sendParticles(ParticleTypes.SPLASH, e.getX(), e.getY(), e.getZ(), 6, 0.2, 0.2, 0.2, 0.1);
+                e.discard();
             }
             if (p.tickCount % 200 == 0 && !WaterSources.take(c)) {
                 c.setOn(false);
@@ -262,6 +307,17 @@ public final class WaterBending {
         @Override
         public void end(Cast c) {
             c.setOn(false);
+            PRESSED.remove(c.player.getUUID());
+        }
+
+        @Override
+        public void forget(ServerPlayer player) {
+            PRESSED.remove(player.getUUID());
+        }
+
+        @Override
+        public void clear() {
+            PRESSED.clear();
         }
     }
 

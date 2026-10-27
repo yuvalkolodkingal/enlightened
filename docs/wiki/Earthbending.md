@@ -74,3 +74,8 @@ Arts in the spirit of ProjectKorra and *Avatar: Legend Reforged*; see also [Comb
 
 Every earthbender's first chakra, and his heavy footing, also show in the **steps**: see
 [Chakras and the Avatar State](Chakras-and-the-Avatar-State).
+
+## New in 1.3
+
+The **Lava Shuriken** is Ghazan's disc: a flat saw of molten rock spinning fast, a glowing heart under dark crust that
+curls over it in spiral streaks and breaks into teeth round the rim, with sparks off the edge.

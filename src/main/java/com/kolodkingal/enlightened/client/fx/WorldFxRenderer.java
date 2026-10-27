@@ -102,6 +102,7 @@ public final class WorldFxRenderer {
     }
 
     static void clear() {
+        WHIP_TRAIL.clear();
         ROLL.clear();
         ROLL_TIME.clear();
     }
@@ -175,7 +176,7 @@ public final class WorldFxRenderer {
         if ((w = stance(st, data, Stance.SCOOTER, data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER))) > 0.01F) {
             airBall(p, w);
         }
-        if ((w = stance(st, data, Stance.GLIDE, AirBending.gliding(data))) > 0.01F) {
+        if ((w = stance(st, data, Stance.GLIDE, data.gliderOpen())) > 0.01F) {
             glider(p, w);
         }
         if (st != null && st.wAir > 0.2F && st.sH > 0.5F && !calm) {
@@ -191,7 +192,10 @@ public final class WorldFxRenderer {
             octopus(p, w);
         }
         if (data.has(Ability.WATER_SPOUT) && data.on(Ability.WATER_SPOUT)) {
-            spout(p, data);
+            spout(p, data, 1.0F);
+        }
+        if (data.has(Ability.WATER_VORTEX) && data.active(Ability.WATER_VORTEX)) {
+            spout(p, data, 1.5F);
         }
         if ((w = stance(st, data, Stance.BLOODBENDING, data.active(Ability.BLOODBENDING))) > 0.01F) {
             bloodStrands(p, data, w);
@@ -240,6 +244,9 @@ public final class WorldFxRenderer {
         if (data.has(Ability.HEAT_CONTROL) && data.on(Ability.HEAT_CONTROL) && !calm) {
             heatShimmer(p);
         }
+        if (data.has(Ability.PALM_FORGE) && data.active(Ability.PALM_FORGE)) {
+            handFlame(p, data);
+        }
         if (data.has(Ability.ILLUMINATION) && data.on(Ability.ILLUMINATION)) {
             handFlame(p, data);
         }
@@ -251,6 +258,9 @@ public final class WorldFxRenderer {
         }
         if ((w = stance(st, data, Stance.AVATAR, data.avatar(now))) > 0.01F) {
             avatarAura(p, data, w);
+        }
+        if (data.has(Ability.ELEMENTAL_SPHERE) && data.on(Ability.ELEMENTAL_SPHERE) && data.avatar(now)) {
+            elementalSphere(p, w);
         }
     }
 
@@ -368,8 +378,8 @@ public final class WorldFxRenderer {
 
     /** The water bubble: a pocket of air, its skin shimmering, under the water. */
     private static void bubble(AbstractClientPlayer p, BendingData data) {
-        float radius = 1.5F + (data.level(Ability.WATER_BUBBLE) - 1) * 1.0F;
-        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        float radius = 2.0F + (data.level(Ability.WATER_BUBBLE) - 1) * 1.0F + 0.3F;
+        Vec3 c = rel(p.getPosition(partial).add(0, 0.9, 0));
         VertexConsumer light = vc(FxGeometry.light());
         FxGeometry.sphere(pose, light, c, radius, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.12F, 1.7F, age * 0.1F, FULL, false, new Quaternionf().rotationY(age * 0.02F));
     }
@@ -447,11 +457,61 @@ public final class WorldFxRenderer {
     }
 
     /** The air scooter: a ball of spinning air under the rider, rolling with the ride. */
+    /**
+     * The elemental sphere of Sozin's Comet: round the Avatar, from the inside out, a ring of dark stones, a band of
+     * water, a grey band of air and a broad ring of fire, each tilted its own way and spinning like a gyroscope.
+     */
+    private static void elementalSphere(AbstractClientPlayer p, float w) {
+        Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
+        int lit = lightAt(p.getPosition(partial));
+        float[] wf = waterFrame();
+        float[] ff = fireFrame(1.0F);
+        // Earth: six stones on the innermost ring.
+        Quaternionf earthTilt = new Quaternionf().rotationX(0.5F).mul(new Quaternionf().rotationY(age * 0.12F));
+        for (int i = 0; i < 6; i++) {
+            double ang = i * Math.PI / 3 + age * 0.25;
+            org.joml.Vector3f v = new org.joml.Vector3f((float) Math.cos(ang) * 1.5F, 0.0F, (float) Math.sin(ang) * 1.5F);
+            earthTilt.transform(v);
+            FxGeometry.sphere(pose, vc(FxGeometry.snow()), c.add(v.x, v.y, v.z), 0.22F, 4, 6, 0, 1, 0.42F, 0.36F, 0.28F, 0.98F * w, 0, 0, lit, true, new Quaternionf().rotationY(age * 0.5F + i));
+        }
+        // Water: a band on the second ring.
+        List<Vec3> water = new ArrayList<>();
+        Quaternionf waterTilt = new Quaternionf().rotationZ(-0.6F).mul(new Quaternionf().rotationY(-age * 0.1F));
+        for (int k = 0; k <= 32; k++) {
+            double ang = k * Math.PI * 2 / 32 - age * 0.3;
+            org.joml.Vector3f v = new org.joml.Vector3f((float) Math.cos(ang) * 2.0F, 0.0F, (float) Math.sin(ang) * 2.0F);
+            waterTilt.transform(v);
+            water.add(c.add(v.x, v.y, v.z));
+        }
+        FxGeometry.tube(pose, vc(FxGeometry.flow()), water, 0.18F, 0.18F, 8, wf[0], wf[1], 6.0F, age * 0.1F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F * w, 0.9F * w, lit, true);
+        // Air: a grey band on the third.
+        List<Vec3> air = new ArrayList<>();
+        Quaternionf airTilt = new Quaternionf().rotationX(-0.9F).mul(new Quaternionf().rotationY(age * 0.08F));
+        for (int k = 0; k <= 32; k++) {
+            double ang = k * Math.PI * 2 / 32 + age * 0.35;
+            org.joml.Vector3f v = new org.joml.Vector3f((float) Math.cos(ang) * 2.5F, 0.0F, (float) Math.sin(ang) * 2.5F);
+            airTilt.transform(v);
+            air.add(c.add(v.x, v.y, v.z));
+        }
+        FxGeometry.ribbon(pose, vc(FxGeometry.light()), air, 0.35F, 0.35F, 0, 1, 1, 0, 0.85F, 0.9F, 0.95F, 0.35F * w, 0.35F * w, FULL, false);
+        // Fire: the broad outer ring.
+        List<Vec3> fire = new ArrayList<>();
+        Quaternionf fireTilt = new Quaternionf().rotationZ(0.35F).mul(new Quaternionf().rotationY(-age * 0.06F));
+        for (int k = 0; k <= 40; k++) {
+            double ang = k * Math.PI * 2 / 40 - age * 0.4;
+            org.joml.Vector3f v = new org.joml.Vector3f((float) Math.cos(ang) * 3.1F, 0.0F, (float) Math.sin(ang) * 3.1F);
+            fireTilt.transform(v);
+            fire.add(c.add(v.x, v.y, v.z));
+        }
+        FxGeometry.tube(pose, vc(FxGeometry.fire(false)), fire, 0.3F, 0.3F, 8, ff[0], ff[1], 10.0F, age * 0.2F, 1.0F, 1.0F, 1.0F, 0.95F * w, 0.95F * w, FULL, true);
+        FxGeometry.puffs(pose, vc(FxGeometry.fire(false)), fire, 0.7F, 0.7F, ff[0], ff[1], 1.0F, 1.0F, 1.0F, 0.8F * w, 0.8F * w, FULL, true, age * 0.3F);
+    }
+
     private static void airBall(AbstractClientPlayer p, float w) {
         Vec3 feet = p.getPosition(partial);
-        // He sits on the ball: it stands on the ground under him and his body is lifted onto it (Stances.drop).
-        Vec3 center = rel(feet.add(0, 0.12, 0));
-        float radius = 0.62F;
+        // The ball stands on the ground under him and he sits on top of it (Stances.drop lifts the body by its height).
+        float radius = 0.6F;
+        Vec3 center = rel(feet.add(0, radius, 0));
         // The ball rolls: its turn is the ride's distance over its radius, about the axis across the motion.
         Quaternionf rot = ROLL.computeIfAbsent(p.getId(), k -> new Quaternionf());
         double last = ROLL_TIME.getOrDefault(p.getId(), (double) age);
@@ -466,9 +526,20 @@ public final class WorldFxRenderer {
         // An idle spin too, so it never looks like a still thing.
         Quaternionf spin = new Quaternionf(rot).mul(new Quaternionf().rotationY(age * 0.08F));
         VertexConsumer light = vc(FxGeometry.light());
-        FxGeometry.sphere(pose, light, center, radius, 10, 20, 0, 1, AIR[0], AIR[1], AIR[2], 0.30F * w, 1.6F, age * 0.2F, FULL, false, spin);
+        // The show's ball: a translucent cyan sphere wrapped in spinning white bands.
+        FxGeometry.sphere(pose, light, center, radius, 10, 20, 0, 1, 0.45F, 0.88F, 0.95F, 0.42F * w, 1.6F, age * 0.2F, FULL, false, spin);
         Quaternionf spin2 = new Quaternionf(rot).mul(new Quaternionf().rotationX(1.1F)).mul(new Quaternionf().rotationY(-age * 0.13F));
-        FxGeometry.sphere(pose, light, center, radius * 0.72F, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.28F * w, 2.1F, -age * 0.3F, FULL, false, spin2);
+        FxGeometry.sphere(pose, light, center, radius * 0.8F, 8, 16, 0, 1, 0.75F, 0.97F, 1.0F, 0.3F * w, 2.1F, -age * 0.3F, FULL, false, spin2);
+        for (int i = 0; i < 5; i++) {
+            List<Vec3> band = new ArrayList<>();
+            for (int k = 0; k <= 14; k++) {
+                float t = k / 14.0F;
+                double lat = (i / 5.0 - 0.45 + 0.15 * Math.sin(t * 3 + i)) * Math.PI * 0.8;
+                double lon = -age * 0.45 + i * 1.26 + t * 2.6;
+                band.add(center.add(Math.cos(lat) * Math.cos(lon) * radius * 1.02, Math.sin(lat) * radius * 1.02, Math.cos(lat) * Math.sin(lon) * radius * 1.02));
+            }
+            FxGeometry.ribbon(pose, light, band, 0.03F, 0.11F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.15F * w, 0.7F * w, FULL, false);
+        }
         // Streaks of wind round the ball.
         for (int i = 0; i < 3; i++) {
             List<Vec3> pts = new ArrayList<>();
@@ -483,10 +554,15 @@ public final class WorldFxRenderer {
             FxGeometry.ribbon(pose, light, pts, 0.10F, 0.02F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.0F, 0.45F * w, FULL, false);
         }
         // The dust it kicks up: a thin ring at the ground.
-        FxGeometry.disc(pose, light, center.add(0, -radius + 0.03, 0), radius * 0.6F, radius * 1.3F, 20, 0, 1, AIR[0], AIR[1], AIR[2], 0.18F * w, 0.0F, FULL, false, age * 0.3F);
+        FxGeometry.disc(pose, light, center.add(0, -radius + 0.03, 0), radius * 0.6F, radius * 1.5F, 20, 0, 1, 0.85F, 0.8F, 0.7F, 0.16F * w, 0.0F, FULL, false, age * 0.3F);
     }
 
     /** The glider's wings, open on the staff above the airbender's hands, coloured as the staff was dyed. */
+    /**
+     * The glider staff of the show: a wooden staff over the hands from which two fans of orange fabric open on
+     * radial ribs, sweeping out to the sides and forward like a kite, with a small tail fin behind; the bender hangs
+     * under it. Drawn whenever the staff is open, fluttering a little in the wind.
+     */
     private static void glider(AbstractClientPlayer p, float w) {
         ItemStack stack = p.getMainHandItem().getItem() instanceof GliderItem ? p.getMainHandItem() : p.getOffhandItem();
         int color = stack.getItem() instanceof GliderItem ? GliderItem.color(stack) : GliderItem.DEFAULT_COLOR;
@@ -499,35 +575,48 @@ public final class WorldFxRenderer {
         Vec3 side = right(flat);
         Vec3 hr = hand(p, HumanoidArm.RIGHT);
         Vec3 hl = hand(p, HumanoidArm.LEFT);
-        Vec3 grip = rel(hr.add(hl).scale(0.5).add(0, 0.15, 0));
+        Vec3 grip = rel(hr.add(hl).scale(0.5).add(0, 0.12, 0));
         int light = lightAt(hr);
-        float flutter = 0.06F * Mth.sin(age * 0.6F);
+        float open = FxGeometry.easeOut(w);
+        float flutter = 0.05F * Mth.sin(age * 0.7F);
         VertexConsumer snow = vc(FxGeometry.snow());
-        // The staff across the hands.
-        List<Vec3> staff = List.of(grip.subtract(side.scale(1.3)), grip.add(side.scale(1.3)));
-        FxGeometry.tube(pose, snow, staff, 0.035F, 0.035F, 6, 0, 1, 1, 0, 0.42F, 0.28F, 0.14F, w, w, light, true);
-        // Two wings: fans from the staff, forward and back, with a tip that flutters.
-        for (int s = -1; s <= 1; s += 2) {
-            for (int k = 0; k < 2; k++) {
-                float span0 = 0.15F + k * 0.6F;
-                float span1 = span0 + 0.6F;
-                float fwd = 0.9F - k * 0.25F;
-                float back = 0.45F - k * 0.1F;
-                Vec3 a = grip.add(side.scale(s * span0)).add(flat.scale(-back));
-                Vec3 bq = grip.add(side.scale(s * span0)).add(flat.scale(fwd));
-                Vec3 c = grip.add(side.scale(s * span1)).add(flat.scale(fwd * 0.7)).add(0, flutter * (k + 1), 0);
-                Vec3 d = grip.add(side.scale(s * span1)).add(flat.scale(-back * 0.7)).add(0, flutter * (k + 1), 0);
-                quadColored(snow, a, bq, c, d, r, g, b, 0.92F * w, light);
+        // The staff across the hands, and the hinge above it.
+        List<Vec3> staff = List.of(grip.subtract(side.scale(1.0)), grip.add(side.scale(1.0)));
+        FxGeometry.tube(pose, snow, staff, 0.04F, 0.04F, 6, 0, 1, 1, 0, 0.42F, 0.28F, 0.14F, 1.0F, 1.0F, light, true);
+        Vec3 hinge = grip.add(0, 0.05, 0);
+        // Two fans: ribs from the hinge out to an arc from behind the staff round to the front, fabric between them.
+        int ribs = 7;
+        double a0 = Math.toRadians(-55);
+        double a1 = Math.toRadians(80);
+        float span = 1.9F * open;
+        for (int sgn = -1; sgn <= 1; sgn += 2) {
+            Vec3 prev = null;
+            for (int i = 0; i <= ribs; i++) {
+                double t = (double) i / ribs;
+                double ang = a0 + (a1 - a0) * t;
+                // Each rib leans out to its side and swings from back to front; the tips sag and flutter.
+                double out = Math.cos(ang) * span;
+                double fwd = Math.sin(ang) * span * 0.75;
+                double sag = -0.08 * open * t * (1 - t) * 4 + flutter * t;
+                Vec3 tip = hinge.add(side.scale(sgn * out)).add(flat.scale(fwd)).add(0, sag, 0);
+                FxGeometry.tube(pose, snow, List.of(hinge, tip), 0.025F, 0.012F, 4, 0, 1, 1, 0, 0.35F, 0.22F, 0.1F, 1.0F, 1.0F, light, true);
+                if (prev != null) {
+                    quadColored(snow, hinge, prev, tip, hinge.add(0, 0.001, 0), r, g, b, 0.95F, light);
+                    quadColored(snow, hinge.add(0, 0.001, 0), tip, prev, hinge, r * 0.85F, g * 0.85F, b * 0.85F, 0.95F, light);
+                }
+                prev = tip;
             }
         }
+        // The tail fin behind the hinge.
+        Vec3 tailBase = grip.add(flat.scale(-0.3));
+        Vec3 tailEnd = grip.add(flat.scale(-0.3 - 0.8 * open)).add(0, -0.05, 0);
+        FxGeometry.tube(pose, snow, List.of(tailBase, tailEnd), 0.03F, 0.015F, 4, 0, 1, 1, 0, 0.35F, 0.22F, 0.1F, 1.0F, 1.0F, light, true);
+        quadColored(snow, tailBase, tailEnd, tailEnd.add(0, 0.28 * open, 0), tailBase.add(0, 0.12 * open, 0), r, g, b, 0.95F, light);
+        quadColored(snow, tailBase.add(0, 0.12 * open, 0), tailEnd.add(0, 0.28 * open, 0), tailEnd, tailBase, r * 0.85F, g * 0.85F, b * 0.85F, 0.95F, light);
     }
 
     private static void quadColored(VertexConsumer vc, Vec3 a, Vec3 b, Vec3 c, Vec3 d, float r, float g, float bl, float al, int light) {
-        List<Vec3> edge = List.of(a, b);
-        List<Vec3> edge2 = List.of(d, c);
-        // Two ribbons would face the camera; a wing is flat: draw it as a tube of two sides collapsed to a sheet.
-        FxGeometry.tube(pose, vc, List.of(a.add(d).scale(0.5), b.add(c).scale(0.5)), (float) a.distanceTo(d) * 0.5F, (float) b.distanceTo(c) * 0.5F,
-                2, 0, 1, 1, 0, r, g, bl, al, al, light, true);
+        FxGeometry.flatQuad(pose, vc, a, b, c, d, r, g, bl, al, light);
     }
 
     /** The wind of a fast flight: streaks trailing the body. */
@@ -626,7 +715,7 @@ public final class WorldFxRenderer {
     }
 
     /** The water spout: a column of water from the surface to the feet, spiralling up, with a crown of spray. */
-    private static void spout(AbstractClientPlayer p, BendingData data) {
+    private static void spout(AbstractClientPlayer p, BendingData data, float girth) {
         Vec3 feet = p.getPosition(partial);
         BlockPos.MutableBlockPos pos = BlockPos.containing(feet).mutable();
         int surface = Integer.MIN_VALUE;
@@ -662,7 +751,7 @@ public final class WorldFxRenderer {
             pts.add(rel(new Vec3(feet.x + Math.cos(a) * 0.12 * (1 - t), y, feet.z + Math.sin(a) * 0.12 * (1 - t))));
         }
         float height = (float) (top - bottom);
-        FxGeometry.tube(pose, flow, pts, 0.75F, 0.45F, 12, fr[0], fr[1], height * 0.5F, -age * 0.06F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.85F, 0.8F, lit, true);
+        FxGeometry.tube(pose, flow, pts, 0.85F * girth, 0.5F * girth, 14, fr[0], fr[1], height * 0.5F, -age * 0.08F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F, 0.8F, lit, true);
         // Three ropes of foam winding up the column.
         for (int i = 0; i < 3; i++) {
             List<Vec3> rope = new ArrayList<>();
@@ -674,6 +763,14 @@ public final class WorldFxRenderer {
                 rope.add(rel(new Vec3(feet.x + Math.cos(a) * r, y, feet.z + Math.sin(a) * r)));
             }
             FxGeometry.ribbon(pose, light, rope, 0.10F, 0.05F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.35F, 0.45F, FULL, false);
+        }
+        // Chunks of foam flung off the twisting body, as in the show, and droplets round the crown.
+        net.minecraft.util.RandomSource rnd = net.minecraft.util.RandomSource.create(now / 3);
+        for (int i = 0; i < 10; i++) {
+            double ang = rnd.nextDouble() * Math.PI * 2;
+            double h = bottom + rnd.nextDouble() * height;
+            double r = 0.85 + rnd.nextDouble() * 0.5;
+            FxGeometry.billboard(pose, vc(FxGeometry.snow()), rel(new Vec3(feet.x + Math.cos(ang) * r, h, feet.z + Math.sin(ang) * r)), 0.14F + rnd.nextFloat() * 0.22F, 0, 1, 0.95F, 0.98F, 1.0F, 0.85F, lit, true, rnd.nextFloat() * 6);
         }
         // The crown of spray at the surface, and the swell under the feet.
         Vec3 foot = rel(new Vec3(feet.x, bottom + 0.05, feet.z));
@@ -753,6 +850,13 @@ public final class WorldFxRenderer {
     }
 
     /** The fire whip: a lash of fire from the main hand, snaking along the look. */
+    /** Where each whip hand was over the last ticks, so the rope trails the arm's swing. */
+    private static final Map<Integer, java.util.ArrayDeque<Vec3>> WHIP_TRAIL = new HashMap<>();
+
+    /**
+     * The fire whip as Zuko lashes it: a thick rope of orange fire with a yellow-white heart, anchored at the hand and
+     * trailing its swing in long loops and S-curves, its tip cracking out along the look; tongues peel off the rope.
+     */
     private static void fireWhip(AbstractClientPlayer p, BendingData data, float w) {
         boolean blue = Variants.blueFire(data);
         float[] core = blue ? BLUE_CORE : FIRE_CORE;
@@ -760,24 +864,44 @@ public final class WorldFxRenderer {
         Vec3 side = right(look);
         Vec3 up = side.cross(look);
         int lvl = Math.max(1, data.level(Ability.FIRE_WHIP));
-        float len = (6.0F + 3.0F * (lvl - 1)) * w;
+        float len = (7.0F + 3.0F * (lvl - 1)) * w;
         Vec3 h = hand(p, p.getMainArm());
-        Vec3 dir = fan(look, p.getMainArm() == HumanoidArm.RIGHT ? 0.14 : -0.14);
+        java.util.ArrayDeque<Vec3> trail = WHIP_TRAIL.computeIfAbsent(p.getId(), k -> new java.util.ArrayDeque<>());
+        if (trail.isEmpty() || trail.peekFirst().distanceToSqr(h) > 1.0E-4) {
+            trail.addFirst(h);
+        }
+        while (trail.size() > 14) {
+            trail.removeLast();
+        }
+        // The rope: the first part follows where the hand has been (the lag of a real whip), the rest loops out along the look.
         List<Vec3> pts = new ArrayList<>();
-        for (int k = 0; k <= 14; k++) {
-            float t = k / 14.0F;
-            Vec3 at = h.add(dir.scale(t * len)).add(side.scale(Math.sin(t * Math.PI * 2 + age * 0.6) * 0.55 * t))
-                    .add(up.scale(Math.cos(t * 3 + age * 0.5) * 0.28 * t));
+        int lagPts = Math.min(trail.size(), 5);
+        int i = 0;
+        for (Vec3 past : trail) {
+            if (i >= lagPts) {
+                break;
+            }
+            Vec3 at = past.add(look.scale(i * 0.35));
             pts.add(rel(at));
+            i++;
+        }
+        Vec3 base = pts.isEmpty() ? rel(h) : pts.get(pts.size() - 1);
+        for (int k = 1; k <= 16; k++) {
+            float t = k / 16.0F;
+            double loop = Math.sin(t * Math.PI * 2.5 + age * 0.55) * 1.1 * Math.sqrt(t);
+            double rise = Math.cos(t * Math.PI * 1.7 + age * 0.45) * 0.55 * t + 0.25 * Math.sin(t * Math.PI);
+            Vec3 at = base.add(look.scale(t * len)).add(side.scale(loop)).add(up.scale(rise));
+            pts.add(at);
         }
         float[] fr = fireFrame(0.9F);
-        FxGeometry.ribbon(pose, vc(FxGeometry.fire(blue)), pts, 0.34F, 0.14F, fr[0], fr[1], len / 1.2F, age * 0.25F, 1.0F, 1.0F, 1.0F, 0.95F, 0.55F, FULL, true);
-        FxGeometry.puffs(pose, vc(FxGeometry.fire(blue)), pts, 0.55F, 0.25F, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.85F, 0.4F, FULL, true, age * 0.3F);
-        FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.12F, 0.04F, 0, 1, 1, 0, core[0], core[1], core[2], 0.7F, 0.2F, FULL, false);
-        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), pts.get(pts.size() - 1), 0.5F, core[0], core[1], core[2], 0.6F * w, age * 0.3F);
+        VertexConsumer fire = vc(FxGeometry.fire(blue));
+        FxGeometry.tube(pose, fire, pts, 0.26F, 0.07F, 8, fr[0], fr[1], len / 1.2F, age * 0.25F, 1.0F, 1.0F, 1.0F, 0.95F, 0.6F, FULL, true);
+        FxGeometry.tube(pose, vc(FxGeometry.light()), pts, 0.11F, 0.02F, 6, 0, 1, 1, 0, core[0], core[1], core[2], 0.8F, 0.3F, FULL, false);
+        FxGeometry.puffs(pose, fire, pts, 0.6F, 0.25F, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.8F, 0.35F, FULL, true, age * 0.3F);
+        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), pts.get(pts.size() - 1), 0.6F, core[0], core[1], core[2], 0.6F * w, age * 0.3F);
+        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(h), 0.7F, core[0], core[1], core[2], 0.5F * w, -age * 0.2F);
     }
 
-    /** Lightning gathering: arcs crawling between the hands, more and brighter as the charge builds. */
     private static void lightningCharge(AbstractClientPlayer p, BendingData data, AnimState st, float w) {
         Vec3 hr = rel(hand(p, HumanoidArm.RIGHT));
         Vec3 hl = rel(hand(p, HumanoidArm.LEFT));
@@ -1006,6 +1130,55 @@ public final class WorldFxRenderer {
                 }
                 FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(dir.scale(reach)), reach * 0.6F, 0.4F * (1.0F - f), 20, 0, 1, 0.8F, 0.95F, 1.0F, 0.35F * (1.0F - f), FULL, false, a, 0.3F);
             }
+            case WATER_VORTEX -> waterVortex(from, to, e, a, f, lit);
+            case ENERGYBEND -> {
+                // The lion turtle's gift: the Avatar glows blue-white, the touched one orange-red, and columns of light rise from both.
+                VertexConsumer light = vc(FxGeometry.light());
+                float en = env(f);
+                Vec3 touched = entity != null ? rel(entity.getPosition(partial)) : to;
+                for (int side = 0; side < 2; side++) {
+                    Vec3 spot = side == 0 ? from : touched;
+                    float[] rgb = side == 0 ? new float[]{0.6F, 0.85F, 1.0F} : new float[]{1.0F, 0.55F, 0.2F};
+                    FxGeometry.ringBand(pose, light, spot.add(0, 0.05, 0), 0.7F, 14.0F * en, 20, 0, 1, rgb[0], rgb[1], rgb[2], 0.45F * en, FULL, false, a * 0.2F, 0.1F);
+                    FxGeometry.ringBand(pose, light, spot.add(0, 0.05, 0), 0.35F, 18.0F * en, 12, 0, 1, 1.0F, 1.0F, 1.0F, 0.35F * en, FULL, false, -a * 0.3F, 0.0F);
+                    FxGeometry.sphere(pose, light, spot.add(0, 1.0, 0), 1.2F, 8, 16, 0, 1, rgb[0], rgb[1], rgb[2], 0.25F * en, 1.5F, a * 0.4F, FULL, false, new Quaternionf().rotationY(a * 0.2F));
+                    FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), spot.add(0, 1.6, 0), 2.5F, rgb[0], rgb[1], rgb[2], 0.7F * en, a * 0.3F);
+                }
+            }
+            case SPIRITBEND -> {
+                // Spiritbending as Korra does it: a spiral of golden light winding up and round the creature, softening to white.
+                VertexConsumer light = vc(FxGeometry.light());
+                float en = env(f);
+                float h = (float) (to.y - from.y);
+                Vec3 c = entity != null ? rel(entity.getPosition(partial)) : from;
+                for (int i = 0; i < 2; i++) {
+                    List<Vec3> pts = new ArrayList<>();
+                    for (int k = 0; k <= 24; k++) {
+                        float t = k / 24.0F;
+                        double ang = t * Math.PI * 4 + a * 0.3 + i * Math.PI;
+                        double r = e.data() * 0.9 + 0.5 + 0.2 * Math.sin(a * 0.5 + k);
+                        pts.add(c.add(Math.cos(ang) * r, h * t, Math.sin(ang) * r));
+                    }
+                    FxGeometry.ribbon(pose, light, pts, 0.22F, 0.08F, 0, 1, 1, 0, 1.0F, 0.85F, 0.35F, 0.6F * en, 0.2F * en, FULL, false);
+                    FxGeometry.puffs(pose, vc(FxGeometry.glowTexture()), pts, 0.5F, 0.3F, 0, 1, 1.0F, 0.9F, 0.5F, 0.45F * en, 0.2F * en, FULL, true, a * 0.2F);
+                }
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), c.add(0, h * 0.5, 0), 1.6F + h * 0.5F, 1.0F, 0.92F, 0.6F, 0.4F * en, a);
+            }
+            case OCTOPUS_LASH -> {
+                // An arm of the octopus form lashing out: a thick tendril of water that snaps to its mark and back.
+                float reach = env(f);
+                List<Vec3> pts = new ArrayList<>();
+                Vec3 d = to.subtract(from);
+                Vec3 side = right(d.lengthSqr() < 1.0E-6 ? new Vec3(0, 0, 1) : d.normalize());
+                for (int k = 0; k <= 10; k++) {
+                    float t = k / 10.0F * reach;
+                    pts.add(from.add(d.scale(t)).add(side.scale(Math.sin(t * Math.PI * 2 + a * 0.8) * 0.3 * t)).add(0, Math.sin(t * Math.PI) * 0.4, 0));
+                }
+                float[] wfr = waterFrame();
+                FxGeometry.tube(pose, vc(FxGeometry.water()), pts, 0.2F, 0.06F, 8, wfr[0], wfr[1], 2.0F, a * 0.1F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F, 0.7F, lit, true);
+                FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.3F, 0.1F, 0, 1, 1, 0, WATER_GLOW[0], WATER_GLOW[1], WATER_GLOW[2], 0.2F, 0.1F, FULL, false);
+                FxGeometry.puffs(pose, vc(FxGeometry.water()), pts, 0.35F, 0.15F, wfr[0], wfr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.6F, 0.5F, lit, true, a * 0.3F);
+            }
             case FIRE_SPIN -> {
                 boolean blue = e.color() == 1;
                 float r = e.data() * easeOut(f);
@@ -1052,6 +1225,53 @@ public final class WorldFxRenderer {
                 FxGeometry.ringBand(pose, vc(FxGeometry.snow()), from.add(0, 0.05, 0), r, 0.9F * (1.0F - f), 20, 0, 1, EARTH[0] * 0.7F, EARTH[1] * 0.65F, EARTH[2] * 0.6F, 0.6F * (1.0F - f), lit, true, a * 0.3F, 0.4F);
             }
         }
+    }
+
+    /**
+     * The water vortex: a column of water twisting up from the ground, as the one Aang rode up a hull: a thick body
+     * of flowing water wound with white froth, chunks of foam flung off it, and spray at the foot and the crown.
+     */
+    private static void waterVortex(Vec3 from, Vec3 to, WorldFx.Effect e, float a, float f, int lit) {
+        float grow = easeOut(Mth.clamp(a / 10.0F, 0.0F, 1.0F)) * (f > 0.85F ? (1.0F - f) / 0.15F : 1.0F);
+        if (grow <= 0.01F) {
+            return;
+        }
+        float radius = e.data() * 0.55F * grow;
+        float height = (float) (to.y - from.y) * grow;
+        float[] fr = waterFrame();
+        VertexConsumer flow = vc(FxGeometry.flow());
+        VertexConsumer water = vc(FxGeometry.water());
+        VertexConsumer light = vc(FxGeometry.light());
+        int n = Math.max(6, (int) (height * 2));
+        List<Vec3> spine = new ArrayList<>();
+        for (int k = 0; k <= n; k++) {
+            float t = (float) k / n;
+            double ang = a * 0.3 + t * 4;
+            spine.add(from.add(Math.cos(ang) * 0.15 * t, height * t, Math.sin(ang) * 0.15 * t));
+        }
+        FxGeometry.tube(pose, flow, spine, radius * 0.6F, radius, 14, fr[0], fr[1], height * 0.6F, -a * 0.12F, WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.9F, 0.75F, lit, true);
+        // White froth winding up the body, and foam flung off it.
+        for (int i = 0; i < 4; i++) {
+            List<Vec3> rope = new ArrayList<>();
+            for (int k = 0; k <= n * 2; k++) {
+                float t = (float) k / (n * 2);
+                double ang = i * 1.57 - a * 0.45 + t * 10;
+                double r = radius * (0.65 + 0.4 * t);
+                rope.add(from.add(Math.cos(ang) * r, height * t, Math.sin(ang) * r));
+            }
+            FxGeometry.ribbon(pose, light, rope, 0.14F, 0.08F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.55F, 0.7F, FULL, false);
+            FxGeometry.puffs(pose, vc(FxGeometry.snow()), rope.subList(0, rope.size() / 2 + 1), 0.3F, 0.5F, 0, 1, 0.95F, 0.98F, 1.0F, 0.0F, 0.75F, lit, true, a * 0.2F + i);
+        }
+        net.minecraft.util.RandomSource rnd = net.minecraft.util.RandomSource.create(e.born() + (long) (a / 3));
+        for (int i = 0; i < 8; i++) {
+            double ang = rnd.nextDouble() * Math.PI * 2;
+            double h = rnd.nextDouble() * height;
+            double r = radius * (1.1 + rnd.nextDouble() * 0.6);
+            FxGeometry.billboard(pose, vc(FxGeometry.snow()), from.add(Math.cos(ang) * r, h, Math.sin(ang) * r), 0.15F + rnd.nextFloat() * 0.2F, 0, 1, 0.95F, 0.98F, 1.0F, 0.8F, lit, true, rnd.nextFloat() * 6);
+        }
+        FxGeometry.disc(pose, water, from.add(0, 0.05, 0), radius * 0.5F, radius * 1.9F, 24, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.75F, 0.0F, lit, true, a * 0.15F);
+        FxGeometry.ringBand(pose, light, from.add(0, 0.1, 0), radius * 1.4F, 0.5F, 24, 0, 1, 1.0F, 1.0F, 1.0F, 0.35F, FULL, false, a * 0.5F, 0.6F);
+        FxGeometry.ringBand(pose, water, from.add(0, height - 0.3, 0), radius * 1.15F, 0.7F, 20, fr[0], fr[1], WATER_TINT[0], WATER_TINT[1], WATER_TINT[2], 0.7F, lit, true, -a * 0.4F, 0.5F);
     }
 
     private static float[] elementRgb(int color) {

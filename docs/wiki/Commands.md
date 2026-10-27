@@ -14,5 +14,6 @@ All need operator rights (permission level 2).
 | `/enlightened loadout <player> <slot 1-10> <ability\|none>` | Puts an ability on a slot (slot 1 is R, 2 is Sneak + R, 3 is G, ... 10 is Sneak + N). |
 | `/enlightened tetherless <players> <true\|false>` | Makes an airbender [tetherless](Airbending#the-tetherless-airbender), or no longer (flight and suffocation are forgotten). |
 | `/enlightened reset <players>` | Takes back every level but the starter's and refunds the points. |
+| `/enlightened avatar <players> <enter\|leave\|rest>` | Enters or leaves the [Avatar State](Chakras-and-the-Avatar-State) (whatever the chakras), or ends its rest. |
 | `/enlightened chakras <players> <0-7>` | Sets how many [chakras](Chakras-and-the-Avatar-State) are open. |
 | `/enlightened info [player]` | Element, points, experience, points spent, kills, and every learned ability with its level and slot. |

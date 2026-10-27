@@ -39,6 +39,7 @@ enum RunCharacter {
             case AIR -> AIR;
             case WATER -> WATER;
             case FIRE -> FIRE;
+            case AVATAR -> AIR;
             default -> NONE;
         };
     }

@@ -80,7 +80,7 @@ public final class CommonEvents {
                 Mastery.onKill(killer, killed);
             }
             boolean severs = !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.PET_KILL_SEVERS_TETHERS.get();
-            if (severs && data.element() == Element.AIR && !data.tetherless() && killed instanceof TamableAnimal pet && pet.isOwnedBy(killer)) {
+            if (severs && data.element().commands(Element.AIR) && !data.tetherless() && killed instanceof TamableAnimal pet && pet.isOwnedBy(killer)) {
                 data.setTetherless(true);
                 killer.level().playSound(null, killer.getX(), killer.getY(), killer.getZ(), ModSounds.PROJECTION.get(), SoundSource.PLAYERS, 1.5F, 0.5F);
                 Benders.burst(killer.serverLevel(), killer.getX(), killer.getY() + 1, killer.getZ(), 0xE6E6E6, 80, 1.2);
@@ -123,27 +123,27 @@ public final class CommonEvents {
             return;
         }
         boolean lightning = source.is(ModDamageTypes.LIGHTNING) || source.is(DamageTypes.LIGHTNING_BOLT);
-        if (lightning && data.element() == Element.FIRE && FireBending.redirect(victim, source, amount)) {
+        if (lightning && data.element().commands(Element.FIRE) && FireBending.redirect(victim, source, amount)) {
             event.setCanceled(true);
             return;
         }
         boolean fire = source.is(DamageTypeTags.IS_FIRE) || source.is(ModTags.FIRE_BENDING);
         if (fire) {
-            float guard = data.element() == Element.FIRE ? FireBending.fireSkin(data)
-                    : data.element() == Element.EARTH ? EarthBending.lavaSkin(data) : 0F;
+            float guard = Math.max(data.element().commands(Element.FIRE) ? FireBending.fireSkin(data) : 0F,
+                    data.element().commands(Element.EARTH) ? EarthBending.lavaSkin(data) : 0F);
             if (guard >= 1.0F) {
                 event.setCanceled(true);
                 return;
             }
             amount *= 1.0F - guard;
         }
-        if (data.element() == Element.WATER) {
+        if (data.element().commands(Element.WATER)) {
             amount *= 1.0F - WaterBending.octopusGuard(data);
             if (!source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
                 amount = com.kolodkingal.enlightened.water.WaterMore.shieldAbsorb(victim, data, amount);
             }
         }
-        if (data.element() == Element.FIRE && !source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+        if (data.element().commands(Element.FIRE) && !source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             boolean deflected = source.is(DamageTypeTags.IS_PROJECTILE) || source.is(ModTags.BENDING);
             amount = com.kolodkingal.enlightened.fire.FireMore.shieldAbsorb(victim, data, amount, deflected);
         }
@@ -151,7 +151,7 @@ public final class CommonEvents {
             event.setCanceled(true);
             return;
         }
-        if (data.element() == Element.AIR && AirBending.shieldUp(victim, data)
+        if (data.element().commands(Element.AIR) && AirBending.shieldUp(victim, data)
                 && !source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.BYPASSES_ARMOR)) {
             amount = AirBending.shieldAbsorb(victim, data, amount);
             if (amount <= 0) {
@@ -182,6 +182,14 @@ public final class CommonEvents {
         }
     }
 
+    /** A creature calmed by spiritbending takes no prey while the calm lasts. */
+    @SubscribeEvent
+    public static void onChangeTarget(net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent event) {
+        if (event.getNewAboutToBeSetTarget() != null && event.getEntity().hasEffect(com.kolodkingal.enlightened.registry.ModEffects.PACIFIED)) {
+            event.setCanceled(true);
+        }
+    }
+
     /** Held, sinking, frozen or stunned: no jumping. */
     @SubscribeEvent
     public static void onJump(LivingEvent.LivingJumpEvent event) {
@@ -198,6 +206,11 @@ public final class CommonEvents {
             event.setDamageMultiplier(0.0F);
             return;
         }
+        if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.AIR)) {
+            // An airbender never falls hard: the air cushions every landing.
+            event.setDamageMultiplier(0.0F);
+            return;
+        }
         if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.EARTH)) {
             com.kolodkingal.enlightened.earth.EarthMore.onFall(player, Benders.get(player), event);
             return;
@@ -205,12 +218,6 @@ public final class CommonEvents {
         if (event.getEntity() instanceof ServerPlayer player && Benders.get(player).avatar(player.level().getGameTime())) {
             event.setDamageMultiplier(0.0F);
             return;
-        }
-        if (event.getEntity() instanceof ServerPlayer player && Benders.is(player, Element.AIR)) {
-            BendingData data = Benders.get(player);
-            if (data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER) || AirBending.gliding(data) || data.has(Ability.AIR_JUMP)) {
-                event.setDamageMultiplier(data.has(Ability.AIR_JUMP) && !AirBending.gliding(data) && !data.on(Ability.AIR_SCOOTER) ? 0.5F : 0F);
-            }
         }
     }
 

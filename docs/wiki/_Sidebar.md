@@ -10,6 +10,7 @@
 * [Airbending](Airbending)
 * [Waterbending](Waterbending)
 * [Firebending](Firebending)
+* [The Avatar](The-Avatar)
 * [Combos and Steps](Combos-and-Steps)
 * [Chakras and the Avatar State](Chakras-and-the-Avatar-State)
 

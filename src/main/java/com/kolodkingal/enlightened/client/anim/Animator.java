@@ -128,10 +128,10 @@ public final class Animator {
         s.sprinting = p.isSprinting();
         s.crouching = p.isCrouching();
         boolean flying = p instanceof LocalPlayer ? p.getAbilities().flying : data.flying();
-        s.flyingEff = flying && data.element() == Element.AIR && !p.isCreative() && !p.isSpectator();
+        s.flyingEff = flying && (data.element().commands(Element.AIR) || data.has(Ability.ELEMENTAL_SPHERE) && data.on(Ability.ELEMENTAL_SPHERE)) && !p.isCreative() && !p.isSpectator();
         s.gliding = AirBending.gliding(data) && !s.onGround;
         s.scooter = data.has(Ability.AIR_SCOOTER) && data.on(Ability.AIR_SCOOTER) && !p.isPassenger();
-        s.spout = data.has(Ability.WATER_SPOUT) && data.on(Ability.WATER_SPOUT);
+        s.spout = data.has(Ability.WATER_SPOUT) && data.on(Ability.WATER_SPOUT) || data.active(Ability.WATER_VORTEX);
     }
 
     /** The edges in the synced data since last tick, and what they start. */
@@ -232,7 +232,7 @@ public final class Animator {
         on[Stance.SEISMIC.ordinal()] = data.has(Ability.SEISMIC_SENSE) && data.on(Ability.SEISMIC_SENSE) && !s.flyingEff;
         on[Stance.AIR_SHIELD.ordinal()] = data.has(Ability.AIR_SHIELD) && data.on(Ability.AIR_SHIELD);
         on[Stance.SCOOTER.ordinal()] = s.scooter;
-        on[Stance.GLIDE.ordinal()] = s.gliding;
+        on[Stance.GLIDE.ordinal()] = data.gliderOpen();
         on[Stance.FLIGHT.ordinal()] = s.flyingEff && !s.onGround;
         on[Stance.OCTOPUS.ordinal()] = data.has(Ability.OCTOPUS_FORM) && data.on(Ability.OCTOPUS_FORM);
         on[Stance.SPOUT.ordinal()] = s.spout;
@@ -255,6 +255,7 @@ public final class Animator {
         on[Stance.MEDITATE.ordinal()] = data.meditating();
         on[Stance.AVATAR.ordinal()] = data.avatar(p.level().getGameTime());
         on[Stance.COMBUSTION.ordinal()] = data.active(Ability.COMBUSTION);
+        on[Stance.PALM_FORGE.ordinal()] = data.active(Ability.PALM_FORGE);
     }
 
     // ---- the routes from the data to the gestures ----
@@ -309,6 +310,7 @@ public final class Animator {
             case AIR_SHIELD -> on ? Gesture.AIR_SHIELD_ON : Gesture.AIR_SHIELD_OFF;
             case AIR_SCOOTER -> on ? Gesture.AIR_SCOOTER_ON : Gesture.AIR_SCOOTER_OFF;
             case FLIGHT -> on ? Gesture.AIR_FLIGHT_ON : Gesture.AIR_FLIGHT_OFF;
+            case ELEMENTAL_SPHERE -> on ? Gesture.AVATAR_ENTER : Gesture.AVATAR_LEAVE;
             case OCTOPUS_FORM -> on ? Gesture.WATER_OCTOPUS_ON : Gesture.WATER_OCTOPUS_OFF;
             case WATER_SPOUT -> on ? Gesture.WATER_SPOUT_ON : Gesture.WATER_SPOUT_OFF;
             case WATER_ARMS -> on ? Gesture.WATER_ARMS_ON : Gesture.WATER_ARMS_OFF;
@@ -338,6 +340,9 @@ public final class Animator {
             case FIRE_JET -> Gesture.FIRE_JET;
             case FIRE_SHIELD -> Gesture.FIRE_SHIELD_START;
             case COMBUSTION -> Gesture.FIRE_COMBUSTION;
+            case AVATAR_STATE -> Gesture.AVATAR_ENTER;
+            case ENERGYBENDING -> Gesture.WATER_SUPPRESS;
+            case SPIRITBENDING -> Gesture.WATER_HEAL;
             default -> null;
         };
     }

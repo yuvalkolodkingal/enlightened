@@ -108,7 +108,7 @@ public enum Combos {
             recent.removeFirst();
         }
         for (Combos combo : VALUES) {
-            if (combo.element != data.element() || !combo.known(data) || !matches(recent, combo, now)) {
+            if (!data.element().commands(combo.element) || !combo.known(data) || !matches(recent, combo, now)) {
                 continue;
             }
             Map<Combos, Long> cds = COOLDOWNS.computeIfAbsent(p.getUUID(), k -> new HashMap<>());
@@ -244,7 +244,7 @@ public enum Combos {
                 double range = 5 + strength;
                 for (LivingEntity e : Shots.cone(p, range, 50)) {
                     Shots.hurt(p, e, 5.0F + strength * 1.5F, ModDamageTypes.FLAME);
-                    e.igniteForSeconds(5);
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 5);
                     Shots.push(e, p.position(), 1.0, 0.5);
                 }
                 Fx.send(level, Fx.BLAZE_ARC, p.position().add(0, 0.6, 0), p.position().add(facing), Variants.blueFire(data) ? 1 : 0, (float) range);
@@ -254,7 +254,7 @@ public enum Combos {
                 double radius = 6 + strength * 1.5;
                 for (LivingEntity e : Shots.area(p, p.position().add(0, 1, 0), radius)) {
                     Shots.hurt(p, e, 5.0F + strength * 1.5F, ModDamageTypes.FIRE);
-                    e.igniteForSeconds(5);
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 5);
                     Shots.push(e, p.position(), 2.2, 0.7);
                 }
                 Fx.at(level, Fx.FIRE_SPIN, p.position(), Variants.blueFire(data) ? 1 : 0, (float) radius);

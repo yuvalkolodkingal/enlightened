@@ -30,6 +30,10 @@ public final class WorldFx {
             return;
         }
         Fx kind = Fx.VALUES[payload.kind()];
+        if (kind == Fx.BLUE_BURN) {
+            BlueBurning.mark(payload.entity(), level.getGameTime() + (long) payload.data());
+            return;
+        }
         if (kind == Fx.AIR_BURST && payload.data() == 0.0F && payload.entity() >= 0) {
             // The flourish of a combo: the bender it names acts it; nothing is drawn for it here.
             if (level.getEntity(payload.entity()) instanceof net.minecraft.world.entity.player.Player player) {

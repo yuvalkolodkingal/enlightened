@@ -44,3 +44,8 @@ a staff.
 A low stone seat for meditation: **cyan dye, paper, cyan dye** over **three smooth stone slabs**. Standing on it (or
 on any block in `#enlightened:meditation_point`), meditation runs three times as fast; see
 [Chakras and the Avatar State](Chakras-and-the-Avatar-State).
+
+## Avatar Scroll
+
+The four scrolls and a **nether star**, shapeless. Whoever reads it becomes [the Avatar](The-Avatar), a bender of all
+four elements; a bender's old element becomes part of the four.

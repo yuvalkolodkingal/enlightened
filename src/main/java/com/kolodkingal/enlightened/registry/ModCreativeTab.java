@@ -18,6 +18,7 @@ public final class ModCreativeTab {
                 output.accept(ModItems.EARTH_SCROLL.get());
                 output.accept(ModItems.AIR_SCROLL.get());
                 output.accept(ModItems.WATER_SCROLL.get());
+                output.accept(ModItems.AVATAR_SCROLL.get());
                 output.accept(ModItems.FIRE_SCROLL.get());
                 output.accept(ModItems.WATER_SKIN.get());
                 output.accept(ModItems.AIR_GLIDER.get());

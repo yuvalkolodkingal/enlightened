@@ -59,12 +59,12 @@ public final class Mastery {
         if (a.gate == Gate.TETHERLESS) {
             return data.tetherless();
         }
-        return data.spent() >= gateCost(a.gate);
+        return data.spent(a.element) >= gateCost(a.gate);
     }
 
     /** Why the next level of an ability cannot be learned, or null if it can. */
     public static String refusal(BendingData data, Ability a) {
-        if (data.element() != a.element) {
+        if (!data.element().commands(a.element)) {
             return "message.enlightened.learn.wrong_element";
         }
         if (data.level(a) >= Ability.MAX_LEVEL) {

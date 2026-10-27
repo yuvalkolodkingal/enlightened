@@ -15,6 +15,10 @@ import com.kolodkingal.enlightened.bending.Shots;
 import com.kolodkingal.enlightened.entity.BendingShotEntity;
 import com.kolodkingal.enlightened.entity.TornadoEntity;
 import com.kolodkingal.enlightened.item.GliderItem;
+import com.kolodkingal.enlightened.bending.Benders;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import com.kolodkingal.enlightened.registry.ModDamageTypes;
 import com.kolodkingal.enlightened.registry.ModSounds;
 import net.minecraft.core.particles.ParticleTypes;
@@ -283,6 +287,29 @@ public final class AirBending {
         return data.active(Ability.AIR_JUMP);
     }
 
+    /** The glider's speed along the glide, by player: a dive gains it, a climb spends it. */
+    private static final Map<UUID, Double> GLIDE_SPEED = new HashMap<>();
+
+    /** Opens or folds the glider staff (with a word and a sound when {@code tell}). */
+    public static void setGlider(ServerPlayer p, BendingData data, boolean open, boolean tell) {
+        if (data.gliderOpen() == open) {
+            return;
+        }
+        data.setGliderOpen(open);
+        GLIDE_SPEED.put(p.getUUID(), 0.55);
+        if (tell) {
+            p.level().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_JUMP.get(), SoundSource.PLAYERS, 0.8F, open ? 1.3F : 0.8F);
+            p.displayClientMessage(Component.translatable(open ? "message.enlightened.air.glider_open" : "message.enlightened.air.glider_closed")
+                    .withStyle(ChatFormatting.GRAY), true);
+        }
+        Benders.syncIfDirty(p);
+    }
+
+    /**
+     * Air Jump, and the glide on the Air Glider, as in the show: the staff opens into its wings (a right-click, or by
+     * itself in a fall), the bender hangs under it and steers with his look (a dive gains speed, a climb spends it),
+     * the Air Jump key pumps a gust under the wings for a lift, Sneak or the ground folds it.
+     */
     static final class Jump implements AbilityLogic {
         @Override
         public void key(Cast c, boolean down) {
@@ -290,13 +317,24 @@ public final class AirBending {
                 return;
             }
             ServerPlayer p = c.player;
-            double lift = c.by(0.9, 1.2, 1.5);
             if (p.getAbilities().flying) {
+                return;
+            }
+            double lift = c.by(0.9, 1.2, 1.5);
+            if (gliding(c.data)) {
+                // A pump of the wings: a gust lifts him and drives him on.
+                Vec3 v = p.getDeltaMovement();
+                p.setDeltaMovement(v.x, Math.max(v.y, 0) + lift * 0.5, v.z);
+                p.hurtMarked = true;
+                GLIDE_SPEED.merge(p.getUUID(), 0.18, Double::sum);
+                c.level().sendParticles(ParticleTypes.GUST, p.getX(), p.getY() + 0.5, p.getZ(), 3, 0.6, 0.2, 0.6, 0.0);
+                c.sound(ModSounds.AIR_JUMP.get(), 0.8F, 1.4F);
+                c.exhaust(0.08F);
+                c.cooldownSeconds(1.0);
                 return;
             }
             p.setDeltaMovement(p.getDeltaMovement().x, lift, p.getDeltaMovement().z);
             p.hurtMarked = true;
-            p.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, c.by(60, 80, 100), 0, false, false, false));
             for (LivingEntity e : Shots.area(p, p.position(), 2.5)) {
                 e.setDeltaMovement(e.getDeltaMovement().add(0, lift * 0.6, 0));
                 e.hurtMarked = true;
@@ -307,34 +345,58 @@ public final class AirBending {
             c.cooldownSeconds(1.5);
         }
 
-        /** The glide: while he falls with the glider in hand, the air carries him forward and down slowly. */
         @Override
         public void tick(Cast c) {
             ServerPlayer p = c.player;
+            BendingData data = c.data;
             Vec3 v = p.getDeltaMovement();
-            boolean falling = !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.isShiftKeyDown()
-                    && v.y < -0.15 && !p.isPassenger() && mayGlide(p);
-            if (!falling) {
+            boolean airborne = !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.isPassenger();
+            // The staff opens by itself in a real fall with it in hand, as Aang's does.
+            if (!data.gliderOpen() && airborne && v.y < -0.45 && !p.isShiftKeyDown() && mayGlide(p)) {
+                setGlider(p, data, true, false);
+            }
+            if (data.gliderOpen() && (p.isShiftKeyDown() || p.isInWater() || p.getAbilities().flying || p.isPassenger() || !mayGlide(p)
+                    || (p.onGround() && data.active(Ability.AIR_JUMP)))) {
+                setGlider(p, data, false, true);
+            }
+            if (!data.gliderOpen() || !airborne) {
                 c.setActive(false);
                 return;
             }
             Vec3 look = p.getLookAngle();
             Vec3 flat = new Vec3(look.x, 0, look.z);
-            flat = flat.lengthSqr() < 1.0E-4 ? new Vec3(v.x, 0, v.z) : flat.normalize();
-            double speed = 0.45 + c.level * 0.1;
-            double fall = look.y < -0.5 ? -0.35 : -0.08;
-            p.setDeltaMovement(flat.x * speed, Math.max(v.y, fall), flat.z * speed);
+            flat = flat.lengthSqr() < 1.0E-4 ? new Vec3(v.x, 0, v.z).normalize() : flat.normalize();
+            double top = 1.1 + c.level * 0.15;
+            double speed = GLIDE_SPEED.getOrDefault(p.getUUID(), 0.55);
+            // A dive gains speed, a climb spends it; the air always takes a little.
+            speed += -look.y * 0.045;
+            speed = Mth.clamp(speed * 0.992, 0.3, top);
+            GLIDE_SPEED.put(p.getUUID(), speed);
+            double vy = look.y * speed * 0.75 - 0.045 - (look.y > 0.15 ? 0.03 : 0.0);
+            p.setDeltaMovement(flat.x * speed, Mth.clamp(vy, -0.7, 0.5), flat.z * speed);
             p.hurtMarked = true;
             p.fallDistance = 0;
             c.setActive(true);
             if (p.tickCount % 3 == 0) {
-                c.level().sendParticles(ParticleTypes.CLOUD, p.getX(), p.getY() + 0.5, p.getZ(), 1, 0.3, 0.1, 0.3, 0.0);
+                c.level().sendParticles(ParticleTypes.CLOUD, p.getX() - flat.x, p.getY() + 0.8, p.getZ() - flat.z, 1, 0.3, 0.1, 0.3, 0.0);
             }
         }
 
         @Override
         public void end(Cast c) {
             c.setActive(false);
+            c.data.setGliderOpen(false);
+            GLIDE_SPEED.remove(c.player.getUUID());
+        }
+
+        @Override
+        public void forget(ServerPlayer player) {
+            GLIDE_SPEED.remove(player.getUUID());
+        }
+
+        @Override
+        public void clear() {
+            GLIDE_SPEED.clear();
         }
     }
 
@@ -391,6 +453,44 @@ public final class AirBending {
 
     // ---- Air Scooter ----
 
+    /**
+     * The scooter's ball skims the water: in water the rider is lifted to its surface and held there, so he rides
+     * over rivers and seas as Aang does. Run on the client for its own player (who moves himself) and on the server.
+     */
+    public static void skimWater(net.minecraft.world.entity.player.Player p) {
+        if (p.getAbilities().flying || p.isPassenger()) {
+            return;
+        }
+        net.minecraft.world.level.Level level = p.level();
+        BlockPos feet = BlockPos.containing(p.getX(), p.getY() + 0.05, p.getZ());
+        net.minecraft.world.level.material.FluidState in = level.getFluidState(feet);
+        Vec3 v = p.getDeltaMovement();
+        if (in.is(net.minecraft.tags.FluidTags.WATER)) {
+            double top = feet.getY() + in.getHeight(level, feet);
+            if (level.getFluidState(feet.above()).is(net.minecraft.tags.FluidTags.WATER)) {
+                // Deep under: rise fast.
+                p.setDeltaMovement(v.x, 0.35, v.z);
+            } else {
+                p.setPos(p.getX(), top + 0.02, p.getZ());
+                p.setDeltaMovement(v.x, 0.0, v.z);
+            }
+            p.setOnGround(true);
+            p.fallDistance = 0;
+            p.hurtMarked = true;
+            return;
+        }
+        BlockPos below = feet.below();
+        net.minecraft.world.level.material.FluidState under = level.getFluidState(below);
+        if (under.is(net.minecraft.tags.FluidTags.WATER) && level.getBlockState(feet).getCollisionShape(level, feet).isEmpty()) {
+            double top = below.getY() + under.getHeight(level, below);
+            if (p.getY() - top < 0.35) {
+                p.setDeltaMovement(v.x, Math.max(v.y, 0.0), v.z);
+                p.setOnGround(true);
+                p.fallDistance = 0;
+            }
+        }
+    }
+
     static final class Scooter implements AbilityLogic {
         @Override
         public void key(Cast c, boolean down) {
@@ -411,9 +511,20 @@ public final class AirBending {
             ServerPlayer p = c.player;
             p.fallDistance = 0;
             ride(p);
+            skimWater(p);
             if (p.tickCount % 4 == 0) {
                 double a = p.tickCount * 0.6;
                 c.level().sendParticles(ParticleTypes.CLOUD, p.getX() + Math.cos(a) * 0.7, p.getY() + 0.05, p.getZ() + Math.sin(a) * 0.7, 1, 0, 0, 0, 0.0);
+            }
+            // The dust and leaves the ball kicks up behind it, as in the show.
+            if (p.tickCount % 2 == 0 && p.getDeltaMovement().horizontalDistanceSqr() > 0.004) {
+                BlockPos under = p.blockPosition().below();
+                var state = c.level().getBlockState(under);
+                if (!state.isAir() && c.level().getFluidState(under).isEmpty()) {
+                    Vec3 back = new Vec3(-p.getDeltaMovement().x, 0, -p.getDeltaMovement().z).normalize().scale(0.8);
+                    c.level().sendParticles(new net.minecraft.core.particles.BlockParticleOption(ParticleTypes.BLOCK, state),
+                            p.getX() + back.x, p.getY() + 0.15, p.getZ() + back.z, 3, 0.3, 0.1, 0.3, 0.05);
+                }
             }
             if (p.tickCount % 60 == 0 && (p.getDeltaMovement().horizontalDistanceSqr() > 0.01)) {
                 c.exhaust(0.1F);

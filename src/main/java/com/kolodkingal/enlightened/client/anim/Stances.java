@@ -65,6 +65,12 @@ final class Stances {
             c.arm(true, StancePoses.WATER_ARMS_M[0] + roll, StancePoses.WATER_ARMS_M[1], StancePoses.WATER_ARMS_M[2], w);
             c.arm(false, StancePoses.WATER_ARMS_O[0] - roll, StancePoses.WATER_ARMS_O[1], StancePoses.WATER_ARMS_O[2], w);
         }
+        if ((w = st.stance(Stance.PALM_FORGE)) > 0.001F) {
+            // The hands cupped before the chest, the fire of the forge between them, trembling with the heat.
+            float heat = 2.0F * Mth.sin(0.9F * age);
+            c.arm(true, -62 + heat, -28, 8, w);
+            c.arm(false, -58 - heat, 30, -8, w);
+        }
         if ((w = st.stance(Stance.AIR_SPOUT)) > 0.001F) {
             // Balancing on the column of wind: arms out and low, the body turning a little with the spin.
             float sway = 6.0F * Mth.sin(0.25F * age);
@@ -271,8 +277,8 @@ final class Stances {
     /** What the stances add to the body's dip (blocks, positive sinks). */
     static float drop(AnimState st) {
         float ground = 1.0F - Math.max(st.wAir, st.wGlide);
-        // The scooter lifts him onto the ball of air (a negative dip).
-        return -0.58F * st.stance(Stance.SCOOTER) + 0.62F * st.stance(Stance.MEDITATE) * ground - 0.45F * st.stance(Stance.AVATAR)
+        // The scooter lifts him onto the top of the ball of air, which stands on the ground (a negative dip).
+        return -1.18F * st.stance(Stance.SCOOTER) + 0.62F * st.stance(Stance.MEDITATE) * ground - 0.45F * st.stance(Stance.AVATAR)
                 + 0.12F * st.stance(Stance.SEISMIC) * ground * (1.0F - st.limbAmount)
                 + 0.08F * st.stance(Stance.BLOODBENDING) * ground + 0.10F * st.stance(Stance.OCTOPUS) * ground * (1.0F - st.limbAmount)
                 + 0.06F * st.stance(Stance.FIRE_FIST) * ground * (1.0F - st.limbAmount) + 0.08F * st.stance(Stance.LIGHTNING_CHARGE) * ground * (1.0F - st.limbAmount);

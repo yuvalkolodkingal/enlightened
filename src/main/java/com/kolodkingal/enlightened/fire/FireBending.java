@@ -1,5 +1,8 @@
 package com.kolodkingal.enlightened.fire;
 
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import com.kolodkingal.enlightened.registry.ModBlocks;
 import com.kolodkingal.enlightened.fx.Fx;
 import com.kolodkingal.enlightened.EnlightenedConfig;
 import com.kolodkingal.enlightened.bending.Ability;
@@ -82,6 +85,28 @@ public final class FireBending {
     }
 
     // ---- Fire Ball: tap for a small one, hold for the big one ----
+
+    // ---- the colour of a firebender's fire where it lands ----
+
+    /** Sets a creature alight with this bender's fire: Azula's burns blue (the clients are told so). */
+    public static void ignite(ServerPlayer owner, LivingEntity target, int seconds) {
+        target.igniteForSeconds(seconds);
+        if (Variants.blueFire(Benders.get(owner))) {
+            markBlue(owner.serverLevel(), target, seconds);
+        }
+    }
+
+    /** Tells the clients that this creature burns blue for the given seconds. */
+    public static void markBlue(ServerLevel level, LivingEntity target, int seconds) {
+        if (target.isOnFire()) {
+            Fx.send(level, Fx.BLUE_BURN, target.position(), target.position(), 1, seconds * 20.0F + 10, target.getId());
+        }
+    }
+
+    /** The fire block this bender leaves on the ground: blue for Azula. */
+    public static BlockState fireBlock(BendingData data) {
+        return Variants.blueFire(data) ? ModBlocks.BLUE_FIRE.get().defaultBlockState() : Blocks.FIRE.defaultBlockState();
+    }
 
     static final class Ball implements AbilityLogic {
         @Override
@@ -171,7 +196,7 @@ public final class FireBending {
             if (p.tickCount % 4 == 0) {
                 for (LivingEntity e : Shots.cone(p, range, mouth ? 25 : 20)) {
                     Shots.hurt(p, e, (float) (dps * 4 / 20), ModDamageTypes.FLAME);
-                    e.igniteForSeconds(3);
+                    ignite(p, e, 3);
                 }
                 c.exhaust(0.1F);
             }
@@ -243,7 +268,7 @@ public final class FireBending {
                 if (aim.target() != null) {
                     float damage = (float) (EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.FIRE_WHIP_DAMAGE.get() : 3.0) + c.level * 0.5F;
                     Shots.hurt(p, aim.target(), damage, ModDamageTypes.FLAME);
-                    aim.target().igniteForSeconds(4);
+                    ignite(p, aim.target(), 4);
                     c.soundAt(aim.end(), ModSounds.FIRE_WHIP.get(), 0.7F, 1.4F);
                 }
                 c.exhaust(0.08F);
@@ -269,7 +294,7 @@ public final class FireBending {
             float damage = (float) ((EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.FIRE_RING_DAMAGE.get() : 4.0) * c.by(1.0, 1.5, 2.0));
             for (LivingEntity e : Shots.area(p, p.position().add(0, 1, 0), radius)) {
                 Shots.hurt(p, e, damage, ModDamageTypes.FIRE);
-                e.igniteForSeconds(c.by(3, 4, 5));
+                ignite(p, e, c.by(3, 4, 5));
                 Shots.push(e, p.position(), 0.6, 0.3);
             }
             ParticleOptions flame = flame(c.data);

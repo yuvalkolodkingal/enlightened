@@ -46,6 +46,13 @@ public final class Variants {
                 look("jeong_jeong", Element.FIRE, "jeong_jeong", false, 0xC9451C, 0xFFD27A),
                 look("ozai", Element.FIRE, "ozai", false, 0xB8200F, 0xFFC247),
                 own(Element.FIRE));
+        // The Avatars: Aang, Korra, Roku and Kyoshi.
+        add(Element.AVATAR,
+                look("aang", Element.AVATAR, "aang", false, Element.AVATAR.color, Element.AVATAR.glow),
+                look("korra", Element.AVATAR, "korra", true, 0x3C8FD6, 0xBFE8FF),
+                look("roku", Element.AVATAR, "roku", false, 0xD9532A, 0xFFD27A),
+                look("kyoshi", Element.AVATAR, "kyoshi", true, 0x5E8E3E, 0xE8D8A0),
+                own(Element.AVATAR));
     }
 
     private static Variant look(String id, Element element, String skin, boolean slim, int color, int glow) {

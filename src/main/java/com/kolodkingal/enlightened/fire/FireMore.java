@@ -1,5 +1,8 @@
 package com.kolodkingal.enlightened.fire;
 
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.item.ItemStack;
+import javax.annotation.Nullable;
 import com.kolodkingal.enlightened.EnlightenedConfig;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.AbilityLogic;
@@ -53,6 +56,7 @@ public final class FireMore {
         logic.put(Ability.BLAZE, new Blaze());
         logic.put(Ability.HEAT_CONTROL, new Heat());
         logic.put(Ability.ILLUMINATION, new Illumination());
+        logic.put(Ability.PALM_FORGE, new PalmForge());
         logic.put(Ability.COMBUSTION, new Combustion());
         logic.put(Ability.FIRE_STEP, new AbilityLogic() {
             @Override
@@ -125,7 +129,7 @@ public final class FireMore {
             }
             for (LivingEntity e : Shots.area(p, p.position().add(0, 1, 0), 1.5)) {
                 Shots.hurt(p, e, 2.0F, ModDamageTypes.FLAME);
-                e.igniteForSeconds(3);
+                FireBending.ignite(p, e, 3);
             }
         }
 
@@ -186,7 +190,7 @@ public final class FireMore {
                     e.discard();
                 } else if (e instanceof LivingEntity living && AreaTargets.mayHurt(p, living) && p.tickCount % 10 == 0) {
                     Shots.hurt(p, living, 1.0F + 0.5F * c.level, ModDamageTypes.FLAME);
-                    living.igniteForSeconds(3);
+                    FireBending.ignite(p, living, 3);
                     Shots.push(living, p.position(), 0.5, 0.2);
                 }
             }
@@ -257,7 +261,7 @@ public final class FireMore {
                     BlockPos fire = ground.above();
                     if (level.getBlockState(ground).isSolid() && level.getBlockState(fire).isAir() && BlockRights.mayPlace(p, level, fire)
                             && !level.getBlockState(ground).is(BlockTags.LEAVES)) {
-                        if (TempBlocks.place(p, level, fire, Blocks.FIRE.defaultBlockState(), c.by(40, 60, 80))) {
+                        if (TempBlocks.place(p, level, fire, FireBending.fireBlock(c.data), c.by(40, 60, 80))) {
                             lit++;
                         }
                     }
@@ -265,7 +269,7 @@ public final class FireMore {
             }
             for (LivingEntity e : Shots.cone(p, range, 40)) {
                 Shots.hurt(p, e, c.byF(3, 4, 5), ModDamageTypes.FLAME);
-                e.igniteForSeconds(c.by(3, 4, 5));
+                FireBending.ignite(p, e, c.by(3, 4, 5));
             }
             Fx.send(level, Fx.BLAZE_ARC, p.position(), p.position().add(facing), Variants.blueFire(c.data) ? 1 : 0, (float) range);
             c.sound(ModSounds.FIRE_BLAST.get(), 1.1F, 0.8F);
@@ -335,6 +339,110 @@ public final class FireMore {
     }
 
     // ---- Illumination: a flame in the hand lights the way ----
+
+    /**
+     * The palm forge: the fire in a firebender's hand cooks what he holds, as Iroh heated his shackle and Baku his
+     * steel: hold the key with food, an ore, raw metal, sand or anything a furnace, a blast furnace, a smoker or a
+     * campfire would take in the main hand, and one piece is cooked or smelted every 3 / 2.25 / 1.5 seconds, with the
+     * furnace's experience.
+     */
+    static final class PalmForge implements AbilityLogic {
+        private static final Map<UUID, Integer> HEAT = new HashMap<>();
+
+        @Override
+        public void key(Cast c, boolean down) {
+            ServerPlayer p = c.player;
+            if (!down) {
+                c.setActive(false);
+                HEAT.remove(p.getUUID());
+                return;
+            }
+            if (!c.ready()) {
+                return;
+            }
+            if (recipe(c.level(), p.getMainHandItem()) == null) {
+                c.say("message.enlightened.fire.forge_nothing");
+                return;
+            }
+            c.setActive(true);
+            HEAT.put(p.getUUID(), 0);
+            c.sound(SoundEvents.FIRECHARGE_USE, 0.7F, 1.3F);
+        }
+
+        @Nullable
+        static net.minecraft.world.item.crafting.AbstractCookingRecipe recipe(ServerLevel level, ItemStack stack) {
+            if (stack.isEmpty()) {
+                return null;
+            }
+            net.minecraft.world.item.crafting.SingleRecipeInput input = new net.minecraft.world.item.crafting.SingleRecipeInput(stack);
+            for (net.minecraft.world.item.crafting.RecipeType<? extends net.minecraft.world.item.crafting.AbstractCookingRecipe> type
+                    : java.util.List.of(net.minecraft.world.item.crafting.RecipeType.SMELTING, net.minecraft.world.item.crafting.RecipeType.BLASTING,
+                    net.minecraft.world.item.crafting.RecipeType.SMOKING, net.minecraft.world.item.crafting.RecipeType.CAMPFIRE_COOKING)) {
+                var found = level.getRecipeManager().getRecipeFor(type, input, level);
+                if (found.isPresent()) {
+                    return found.get().value();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public void tick(Cast c) {
+            if (!c.active()) {
+                return;
+            }
+            ServerPlayer p = c.player;
+            ServerLevel level = c.level();
+            ItemStack stack = p.getMainHandItem();
+            net.minecraft.world.item.crafting.AbstractCookingRecipe recipe = recipe(level, stack);
+            if (recipe == null) {
+                c.setActive(false);
+                HEAT.remove(p.getUUID());
+                return;
+            }
+            int heat = HEAT.merge(p.getUUID(), 1, Integer::sum);
+            Vec3 hand = Shots.hand(p, false);
+            if (p.tickCount % 3 == 0) {
+                level.sendParticles(FireBending.flame(c.data), hand.x, hand.y, hand.z, 1, 0.08, 0.05, 0.08, 0.01);
+            }
+            if (p.tickCount % 10 == 0) {
+                level.sendParticles(ParticleTypes.SMOKE, hand.x, hand.y + 0.1, hand.z, 1, 0.05, 0.05, 0.05, 0.01);
+            }
+            int need = c.by(60, 45, 30);
+            if (heat < need) {
+                return;
+            }
+            HEAT.put(p.getUUID(), 0);
+            ItemStack result = recipe.assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(stack), level.registryAccess()).copy();
+            stack.shrink(1);
+            if (!p.getInventory().add(result)) {
+                p.drop(result, false);
+            }
+            int xp = Math.round(recipe.getExperience() * 2.0F);
+            if (xp > 0) {
+                p.giveExperiencePoints(xp);
+            }
+            level.sendParticles(ParticleTypes.LAVA, hand.x, hand.y, hand.z, 3, 0.1, 0.1, 0.1, 0.0);
+            level.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.5F, 1.6F);
+            c.exhaust(0.15F);
+        }
+
+        @Override
+        public void end(Cast c) {
+            c.setActive(false);
+            HEAT.remove(c.player.getUUID());
+        }
+
+        @Override
+        public void forget(ServerPlayer player) {
+            HEAT.remove(player.getUUID());
+        }
+
+        @Override
+        public void clear() {
+            HEAT.clear();
+        }
+    }
 
     static final class Illumination implements AbilityLogic {
         private static final Map<UUID, BlockPos> LIGHTS = new HashMap<>();
@@ -444,7 +552,7 @@ public final class FireMore {
                 double d = e.position().distanceTo(end);
                 float f = (float) Math.max(0.2, 1.0 - d / (power * 1.5));
                 Shots.hurt(p, e, damage * f, ModDamageTypes.FIRE);
-                e.igniteForSeconds(4);
+                FireBending.ignite(p, e, 4);
                 Shots.push(e, end, 1.5 * f, 0.5 * f);
             }
             level.explode(p, ModDamageTypes.source(level, ModDamageTypes.FIRE, p, p), null, end.x, end.y, end.z, power,

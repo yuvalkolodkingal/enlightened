@@ -194,7 +194,10 @@ public final class TestKit {
             }
             undo.clear();
             MinecraftServer server = helper.getLevel().getServer();
-            TempBlocks.restoreEverything(server);
+            // Only this fixture's benders' blocks: the tests run side by side, and another's fire must stand.
+            for (ServerPlayer p : players) {
+                TempBlocks.restoreAll(server, p.getUUID());
+            }
             Iterator<ServerPlayer> it = players.iterator();
             while (it.hasNext()) {
                 ServerPlayer player = it.next();

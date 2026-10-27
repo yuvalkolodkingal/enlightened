@@ -76,14 +76,16 @@ final class Locomotion {
         float calm = EnlightenedClientConfig.reducedMotion() ? 0.3F : 1.0F;
         float wind = 2.5F * calm * Mth.sin(0.3F * age);
         float bank = Mth.clamp(st.turn * 0.6F, -8.0F, 8.0F);
-        c.arm(true, StancePoses.GLIDE_M[0] + wind, StancePoses.GLIDE_M[1] - bank, StancePoses.GLIDE_M[2], w);
-        c.arm(false, StancePoses.GLIDE_O[0] - wind, StancePoses.GLIDE_O[1] - bank, StancePoses.GLIDE_O[2], w);
+        // The hands hold the staff overhead whenever it is open, on the ground too; the body lies flat only in the air.
+        float grip = Math.max(w, st.stance(Stance.GLIDE));
+        c.arm(true, StancePoses.GLIDE_M[0] + wind, StancePoses.GLIDE_M[1] - bank, StancePoses.GLIDE_M[2], grip);
+        c.arm(false, StancePoses.GLIDE_O[0] - wind, StancePoses.GLIDE_O[1] - bank, StancePoses.GLIDE_O[2], grip);
         float flutter = 4.0F * calm * Mth.sin(0.5F * age);
         c.leg(true, 8.0F + flutter, 2.0F, w);
         c.leg(false, 8.0F - flutter, -2.0F, w);
         c.head(-30.0F, 0, 0, w);
-        c.occupy(true, w);
-        c.occupy(false, w);
+        c.occupy(true, grip);
+        c.occupy(false, grip);
     }
 
     /** The air scooter: seated on the ball with the knees up, the main hand low steering, the off arm out for balance. */

@@ -77,3 +77,14 @@ Katara (default), Amon (Noatak), Ming-Hua, Master Pakku in the White Lotus robes
 
 Every water art is now drawn as real water: the whip, the arms and the octopus's tentacles are ribbons of the
 game's water texture, the healing a glow of it, the ice a sheet of ice.
+
+## New in 1.3
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Octopus Form** (changed) | toggle | While the eight arms are up, **press the key to lash** them at what you look at (a cone of 5 blocks, 3 + level damage, knockback); the arms strike by themselves whoever comes within 2.6 blocks and **swat arrows and shots aside**; **hold the key** for a moment to fold the form away. |
+| **Water Vortex** | press | A whirlpool twists up where you aim (within 14): **2.5 / 3.5 / 4.5** blocks wide, for five seconds, everyone in it pulled in, lifted, spun and hurt (**2 / 3 / 4** a second), then flung out. **Cast at your own feet over water**, it is yours to **ride**: it lifts you three blocks and races you over the sea where you look (**0.85 / 1.05 / 1.25** blocks a tick); press again, Sneak or dry land stops it, and the ride never waits for the whirlpool's cooldown. Cooldown **12 / 10 / 8 s** (the whirlpool). |
+| **Water Bubble** (changed) | toggle | A real pocket of air carved out of the water round you, **4 / 6 / 8** blocks across, that follows you along the sea floor and closes behind you; you and whoever is beside you breathe in it. |
+
+The water spout is the show's column now: a thick body of flowing water wound with froth, foam flung off it, spray at
+its foot. The water whip and arms carry the show's near-white rim.

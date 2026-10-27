@@ -20,6 +20,7 @@ public final class Abilities {
         AirBending.register(LOGIC);
         WaterBending.register(LOGIC);
         FireBending.register(LOGIC);
+        com.kolodkingal.enlightened.avatar.AvatarBending.register(LOGIC);
     }
 
     @Nullable

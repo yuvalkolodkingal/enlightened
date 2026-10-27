@@ -83,6 +83,7 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue AVATAR_STATE_SECONDS;
     public static final ModConfigSpec.IntValue AVATAR_STATE_COOLDOWN_SECONDS;
     public static final ModConfigSpec.BooleanValue AVATAR_STATE_ON_LOW_HEALTH;
+    public static final ModConfigSpec.IntValue ENERGYBENDING_MINUTES;
     public static final ModConfigSpec.BooleanValue COMBOS;
     public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
     public static final ModConfigSpec.BooleanValue STEPS;
@@ -181,6 +182,7 @@ public final class EnlightenedConfig {
         AVATAR_STATE_COOLDOWN_SECONDS = B.comment("Seconds before the Avatar State can be entered again.").defineInRange("avatarStateCooldownSeconds", 300, 0, 86400);
         AVATAR_STATE_ON_LOW_HEALTH = B.comment("Whether a bender with all seven chakras open enters the Avatar State by himself when near death.")
                 .define("avatarStateOnLowHealth", true);
+        ENERGYBENDING_MINUTES = B.comment("Minutes the Avatar's energybending takes a bender's bending for.").defineInRange("energybendingMinutes", 30, 1, 100000);
         COMBOS = B.comment("Whether sequences of casts trigger the combos (Twister, Earth Dome, Ice Wave, Fire Spin...).").define("combos", true);
         COMBO_WINDOW_TICKS = B.comment("Ticks between the casts of a combo (60 = 3 s).").defineInRange("comboWindowTicks", 60, 10, 600);
         STEPS = B.comment("Whether a double tap of a direction dashes a bender who learned his element's step.").define("steps", true);

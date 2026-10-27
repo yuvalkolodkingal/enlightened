@@ -171,8 +171,13 @@ public final class Chakras {
 
     /** Enters the Avatar State: by meditation, or by itself when near death ({@code dire}). */
     public static void enterAvatar(ServerPlayer p, BendingData data, boolean dire) {
+        enterAvatar(p, data, dire, 1.0F);
+    }
+
+    /** Enters the Avatar State for the configured time times {@code scale} (the Avatar's own art lasts longer). */
+    public static void enterAvatar(ServerPlayer p, BendingData data, boolean dire, float scale) {
         long now = p.level().getGameTime();
-        int seconds = seconds(EnlightenedConfig.AVATAR_STATE_SECONDS, 12);
+        int seconds = Math.round(seconds(EnlightenedConfig.AVATAR_STATE_SECONDS, 12) * scale);
         data.setAvatarUntil(now + seconds * 20L);
         data.setAvatarCooldownUntil(now + seconds(EnlightenedConfig.AVATAR_STATE_COOLDOWN_SECONDS, 300) * 20L);
         data.clearCooldowns();

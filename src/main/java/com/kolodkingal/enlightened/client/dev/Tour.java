@@ -54,7 +54,7 @@ public final class Tour {
                 worldAsked = true;
                 mc.options.renderDistance().set(5);
                 mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
-                LevelSettings settings = new LevelSettings("tour", GameType.CREATIVE, false, Difficulty.PEACEFUL, true, new GameRules(),
+                LevelSettings settings = new LevelSettings("tour", GameType.CREATIVE, false, Difficulty.EASY, true, new GameRules(),
                         WorldDataConfiguration.DEFAULT);
                 WorldOptions options = new WorldOptions(12345L, false, false);
                 mc.createWorldOpenFlows().createFreshLevel("tour", settings, options,
@@ -230,7 +230,7 @@ public final class Tour {
         cmd("fill 5 -61 2 8 -61 5 sand", 5);
         cmd("setblock -5 -60 3 iron_block", 2);
         cmd("setblock -5 -60 5 iron_block", 2);
-        cmd("summon zombie 0 -60 7 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+        cmd("summon zombie 0 -60 7 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         cmd("tp @s 0 -60 0 0 10", 10);
         shot("00_scene", 20);
         if (QUICK) {
@@ -330,7 +330,7 @@ public final class Tour {
         cast("lava_shuriken", "57_lava_shuriken", 5);
         cast("metal_blades", "58_metal_blades", 5);
         cmd("tp @s 6 -60 0 90 10", 10);
-        cmd("summon zombie 2 -60 0 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+        cmd("summon zombie 2 -60 0 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         cast("quicksand", "59_quicksand", 10);
         cmd("tp @s 0 -60 0 0 10", 10);
         cast("earth_pillar", "60_earth_pillar", 10);
@@ -338,7 +338,7 @@ public final class Tour {
 
         // ---- the arts of 1.2 ----
         element("earth", "bolin", "rock_throw", "shockwave", "catapult", "earth_grab", "earth_tunnel", "extraction", "earth_wall", "earth_pillar", "density_shift", "earth_step");
-        cmd("summon zombie 0 -60 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+        cmd("summon zombie 0 -60 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         cast("shockwave", "80_shockwave", 6);
         cast("earth_grab", "81_earth_grab", 8);
         held("earth_tunnel", "82_earth_tunnel", 16, 30);
@@ -361,7 +361,7 @@ public final class Tour {
         cmd("tp @s 0 -60 0 0 10", 10);
 
         element("air", "jinora", "air_blast", "air_suction", "air_burst", "air_spout", "air_agility", "air_step", "air_shield", "tornado", "air_blades");
-        cmd("summon zombie 0 -60 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+        cmd("summon zombie 0 -60 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         cast("air_suction", "86_air_suction", 4);
         cast("air_burst", "87_air_burst", 4);
         cmd("enlightened loadout @s 1 air_spout", 6);
@@ -375,7 +375,7 @@ public final class Tour {
         cmd("tp @s 0 -60 4 0 10", 10);
         cmd("setblock 3 -60 6 oak_leaves", 2);
         cmd("setblock 3 -59 6 oak_leaves", 2);
-        cmd("summon zombie 0 -60 8 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+        cmd("summon zombie 0 -60 8 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         held("water_shield", "89_water_shield", 20, 40);
         held("frost_breath", "90_frost_breath", 20, 40);
         cast("plant_tether", "91_plant_tether", 5);
@@ -384,7 +384,7 @@ public final class Tour {
         cmd("tp @s 0 -60 0 0 10", 10);
 
         element("fire", "azula", "fire_ball", "fire_jet", "fire_shield", "wall_of_fire", "blaze", "heat_control", "illumination", "combustion", "fire_ring", "fire_fist");
-        cmd("summon zombie 0 -60 8 {NoAI:1b,PersistenceRequired:1b,Silent:1b}", 5);
+        cmd("summon zombie 0 -60 8 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
         held("fire_shield", "93_fire_shield_blue", 20, 40);
         cast("wall_of_fire", "94_wall_of_fire", 14);
         cast("blaze", "95_blaze", 6);
@@ -430,6 +430,75 @@ public final class Tour {
         wait(10);
 
         // ---- the lemur ----
+        // ---- 1.3: the glider, the scooter on water, the octopus's lash, the vortex, the bubble, blue fire, the forge, the Avatar ----
+        element("air", "tenzin", "air_jump", "air_scooter", "air_blast");
+        cmd("give @s enlightened:air_glider", 2);
+        cmd("fill -3 -61 10 3 -61 16 water", 5);
+        wait(10);
+        cmd("enlightened loadout @s 1 air_jump", 6);
+        STEPS.add(new Step(2, () -> {
+            Minecraft mc = Minecraft.getInstance();
+            mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
+        }));
+        shot("110_glider_open", 12);
+        press(1, 2);
+        shot("111_glider_jump", 6);
+        camera(CameraType.THIRD_PERSON_FRONT, 1);
+        shot("112_glider_front", 3);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        wait(40);
+        cmd("tp @s 0 -60 9 0 10", 10);
+        toggled("air_scooter", "113_scooter_shore", 20);
+        cmd("enlightened loadout @s 1 air_scooter", 6);
+        press(1, 2);
+        forward(true, 2);
+        shot("114_scooter_on_water", 30);
+        forward(false, 2);
+        press(1, 2);
+        cmd("tp @s 0 -60 0 0 10", 10);
+        element("water", "katara", "octopus_form", "water_vortex", "water_bubble");
+        cmd("summon zombie 0 -60 4 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
+        cmd("enlightened loadout @s 1 octopus_form", 6);
+        press(1, 2);
+        wait(20);
+        press(1, 2);
+        shot("120_octopus_lash", 4);
+        wait(20);
+        // A step's delay is the wait after it: the key stays down 20 ticks, long enough to fold the form.
+        hold(1, 20);
+        release(1, 4);
+        cmd("tp @s 0 -60 2 0 20", 10);
+        cast("water_vortex", "121_water_vortex", 30);
+        cmd("tp @s 0 -60 12 0 60", 10);
+        wait(20);
+        cmd("enlightened loadout @s 1 water_vortex", 6);
+        press(1, 2);
+        shot("122_vortex_ride", 30);
+        press(1, 2);
+        cmd("fill -4 -64 20 4 -58 28 water", 5);
+        cmd("tp @s 0 -62 24 0 10", 10);
+        toggled("water_bubble", "123_water_bubble", 40);
+        cmd("tp @s 0 -60 0 0 10", 10);
+        element("fire", "azula", "blaze", "fire_ball", "palm_forge");
+        cmd("summon zombie 0 -60 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
+        cast("blaze", "130_blue_fire_ground", 20);
+        cmd("item replace entity @s weapon.mainhand with raw_iron 8", 2);
+        held("palm_forge", "131_palm_forge", 30, 80);
+        cmd("tp @s 0 -60 0 0 10", 10);
+        cmd("give @s enlightened:avatar_scroll", 2);
+        element("avatar", "aang", "avatar_state", "energybending", "spiritbending", "elemental_sphere", "fire_fist", "water_whip", "rock_throw", "air_blast");
+        cmd("enlightened chakras @s 7", 2);
+        cmd("enlightened avatar @s rest", 2);
+        cmd("summon zombie 0 -60 5 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
+        cast("spiritbending", "140_spiritbending", 15);
+        cast("avatar_state", "141_avatar_state", 20);
+        toggled("elemental_sphere", "142_elemental_sphere", 30);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        shot("143_avatar_front", 5);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        held("fire_fist", "144_avatar_fire_fist", 15, 30);
+        cast("water_whip", "145_avatar_water_whip", 5);
+
         cmd("summon enlightened:flying_lemur 1 -60 3", 5);
         cmd("summon enlightened:flying_lemur -1 -58 3", 5);
         shot("70_lemur", 30);

@@ -54,7 +54,10 @@ panel in the top-left corner, items that awaken the power, a server config, oper
    **Air Glider** (2 leather, a breeze rod, 2 sticks) opens as an airbender falls; dye it in a crafting table.
 6. **Combos and steps.** Cast the right abilities within three seconds of each other for a combo (Earth Dome, Ice
    Wave, Fire Spin, Twister...); double-tap a direction to dash with your element's step.
-7. **Chakras.** Press **M** to meditate (faster on a **Meditation Point**: cyan dye, paper, cyan dye over three
+7. **The Avatar.** Bind the four scrolls round a nether star into the **Avatar Scroll** and read it: you bend all four
+   elements, enter the Avatar State at will with the seven chakras open, take or give back bending by touch,
+   calm creatures with spiritbending and fly inside the elemental sphere.
+8. **Chakras.** Press **M** to meditate (faster on a **Meditation Point**: cyan dye, paper, cyan dye over three
    smooth stone slabs). Each minute opens a chakra; with all seven open, a breath more takes you into the
    **Avatar State**: invincible, twice as strong, for twelve seconds.
 
@@ -129,6 +132,9 @@ Enlightened בנוי על אותה מסגרת כמו [Enhanced](https://github.c
    מחדל). כשף אוויר שהורג את חיית המחמד שלו מנתק את כבליו הארציים: תעופה וחנק נפתחים לו, והאוויר שלו מכה חזק יותר.
 5. **פריטים.** **נאד המים** (4 עור, חוט) נושא עשר מנות מים; קליק ימני על מים ממלא אותו. **דאון האוויר** (2 עור,
    מוט בריז, 2 מקלות) נפתח כשכשף אוויר נופל; צובעים אותו בשולחן עבודה.
+6. **האווטאר.** קושרים את ארבע המגילות סביב כוכב נת'ר ל**מגילת האווטאר** וקוראים אותה: מכשפים את כל ארבעת
+   היסודות, נכנסים למצב האווטאר מרצון כשכל שבע הצ'אקרות פתוחות, לוקחים או מחזירים כישוף במגע, מרגיעים יצורים
+   בכשפות רוח וטסים בתוך כדור היסודות.
 6. **קומבואים וצעדים.** מטילים את היכולות הנכונות בתוך שלוש שניות זו מזו לקומבו (כיפת אדמה, גל קרח, סחרור אש,
    טוויסטר...); לחיצה כפולה על כיוון מזניקה אתכם בצעד של היסוד שלכם.
 7. **צ'אקרות.** **M** למדיטציה (מהר יותר על **נקודת מדיטציה**: צבע טורקיז, נייר, צבע טורקיז מעל שלושה לוחות אבן

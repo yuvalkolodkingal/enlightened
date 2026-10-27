@@ -8,6 +8,7 @@
   "client": [
     "client.AbstractClientPlayerMixin",
     "client.EntityMixin",
+    "client.EntityRenderDispatcherMixin",
     "client.ItemInHandRendererAccessor",
     "client.PlayerModelMixin",
     "client.PlayerRendererMixin"

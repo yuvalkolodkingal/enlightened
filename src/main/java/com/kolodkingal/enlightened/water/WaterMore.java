@@ -1,5 +1,12 @@
 package com.kolodkingal.enlightened.water;
 
+import net.minecraft.util.Mth;
+import java.util.UUID;
+import java.util.Set;
+import java.util.List;
+import java.util.Iterator;
+import java.util.HashSet;
+import java.util.ArrayList;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.AbilityLogic;
 import com.kolodkingal.enlightened.bending.AreaTargets;
@@ -44,6 +51,7 @@ public final class WaterMore {
     public static void register(Map<Ability, AbilityLogic> logic) {
         logic.put(Ability.WATER_SHIELD, new Shield());
         logic.put(Ability.WATER_BUBBLE, new Bubble());
+        logic.put(Ability.WATER_VORTEX, new Vortex());
         logic.put(Ability.PHASE_CHANGE, new PhaseChange());
         logic.put(Ability.FROST_BREATH, new FrostBreath());
         logic.put(Ability.PLANT_TETHER, new Tether());
@@ -118,13 +126,22 @@ public final class WaterMore {
 
     // ---- Water Bubble: a pocket of air under the water ----
 
+    /**
+     * The water bubble of the show: a real pocket of air round the bender under the water, 4 / 6 / 8 blocks across,
+     * that follows him as he walks the sea floor, for him and whoever is beside him; the water closes behind. Toggle.
+     */
     static final class Bubble implements AbilityLogic {
+        private static final Set<UUID> IN_BUBBLE = new HashSet<>();
+
         @Override
         public void key(Cast c, boolean down) {
             if (!down) {
                 return;
             }
             c.setOn(!c.on());
+            if (!c.on()) {
+                IN_BUBBLE.remove(c.player.getUUID());
+            }
             c.sound(ModSounds.WATER_GATHER.get(), 0.9F, c.on() ? 1.3F : 0.8F);
         }
 
@@ -134,27 +151,229 @@ public final class WaterMore {
                 return;
             }
             ServerPlayer p = c.player;
-            double radius = c.by(1.5, 2.5, 3.5);
-            if (!p.isInWater() && !p.isUnderWater()) {
+            ServerLevel level = c.level();
+            int radius = c.by(2, 3, 4);
+            BlockPos center = BlockPos.containing(p.getX(), p.getY() + 0.9, p.getZ());
+            boolean inWater = p.isInWater() || p.isUnderWater();
+            // The pocket opens when he goes under, and lasts while water is still round him; it closes when he walks out.
+            if (inWater) {
+                IN_BUBBLE.add(p.getUUID());
+            } else if (IN_BUBBLE.contains(p.getUUID()) && !waterWithin(level, center, radius + 1)) {
+                IN_BUBBLE.remove(p.getUUID());
+            }
+            if (!IN_BUBBLE.contains(p.getUUID())) {
                 return;
             }
+            if (p.tickCount % 2 == 0) {
+                int r2 = radius * radius;
+                for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
+                    if (pos.distSqr(center) > r2) {
+                        continue;
+                    }
+                    BlockState state = level.getBlockState(pos);
+                    if (state.is(Blocks.WATER)) {
+                        TempBlocks.place(p, level, pos.immutable(), Blocks.AIR.defaultBlockState(), 8);
+                    } else if (state.isAir()) {
+                        TempBlocks.extend(level, pos.immutable(), 8);
+                    }
+                }
+            }
             p.setAirSupply(p.getMaxAirSupply());
-            for (LivingEntity e : c.level().getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(radius),
-                    e -> e != p && (e instanceof Player || e.isAlliedTo(p)) && e.isUnderWater())) {
+            for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(radius), e -> e != p && e.isUnderWater())) {
                 e.setAirSupply(e.getMaxAirSupply());
             }
             if (p.tickCount % 4 == 0) {
-                c.level().sendParticles(ParticleTypes.BUBBLE, p.getX(), p.getEyeY(), p.getZ(), 3, radius * 0.6, 0.4, radius * 0.6, 0.0);
+                double a = p.tickCount * 0.3;
+                level.sendParticles(ParticleTypes.BUBBLE, p.getX() + Math.cos(a) * radius, p.getY() + 1 + Math.sin(a * 0.7) * radius * 0.6, p.getZ() + Math.sin(a) * radius, 2, 0.1, 0.1, 0.1, 0.0);
             }
+        }
+
+        private static boolean waterWithin(ServerLevel level, BlockPos center, int radius) {
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
+                if (level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override
         public void end(Cast c) {
             c.setOn(false);
+            IN_BUBBLE.remove(c.player.getUUID());
+        }
+
+        @Override
+        public void forget(ServerPlayer player) {
+            IN_BUBBLE.remove(player.getUUID());
+        }
+
+        @Override
+        public void clear() {
+            IN_BUBBLE.clear();
         }
     }
 
-    // ---- Phase Change: water freezes, ice melts ----
+    /**
+     * The water vortex: a whirlpool twisting up from the point the bender aims at (as the column Aang rode up a ship's
+     * hull), 2.5 / 3.5 / 4.5 blocks wide, for five seconds: everyone in it is pulled in, lifted, spun and hurt, and
+     * flung out at the end. Needs water: the skin, or water near.
+     */
+    static final class Vortex implements AbilityLogic {
+        private record Spin(ServerLevel level, UUID owner, Vec3 center, double radius, float damage, long born, long until, int color) {
+        }
+
+        private static final List<Spin> SPINS = new ArrayList<>();
+        private static final int LIFE = 100;
+        /** Who rides a vortex of his own over the water, as Aang rode one up a hull: carried fast where he looks. */
+        private static final Set<UUID> RIDERS = new HashSet<>();
+
+        @Override
+        public void key(Cast c, boolean down) {
+            if (!down) {
+                return;
+            }
+            ServerPlayer p = c.player;
+            if (RIDERS.remove(p.getUUID())) {
+                c.setActive(false);
+                c.sound(ModSounds.WATER_GATHER.get(), 1.0F, 0.7F);
+                return;
+            }
+            Shots.Aim aim = Shots.aim(p, 14);
+            Vec3 at = aim.end();
+            // Cast at his own feet over water, the vortex is his to ride: it lifts him and races him over the sea.
+            // The ride ignores the whirlpool's cooldown: he may step onto his vortex right after throwing one.
+            boolean atFeet = aim.target() == null && at.subtract(p.position()).horizontalDistanceSqr() < 6.0 && at.y < p.getY() + 1.0;
+            if (atFeet && (p.isInWater() || WaterBending.waterBelow(c.level(), p, 6) != null)) {
+                if (!WaterSources.take(c)) {
+                    return;
+                }
+                RIDERS.add(p.getUUID());
+                c.setActive(true);
+                c.sound(ModSounds.WATER_GATHER.get(), 1.4F, 0.8F);
+                c.say("message.enlightened.water.vortex_ride");
+                c.exhaust(0.3F);
+                return;
+            }
+            if (!c.ready() || !WaterSources.take(c)) {
+                return;
+            }
+            ServerLevel level = c.level();
+            // The vortex stands on the ground (or the water) under the point aimed at.
+            BlockPos.MutableBlockPos pos = BlockPos.containing(at).mutable();
+            for (int i = 0; i < 12 && level.getBlockState(pos).getCollisionShape(level, pos).isEmpty() && !level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER); i++) {
+                pos.move(0, -1, 0);
+            }
+            Vec3 center = new Vec3(at.x, pos.getY() + 1.0, at.z);
+            double radius = c.by(2.5, 3.5, 4.5);
+            long now = level.getGameTime();
+            SPINS.add(new Spin(level, p.getUUID(), center, radius, c.byF(2.0, 3.0, 4.0), now, now + LIFE, c.color()));
+            Fx.send(level, Fx.WATER_VORTEX, center, center.add(0, 3.5 + c.level * 0.5, 0), c.color(), (float) radius);
+            c.sound(ModSounds.WATER_GATHER.get(), 1.4F, 0.6F);
+            c.exhaust(0.5F);
+            c.cooldownSeconds(c.by(12, 10, 8));
+        }
+
+        /** The ride: a column of water under him, carrying him 3 blocks over the sea at a sprint where he looks. */
+        private static void ride(Cast c) {
+            ServerPlayer p = c.player;
+            BlockPos water = p.isInWater() ? p.blockPosition() : WaterBending.waterBelow(c.level(), p, 7);
+            if (water == null || p.isShiftKeyDown() || p.getAbilities().flying || p.isPassenger()) {
+                RIDERS.remove(p.getUUID());
+                c.setActive(false);
+                c.say("message.enlightened.water.vortex_ride_off");
+                return;
+            }
+            double surface = water.getY() + 1.0;
+            double want = surface + 3.0 + c.level * 0.5;
+            Vec3 look = p.getLookAngle();
+            Vec3 flat = new Vec3(look.x, 0, look.z);
+            flat = flat.lengthSqr() < 1.0E-4 ? Vec3.ZERO : flat.normalize();
+            double speed = c.by(0.85, 1.05, 1.25);
+            // Only going somewhere when he looks somewhere; a straight-down look holds him in place.
+            double go = Mth.clamp(1.0 - Math.max(0.0, -look.y - 0.6) * 2.5, 0.0, 1.0);
+            double vy = Mth.clamp((want - p.getY()) * 0.3, -0.5, 0.5);
+            p.setDeltaMovement(flat.x * speed * go, vy, flat.z * speed * go);
+            p.hurtMarked = true;
+            p.fallDistance = 0;
+            p.setAirSupply(p.getMaxAirSupply());
+            if (p.tickCount % 2 == 0) {
+                double a = p.tickCount * 0.5;
+                c.level().sendParticles(ParticleTypes.SPLASH, p.getX() + Math.cos(a) * 1.1, surface + (p.tickCount % 30) * 0.1, p.getZ() + Math.sin(a) * 1.1, 2, 0.2, 0.2, 0.2, 0.0);
+            }
+            if (p.tickCount % 40 == 0) {
+                c.exhaust(0.15F);
+            }
+        }
+
+        @Override
+        public void tick(Cast c) {
+            if (RIDERS.contains(c.player.getUUID())) {
+                ride(c);
+            }
+            if (SPINS.isEmpty()) {
+                return;
+            }
+            ServerPlayer p = c.player;
+            long now = c.level().getGameTime();
+            Iterator<Spin> it = SPINS.iterator();
+            while (it.hasNext()) {
+                Spin s = it.next();
+                if (!s.owner.equals(p.getUUID()) || s.level != c.level()) {
+                    continue;
+                }
+                boolean last = now >= s.until;
+                double top = s.center.y + 3.0 + c.level * 0.5;
+                for (LivingEntity e : Shots.area(p, s.center.add(0, 1.5, 0), s.radius + 1.0)) {
+                    Vec3 rel = e.position().subtract(s.center);
+                    Vec3 flat = new Vec3(rel.x, 0, rel.z);
+                    double d = flat.length();
+                    Vec3 in = d < 0.05 ? Vec3.ZERO : flat.scale(-1.0 / d);
+                    Vec3 around = new Vec3(-in.z, 0, in.x);
+                    Vec3 v = e.getDeltaMovement();
+                    if (last) {
+                        Shots.push(e, s.center, 1.6, 0.9);
+                        continue;
+                    }
+                    double lift = e.getY() < top ? 0.22 : -0.02;
+                    e.setDeltaMovement(v.x * 0.6 + in.x * 0.18 + around.x * 0.28, lift, v.z * 0.6 + in.z * 0.18 + around.z * 0.28);
+                    e.hurtMarked = true;
+                    e.fallDistance = 0;
+                    if ((now - s.born) % 20 == 10) {
+                        Shots.hurt(p, e, s.damage, ModDamageTypes.WATER);
+                    }
+                }
+                if (now % 2 == 0) {
+                    double a = now * 0.5;
+                    double r = s.radius * 0.8;
+                    s.level.sendParticles(ParticleTypes.SPLASH, s.center.x + Math.cos(a) * r, s.center.y + (now % 40) * 0.08, s.center.z + Math.sin(a) * r, 2, 0.2, 0.2, 0.2, 0.0);
+                }
+                if (last) {
+                    s.level.sendParticles(ParticleTypes.SPLASH, s.center.x, s.center.y + 1.0, s.center.z, 60, s.radius * 0.6, 1.5, s.radius * 0.6, 0.2);
+                    it.remove();
+                }
+            }
+        }
+
+        @Override
+        public void end(Cast c) {
+            SPINS.removeIf(s -> s.owner.equals(c.player.getUUID()));
+            RIDERS.remove(c.player.getUUID());
+            c.setActive(false);
+        }
+
+        @Override
+        public void forget(ServerPlayer player) {
+            SPINS.removeIf(s -> s.owner.equals(player.getUUID()));
+            RIDERS.remove(player.getUUID());
+        }
+
+        @Override
+        public void clear() {
+            SPINS.clear();
+            RIDERS.clear();
+        }
+    }
 
     static final class PhaseChange implements AbilityLogic {
         @Override

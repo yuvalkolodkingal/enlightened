@@ -25,7 +25,7 @@ public final class Benders {
     }
 
     public static boolean is(Player player, Element element) {
-        return element(player) == element;
+        return element(player).commands(element);
     }
 
     /** Pushes the player's bending data to every client that can see them, if anything changed. */
@@ -53,6 +53,15 @@ public final class Benders {
             Ability starter = Ability.starterOf(element);
             if (starter != null) {
                 data.setLevel(starter, 1);
+            }
+            if (element == Element.AVATAR) {
+                // The Avatar begins with the first art of each of the four.
+                for (Element e : Element.FOUR) {
+                    Ability first = Ability.starterOf(e);
+                    if (first != null) {
+                        data.setLevel(first, 1);
+                    }
+                }
             }
             data.setPoints(Mastery.startingPoints());
             Loadout.reset(data);

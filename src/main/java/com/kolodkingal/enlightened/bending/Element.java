@@ -19,7 +19,12 @@ public enum Element implements StringRepresentable {
     /** The Water Tribes' blue, with the white of ice at its heart. */
     WATER(0x2E86DE, 0xBFE8FF),
     /** The Fire Nation's red, with gold at its heart. */
-    FIRE(0xE2531A, 0xFFD65A);
+    FIRE(0xE2531A, 0xFFD65A),
+    /** The Avatar: all four, in the blue-white of the Avatar State's light. */
+    AVATAR(0x7FD6FF, 0xFFFFFF);
+
+    /** The four elements, in the order of the Avatar cycle. */
+    public static final java.util.List<Element> FOUR = java.util.List.of(WATER, EARTH, FIRE, AIR);
 
     public static final Codec<Element> CODEC = StringRepresentable.fromEnum(Element::values);
 
@@ -39,6 +44,11 @@ public enum Element implements StringRepresentable {
     /** Whether the player bends anything. */
     public boolean bends() {
         return this != NONE;
+    }
+
+    /** Whether a bender of this element commands that one: his own, or, for the Avatar, any of the four. */
+    public boolean commands(Element element) {
+        return this == element || (this == AVATAR && element != NONE);
     }
 
     public Component displayName() {

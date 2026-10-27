@@ -55,4 +55,5 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 | `avatarStateOnLowHealth` | true | Whether a bender with all seven chakras open enters it by himself when near death. |
 | `combos` | true | Whether sequences of casts trigger the combos. |
 | `comboWindowTicks` | 60 | Ticks between the casts of a combo. |
+| `energybendingMinutes` | 30 | Minutes the Avatar's energybending takes a bender's bending for. |
 | `steps` | true | Whether a double tap of a direction dashes a bender who learned his element's step. |

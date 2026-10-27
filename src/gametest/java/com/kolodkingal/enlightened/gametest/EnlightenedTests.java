@@ -553,4 +553,158 @@ public final class EnlightenedTests {
             helper.succeed();
         });
     }
+
+    // ---- 1.3: the glider, the octopus's lash, the vortex, blue fire, the palm forge, the Avatar ----
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void gliderOpensAndAirJumpHasNoSlowFalling(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        BendingData data = f.bender(player, Element.AIR, Ability.AIR_JUMP, 1);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get()));
+        com.kolodkingal.enlightened.air.AirBending.setGlider(player, data, true, false);
+        check(data.gliderOpen(), "the staff opened into its wings");
+        f.press(player, Ability.AIR_JUMP, false);
+        // The server zeroes a player's velocity every tick (the client moves him), so the throw shows at once.
+        check(player.getDeltaMovement().y > 0.5, "the air jump threw him up");
+        helper.runAtTickTime(3, () -> {
+            check(!player.hasEffect(net.minecraft.world.effect.MobEffects.SLOW_FALLING), "the air jump gives no slow falling");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void octopusFormLashesAtTheKey(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8, GameType.CREATIVE);
+        f.bender(player, Element.WATER, Ability.OCTOPUS_FORM, 2);
+        Mob zombie = f.zombie(10, FLOOR, 11);
+        float health = zombie.getHealth();
+        f.lookAt(player, zombie);
+        f.press(player, Ability.OCTOPUS_FORM, false);
+        helper.runAtTickTime(5, () -> {
+            check(Benders.get(player).on(Ability.OCTOPUS_FORM), "the form is up");
+            f.press(player, Ability.OCTOPUS_FORM, false);
+        });
+        helper.runAtTickTime(12, () -> {
+            check(zombie.getHealth() < health, "the arms lashed the zombie");
+            check(Benders.get(player).on(Ability.OCTOPUS_FORM), "a press lashes and keeps the form up");
+            f.press(player, Ability.OCTOPUS_FORM, true);
+        });
+        helper.runAtTickTime(30, () -> {
+            check(!Benders.get(player).on(Ability.OCTOPUS_FORM), "a held key folds the form away");
+            f.release(player, Ability.OCTOPUS_FORM);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 80)
+    public static void waterVortexLiftsAndHurts(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 6, GameType.CREATIVE);
+        f.bender(player, Element.WATER, Ability.WATER_VORTEX, 1);
+        Mob zombie = f.zombie(10, FLOOR, 11);
+        float health = zombie.getHealth();
+        f.lookAt(player, zombie);
+        f.press(player, Ability.WATER_VORTEX, false);
+        helper.runAtTickTime(40, () -> {
+            check(zombie.getDeltaMovement().y > 0.05 || zombie.getY() > helper.absoluteVec(new Vec3(0, FLOOR, 0)).y + 0.5, "the vortex lifts the zombie");
+            check(zombie.getHealth() < health, "the vortex hurts the zombie");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void azulasBlazeLeavesBlueFire(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 6, GameType.CREATIVE);
+        f.bender(player, Element.FIRE, Ability.BLAZE, 2);
+        Benders.setVariant(player, com.kolodkingal.enlightened.bending.Variants.get(Element.FIRE, "azula"));
+        BendingData data = Benders.get(player);
+        check(com.kolodkingal.enlightened.bending.Variants.blueFire(data), "Azula's fire is blue (look " + data.variant() + ")");
+        check(com.kolodkingal.enlightened.fire.FireBending.fireBlock(data).is(com.kolodkingal.enlightened.registry.ModBlocks.BLUE_FIRE.get()), "her fire block is the blue one");
+        f.lookAt(player, new Vec3(10, FLOOR, 12));
+        f.press(player, Ability.BLAZE, false);
+        helper.runAtTickTime(10, () -> {
+            boolean blue = false;
+            // The blaze is an arc: it lands sideways of the look too.
+            for (BlockPos pos : BlockPos.betweenClosed(new BlockPos(2, (int) FLOOR - 2, 4), new BlockPos(18, (int) FLOOR + 2, 18))) {
+                if (helper.getBlockState(pos).is(com.kolodkingal.enlightened.registry.ModBlocks.BLUE_FIRE.get())) {
+                    blue = true;
+                }
+            }
+            check(blue, "Azula's blaze lit blue fire on the ground");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 120)
+    public static void palmForgeSmeltsRawIronInHand(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        f.bender(player, Element.FIRE, Ability.PALM_FORGE, 3);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.RAW_IRON, 3));
+        f.press(player, Ability.PALM_FORGE, true);
+        helper.runAtTickTime(45, () -> {
+            check(player.getInventory().countItem(net.minecraft.world.item.Items.IRON_INGOT) >= 1, "a piece of raw iron became an ingot in the hand");
+            f.release(player, Ability.PALM_FORGE);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void theAvatarBendsAllFour(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 6, GameType.CREATIVE);
+        BendingData data = f.bender(player, Element.AVATAR, Ability.ROCK_THROW, 1, Ability.AIR_BLAST, 1, Ability.WATER_WHIP, 1, Ability.FIRE_RING, 1);
+        check(data.element().commands(Element.FIRE) && data.element().commands(Element.WATER), "the Avatar commands every element");
+        check(com.kolodkingal.enlightened.bending.Mastery.canLearn(data, Ability.FIRE_FIST), "the Avatar may learn a fire art");
+        Mob zombie = f.zombie(10, FLOOR, 10);
+        f.lookAt(player, zombie);
+        f.press(player, Ability.ROCK_THROW, false);
+        f.press(player, Ability.FIRE_RING, false);
+        f.press(player, Ability.AIR_BLAST, false);
+        helper.runAtTickTime(5, () -> {
+            long now = player.level().getGameTime();
+            check(!data.isReady(Ability.ROCK_THROW, now), "the rock went off");
+            check(!data.isReady(Ability.FIRE_RING, now), "the fire ring went off");
+            check(!data.isReady(Ability.AIR_BLAST, now), "the air blast went off");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void energybendingTakesAndGivesBackBending(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer avatar = f.player(10, FLOOR, 8, GameType.CREATIVE);
+        f.bender(avatar, Element.AVATAR, Ability.ENERGYBENDING, 3, Ability.ROCK_THROW, 3, Ability.FIRE_BALL, 3, Ability.AIR_BLAST, 3);
+        ServerPlayer bender = f.player(10, FLOOR, 10);
+        BendingData theirs = f.bender(bender, Element.FIRE, Ability.FIRE_BALL, 1);
+        f.lookAt(avatar, bender);
+        f.press(avatar, Ability.ENERGYBENDING, false);
+        long now = avatar.level().getGameTime();
+        check(theirs.suppressed(now), "the firebender's bending is taken");
+        Benders.get(avatar).clearCooldowns();
+        f.press(avatar, Ability.ENERGYBENDING, false);
+        check(!theirs.suppressed(now), "a second touch gives it back");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void spiritbendingCalmsAZombie(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer avatar = f.player(10, FLOOR, 8, GameType.CREATIVE);
+        f.bender(avatar, Element.AVATAR, Ability.SPIRITBENDING, 1);
+        Mob zombie = f.zombie(10, FLOOR, 11);
+        zombie.setTarget(avatar);
+        f.lookAt(avatar, zombie);
+        f.press(avatar, Ability.SPIRITBENDING, false);
+        helper.runAtTickTime(5, () -> {
+            check(zombie.hasEffect(com.kolodkingal.enlightened.registry.ModEffects.PACIFIED), "the zombie is calmed");
+            check(zombie.getTarget() == null, "it forgot its prey");
+            zombie.setTarget(avatar);
+            check(zombie.getTarget() == null, "it takes no new prey while calm");
+            helper.succeed();
+        });
+    }
 }

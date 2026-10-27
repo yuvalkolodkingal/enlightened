@@ -60,3 +60,14 @@ Lotus robes, Fire Lord Ozai, your own skin. See [Looks](Looks).
 
 Every fire art is drawn as real fire: the fist's streams, the whip, the ball, the ring, the walls and domes are the
 game's fire texture; Azula's fire is blue soul fire.
+
+## New in 1.3
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Palm Forge** | hold | The fire in your hand cooks what you hold: food, an ore, raw metal, sand, anything a furnace, a blast furnace, a smoker or a campfire would take, **one piece every 3 / 2.25 / 1.5 s**, with the furnace's experience. |
+
+**Blue fire burns blue.** Azula's fire leaves **Blue Fire** on the ground where it lands (the blaze, a big fire
+ball): a blue flame that stands wherever fire would, does not spread, and dies down by itself; whoever it burns, and
+whoever her fist, whip, ring, wall, shield or combustion sets alight, **burns with blue flames**. The fire whip is the
+show's rope of fire: thick, with a yellow heart, trailing the arm's swing in loops.

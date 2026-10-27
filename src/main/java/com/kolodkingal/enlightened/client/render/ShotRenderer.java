@@ -3,6 +3,7 @@ package com.kolodkingal.enlightened.client.render;
 import com.kolodkingal.enlightened.client.fx.FxGeometry;
 import com.kolodkingal.enlightened.entity.BendingShotEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -164,16 +165,53 @@ public class ShotRenderer extends EntityRenderer<BendingShotEntity> {
         FxGeometry.billboard(poseStack.last(), buffer.getBuffer(FxGeometry.glowTexture()), new Vec3(0, 0, -0.45), 0.25F, 0, 1, 0.8F, 0.95F, 1.0F, 0.6F, FxGeometry.FULL, true, t * 0.4F);
     }
 
-    /** A lava shuriken: a whirling disc of lava, glowing, with a ring of darker crust. */
+    /**
+     * Ghazan's lava disc: a flat saw of molten rock spinning fast, a glowing orange heart under dark crust that curls
+     * over it in spiral streaks and breaks into teeth round the rim, with sparks and heat flung off the edge.
+     */
     private void lavaDisc(BendingShotEntity entity, float t, float pop, PoseStack poseStack, MultiBufferSource buffer) {
         face(poseStack, entity);
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(t * 30F));
-        float[] fr = FxGeometry.frame(t, FxGeometry.LAVA_FRAMES, 0.6F);
-        float r = 0.45F * pop;
-        FxGeometry.disc(poseStack.last(), buffer.getBuffer(FxGeometry.lava()), Vec3.ZERO, 0.0F, r, 6, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, FxGeometry.FULL, true, 0);
-        FxGeometry.ringBand(poseStack.last(), buffer.getBuffer(FxGeometry.lava()), new Vec3(0, -0.03, 0), r * 0.98F, 0.06F, 6, fr[0], fr[1], 0.5F, 0.3F, 0.2F, 1.0F, FxGeometry.FULL, true, 0, 0);
-        FxGeometry.glowBlob(poseStack.last(), buffer.getBuffer(FxGeometry.glowTexture()), Vec3.ZERO, r * 2.4F, 1.0F, 0.55F, 0.15F, 0.55F, t * 0.2F);
+        poseStack.mulPose(Axis.YP.rotationDegrees(t * 55F));
+        float[] fr = FxGeometry.frame(t, FxGeometry.LAVA_FRAMES, 0.8F);
+        float r = 0.5F * pop;
+        PoseStack.Pose pose = poseStack.last();
+        // The entity buffers are shared: each type is asked for only once the last is drawn, never two at once.
+        VertexConsumer lava = buffer.getBuffer(FxGeometry.lava());
+        // The glowing heart, thin as a saw blade.
+        FxGeometry.disc(pose, lava, Vec3.ZERO, 0.0F, r * 0.92F, 10, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, FxGeometry.FULL, true, 0);
+        FxGeometry.disc(pose, lava, new Vec3(0, -0.015, 0), 0.0F, r * 0.92F, 10, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, FxGeometry.FULL, true, 0);
+        VertexConsumer snow = buffer.getBuffer(FxGeometry.snow());
+        // Dark crust: a rim broken into teeth, and three spiral streaks curling over the heart.
+        int teeth = 12;
+        for (int i = 0; i < teeth; i++) {
+            double a0 = i * Math.PI * 2 / teeth;
+            double a1 = (i + 0.5) * Math.PI * 2 / teeth;
+            double a2 = (i + 1) * Math.PI * 2 / teeth;
+            Vec3 in0 = new Vec3(Math.cos(a0) * r * 0.78, 0.01, Math.sin(a0) * r * 0.78);
+            Vec3 in2 = new Vec3(Math.cos(a2) * r * 0.78, 0.01, Math.sin(a2) * r * 0.78);
+            Vec3 tip = new Vec3(Math.cos(a1) * r * 1.12, 0.01, Math.sin(a1) * r * 1.12);
+            Vec3 base = new Vec3(Math.cos(a0) * r * 0.9, 0.01, Math.sin(a0) * r * 0.9);
+            FxGeometry.flatQuad(pose, snow, in0, base, tip, in2, 0.22F, 0.1F, 0.07F, 1.0F, FxGeometry.FULL);
+        }
+        for (int i = 0; i < 3; i++) {
+            List<Vec3> streak = new ArrayList<>();
+            for (int k = 0; k <= 10; k++) {
+                float u = k / 10.0F;
+                double ang = i * Math.PI * 2 / 3 + u * 3.2;
+                double rad = r * (0.12 + 0.68 * u);
+                streak.add(new Vec3(Math.cos(ang) * rad, 0.02, Math.sin(ang) * rad));
+            }
+            FxGeometry.tube(pose, snow, streak, 0.025F, 0.06F, 4, 0, 1, 1, 0, 0.2F, 0.09F, 0.06F, 1.0F, 1.0F, FxGeometry.FULL, true);
+        }
+        // Heat and sparks off the edge.
+        FxGeometry.glowBlob(pose, buffer.getBuffer(FxGeometry.glowTexture()), Vec3.ZERO, r * 2.6F, 1.0F, 0.55F, 0.15F, 0.5F, t * 0.2F);
+        net.minecraft.util.RandomSource rnd = net.minecraft.util.RandomSource.create((long) (t / 2));
+        for (int i = 0; i < 5; i++) {
+            double ang = rnd.nextDouble() * Math.PI * 2;
+            double rad = r * (1.1 + rnd.nextDouble() * 0.5);
+            FxGeometry.billboard(pose, buffer.getBuffer(FxGeometry.glowTexture()), new Vec3(Math.cos(ang) * rad, 0.05, Math.sin(ang) * rad), 0.08F + rnd.nextFloat() * 0.1F, 0, 1, 1.0F, 0.8F, 0.3F, 0.9F, FxGeometry.FULL, true, 0);
+        }
     }
 
     /** An air blade: a crescent of compressed air, spinning edge-on along its flight, faint and fast. */

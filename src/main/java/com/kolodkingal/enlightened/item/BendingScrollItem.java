@@ -34,7 +34,8 @@ public class BendingScrollItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         BendingData data = Benders.get(player);
-        if (data.element() == Element.NONE) {
+        // Anyone but the Avatar may read the Avatar Scroll: his old bending becomes a part of all four.
+        if (data.element() == Element.NONE || element == Element.AVATAR && data.element() != Element.AVATAR) {
             if (player instanceof ServerPlayer server) {
                 Benders.awaken(server, element);
                 if (!player.isCreative()) {
@@ -43,7 +44,7 @@ public class BendingScrollItem extends Item {
             }
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
         }
-        if (data.element() == element) {
+        if (data.element().commands(element)) {
             if (level.isClientSide) {
                 ClientScroll.open();
             }

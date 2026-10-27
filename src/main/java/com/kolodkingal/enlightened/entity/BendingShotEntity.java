@@ -325,7 +325,13 @@ public class BendingShotEntity extends Entity {
         boolean hurt = target.hurt(ModDamageTypes.source(level(), damageType(), this, p), damage);
         if (hurt && target instanceof LivingEntity living) {
             switch (kind()) {
-                case FIRE_BALL, LAVA -> living.igniteForSeconds(touch);
+                case FIRE_BALL, LAVA -> {
+                    if (p instanceof ServerPlayer owner) {
+                        com.kolodkingal.enlightened.fire.FireBending.ignite(owner, living, touch);
+                    } else {
+                        living.igniteForSeconds(touch);
+                    }
+                }
                 case ICE_KNIFE -> living.addEffect(new MobEffectInstance(ModEffects.FROZEN, touch * 20, 0));
                 case SNOWBALL -> living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, touch * 20, 1));
                 case SAND -> living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, touch * 20, 0));
@@ -342,7 +348,7 @@ public class BendingShotEntity extends Entity {
             for (LivingEntity e : com.kolodkingal.enlightened.bending.Shots.area(owner, position(), size())) {
                 if (e != target) {
                     e.hurt(ModDamageTypes.source(level, ModDamageTypes.FIRE, this, p), damage * 0.5F);
-                    e.igniteForSeconds(touch);
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(owner, e, touch);
                 }
             }
         }
@@ -385,7 +391,7 @@ public class BendingShotEntity extends Entity {
                     if (against != null && size() >= 1.5F && ownerPlayer() instanceof ServerPlayer owner) {
                         BlockPos above = against.above();
                         if (level.getBlockState(above).isAir() && com.kolodkingal.enlightened.bending.BlockRights.mayPlace(owner, level, above)) {
-                            level.setBlockAndUpdate(above, Blocks.FIRE.defaultBlockState());
+                            level.setBlockAndUpdate(above, com.kolodkingal.enlightened.fire.FireBending.fireBlock(com.kolodkingal.enlightened.bending.Benders.get(owner)));
                         }
                     }
                 }

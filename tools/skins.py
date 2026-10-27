@@ -448,6 +448,15 @@ LOOKS = {
                          boots=(40, 30, 30), trim=(204, 162, 60), topknot=True)),
     'jeong_jeong': (False, dict(garment='lotus', skin=(224, 194, 164), eyes=(80, 70, 60), hair=(226, 226, 232), style='wild', shirt=(62, 112, 172), pants=(50, 90, 150),
                                 boots=(60, 50, 40), beard=True, full=True)),
+    # The Avatars.
+    'aang': (False, dict(garment='nomad', skin=(236, 206, 176), eyes=(96, 96, 112), hair=(60, 50, 45), style='bald', shirt=(222, 150, 50), pants=(214, 130, 50),
+                         boots=(120, 80, 50), bare=True, cape=(170, 60, 40), belt=(140, 60, 44), arrows=(70, 110, 210))),
+    'korra': (True, dict(garment='tribe', skin=(196, 146, 104), eyes=(70, 150, 220), hair=(60, 36, 24), style='long', shirt=(62, 112, 172), pants=(50, 90, 150),
+                         boots=(100, 70, 50), belt=(200, 180, 120), trim=(226, 226, 232))),
+    'roku': (False, dict(garment='nation', skin=(230, 200, 170), eyes=(190, 150, 60), hair=(226, 226, 232), style='long', shirt=(140, 30, 30), pants=(80, 30, 30),
+                         boots=(40, 30, 30), trim=(204, 162, 60), beard=True, full=True, topknot=True)),
+    'kyoshi': (True, dict(garment='robe', skin=(240, 236, 232), eyes=(60, 120, 90), hair=(28, 26, 28), style='long', shirt=(70, 120, 70), pants=(50, 90, 60),
+                          boots=(40, 40, 40), belt=(204, 170, 80), trim=(204, 170, 80), headband=(204, 170, 80), headband_row=1)),
     'ozai': (False, dict(garment='nation', skin=(236, 206, 176), eyes=(190, 150, 60), hair=(36, 30, 30), style='long', shirt=(120, 20, 20), pants=(60, 20, 20),
                          boots=(40, 30, 30), trim=(204, 162, 60), beard=True, full=True, crown=(232, 192, 70), topknot=True)),
 }
@@ -575,7 +584,7 @@ def paint_lemur():
 
 def paint_items():
     os.makedirs(ITEM, exist_ok=True)
-    scrolls = {'earth_scroll': (90, 140, 70), 'air_scroll': (220, 170, 60), 'water_scroll': (50, 120, 200), 'fire_scroll': (200, 60, 30)}
+    scrolls = {'earth_scroll': (90, 140, 70), 'air_scroll': (220, 170, 60), 'water_scroll': (50, 120, 200), 'fire_scroll': (200, 60, 30), 'avatar_scroll': (127, 214, 255)}
     for name, ribbon in scrolls.items():
         img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
         d = ImageDraw.Draw(img)

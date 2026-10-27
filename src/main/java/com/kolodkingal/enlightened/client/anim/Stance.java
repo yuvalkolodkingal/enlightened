@@ -62,7 +62,9 @@ public enum Stance {
     /** The Avatar State: afloat, the arms spread, the head back. */
     AVATAR(3, 6, false),
     /** Combustion gathering at the forehead: a hand to the third eye. */
-    COMBUSTION(1.5F, 3, true);
+    COMBUSTION(1.5F, 3, true),
+    /** The palm forge: both hands cupped before the chest, the fire between them. */
+    PALM_FORGE(2, 3, false);
 
     public final float tauIn;
     public final float tauOut;

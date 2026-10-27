@@ -553,5 +553,8 @@
   "message.enlightened.cosmic.enter": "הרוח שלך עוזבת את הגוף... ים של כוכבים, שביל של אור, ואתה עצמך, ענק, מחכה בסופו. לך בשביל עד הסוף.",
   "message.enlightened.cosmic.fell": "השביל תופס אותך שוב.",
   "message.enlightened.cosmic.done": "בסוף השביל האנרגיה הקוסמית זורמת לתוכך.",
-  "command.enlightened.temple": "מקדש האוויר הדרומי עומד ב-%s %s %s."
+  "command.enlightened.temple": "מקדש האוויר הדרומי עומד ב-%s %s %s.",
+  "message.enlightened.bison.full": "כל המקומות על הביזון תפוסים.",
+  "message.enlightened.bison.needs_saddle": "רק הבעלים רוכב על ביזון בלי אוכף: שים עליו אוכף כדי לשאת אחרים.",
+  "message.enlightened.bison.wild": "הביזון עוד לא סומך עליך: האכל אותו חיטה (%s מתוך %s)."
 }

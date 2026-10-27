@@ -127,17 +127,25 @@ public final class TempleTests {
         bison.mobInteract(owner, InteractionHand.MAIN_HAND);
         check(bison.isTame() && bison.isOwnedBy(owner), "tamed by the one who fed it");
         check(owner.getMainHandItem().getCount() == 64 - SkyBisonEntity.WHEAT_TO_TAME, "the wheat was eaten");
+        // Its owner rides it at once, saddle or not; nobody else without a saddle.
+        owner.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        bison.mobInteract(owner, InteractionHand.MAIN_HAND);
+        check(owner.getVehicle() == bison, "the owner rides an unsaddled bison");
+        ServerPlayer stranger = f.player(6, FLOOR, 4);
+        check(!stranger.startRiding(bison), "nobody else rides without a saddle");
+        owner.stopRiding();
         owner.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SADDLE));
         bison.mobInteract(owner, InteractionHand.MAIN_HAND);
         check(bison.isSaddled(), "saddled");
+        owner.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         bison.mobInteract(owner, InteractionHand.MAIN_HAND);
         check(owner.getVehicle() == bison, "the owner rides");
         check(bison.getControllingPassenger() == owner, "and steers");
         for (int i = 0; i < 5; i++) {
-            ServerPlayer friend = f.player(4 + i, FLOOR, 6);
+            ServerPlayer friend = f.player(4 + i, FLOOR, 7);
             check(friend.startRiding(bison), "rider " + (i + 2) + " climbs on");
         }
-        ServerPlayer seventh = f.player(12, FLOOR, 4);
+        ServerPlayer seventh = f.player(12, FLOOR, 3);
         check(!seventh.startRiding(bison), "a seventh does not fit");
         Set<String> seats = new HashSet<>();
         for (var e : bison.getPassengers()) {
@@ -260,13 +268,19 @@ public final class TempleTests {
 
     @GameTest(template = ARENA, timeoutTicks = 20)
     public static void theTemplePlan(GameTestHelper helper) {
-        check(AirTemplePiece.design(0, 0, 0, 0).is(ModBlocks.MEDITATION_POINT.get()), "the guru sits on a meditation point at the heart");
-        check(AirTemplePiece.design(6, 6, 0, 6).is(Blocks.CALCITE), "the sanctuary's wall is white stone");
-        check(AirTemplePiece.design(6, 2, 0, 6).isAir(), "with a door to each of the four ways");
-        check(AirTemplePiece.design(0, 31, 0, 0).is(Blocks.LIGHTNING_ROD), "under a spire");
-        check(AirTemplePiece.design(0, 20, 6, 6).is(Blocks.LIGHT_BLUE_CONCRETE), "and a blue roof");
-        check(AirTemplePiece.design(-7, 1, 16, Math.hypot(7, 16)).is(Blocks.HAY_BLOCK), "hay in the bison's courtyard");
-        check(AirTemplePiece.design(30, 5, 0, 30) == null, "the world beyond is left alone");
+        check(AirTemplePiece.design(0, 20, 0, 0).getBlock() != Blocks.AIR, "the temple stands on a mountain of its own");
+        check(AirTemplePiece.design(0, 41, 0, 0).is(ModBlocks.MEDITATION_POINT.get()), "the guru's mat lies on the summit sanctuary's floor");
+        check(!AirTemplePiece.design(0, 40, 0, 0).isAir(), "the sanctuary floor");
+        check(AirTemplePiece.design(6, 46, 0, 6).is(Blocks.CALCITE), "the sanctuary's wall is white stone");
+        check(AirTemplePiece.design(6, 42, 0, 6).isAir(), "with doors to the east, south and west");
+        check(AirTemplePiece.design(0, 44, -7, 7).is(Blocks.WAXED_CUT_COPPER), "and the sealed round door on the north, the swirl in brass");
+        check(AirTemplePiece.design(8, 47, 0, 8).is(Blocks.BLUE_CONCRETE), "the great tower rises in tiers of blue roofs");
+        check(AirTemplePiece.design(0, 65, 6, 6).is(Blocks.LIGHT_BLUE_CONCRETE), "under a tall blue cone");
+        check(AirTemplePiece.design(0, 77, 0, 0).is(Blocks.LIGHTNING_ROD), "and a golden spire");
+        check(AirTemplePiece.design(-31, 4, 0, 31).is(Blocks.GOLD_BLOCK), "Monk Gyatso's statue wears his medallion");
+        check(AirTemplePiece.design(24, 7, 0, 24).is(Blocks.STONE_BRICK_STAIRS), "stairways climb the cliffs");
+        check(AirTemplePiece.design(-6, 1, 33, Math.hypot(6, 33)).is(Blocks.HAY_BLOCK), "hay in the bison's courtyard");
+        check(AirTemplePiece.design(50, 5, 0, 50) == null, "the world beyond is left alone");
         helper.succeed();
     }
 

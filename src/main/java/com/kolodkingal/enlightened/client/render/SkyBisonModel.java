@@ -11,8 +11,9 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 /**
- * The sky bison, after Appa: a great white body with a brown arrow down its back, a broad head with a fringe of fur,
- * two short horns and a wide dark nose, six short legs, and a flat paddle of a tail. On the ground the legs walk in
+ * The sky bison, after Appa: a great white shaggy body with a brown arrow from the brow down its back, a ruff at the
+ * chest and a grey ridged belly; a low broad head with a fringe of fur over the eyes, tufts at the cheeks, a wide
+ * flat grey muzzle and big horns curving out and up; six short legs with dark toes; a wide flat tail. On the ground the legs walk in
  * threes; in the air they tuck back and the tail beats slowly up and down, the body pitched where it flies. The
  * saddle (a leather pad with a wooden basket rim) shows when it is saddled. Texture 256x256
  * ({@code textures/entity/sky_bison.png}, drawn by tools/skins.py).
@@ -39,31 +40,44 @@ public class SkyBisonModel extends HierarchicalModel<SkyBisonEntity> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
+        // The body, a ruff of fur at the chest, and the grey ridged belly hanging between the legs.
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-                .texOffs(0, 0).addBox(-20.0F, -26.0F, -28.0F, 40.0F, 26.0F, 56.0F), PartPose.offset(0.0F, 12.0F, 0.0F));
+                .texOffs(0, 0).addBox(-20.0F, -26.0F, -28.0F, 40.0F, 26.0F, 56.0F)
+                .texOffs(0, 114).addBox(-16.0F, -22.0F, -31.0F, 32.0F, 16.0F, 4.0F)
+                .texOffs(0, 200).addBox(-9.0F, 0.0F, -24.0F, 18.0F, 5.0F, 48.0F), PartPose.offset(0.0F, 14.0F, 0.0F));
+        // The head, low and broad: the fringe of fur over the eyes, the tufts at the cheeks, the wide flat muzzle.
         PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
-                .texOffs(0, 82).addBox(-13.0F, -12.0F, -16.0F, 26.0F, 20.0F, 16.0F)
-                .texOffs(84, 82).addBox(-12.0F, -15.0F, -17.0F, 24.0F, 5.0F, 6.0F)
-                .texOffs(84, 93).addBox(-6.0F, 1.0F, -19.0F, 12.0F, 6.0F, 3.0F), PartPose.offset(0.0F, -10.0F, -27.0F));
-        head.addOrReplaceChild("left_horn", CubeListBuilder.create()
-                .texOffs(144, 82).addBox(0.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F)
-                .texOffs(160, 82).addBox(2.5F, -6.0F, -1.5F, 3.0F, 5.0F, 3.0F), PartPose.offsetAndRotation(12.0F, -10.0F, -7.0F, 0.0F, 0.0F, 0.3F));
-        head.addOrReplaceChild("right_horn", CubeListBuilder.create().mirror()
-                .texOffs(144, 82).addBox(-4.0F, -2.0F, -2.0F, 4.0F, 4.0F, 4.0F)
-                .texOffs(160, 82).addBox(-5.5F, -6.0F, -1.5F, 3.0F, 5.0F, 3.0F), PartPose.offsetAndRotation(-12.0F, -10.0F, -7.0F, 0.0F, 0.0F, -0.3F));
+                .texOffs(0, 82).addBox(-14.0F, -10.0F, -14.0F, 28.0F, 18.0F, 14.0F)
+                .texOffs(84, 82).addBox(-13.0F, -14.0F, -16.0F, 26.0F, 6.0F, 8.0F)
+                .texOffs(152, 82).addBox(-18.0F, -6.0F, -12.0F, 4.0F, 10.0F, 10.0F)
+                .texOffs(152, 82).addBox(14.0F, -6.0F, -12.0F, 4.0F, 10.0F, 10.0F)
+                .texOffs(84, 96).addBox(-11.0F, 0.0F, -19.0F, 22.0F, 8.0F, 6.0F), PartPose.offset(0.0F, -8.0F, -28.0F));
+        // The horns: out from the head, then curving up and in, as Appa's do.
+        for (int side = -1; side <= 1; side += 2) {
+            PartDefinition base = head.addOrReplaceChild(side < 0 ? "right_horn" : "left_horn", CubeListBuilder.create()
+                    .texOffs(180, 82).addBox(side < 0 ? -6.0F : 0.0F, -2.0F, -2.0F, 6.0F, 4.0F, 4.0F),
+                    PartPose.offset(side * 13.0F, -9.0F, -6.0F));
+            PartDefinition mid = base.addOrReplaceChild("mid", CubeListBuilder.create()
+                    .texOffs(200, 82).addBox(-2.0F, -9.0F, -2.0F, 4.0F, 9.0F, 4.0F),
+                    PartPose.offsetAndRotation(side * 5.0F, 0.0F, 0.0F, 0.0F, 0.0F, side * 0.45F));
+            mid.addOrReplaceChild("tip", CubeListBuilder.create()
+                    .texOffs(216, 82).addBox(-1.5F, -6.0F, -1.5F, 3.0F, 6.0F, 3.0F),
+                    PartPose.offsetAndRotation(0.0F, -8.5F, 0.0F, 0.0F, 0.0F, -side * 0.75F));
+        }
         float[][] at = {{14, -18}, {-14, -18}, {14, 0}, {-14, 0}, {14, 18}, {-14, 18}};
         for (int i = 0; i < 6; i++) {
             body.addOrReplaceChild("leg" + i, CubeListBuilder.create()
-                    .texOffs(192, 0).addBox(-5.0F, 0.0F, -5.0F, 10.0F, 12.0F, 10.0F), PartPose.offset(at[i][0], 0.0F, at[i][1]));
+                    .texOffs(192, 0).addBox(-5.0F, 0.0F, -5.0F, 10.0F, 10.0F, 10.0F), PartPose.offset(at[i][0], 0.0F, at[i][1]));
         }
+        // The broad flat tail.
         body.addOrReplaceChild("tail", CubeListBuilder.create()
-                .texOffs(114, 93).addBox(-14.0F, -2.0F, 0.0F, 28.0F, 4.0F, 22.0F), PartPose.offset(0.0F, -10.0F, 27.0F));
+                .texOffs(72, 114).addBox(-18.0F, -1.5F, 0.0F, 36.0F, 3.0F, 26.0F), PartPose.offset(0.0F, -12.0F, 27.0F));
         body.addOrReplaceChild("saddle", CubeListBuilder.create()
-                .texOffs(0, 128).addBox(-16.0F, -4.0F, -18.0F, 32.0F, 4.0F, 28.0F)
-                .texOffs(120, 128).addBox(-16.0F, -9.0F, -18.0F, 32.0F, 5.0F, 2.0F)
-                .texOffs(120, 128).addBox(-16.0F, -9.0F, 8.0F, 32.0F, 5.0F, 2.0F)
-                .texOffs(120, 136).addBox(14.0F, -9.0F, -16.0F, 2.0F, 5.0F, 24.0F)
-                .texOffs(120, 136).addBox(-16.0F, -9.0F, -16.0F, 2.0F, 5.0F, 24.0F), PartPose.offset(0.0F, -26.0F, 0.0F));
+                .texOffs(0, 160).addBox(-16.0F, -4.0F, -18.0F, 32.0F, 4.0F, 28.0F)
+                .texOffs(120, 160).addBox(-16.0F, -9.0F, -18.0F, 32.0F, 5.0F, 2.0F)
+                .texOffs(120, 160).addBox(-16.0F, -9.0F, 8.0F, 32.0F, 5.0F, 2.0F)
+                .texOffs(120, 168).addBox(14.0F, -9.0F, -16.0F, 2.0F, 5.0F, 24.0F)
+                .texOffs(120, 168).addBox(-16.0F, -9.0F, -16.0F, 2.0F, 5.0F, 24.0F), PartPose.offset(0.0F, -26.0F, 0.0F));
         return LayerDefinition.create(mesh, 256, 256);
     }
 
@@ -81,7 +95,7 @@ public class SkyBisonModel extends HierarchicalModel<SkyBisonEntity> {
         // The body pitches where it flies, and rises and falls with each beat of the tail.
         float beat = Mth.sin(ageInTicks * 0.12F);
         body.xRot = fly * Mth.clamp(bison.getXRot(), -30.0F, 30.0F) * rad;
-        body.y = 12.0F + fly * beat * 0.8F + (1 - fly) * 0.3F * Mth.sin(ageInTicks * 0.05F);
+        body.y = 14.0F + fly * beat * 0.8F + (1 - fly) * 0.3F * Mth.sin(ageInTicks * 0.05F);
         head.yRot = netHeadYaw * rad * 0.5F;
         head.xRot = headPitch * rad * 0.5F - fly * 0.1F;
         // The tail: a slow paddle in the air, a lazy sway on the ground.

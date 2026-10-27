@@ -19,7 +19,8 @@ Untaught, meditation calms you and earns experience, but your chakras stay close
 
 ## Meditation
 
-Press **Meditate** (default **M**) standing on the ground or in water: the bender sits in the lotus and breathes.
+Press **Meditate** (default **M**) standing on the ground or in water, or **right-click a Meditation Point** to sit
+down on it: the bender sits in the lotus and breathes.
 Moving, swinging, falling or dying ends it. Meditation earns one experience every `meditationXpSeconds` (15 s) and,
 after `chakraMeditationSeconds` (60 s) of it, opens the next chakra, if you have spent enough points on your element:
 the n-th chakra asks for n × `chakraPointsEach` (2) points (none before the guru). On a **Meditation Point** (a block:

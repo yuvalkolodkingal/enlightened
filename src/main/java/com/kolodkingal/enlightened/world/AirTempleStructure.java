@@ -29,7 +29,8 @@ public class AirTempleStructure extends Structure {
         int x = context.chunkPos().getMiddleBlockX();
         int z = context.chunkPos().getMiddleBlockZ();
         int y = height(context, x, z);
-        if (y < MIN_HEIGHT) {
+        // The temple raises its own peak some 80 blocks: on ground too high it would reach past the top of the world.
+        if (y < MIN_HEIGHT || y > 200) {
             return Optional.empty();
         }
         // On a peak, not a needle: the ground round it may fall away, but not into a gorge.

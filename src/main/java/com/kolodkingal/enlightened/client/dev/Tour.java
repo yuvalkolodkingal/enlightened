@@ -149,6 +149,25 @@ public final class Tour {
         STEPS.add(new Step(delay, () -> Minecraft.getInstance().options.keyUp.setDown(on)));
     }
 
+    /** Right-clicks the nearest sky bison, through the client as a player does. */
+    private static void interactBison() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null || mc.gameMode == null) {
+            return;
+        }
+        net.minecraft.world.entity.Entity best = null;
+        for (net.minecraft.world.entity.Entity e : mc.level.entitiesForRendering()) {
+            if (e instanceof com.kolodkingal.enlightened.entity.SkyBisonEntity && (best == null || e.distanceToSqr(mc.player) < best.distanceToSqr(mc.player))) {
+                best = e;
+            }
+        }
+        if (best != null) {
+            net.minecraft.world.InteractionResult r = mc.gameMode.interact(mc.player, best, net.minecraft.world.InteractionHand.MAIN_HAND);
+            com.kolodkingal.enlightened.Enlightened.LOGGER.info("[tour] interact bison -> {} tame={} riding={}", r,
+                    ((com.kolodkingal.enlightened.entity.SkyBisonEntity) best).isTame(), mc.player.getVehicle() != null);
+        }
+    }
+
     /** Runs on the integrated server, with the tour's player (what no command can do: tame and saddle a bison). */
     private static void server(java.util.function.Consumer<net.minecraft.server.level.ServerPlayer> action, int delay) {
         STEPS.add(new Step(delay, () -> {
@@ -597,32 +616,49 @@ public final class Tour {
         cmd("enlightened temple 0 -60 80", 60);
         // The views from the air are taken as a spectator, who hangs where he is put.
         cmd("gamemode spectator", 5);
-        cmd("tp @s 0 -36 34 0 22", 40);
+        STEPS.add(new Step(5, () -> Minecraft.getInstance().options.renderDistance().set(10)));
+        cmd("tp @s 0 -14 6 0 14", 120);
         shot("160_temple", 10);
-        cmd("tp @s -32 -42 58 -62 15", 30);
+        cmd("tp @s -58 -26 44 -55 8", 80);
         shot("161_temple_side", 10);
-        cmd("tp @s 0 -50 98 180 40", 30);
-        shot("163_bison_calves", 10);
-        cmd("tp @s 0 -56 74 0 30", 30);
+        cmd("tp @s -26 -56 80 90 15", 40);
+        shot("166_gyatso", 10);
+        cmd("tp @s 0 -15 84 180 40", 30);
         shot("162_pathik", 10);
+        cmd("tp @s 0 -14 76 0 40", 20);
+        shot("167_sanctuary_statues", 10);
+        cmd("tp @s 0 -15 64 0 8", 20);
+        shot("168_sanctuary_door", 10);
+        cmd("tp @s -17 -46 65 -135 35", 20);
+        shot("169_storage", 10);
+        cmd("tp @s 0 -46 126 180 40", 30);
+        shot("163_bison_calves", 10);
+        cmd("tp @s 34 -50 70 60 15", 30);
+        shot("163b_stairway", 10);
+        STEPS.add(new Step(5, () -> Minecraft.getInstance().options.renderDistance().set(5)));
         cmd("gamemode creative", 5);
-        cmd("tp @s 0 -59 64 0 10", 10);
-        server(p -> {
-            com.kolodkingal.enlightened.entity.SkyBisonEntity b = com.kolodkingal.enlightened.registry.ModEntities.SKY_BISON.get().create(p.serverLevel());
-            if (b != null) {
-                b.moveTo(p.getX(), p.getY(), p.getZ() - 4, 0.0F, 0.0F);
-                b.tame(p);
-                b.equipSaddle(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SADDLE), null);
-                p.serverLevel().addFreshEntity(b);
-                p.startRiding(b);
-            }
-        }, 20);
-        shot("164_bison_ride", 20);
+        cmd("tp @s 0 -60 16 0 10", 10);
+        // A grown bison tamed, ridden and flown by right-clicks, as a player does it.
+        cmd("kill @e[type=enlightened:sky_bison,distance=..20]", 2);
+        cmd("summon enlightened:sky_bison 0 -60 20 {Rotation:[180f,0f],NoAI:1b}", 20);
+        cmd("item replace entity @s weapon.mainhand with wheat 32", 5);
+        for (int i = 0; i < 17; i++) {
+            STEPS.add(new Step(3, Tour::interactBison));
+        }
+        cmd("item replace entity @s weapon.mainhand with air", 5);
+        cmd("gamemode spectator", 5);
+        cmd("tp @s 2 -58 12 -15 8", 20);
+        shot("164_bison_face", 10);
+        cmd("gamemode creative", 5);
+        cmd("data merge entity @e[type=enlightened:sky_bison,limit=1,sort=nearest] {NoAI:0b}", 2);
+        cmd("tp @s 0 -60 16 0 10", 15);
+        STEPS.add(new Step(10, Tour::interactBison));
+        shot("165_bison_ride", 10);
         // "Yip yip!": Jump held, the bison climbs.
         STEPS.add(new Step(50, () -> Minecraft.getInstance().options.keyJump.setDown(true)));
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.keyJump.setDown(false)));
         camera(CameraType.THIRD_PERSON_FRONT, 2);
-        shot("165_bison_flying", 10);
+        shot("165b_bison_flying", 10);
         camera(CameraType.THIRD_PERSON_BACK, 2);
         server(p -> p.stopRiding(), 5);
         cmd("tp @s 0 -60 0 0 10", 10);

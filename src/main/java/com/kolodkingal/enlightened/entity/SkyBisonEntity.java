@@ -50,8 +50,8 @@ import java.util.List;
 /**
  * The sky bison of the Air Nomads, like Appa: a huge, gentle, six-legged beast with a flat tail that swims through
  * the air. Calves live at the Southern Air Temple. Fed enough wheat a bison comes to trust whoever feeds it and is
- * tamed; a calf grows slowly into a full bison (wheat speeds it up). A grown, tamed bison takes a saddle, and then
- * up to six riders: its owner sits on its head and steers, the rest sit in the saddle behind.
+ * tamed; a calf grows slowly into a full bison (wheat speeds it up). Its owner rides a grown, tamed bison on its
+ * head and steers, saddle or not; with a saddle it carries five more in the saddle behind.
  *
  * <p>Flying: the owner looks where to go and holds forward; Jump climbs ("Yip yip!"), and with no key held the bison
  * hangs in the air, drifting slowly down; it lands where it touches the ground and walks there. Riders who step off
@@ -144,12 +144,26 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
             // Fed when tame: it heals, a calf grows, two fed bison may have a calf.
             return super.mobInteract(player, hand);
         }
-        if (isTame() && isSaddled() && !isBaby() && canAddPassenger(player) && !player.isSecondaryUseActive()) {
-            if (!level().isClientSide) {
-                player.setYRot(getYRot());
-                player.startRiding(this);
+        if (isTame() && !isBaby() && !player.isSecondaryUseActive() && !isFood(stack)) {
+            // Its owner sits on its head, saddle or not, as Aang rode Appa; the saddle carries five more.
+            if (canAddPassenger(player)) {
+                if (!level().isClientSide) {
+                    player.setYRot(getYRot());
+                    player.startRiding(this);
+                }
+                return InteractionResult.sidedSuccess(level().isClientSide);
             }
-            return InteractionResult.sidedSuccess(level().isClientSide);
+            if (!level().isClientSide) {
+                player.displayClientMessage(Component.translatable(isSaddled() ? "message.enlightened.bison.full" : "message.enlightened.bison.needs_saddle")
+                        .withStyle(ChatFormatting.GRAY), true);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (!isTame() && stack.isEmpty()) {
+            if (!level().isClientSide) {
+                player.displayClientMessage(Component.translatable("message.enlightened.bison.wild", wheatEaten, WHEAT_TO_TAME).withStyle(ChatFormatting.GRAY), true);
+            }
+            return InteractionResult.CONSUME;
         }
         if (isTame() && isBaby() && stack.is(Items.SADDLE)) {
             if (!level().isClientSide) {
@@ -210,7 +224,14 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
 
     @Override
     protected boolean canAddPassenger(Entity passenger) {
-        return getPassengers().size() < MAX_RIDERS && isSaddled() && !isBaby();
+        if (isBaby() || !isTame()) {
+            return false;
+        }
+        if (isSaddled()) {
+            return getPassengers().size() < MAX_RIDERS;
+        }
+        // Without a saddle only its owner, alone, on its head.
+        return getPassengers().isEmpty() && passenger instanceof Player p && isOwnedBy(p);
     }
 
     /** The owner, wherever he sits, steers. */

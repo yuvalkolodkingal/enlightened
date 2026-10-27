@@ -628,76 +628,99 @@ def paint_pathik():
 
 
 def paint_bison():
-    """The sky bison (Appa): 256x256 over SkyBisonModel.createBodyLayer. White fur, the brown arrow from the tail over
-    the back to the brow, tan horns, a dark nose, small brown eyes, grey toes; the saddle brown leather with a red
-    blanket edge and a wooden rim."""
+    """The sky bison (Appa): 256x256 over SkyBisonModel.createBodyLayer. Shaggy white fur, the brown arrow from the brow
+    over the back, a broad flat grey muzzle with dark nostrils, small dark eyes under the fringe, horns grey-brown and
+    darker at the tips, a grey ridged belly, dark toes, a wide white tail; the saddle brown leather with a red blanket
+    edge and a wooden rim."""
     p = Painter('sky_bison', (256, 256))
-    fur = (238, 234, 222)
-    brown = (122, 82, 52)
+    fur = (240, 236, 224)
+    shade_fur = shade(fur, 0.86)
+    brown = (128, 92, 66)
+    grey = (128, 120, 122)
     body = cube(0, 0, 40, 26, 56)
-    head = cube(0, 82, 26, 20, 16)
-    bangs = cube(84, 82, 24, 5, 6)
-    nose = cube(84, 93, 12, 6, 3)
-    horn = cube(144, 82, 4, 4, 4)
-    tip = cube(160, 82, 3, 5, 3)
-    leg = cube(192, 0, 10, 12, 10)
-    tail = cube(114, 93, 28, 4, 22)
-    pad = cube(0, 128, 32, 4, 28)
-    rim_end = cube(120, 128, 32, 5, 2)
-    rim_side = cube(120, 136, 2, 5, 24)
-    for c in (body, head, bangs, leg, tail):
-        p.faces(c, fur, grain=0.06, vgrad=0.1)
-    # The tufts of a shaggy coat.
-    for c in (body, head, bangs, tail):
+    head = cube(0, 82, 28, 18, 14)
+    fringe = cube(84, 82, 26, 6, 8)
+    cheek = cube(152, 82, 4, 10, 10)
+    muzzle = cube(84, 96, 22, 8, 6)
+    horn_base = cube(180, 82, 6, 4, 4)
+    horn_mid = cube(200, 82, 4, 9, 4)
+    horn_tip = cube(216, 82, 3, 6, 3)
+    leg = cube(192, 0, 10, 10, 10)
+    ruff = cube(0, 114, 32, 16, 4)
+    tail = cube(72, 114, 36, 3, 26)
+    belly = cube(0, 200, 18, 5, 48)
+    pad = cube(0, 160, 32, 4, 28)
+    rim_end = cube(120, 160, 32, 5, 2)
+    rim_side = cube(120, 168, 2, 5, 24)
+    for c in (body, head, fringe, cheek, leg, ruff, tail):
+        # Full-bright white on every face (the painter's side shading made the bison look grey; the game shades it).
         for face, rect in c.items():
-            p.speckle(rect, shade(fur, 0.88), 0.12)
-    # The belly a little grey.
-    p.fill(body['bottom'], shade(fur, 0.86), 0.06)
-    # The arrow down the back: the body's top face runs 40 across and 56 from front (row 0) to back.
+            p.fill(rect, fur, 0.05, 1.0)
+        for face, rect in c.items():
+            p.speckle(rect, shade_fur, 0.16)
+            p.speckle(rect, (252, 250, 244), 0.08)
+    # Shaggy edges: darker locks hanging along the lower rows of the sides.
+    for c in (body, ruff, cheek):
+        for face in ('left', 'right', 'front', 'back'):
+            x, y, w, h = c[face]
+            for i in range(x, x + w):
+                if p.rnd.random() < 0.5:
+                    p.dot(i, y + h - 1, shade_fur, 0.95)
+    # The belly: grey with ridges across it.
+    p.faces(belly, grey, grain=0.05, vgrad=0.0)
+    x, y, w, h = belly['bottom']
+    for j in range(y, y + h, 4):
+        p.fill((x, j, w, 1), shade(grey, 0.75), 0.03)
+    for face in ('left', 'right'):
+        x, y, w, h = belly[face]
+        for i in range(x, x + w, 4):
+            p.fill((i, y, 1, h), shade(grey, 0.75), 0.03)
+    p.fill(body['bottom'], shade(fur, 0.8), 0.05)
+    # The arrow down the back: the body's top runs 40 across and 56 from the front (row 0) to the back.
     x, y, w, h = body['top']
-    p.fill((x + 14, y + 10, 12, h - 10), brown, 0.07)
-    for k in range(10):
-        p.fill((x + 14 - (10 - k), y + k, 12 + 2 * (10 - k), 1), brown, 0.07)
-    # ...and over the brow: the head's top and the upper front, pointing down at the nose.
+    p.fill((x + 15, y + 12, 10, h - 12), brown, 0.07)
+    for k in range(14):
+        half = 14 - k
+        p.fill((x + 20 - half, y + k, 2 * half, 1), brown, 0.07)
+    # ...and over the brow, pointing down at the muzzle.
     x, y, w, h = head['top']
+    p.fill((x + 9, y, 10, h), brown, 0.07)
+    x, y, w, h = fringe['top']
     p.fill((x + 8, y, 10, h), brown, 0.07)
+    x, y, w, h = fringe['front']
+    for k in range(h):
+        p.fill((x + 8 + k, y + k, max(2, 10 - 2 * k), 1), brown, 0.07)
+    # The face: small dark eyes just under the fringe, the mouth.
     x, y, w, h = head['front']
-    for k in range(7):
-        p.fill((x + 6 + k, y + k, w - 12 - 2 * k, 1), brown, 0.07)
-    x, y, w, h = bangs['top']
-    p.fill((x + 7, y, 10, h), brown, 0.07)
-    x, y, w, h = bangs['front']
-    p.fill((x + 7, y, 10, 2), brown, 0.07)
-    # The eyes: small and kind, low on the broad face.
-    x, y, w, h = head['front']
-    for ex in (5, 19):
-        p.fill((x + ex, y + 9, 3, 3), (60, 40, 28), 0.0)
-        p.dot(x + ex + 1, y + 9, (230, 230, 230))
-        p.fill((x + ex - 1, y + 8, 5, 1), shade(fur, 0.8), 0.0)
-    # The mouth.
-    p.fill((x + 8, y + 17, 10, 1), shade(fur, 0.6), 0.0)
-    # The nose: dark, with two nostrils.
-    p.faces(nose, (96, 86, 80), grain=0.05, vgrad=0.0)
-    x, y, w, h = nose['front']
-    p.fill((x + 2, y + 2, 2, 2), (40, 34, 30), 0.0)
-    p.fill((x + 8, y + 2, 2, 2), (40, 34, 30), 0.0)
-    # Horns: tan, darker at the tip.
-    p.faces(horn, (204, 176, 128), grain=0.05)
-    p.faces(tip, (176, 146, 100), grain=0.05)
-    # Legs: grey toes.
-    p.rows(leg, (120, 112, 104), (10, 11))
-    p.fill(leg['bottom'], (110, 100, 94), 0.05)
+    for ex in (5, 20):
+        p.fill((x + ex, y + 1, 3, 2), (36, 28, 24), 0.0)
+        p.dot(x + ex + 1, y + 1, (220, 220, 220))
+    # The muzzle: broad, flat and grey-blue, two dark nostrils, a line of mouth under it.
+    p.faces(muzzle, (118, 112, 124), grain=0.04, vgrad=0.0)
+    x, y, w, h = muzzle['front']
+    p.fill((x + 4, y + 2, 3, 2), (44, 40, 46), 0.0)
+    p.fill((x + 15, y + 2, 3, 2), (44, 40, 46), 0.0)
+    p.fill((x + 2, y + h - 1, w - 4, 1), (80, 74, 84), 0.0)
+    x, y, w, h = muzzle['top']
+    p.fill((x, y, w, h), (132, 126, 136), 0.04)
+    # Horns: grey-brown, darker towards the tips.
+    p.faces(horn_base, (150, 136, 120), grain=0.05)
+    p.faces(horn_mid, (128, 116, 104), grain=0.05)
+    p.faces(horn_tip, (92, 84, 78), grain=0.05)
+    # Legs: dark shaggy toes.
+    p.rows(leg, (110, 98, 92), (7, 8, 9))
+    p.fill(leg['bottom'], (96, 86, 80), 0.05)
     x, y, w, h = leg['front']
     for k in (2, 5, 8):
-        p.fill((x + k, y + h - 2, 1, 2), (80, 74, 70), 0.0)
-    # The tail: white, the arrow's end in brown.
-    x, y, w, h = tail['top']
-    p.fill((x + 9, y, 10, 6), brown, 0.07)
+        p.fill((x + k, y + h - 3, 1, 3), (70, 62, 58), 0.0)
+    # The tail: white, a little grey at its edge.
+    for face in ('front', 'back', 'left', 'right'):
+        x, y, w, h = tail[face]
+        p.fill((x, y + h - 1, w, 1), shade_fur, 0.04)
     # The saddle: leather, a red blanket edge, a wooden rim.
     p.faces(pad, (128, 74, 42), grain=0.06, vgrad=0.0)
     for face in ('front', 'back', 'left', 'right'):
-        x, y, w, h = pad[face]
-        p.fill((x, y, w, h), (176, 56, 40), 0.05)
+        p.fill(pad[face], (176, 56, 40), 0.05)
     x, y, w, h = pad['top']
     p.fill((x, y, w, 2), (176, 56, 40), 0.05)
     p.fill((x, y + h - 2, w, 2), (176, 56, 40), 0.05)
@@ -707,7 +730,6 @@ def paint_bison():
             x, y, w, h = c[face]
             p.fill((x, y + h - 1, w, 1), (150, 110, 60), 0.05)
     p.save(os.path.join(ENTITY, 'sky_bison.png'))
-
 
 def paint_items():
     os.makedirs(ITEM, exist_ok=True)

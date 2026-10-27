@@ -553,5 +553,8 @@
   "message.enlightened.cosmic.enter": "Your spirit leaves your body... a sea of stars, a path of light, and your own self, vast, waiting at its end. Walk the path to its end.",
   "message.enlightened.cosmic.fell": "The path catches you again.",
   "message.enlightened.cosmic.done": "At the end of the path the cosmic energy flows into you.",
-  "command.enlightened.temple": "The Southern Air Temple stands at %s %s %s."
+  "command.enlightened.temple": "The Southern Air Temple stands at %s %s %s.",
+  "message.enlightened.bison.full": "Every seat on the bison is taken.",
+  "message.enlightened.bison.needs_saddle": "Only its owner rides a bison without a saddle: saddle it to carry others.",
+  "message.enlightened.bison.wild": "The bison does not trust you yet: feed it wheat (%s of %s)."
 }

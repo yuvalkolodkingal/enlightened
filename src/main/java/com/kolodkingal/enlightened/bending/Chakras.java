@@ -257,7 +257,7 @@ public final class Chakras {
             return;
         }
         long now = p.level().getGameTime();
-        int seconds = Math.round(seconds(EnlightenedConfig.AVATAR_STATE_SECONDS, 12) * scale);
+        int seconds = Math.round(seconds(EnlightenedConfig.AVATAR_STATE_SECONDS, 120) * scale);
         data.setAvatarUntil(now + seconds * 20L);
         data.setAvatarCooldownUntil(now + seconds(EnlightenedConfig.AVATAR_STATE_COOLDOWN_SECONDS, 300) * 20L);
         data.clearCooldowns();

@@ -442,12 +442,14 @@ LOOKS = {
 
     'zuko': (False, dict(garment='nation', skin=(236, 206, 176), eyes=(190, 150, 60), hair=(36, 30, 30), style='short', shirt=(132, 30, 30), pants=(70, 30, 30),
                          boots=(40, 30, 30), trim=(204, 162, 60), scar=True)),
-    'iroh': (False, dict(garment='lotus', skin=(230, 200, 170), eyes=(190, 150, 60), hair=(222, 222, 222), style='topknot', shirt=(62, 112, 172), pants=(50, 90, 150),
-                         boots=(60, 50, 40), beard=True, bigbeard=True)),
+    # Iroh of the Order of the White Lotus (the siege of Ba Sing Se): a pale blue-grey robe with white trim, a navy sash.
+    'iroh': (False, dict(garment='lotus', skin=(230, 200, 170), eyes=(190, 150, 60), hair=(232, 232, 232), style='topknot', shirt=(132, 156, 186), pants=(62, 82, 120),
+                         boots=(44, 42, 50), trim=(236, 236, 240), belt=(40, 58, 100), beard=True, bigbeard=True)),
     'azula': (True, dict(garment='nation', skin=(236, 212, 182), eyes=(190, 150, 60), hair=(36, 30, 30), style='fringe', shirt=(150, 30, 30), pants=(80, 30, 30),
                          boots=(40, 30, 30), trim=(204, 162, 60), topknot=True)),
-    'jeong_jeong': (False, dict(garment='lotus', skin=(224, 194, 164), eyes=(80, 70, 60), hair=(226, 226, 232), style='wild', shirt=(62, 112, 172), pants=(50, 90, 150),
-                                boots=(60, 50, 40), beard=True, full=True)),
+    # Jeong Jeong the deserter, in the river hermitage: worn dark red robes, wild white hair and beard.
+    'jeong_jeong': (False, dict(garment='nation', skin=(218, 186, 154), eyes=(150, 92, 60), hair=(226, 226, 232), style='wild', shirt=(108, 38, 30), pants=(70, 30, 26),
+                                boots=(52, 40, 34), trim=(150, 112, 66), beard=True, full=True)),
     # The Avatars.
     'aang': (False, dict(garment='nomad', skin=(236, 206, 176), eyes=(96, 96, 112), hair=(60, 50, 45), style='bald', shirt=(222, 150, 50), pants=(214, 130, 50),
                          boots=(120, 80, 50), bare=True, cape=(170, 60, 40), belt=(140, 60, 44), arrows=(70, 110, 210))),

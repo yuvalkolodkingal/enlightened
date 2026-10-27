@@ -179,7 +179,7 @@ public final class EnlightenedConfig {
         CHAKRA_POINTS_EACH = B.comment("Points spent on the element that each chakra asks for (the n-th chakra needs n times this).")
                 .defineInRange("chakraPointsEach", 2, 0, 50);
         MEDITATION_XP_SECONDS = B.comment("Seconds of meditation that earn one experience (0: meditation earns none).").defineInRange("meditationXpSeconds", 15, 0, 3600);
-        AVATAR_STATE_SECONDS = B.comment("How long the Avatar State lasts.").defineInRange("avatarStateSeconds", 12, 1, 600);
+        AVATAR_STATE_SECONDS = B.comment("How long the Avatar State lasts, in seconds (two minutes by default).").defineInRange("avatarStateLengthSeconds", 120, 1, 3600);
         AVATAR_STATE_COOLDOWN_SECONDS = B.comment("Seconds before the Avatar State can be entered again.").defineInRange("avatarStateCooldownSeconds", 300, 0, 86400);
         AVATAR_STATE_ON_LOW_HEALTH = B.comment("Whether the Avatar enters the Avatar State by himself when near death (before Guru Pathik's lessons, the only way in).")
                 .define("avatarStateOnLowHealth", true);

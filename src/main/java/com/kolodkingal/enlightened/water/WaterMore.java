@@ -165,18 +165,24 @@ public final class WaterMore {
             if (!IN_BUBBLE.contains(p.getUUID())) {
                 return;
             }
-            if (p.tickCount % 2 == 0) {
-                int r2 = radius * radius;
-                for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
-                    if (pos.distSqr(center) > r2) {
-                        continue;
-                    }
-                    BlockState state = level.getBlockState(pos);
-                    if (state.is(Blocks.WATER)) {
-                        TempBlocks.place(p, level, pos.immutable(), Blocks.AIR.defaultBlockState(), 8);
-                    } else if (state.isAir()) {
-                        TempBlocks.extend(level, pos.immutable(), 8);
-                    }
+            // Every tick: the pocket is air inside, and its outer shell an invisible wall water cannot flow into (a
+            // structure void), so the sea round it never pours back in; a cell the water did reach is cleared again.
+            int r2 = radius * radius;
+            int inner = (radius - 1) * (radius - 1);
+            for (BlockPos pos : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
+                double d2 = pos.distSqr(center);
+                if (d2 > r2) {
+                    continue;
+                }
+                BlockState want = d2 > inner ? Blocks.STRUCTURE_VOID.defaultBlockState() : Blocks.AIR.defaultBlockState();
+                BlockPos at = pos.immutable();
+                BlockState state = level.getBlockState(at);
+                boolean pocket = state.isAir() || state.is(Blocks.STRUCTURE_VOID) || state.is(Blocks.WATER);
+                if (pocket && TempBlocks.hold(level, at, want, 10)) {
+                    continue;
+                }
+                if (state.is(Blocks.WATER)) {
+                    TempBlocks.place(p, level, at, want, 10);
                 }
             }
             p.setAirSupply(p.getMaxAirSupply());

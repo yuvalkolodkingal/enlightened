@@ -45,7 +45,7 @@ path, and it catches you again at its start.
 
 ## The Avatar State
 
-Only the Avatar has it. For `avatarStateSeconds` (12 s): nothing hurts you, your bending is **twice as strong** and
+Only the Avatar has it. For `avatarStateLengthSeconds` (**two minutes**): nothing hurts you, your bending is **twice as strong** and
 its cooldowns **half**, every cooldown is cleared at the start, you move 30% faster, never drown, burn or fall, and
 glow with your element's light; everyone near is thrown back as you rise. The server announces who entered it.
 

@@ -228,13 +228,39 @@ public final class TempleTests {
         });
     }
 
+    @GameTest(template = ARENA, timeoutTicks = 100)
+    public static void theWaterBubbleHoldsWithoutCollapsing(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        for (int x = 4; x <= 16; x++) {
+            for (int z = 4; z <= 16; z++) {
+                for (int y = 2; y <= 12; y++) {
+                    helper.setBlock(new BlockPos(x, y, z), Blocks.WATER);
+                }
+            }
+        }
+        ServerPlayer player = f.player(10, 5, 10);
+        BendingData data = f.bender(player, Element.WATER, Ability.WATER_BUBBLE, 3);
+        f.press(player, Ability.WATER_BUBBLE, false);
+        check(data.on(Ability.WATER_BUBBLE), "the bubble is on");
+        // Three seconds on, the pocket is still open: water flowing back would fill it within a second.
+        helper.runAtTickTime(60, () -> {
+            BlockPos center = new BlockPos(10, 5, 10);
+            check(helper.getBlockState(center).isAir(), "air at the heart");
+            check(helper.getBlockState(center.east(2)).isAir() && helper.getBlockState(center.above(2)).isAir(), "air two blocks out");
+            check(helper.getBlockState(center.west(4)).is(Blocks.STRUCTURE_VOID), "an invisible wall holds the water back at the edge");
+            check(helper.getBlockState(center.west(6)).is(Blocks.WATER), "and the sea beyond");
+            f.press(player, Ability.WATER_BUBBLE, false);
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 20)
     public static void theTemplePlan(GameTestHelper helper) {
         check(AirTemplePiece.design(0, 0, 0, 0).is(ModBlocks.MEDITATION_POINT.get()), "the guru sits on a meditation point at the heart");
         check(AirTemplePiece.design(6, 6, 0, 6).is(Blocks.CALCITE), "the sanctuary's wall is white stone");
         check(AirTemplePiece.design(6, 2, 0, 6).isAir(), "with a door to each of the four ways");
         check(AirTemplePiece.design(0, 31, 0, 0).is(Blocks.LIGHTNING_ROD), "under a spire");
-        check(AirTemplePiece.design(0, 20, 6, 6).is(Blocks.LIGHT_BLUE_TERRACOTTA), "and a blue roof");
+        check(AirTemplePiece.design(0, 20, 6, 6).is(Blocks.LIGHT_BLUE_CONCRETE), "and a blue roof");
         check(AirTemplePiece.design(-7, 1, 16, Math.hypot(7, 16)).is(Blocks.HAY_BLOCK), "hay in the bison's courtyard");
         check(AirTemplePiece.design(30, 5, 0, 30) == null, "the world beyond is left alone");
         helper.succeed();

@@ -20,13 +20,13 @@ import org.joml.Quaternionf;
 
 /**
  * The cosmic plane, drawn on the client: the bender's own self sitting vast in the lotus at the end of the path, a
- * dark silhouette of his own skin with the arrow and the eyes alight (as Aang saw himself), wrapped in a purple glow,
+ * violet, see-through likeness of his own skin with the arrow and the eyes alight (as Aang saw himself), wrapped in a purple glow,
  * and a few great clouds of violet light far off among the stars.
  */
 public final class CosmicRenderer {
     private static final ResourceLocation EYES = Enlightened.id("textures/entity/avatar_eyes.png");
     private static final ResourceLocation ARROWS = Enlightened.id("textures/entity/avatar_arrows.png");
-    private static final float SCALE = 13.0F;
+    private static final float SCALE = 32.0F;
     private static MeditatingBodyModel<AbstractClientPlayer> model;
 
     public static void render(RenderLevelStageEvent event) {
@@ -42,19 +42,23 @@ public final class CosmicRenderer {
         float age = self.tickCount + partial;
         Vec3 cam = event.getCamera().getPosition();
         PoseStack ps = event.getPoseStack();
-        MultiBufferSource.BufferSource buffers = mc.renderBuffers().bufferSource();
+        MultiBufferSource.BufferSource buffers = FxGeometry.source();
 
+        // Entity shaders read the lightmap, which is off by this stage of the frame: on for the giant, or he is black.
+        mc.gameRenderer.lightTexture().turnOnLightLayer();
         ps.pushPose();
         float breath = 0.15F * Mth.sin(age * 0.03F);
-        ps.translate(Cosmic.GIANT.x - cam.x, Cosmic.GIANT.y - cam.y + breath - 0.56F * SCALE, Cosmic.GIANT.z - cam.z);
+        // The model's origin is its neck: set there, the head rises above it and the body in the lotus sits below,
+        // the seat (three quarters of a model block down) a few blocks over the path.
+        double neck = Cosmic.Y + 4.0 + 0.75 * SCALE;
+        ps.translate(Cosmic.GIANT.x - cam.x, neck - cam.y + breath, Cosmic.GIANT.z - cam.z);
         ps.scale(SCALE, SCALE, SCALE);
         ps.scale(-1.0F, -1.0F, 1.0F);
-        ps.translate(0.0F, -1.501F, 0.0F);
         model.setupAnim(self, 0.0F, 0.0F, 1000.0F + age, 0.0F, 0.0F);
         int full = FxGeometry.FULL;
         ResourceLocation skin = self.getSkin().texture();
-        // The body: his own skin, dark as the night sky, a little see-through.
-        model.renderToBuffer(ps, buffers.getBuffer(RenderType.entityTranslucent(skin)), full, OverlayTexture.NO_OVERLAY, 0xE8241838);
+        // The body: his own skin in a cosmic violet, a little see-through.
+        model.renderToBuffer(ps, buffers.getBuffer(RenderType.entityTranslucent(skin)), full, OverlayTexture.NO_OVERLAY, 0xD8B494F0);
         // The arrow and the eyes, alight.
         float pulse = 0.75F + 0.25F * Mth.sin(age * 0.08F);
         int glow = ((int) (255 * pulse) << 24) | 0xC8D8FF;
@@ -62,12 +66,13 @@ public final class CosmicRenderer {
         model.renderToBuffer(ps, buffers.getBuffer(RenderType.eyes(EYES)), full, OverlayTexture.NO_OVERLAY, glow);
         ps.popPose();
         buffers.endBatch();
+        mc.gameRenderer.lightTexture().turnOffLightLayer();
 
         // The purple glow round him, and clouds of violet light far off.
-        MultiBufferSource.BufferSource fx = FxGeometry.source();
+        MultiBufferSource.BufferSource fx = buffers;
         VertexConsumer light = fx.getBuffer(FxGeometry.light());
         PoseStack.Pose pose = ps.last();
-        Vec3 heart = Cosmic.GIANT.add(0, SCALE * 0.9, 0).subtract(cam);
+        Vec3 heart = new Vec3(Cosmic.GIANT.x, Cosmic.Y + 4.0 + 0.6 * SCALE, Cosmic.GIANT.z).subtract(cam);
         FxGeometry.sphere(pose, light, heart, SCALE * 1.05F, 10, 20, 0, 1, 0.55F, 0.3F, 0.95F, 0.06F, 0.0F, 0.0F, full, false, new Quaternionf());
         FxGeometry.sphere(pose, light, heart, SCALE * 1.4F, 10, 20, 0, 1, 0.45F, 0.2F, 0.85F, 0.035F, 0.0F, 0.0F, full, false, new Quaternionf());
         double[][] clouds = {{-90, 60, 140}, {110, 40, 60}, {-60, -20, -80}, {70, 90, -40}, {0, 120, 220}};

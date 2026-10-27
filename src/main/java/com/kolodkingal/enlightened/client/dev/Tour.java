@@ -254,6 +254,14 @@ public final class Tour {
             quick();
             return;
         }
+        if ("v14".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v14();
+            return;
+        }
+        if ("cosmic".equals(System.getProperty("enlightened.tour.only", ""))) {
+            cosmic();
+            return;
+        }
 
         // ---- fire ----
         element("fire", "zuko", "fire_ball", "fire_fist", "fire_whip", "fire_ring", "fire_healing", "lightning", "lightning_redirect");
@@ -516,10 +524,24 @@ public final class Tour {
         held("fire_fist", "144_avatar_fire_fist", 15, 30);
         cast("water_whip", "145_avatar_water_whip", 5);
 
+        v14();
+
+        cmd("summon enlightened:flying_lemur 1 -60 3", 5);
+        cmd("summon enlightened:flying_lemur -1 -58 3", 5);
+        shot("70_lemur", 30);
+        shot("71_lemur_later", 30);
+        wait(10);
+    }
+
+    /** The 1.4 section (also alone, with -Denlightened.tour.only=v14). */
+    private static void v14() {
         // ---- 1.4: the spouts, the octopus body, frost walk, suffocation, the temple, the bison, the cosmic plane ----
         element("water", "katara", "water_spout", "octopus_form", "frost_walk", "water_whip");
         cmd("fill -2 -61 -2 2 -61 2 ice", 3);
-        toggled("water_spout", "150_water_spout_ice", 40);
+        cmd("enlightened loadout @s 1 water_spout", 6);
+        press(1, 60);
+        shot("150_water_spout_ice", 5);
+        press(1, 30);
         cmd("tp @s 0 -60 0 0 10", 10);
         camera(CameraType.THIRD_PERSON_FRONT, 2);
         toggled("octopus_form", "151_octopus_body", 30);
@@ -531,22 +553,48 @@ public final class Tour {
         shot("152_frost_walk", 5);
         press(1, 4);
         cmd("tp @s 0 -60 0 0 10", 5);
+        // The bubble held for three seconds: it must not collapse.
+        element("water", "katara", "water_bubble");
+        cmd("fill -6 -64 18 6 -56 30 water", 5);
+        cmd("tp @s 0 -62 24 0 10", 10);
+        cmd("enlightened loadout @s 1 water_bubble", 6);
+        press(1, 60);
+        press(1, 10);
+        cmd("fill -6 -64 18 6 -56 30 air", 5);
+        cmd("fill -6 -64 18 6 -62 30 dirt", 5);
+        cmd("fill -6 -61 18 6 -61 30 grass_block", 5);
+        cmd("tp @s 0 -60 0 0 10", 5);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        element("fire", "iroh", "fire_ball");
+        shot("156_iroh_white_lotus", 10);
+        element("fire", "jeong_jeong", "fire_ball");
+        shot("157_jeong_jeong", 10);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
         element("air", "zaheer", "suffocate", "air_spout", "air_blast");
-        cmd("summon zombie 0 -60 4 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
+        cmd("setblock 0 -60 6 stone", 2);
+        cmd("summon zombie 0 -59 6 {NoAI:1b,PersistenceRequired:1b,Silent:1b,ArmorItems:[{},{},{},{id:\"minecraft:leather_helmet\",count:1}]}", 5);
+        cmd("tp @s 0 -60 0 0 -5", 5);
         held("suffocate", "153_suffocate", 20, 40);
+        cmd("setblock 0 -60 6 air", 2);
         cmd("kill @e[type=zombie]", 2);
-        toggled("air_spout", "154_air_spout", 40);
+        cmd("enlightened loadout @s 1 air_spout", 6);
+        press(1, 50);
+        shot("154_air_spout", 5);
+        press(1, 30);
         cmd("tp @s 0 -60 0 0 10", 10);
         // The temple, built on the flat world by its command.
         cmd("enlightened temple 0 -60 80", 60);
-        cmd("tp @s 0 -38 36 0 22", 30);
-        shot("160_temple", 40);
-        cmd("tp @s -30 -40 60 -60 18", 30);
-        shot("161_temple_side", 20);
-        cmd("tp @s 0 -59 75 0 15", 30);
-        shot("162_pathik", 20);
-        cmd("tp @s 0 -52 86 0 50", 20);
-        shot("163_bison_calves", 20);
+        // The views from the air are taken as a spectator, who hangs where he is put.
+        cmd("gamemode spectator", 5);
+        cmd("tp @s 0 -36 34 0 22", 40);
+        shot("160_temple", 10);
+        cmd("tp @s -32 -42 58 -62 15", 30);
+        shot("161_temple_side", 10);
+        cmd("tp @s 0 -50 98 180 40", 30);
+        shot("163_bison_calves", 10);
+        cmd("tp @s 0 -56 74 0 30", 30);
+        shot("162_pathik", 10);
+        cmd("gamemode creative", 5);
         cmd("tp @s 0 -59 64 0 10", 10);
         server(p -> {
             com.kolodkingal.enlightened.entity.SkyBisonEntity b = com.kolodkingal.enlightened.registry.ModEntities.SKY_BISON.get().create(p.serverLevel());
@@ -559,34 +607,36 @@ public final class Tour {
             }
         }, 20);
         shot("164_bison_ride", 20);
-        server(p -> {
-            if (p.getVehicle() != null) {
-                p.getVehicle().teleportTo(p.getVehicle().getX(), p.getVehicle().getY() + 12, p.getVehicle().getZ());
-            }
-        }, 15);
+        // "Yip yip!": Jump held, the bison climbs.
+        STEPS.add(new Step(50, () -> Minecraft.getInstance().options.keyJump.setDown(true)));
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.keyJump.setDown(false)));
         camera(CameraType.THIRD_PERSON_FRONT, 2);
         shot("165_bison_flying", 10);
         camera(CameraType.THIRD_PERSON_BACK, 2);
         server(p -> p.stopRiding(), 5);
         cmd("tp @s 0 -60 0 0 10", 10);
-        // The cosmic plane of the seventh chakra.
-        element("avatar", "aang", "avatar_state", "fire_fist");
-        cmd("enlightened chakras @s 6", 2);
-        server(com.kolodkingal.enlightened.world.Cosmic::send, 40);
-        shot("170_cosmic_path", 20);
-        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.pathX(44) + " 101 44 0 0", 30);
-        shot("171_cosmic_giant", 10);
-        camera(CameraType.THIRD_PERSON_FRONT, 2);
-        shot("172_cosmic_front", 5);
-        camera(CameraType.THIRD_PERSON_BACK, 2);
+        cosmic();
         cmd("tp @s " + (int) Math.floor(com.kolodkingal.enlightened.world.Cosmic.END.x) + " 101 66", 40);
         cmd("tp @s 0 -60 0 0 10", 10);
 
-        cmd("summon enlightened:flying_lemur 1 -60 3", 5);
-        cmd("summon enlightened:flying_lemur -1 -58 3", 5);
-        shot("70_lemur", 30);
-        shot("71_lemur_later", 30);
-        wait(10);
+    }
+
+    /** The cosmic plane (also alone, with -Denlightened.tour.only=cosmic). */
+    private static void cosmic() {
+        // The cosmic plane of the seventh chakra.
+        element("avatar", "aang", "avatar_state", "fire_fist");
+        cmd("enlightened chakras @s 6", 2);
+        server(com.kolodkingal.enlightened.world.Cosmic::send, 100);
+        camera(CameraType.FIRST_PERSON, 2);
+        shot("170_cosmic_path", 20);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.pathX(44) + " 101 44 0 0", 30);
+        camera(CameraType.FIRST_PERSON, 2);
+        shot("171_cosmic_giant", 10);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        shot("172_cosmic_front", 5);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
     }
 
     private Tour() {

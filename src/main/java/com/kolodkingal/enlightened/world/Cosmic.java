@@ -33,7 +33,7 @@ public final class Cosmic {
     /** Where the path ends (the platform before the giant). */
     public static final Vec3 END = new Vec3(pathX(66) + 0.5, Y + 1, 66.5);
     /** Where the giant self sits, behind the end of the path, facing back along it. */
-    public static final Vec3 GIANT = new Vec3(pathX(66) + 0.5, Y - 4, 92.5);
+    public static final Vec3 GIANT = new Vec3(pathX(66) + 0.5, Y - 4, 104.5);
     private static final String RETURN = "enlightened_cosmic_return";
     private static boolean built;
 

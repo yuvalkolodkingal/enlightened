@@ -64,6 +64,25 @@ public final class TempBlocks {
         return false;
     }
 
+    /**
+     * Keeps a raised cell as {@code state} for at least {@code ticks} more, setting it again if something changed it
+     * meanwhile (water flowing back into a pocket of air). Returns whether the cell was raised.
+     */
+    public static boolean hold(ServerLevel level, BlockPos pos, BlockState state, int ticks) {
+        long until = level.getGameTime() + ticks;
+        for (int i = 0; i < PLACED.size(); i++) {
+            Placed p = PLACED.get(i);
+            if (p.dimension == level.dimension() && p.pos.equals(pos)) {
+                if (level.getBlockState(pos) != state) {
+                    level.setBlock(pos, state, 3);
+                }
+                PLACED.set(i, new Placed(p.dimension, p.pos, p.before, state, Math.max(p.until, until), p.owner));
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Whether the cell holds a block bending raised and has not yet put back. */
     public static boolean isRaised(ServerLevel level, BlockPos pos) {
         for (Placed p : PLACED) {
@@ -101,6 +120,9 @@ public final class TempBlocks {
             return; // someone changed it meanwhile: it is theirs now
         }
         level.setBlock(p.pos, p.before.isAir() ? Blocks.AIR.defaultBlockState() : p.before, 3);
+        if (p.placed.getRenderShape() == net.minecraft.world.level.block.RenderShape.INVISIBLE) {
+            return; // air or an invisible wall: nothing to see go
+        }
         level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, p.placed), p.pos.getX() + 0.5, p.pos.getY() + 0.5, p.pos.getZ() + 0.5,
                 6, 0.3, 0.3, 0.3, 0.05);
         if (level.random.nextInt(4) == 0) {

@@ -56,6 +56,7 @@ neoForge {
             client()
             systemProperty 'enlightened.tour', 'true'
             systemProperty 'enlightened.tour.quick', System.getProperty('enlightened.tour.quick', 'false')
+            systemProperty 'enlightened.tour.only', System.getProperty('enlightened.tour.only', '')
             programArguments.addAll '--width', '1280', '--height', '720'
         }
 

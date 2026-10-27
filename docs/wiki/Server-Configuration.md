@@ -50,7 +50,7 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 | `chakraMeditationSeconds` | 60 | Seconds of meditation that open one chakra (a third of it on a Meditation Point). |
 | `chakraPointsEach` | 2 | Points spent on the element each chakra asks for (the n-th needs n times this). |
 | `meditationXpSeconds` | 15 | Seconds of meditation that earn one experience (0: none). |
-| `avatarStateSeconds` | 12 | How long the Avatar State lasts. |
+| `avatarStateLengthSeconds` | 120 | How long the Avatar State lasts (two minutes). |
 | `avatarStateCooldownSeconds` | 300 | Seconds before it can be entered again. |
 | `avatarStateOnLowHealth` | true | Whether the Avatar enters it by himself when near death (before Guru Pathik's lessons, the only way in). |
 | `guruRequired` | true | Whether the chakras open only for a bender Guru Pathik has taught. |

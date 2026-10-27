@@ -345,7 +345,7 @@ Point** block) opens the next chakra if `spent() >= n × avatar.chakraPointsEach
 (`avatar.meditationXpSeconds`). Gifts: chakras 1 and 4 a heart each (an attribute modifier), 2 and 5 cooldowns −5%
 each (`Cast.cooldown`), 3 and 6 damage +5% each (`Shots.hurt`). With all seven open, holding the meditation a breath
 longer (or, `avatar.avatarStateOnLowHealth`, a lethal hit in `CommonEvents`) enters the Avatar State for
-`avatar.avatarStateSeconds` (12): invulnerable to damage, damage ×2, cooldowns ×0.5, cooldowns cleared, speed +30%,
+`avatar.avatarStateLengthSeconds` (120): invulnerable to damage, damage ×2, cooldowns ×0.5, cooldowns cleared, speed +30%,
 absorption, no drowning, burning or falling, `Fx.AVATAR_RISE` and a push on everyone near, a broadcast; then
 `avatar.avatarStateCooldownSeconds` (300). `BendingData` saves chakras, meditation progress and the cooldown;
 `/enlightened chakras` sets the count; the HUD shows them.

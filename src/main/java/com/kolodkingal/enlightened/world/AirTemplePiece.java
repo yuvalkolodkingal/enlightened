@@ -47,8 +47,8 @@ public class AirTemplePiece extends StructurePiece {
     private static final BlockState AIR = Blocks.AIR.defaultBlockState();
     private static final BlockState WALL = Blocks.CALCITE.defaultBlockState();
     private static final BlockState BAND = Blocks.SMOOTH_SANDSTONE.defaultBlockState();
-    private static final BlockState ROOF = Blocks.LIGHT_BLUE_TERRACOTTA.defaultBlockState();
-    private static final BlockState ROOF_RIM = Blocks.BLUE_TERRACOTTA.defaultBlockState();
+    private static final BlockState ROOF = Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState();
+    private static final BlockState ROOF_RIM = Blocks.BLUE_CONCRETE.defaultBlockState();
     private static final BlockState CEILING = Blocks.SMOOTH_STONE.defaultBlockState();
     private static final BlockState FLOOR = Blocks.SMOOTH_STONE.defaultBlockState();
     private static final BlockState FLOOR_RING = Blocks.POLISHED_DIORITE.defaultBlockState();
@@ -133,7 +133,7 @@ public class AirTemplePiece extends StructurePiece {
             }
         }
         // The chests: the sanctuary, and two of the towers.
-        createChest(level, box, random, origin.offset(0, 1, -5), LOOT, null);
+        createChest(level, box, random, origin.offset(-4, 1, 3), LOOT, null);
         createChest(level, box, random, origin.offset(13, 1, -13), LOOT, null);
         createChest(level, box, random, origin.offset(-13, 1, 13), LOOT, null);
         // Those who live here.

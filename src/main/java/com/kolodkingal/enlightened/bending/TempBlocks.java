@@ -27,7 +27,10 @@ import java.util.UUID;
  * (so a wall never outlives its bender's session) and when a bender loses his element.
  */
 public final class TempBlocks {
-    private record Placed(ResourceKey<Level> dimension, BlockPos pos, BlockState before, BlockState placed, long until, UUID owner) {
+    private record Placed(ResourceKey<Level> dimension, BlockPos pos, BlockState before, BlockState placed, long until, UUID owner, int flags) {
+        Placed(ResourceKey<Level> dimension, BlockPos pos, BlockState before, BlockState placed, long until, UUID owner) {
+            this(dimension, pos, before, placed, until, owner, 3);
+        }
     }
 
     private static final List<Placed> PLACED = new ArrayList<>();
@@ -49,6 +52,26 @@ public final class TempBlocks {
         return true;
     }
 
+    /**
+     * Changes the block at {@code pos} to {@code state} for {@code ticks} where the player may break it (a water plant
+     * vanished, a waterlogged block drained by the water bubble), quietly: no neighbour is told, now or when it goes
+     * back, so the kelp above a vanished stalk does not break off. Returns true if it was changed.
+     */
+    public static boolean replace(ServerPlayer player, ServerLevel level, BlockPos pos, BlockState state, int ticks) {
+        if (isRaised(level, pos)) {
+            return false;
+        }
+        BlockState before = level.getBlockState(pos);
+        if (before.hasBlockEntity() && !before.is(state.getBlock()) || !BlockRights.mayBreak(player, level, pos, before)) {
+            return false;
+        }
+        if (!level.setBlock(pos, state, 2 | 16)) {
+            return false;
+        }
+        PLACED.add(new Placed(level.dimension(), pos.immutable(), before, state, level.getGameTime() + ticks, player.getUUID(), 2 | 16));
+        return true;
+    }
+
     /** Keeps a raised block up for at least {@code ticks} more (the bubble of air that follows a swimmer). Returns whether it was raised. */
     public static boolean extend(ServerLevel level, BlockPos pos, int ticks) {
         long until = level.getGameTime() + ticks;
@@ -56,7 +79,7 @@ public final class TempBlocks {
             Placed p = PLACED.get(i);
             if (p.dimension == level.dimension() && p.pos.equals(pos)) {
                 if (p.until < until) {
-                    PLACED.set(i, new Placed(p.dimension, p.pos, p.before, p.placed, until, p.owner));
+                    PLACED.set(i, new Placed(p.dimension, p.pos, p.before, p.placed, until, p.owner, p.flags));
                 }
                 return true;
             }
@@ -74,9 +97,9 @@ public final class TempBlocks {
             Placed p = PLACED.get(i);
             if (p.dimension == level.dimension() && p.pos.equals(pos)) {
                 if (level.getBlockState(pos) != state) {
-                    level.setBlock(pos, state, 3);
+                    level.setBlock(pos, state, p.flags);
                 }
-                PLACED.set(i, new Placed(p.dimension, p.pos, p.before, state, Math.max(p.until, until), p.owner));
+                PLACED.set(i, new Placed(p.dimension, p.pos, p.before, state, Math.max(p.until, until), p.owner, p.flags));
                 return true;
             }
         }
@@ -119,7 +142,7 @@ public final class TempBlocks {
         if (now != p.placed && !now.is(p.placed.getBlock())) {
             return; // someone changed it meanwhile: it is theirs now
         }
-        level.setBlock(p.pos, p.before.isAir() ? Blocks.AIR.defaultBlockState() : p.before, 3);
+        level.setBlock(p.pos, p.before.isAir() ? Blocks.AIR.defaultBlockState() : p.before, p.flags);
         if (p.placed.getRenderShape() == net.minecraft.world.level.block.RenderShape.INVISIBLE) {
             return; // air or an invisible wall: nothing to see go
         }

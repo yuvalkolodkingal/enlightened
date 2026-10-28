@@ -183,6 +183,23 @@ public final class WaterMore {
                 }
                 if (state.is(Blocks.WATER)) {
                     TempBlocks.place(p, level, at, want, 10);
+                    continue;
+                }
+                // Water held in a block: a waterlogged block is drained (it stays, dry), a water plant (seagrass, kelp, a
+                // bubble column) vanishes; both come back once the bubble has passed.
+                if (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)) {
+                    if (state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)) {
+                        BlockState dry = state.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED, false);
+                        if (!TempBlocks.hold(level, at, dry, 10)) {
+                            TempBlocks.replace(p, level, at, dry, 10);
+                        }
+                    } else {
+                        TempBlocks.extend(level, at, 10);
+                    }
+                } else if (state.getFluidState().is(net.minecraft.tags.FluidTags.WATER) && !state.hasBlockEntity()) {
+                    if (!TempBlocks.hold(level, at, want, 10)) {
+                        TempBlocks.replace(p, level, at, want, 10);
+                    }
                 }
             }
             p.setAirSupply(p.getMaxAirSupply());

@@ -266,6 +266,39 @@ public final class TempleTests {
         });
     }
 
+    @GameTest(template = ARENA, timeoutTicks = 140)
+    public static void theWaterBubbleDrainsWaterloggedBlocksAndPartsTheSeagrass(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        for (int x = 4; x <= 16; x++) {
+            for (int z = 4; z <= 16; z++) {
+                for (int y = 2; y <= 12; y++) {
+                    helper.setBlock(new BlockPos(x, y, z), Blocks.WATER);
+                }
+            }
+        }
+        BlockPos grass = new BlockPos(12, 2, 10);
+        BlockPos slab = new BlockPos(10, 2, 8);
+        helper.setBlock(grass, Blocks.SEAGRASS);
+        helper.setBlock(slab, Blocks.OAK_SLAB.defaultBlockState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED, true));
+        ServerPlayer player = f.player(10, 2, 10);
+        BendingData data = f.bender(player, Element.WATER, Ability.WATER_BUBBLE, 3);
+        f.press(player, Ability.WATER_BUBBLE, false);
+        helper.runAtTickTime(40, () -> {
+            check(helper.getBlockState(grass).isAir(), "the seagrass gave way to the air (" + helper.getBlockState(grass) + ")");
+            check(helper.getBlockState(slab).is(Blocks.OAK_SLAB)
+                    && !helper.getBlockState(slab).getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED),
+                    "the slab stays, drained (" + helper.getBlockState(slab) + ")");
+            f.press(player, Ability.WATER_BUBBLE, false);
+            check(!data.on(Ability.WATER_BUBBLE), "the bubble is let go");
+        });
+        helper.runAtTickTime(90, () -> {
+            check(helper.getBlockState(grass).is(Blocks.SEAGRASS), "the seagrass is back (" + helper.getBlockState(grass) + ")");
+            check(helper.getBlockState(slab).getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED),
+                    "and the slab under water again");
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 20)
     public static void theTemplePlan(GameTestHelper helper) {
         check(AirTemplePiece.design(0, 20, 0, 0).getBlock() != Blocks.AIR, "the temple stands on a mountain of its own");

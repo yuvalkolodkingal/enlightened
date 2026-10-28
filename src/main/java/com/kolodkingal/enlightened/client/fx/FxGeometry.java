@@ -34,6 +34,12 @@ public final class FxGeometry {
     public static final ResourceLocation ICE = ResourceLocation.withDefaultNamespace("textures/block/ice.png");
     public static final ResourceLocation PACKED_ICE = ResourceLocation.withDefaultNamespace("textures/block/packed_ice.png");
     public static final ResourceLocation SNOW = ResourceLocation.withDefaultNamespace("textures/block/snow.png");
+    /** The game's fire drawn in greys (tools: from fire_0), for fire of any colour: the rainbow fire tints it. */
+    public static final ResourceLocation WHITE_FIRE = com.kolodkingal.enlightened.Enlightened.id("textures/fx/white_fire.png");
+    /** The fire colours a firebender may choose ({@link com.kolodkingal.enlightened.bending.Variants#fireColour}). */
+    public static final int FIRE_NORMAL = 0;
+    public static final int FIRE_BLUE = 1;
+    public static final int FIRE_RAINBOW = 2;
     /** A soft radial glow of our own (the game's particle glow is an 8x8 sprite that draws as a square). */
     public static final ResourceLocation GLOW = com.kolodkingal.enlightened.Enlightened.id("textures/fx/glow.png");
     /** Frames of the animated textures (their height over their width). */
@@ -45,6 +51,7 @@ public final class FxGeometry {
     private static final RenderType FLOW_TYPE = RenderType.entityTranslucentCull(WATER_FLOW);
     private static final RenderType FIRE_TYPE = RenderType.entityTranslucentEmissive(FIRE);
     private static final RenderType SOUL_FIRE_TYPE = RenderType.entityTranslucentEmissive(SOUL_FIRE);
+    private static final RenderType RAINBOW_FIRE_TYPE = RenderType.entityTranslucentEmissive(WHITE_FIRE);
     private static final RenderType LAVA_TYPE = RenderType.entityTranslucentEmissive(LAVA);
     private static final RenderType ICE_TYPE = RenderType.entityTranslucentCull(ICE);
     private static final RenderType SNOW_TYPE = RenderType.entityTranslucentCull(SNOW);
@@ -60,6 +67,86 @@ public final class FxGeometry {
 
     public static RenderType fire(boolean blue) {
         return blue ? SOUL_FIRE_TYPE : FIRE_TYPE;
+    }
+
+    /** The fire of a colour: the game's fire, soul fire for blue, the grey fire (to be tinted) for the rainbow. */
+    public static RenderType fire(int colour) {
+        return colour == FIRE_RAINBOW ? RAINBOW_FIRE_TYPE : colour == FIRE_BLUE ? SOUL_FIRE_TYPE : FIRE_TYPE;
+    }
+
+    public static boolean rainbow(RenderType type) {
+        return type == RAINBOW_FIRE_TYPE;
+    }
+
+    /** The colour of the rainbow at hue {@code h} (0 to 1 round the wheel), bright. */
+    public static float[] hue(float h) {
+        float x = (h - Mth.floor(h)) * 6.0F;
+        int i = (int) x;
+        float f = x - i;
+        float s = 0.78F;
+        float p = 1.0F - s;
+        float q = 1.0F - s * f;
+        float t = 1.0F - s * (1.0F - f);
+        return switch (i) {
+            case 0 -> new float[]{1.0F, t, p};
+            case 1 -> new float[]{q, 1.0F, p};
+            case 2 -> new float[]{p, 1.0F, t};
+            case 3 -> new float[]{p, q, 1.0F};
+            case 4 -> new float[]{t, p, 1.0F};
+            default -> new float[]{1.0F, p, q};
+        };
+    }
+
+    /**
+     * Rainbow fire: what is drawn through it is tinted by the hue of where each vertex lies ({@code ox, oy, oz} added
+     * to the camera-relative position, for the world's) and of the time, so bands of colour run through the flames.
+     */
+    public static VertexConsumer rainbow(VertexConsumer base, double ox, double oy, double oz, float time) {
+        return new VertexConsumer() {
+            private float lx;
+            private float ly;
+            private float lz;
+
+            @Override
+            public VertexConsumer addVertex(float x, float y, float z) {
+                lx = x;
+                ly = y;
+                lz = z;
+                base.addVertex(x, y, z);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setColor(int r, int g, int b, int a) {
+                float[] c = hue((float) ((lx + ox) * 0.07 + (ly + oy) * 0.05 + (lz + oz) * 0.07) - time * 0.02F);
+                base.setColor((int) (r * c[0]), (int) (g * c[1]), (int) (b * c[2]), a);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setUv(float u, float v) {
+                base.setUv(u, v);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setUv1(int u, int v) {
+                base.setUv1(u, v);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setUv2(int u, int v) {
+                base.setUv2(u, v);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setNormal(float x, float y, float z) {
+                base.setNormal(x, y, z);
+                return this;
+            }
+        };
     }
 
     public static RenderType lava() {
@@ -89,7 +176,7 @@ public final class FxGeometry {
     public static MultiBufferSource.BufferSource source() {
         if (source == null) {
             SequencedMap<RenderType, ByteBufferBuilder> fixed = new LinkedHashMap<>();
-            for (RenderType type : List.of(WATER_TYPE, FLOW_TYPE, ICE_TYPE, SNOW_TYPE, LAVA_TYPE, FIRE_TYPE, SOUL_FIRE_TYPE, GLOW_TYPE, RenderType.lightning())) {
+            for (RenderType type : List.of(WATER_TYPE, FLOW_TYPE, ICE_TYPE, SNOW_TYPE, LAVA_TYPE, FIRE_TYPE, SOUL_FIRE_TYPE, RAINBOW_FIRE_TYPE, GLOW_TYPE, RenderType.lightning())) {
                 fixed.put(type, new ByteBufferBuilder(type.bufferSize()));
             }
             source = MultiBufferSource.immediateWithBuffers(fixed, new ByteBufferBuilder(786432));

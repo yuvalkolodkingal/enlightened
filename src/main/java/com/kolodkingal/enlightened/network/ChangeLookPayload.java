@@ -29,6 +29,16 @@ public record ChangeLookPayload(int step) implements CustomPacketPayload {
                 if (com.kolodkingal.enlightened.water.WaterBending.switchOctopus(player)) {
                     return;
                 }
+                // Sneaking, a firebender (or the Avatar) changes the colour of his fire instead of his look.
+                if (player.isShiftKeyDown() && Benders.element(player).commands(com.kolodkingal.enlightened.bending.Element.FIRE)) {
+                    com.kolodkingal.enlightened.bending.BendingData data = Benders.get(player);
+                    int next = Math.floorMod(com.kolodkingal.enlightened.bending.Variants.fireColour(data) + (payload.step() < 0 ? -1 : 1), 3);
+                    data.setFireChoice(next + 1);
+                    Benders.syncIfDirty(player);
+                    player.displayClientMessage(Component.translatable("message.enlightened.fire_colour",
+                            Component.translatable("fire_colour.enlightened." + com.kolodkingal.enlightened.bending.Variants.FIRE_COLOURS[next])), true);
+                    return;
+                }
                 if (!Benders.cycleVariant(player, payload.step() < 0 ? -1 : 1) && Benders.element(player).bends()) {
                     player.displayClientMessage(Component.translatable("message.enlightened.look.none"), true);
                 }

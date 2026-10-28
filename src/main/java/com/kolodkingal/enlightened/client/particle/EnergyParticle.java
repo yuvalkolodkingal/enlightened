@@ -18,7 +18,8 @@ public class EnergyParticle extends TextureSheetParticle {
         this.xd = xd;
         this.yd = yd;
         this.zd = zd;
-        int color = options.color();
+        int color = options.color() == com.kolodkingal.enlightened.bending.Variants.RAINBOW_MARK
+                ? com.kolodkingal.enlightened.bending.Variants.rainbow(level.random.nextFloat()) : options.color();
         float shade = 0.85F + random.nextFloat() * 0.15F;
         this.rCol = ((color >> 16) & 0xFF) / 255F * shade;
         this.gCol = ((color >> 8) & 0xFF) / 255F * shade;

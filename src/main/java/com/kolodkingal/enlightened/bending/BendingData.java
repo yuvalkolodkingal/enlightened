@@ -386,14 +386,33 @@ public final class BendingData {
         }
     }
 
+    /**
+     * The fire colour the bender chose: 0 for his look's, else 1 + {@link Variants#fireColour} (normal, blue, rainbow).
+     * Kept in the two top bits of the second toggle word, which no ability reaches, so it is saved and synced with them.
+     */
+    public int fireChoice() {
+        return (int) (toggles[1] >>> 62);
+    }
+
+    public void setFireChoice(int choice) {
+        long bits = (toggles[1] & ~(3L << 62)) | ((long) (choice & 3) << 62);
+        if (bits != toggles[1]) {
+            toggles[1] = bits;
+            dirty = true;
+        }
+    }
+
     /** A copy of the toggle bits (bit {@code ordinal & 63} of word {@code ordinal >> 6}). */
     public long[] toggleBits() {
         return toggles.clone();
     }
 
+    /** Turns every toggle off (the chosen fire colour, kept in the same word, stays). */
     public void clearToggles() {
-        if (toggles[0] != 0 || toggles[1] != 0) {
-            java.util.Arrays.fill(toggles, 0L);
+        long keep = toggles[1] & (3L << 62);
+        if (toggles[0] != 0 || toggles[1] != keep) {
+            toggles[0] = 0L;
+            toggles[1] = keep;
             dirty = true;
         }
     }

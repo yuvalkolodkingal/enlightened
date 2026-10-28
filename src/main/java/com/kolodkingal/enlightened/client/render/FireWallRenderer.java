@@ -31,7 +31,10 @@ public class FireWallRenderer extends EntityRenderer<FireWallEntity> {
         float half = wall.width() * 0.5F;
         Vec3 along = wall.along();
         float[] fr = FxGeometry.frame(t, FxGeometry.FIRE_FRAMES, 1.0F);
-        VertexConsumer fire = buffer.getBuffer(FxGeometry.fire(wall.blue()));
+        VertexConsumer fire = buffer.getBuffer(FxGeometry.fire(wall.colour()));
+        if (wall.colour() == FxGeometry.FIRE_RAINBOW) {
+            fire = FxGeometry.rainbow(fire, wall.getX(), wall.getY(), wall.getZ(), t);
+        }
         // Three layers of flame with a flicker of their own, so the curtain looks deep and alive.
         for (int layer = -1; layer <= 1; layer++) {
             Vec3 off = new Vec3(-along.z, 0, along.x).scale(layer * 0.18);

@@ -229,7 +229,7 @@ public final class FireMore {
             Vec3 foot = new Vec3(at.x, pos.getY() + 1.0, at.z);
             float yaw = p.getYRot();
             int seconds = (int) ((EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.FIRE_WALL_SECONDS.get() : 6) * c.by(1.0, 1.4, 1.8));
-            FireWallEntity wall = new FireWallEntity(level, p, foot, yaw, c.byF(5, 7, 9), seconds * 20, 1.5F + c.level * 0.5F, Variants.blueFire(c.data));
+            FireWallEntity wall = new FireWallEntity(level, p, foot, yaw, c.byF(5, 7, 9), seconds * 20, 1.5F + c.level * 0.5F, Variants.fireColour(c.data));
             level.addFreshEntity(wall);
             c.sound(ModSounds.FIRE_RING.get(), 1.2F, 0.9F);
             c.exhaust(0.3F);
@@ -271,7 +271,7 @@ public final class FireMore {
                 Shots.hurt(p, e, c.byF(3, 4, 5), ModDamageTypes.FLAME);
                 FireBending.ignite(p, e, c.by(3, 4, 5));
             }
-            Fx.send(level, Fx.BLAZE_ARC, p.position(), p.position().add(facing), Variants.blueFire(c.data) ? 1 : 0, (float) range);
+            Fx.send(level, Fx.BLAZE_ARC, p.position(), p.position().add(facing), Variants.fireColour(c.data), (float) range);
             c.sound(ModSounds.FIRE_BLAST.get(), 1.1F, 0.8F);
             c.exhaust(0.25F);
             c.cooldownSeconds(c.by(8, 7, 6));

@@ -31,7 +31,7 @@ import java.util.UUID;
 public class FireWallEntity extends Entity {
     private static final EntityDataAccessor<Float> DATA_WIDTH = SynchedEntityData.defineId(FireWallEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_YAW = SynchedEntityData.defineId(FireWallEntity.class, EntityDataSerializers.FLOAT);
-    private static final EntityDataAccessor<Boolean> DATA_BLUE = SynchedEntityData.defineId(FireWallEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Integer> DATA_COLOUR = SynchedEntityData.defineId(FireWallEntity.class, EntityDataSerializers.INT);
 
     @Nullable
     private UUID owner;
@@ -44,7 +44,7 @@ public class FireWallEntity extends Entity {
         this.noPhysics = true;
     }
 
-    public FireWallEntity(Level level, ServerPlayer owner, Vec3 at, float yaw, float width, int lifetime, float damage, boolean blue) {
+    public FireWallEntity(Level level, ServerPlayer owner, Vec3 at, float yaw, float width, int lifetime, float damage, int colour) {
         this(ModEntities.FIRE_WALL.get(), level);
         this.owner = owner.getUUID();
         this.lifetime = lifetime;
@@ -52,14 +52,14 @@ public class FireWallEntity extends Entity {
         setPos(at.x, at.y, at.z);
         entityData.set(DATA_WIDTH, width);
         entityData.set(DATA_YAW, yaw);
-        entityData.set(DATA_BLUE, blue);
+        entityData.set(DATA_COLOUR, colour);
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_WIDTH, 5.0F);
         builder.define(DATA_YAW, 0.0F);
-        builder.define(DATA_BLUE, false);
+        builder.define(DATA_COLOUR, 0);
     }
 
     public float width() {
@@ -72,7 +72,12 @@ public class FireWallEntity extends Entity {
     }
 
     public boolean blue() {
-        return entityData.get(DATA_BLUE);
+        return colour() == com.kolodkingal.enlightened.bending.Variants.FIRE_BLUE;
+    }
+
+    /** The colour of its fire ({@link com.kolodkingal.enlightened.bending.Variants#fireColour}). */
+    public int colour() {
+        return entityData.get(DATA_COLOUR);
     }
 
     public int lifetime() {
@@ -139,7 +144,7 @@ public class FireWallEntity extends Entity {
         }
         if (tickCount % 2 == 0) {
             double t = (random.nextDouble() - 0.5) * width();
-            level.sendParticles(blue() ? net.minecraft.core.particles.ParticleTypes.SOUL_FIRE_FLAME : net.minecraft.core.particles.ParticleTypes.FLAME,
+            level.sendParticles(com.kolodkingal.enlightened.fire.FireBending.flame(colour()),
                     getX() + along.x * t, getY() + random.nextDouble() * 2.5, getZ() + along.z * t, 1, 0.1, 0.1, 0.1, 0.01);
         }
     }

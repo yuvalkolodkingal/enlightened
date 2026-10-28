@@ -638,10 +638,11 @@ def paint_bison():
     brown = (128, 92, 66)
     grey = (128, 120, 122)
     body = cube(0, 0, 40, 26, 56)
-    head = cube(0, 82, 28, 18, 14)
-    fringe = cube(84, 82, 26, 6, 8)
-    cheek = cube(152, 82, 4, 10, 10)
-    muzzle = cube(84, 96, 22, 8, 6)
+    head = cube(132, 200, 30, 20, 16)
+    fringe = cube(0, 103, 30, 6, 5)
+    cheek = cube(120, 82, 5, 13, 10)
+    muzzle = cube(0, 82, 26, 11, 10)
+    bridge = cube(72, 82, 18, 4, 6)
     horn_base = cube(180, 82, 6, 4, 4)
     horn_mid = cube(200, 82, 4, 9, 4)
     horn_tip = cube(216, 82, 3, 6, 3)
@@ -682,27 +683,52 @@ def paint_bison():
     for k in range(14):
         half = 14 - k
         p.fill((x + 20 - half, y + k, 2 * half, 1), brown, 0.07)
-    # ...and over the brow, pointing down at the muzzle.
+    # ...and over the crown, pointing down to the brow between the eyes.
     x, y, w, h = head['top']
-    p.fill((x + 9, y, 10, h), brown, 0.07)
+    p.fill((x + 11, y, 8, h), brown, 0.07)
     x, y, w, h = fringe['top']
-    p.fill((x + 8, y, 10, h), brown, 0.07)
+    p.fill((x + 11, y, 8, h), brown, 0.07)
     x, y, w, h = fringe['front']
     for k in range(h):
-        p.fill((x + 8 + k, y + k, max(2, 10 - 2 * k), 1), brown, 0.07)
-    # The face: small dark eyes just under the fringe, the mouth.
+        half = max(1, 6 - k)
+        p.fill((x + 15 - half, y + k, 2 * half, 1), brown, 0.07)
+    # The fringe hangs in locks: its lower edge ragged (cut out), darker in the shadows between the locks.
+    for face in ('front', 'left', 'right'):
+        x, y, w, h = fringe[face]
+        for i in range(x, x + w):
+            cut = (i * 7 + 3) % 5
+            for j in range(y + h - (1 if cut < 2 else 2 if cut < 4 else 0), y + h):
+                if p.px[i, j][:3] != brown:
+                    p.px[i, j] = (0, 0, 0, 0)
+            if cut == 4:
+                p.dot(i, y + h - 1, shade_fur, 0.9)
+    # The face: small dark eyes set wide, just under the fringe, each with a glint; a soft shadow below.
     x, y, w, h = head['front']
-    for ex in (5, 20):
-        p.fill((x + ex, y + 1, 3, 2), (36, 28, 24), 0.0)
-        p.dot(x + ex + 1, y + 1, (220, 220, 220))
-    # The muzzle: broad, flat and grey-blue, two dark nostrils, a line of mouth under it.
-    p.faces(muzzle, (118, 112, 124), grain=0.04, vgrad=0.0)
+    for ex in (4, 22):
+        p.fill((x + ex, y + 6, 4, 3), (40, 30, 26), 0.0)
+        p.dot(x + ex + 1, y + 6, (235, 235, 230))
+        p.fill((x + ex, y + 9, 4, 1), shade_fur, 0.03)
+    # The muzzle: broad, flat, the grey-blue of Appa's, two dark nostrils high on its front, a long line of mouth and
+    # a paler chin; the bridge above it the same grey, a little lighter on top.
+    mz = (126, 128, 140)
+    p.faces(muzzle, mz, grain=0.04, vgrad=0.0)
+    p.faces(bridge, shade(mz, 1.04), grain=0.04, vgrad=0.0)
     x, y, w, h = muzzle['front']
-    p.fill((x + 4, y + 2, 3, 2), (44, 40, 46), 0.0)
-    p.fill((x + 15, y + 2, 3, 2), (44, 40, 46), 0.0)
-    p.fill((x + 2, y + h - 1, w - 4, 1), (80, 74, 84), 0.0)
-    x, y, w, h = muzzle['top']
-    p.fill((x, y, w, h), (132, 126, 136), 0.04)
+    p.fill((x + 6, y + 2, 4, 2), (46, 44, 52), 0.0)
+    p.fill((x + 16, y + 2, 4, 2), (46, 44, 52), 0.0)
+    p.fill((x + 3, y + 7, w - 6, 1), (70, 68, 80), 0.0)
+    p.fill((x + 6, y + 8, w - 12, 3), shade(mz, 1.12), 0.03)
+    for face in ('left', 'right'):
+        x, y, w, h = muzzle[face]
+        p.fill((x, y + 7, w, 1), (70, 68, 80), 0.0)
+    x, y, w, h = bridge['top']
+    p.fill((x, y, w, h), shade(mz, 1.1), 0.03)
+    # The cheek tufts: shaggy, ragged at the bottom.
+    for face in ('front', 'left', 'right', 'back'):
+        x, y, w, h = cheek[face]
+        for i in range(x, x + w):
+            if (i * 5) % 3 == 0:
+                p.px[i, y + h - 1] = (0, 0, 0, 0)
     # Horns: grey-brown, darker towards the tips.
     p.faces(horn_base, (150, 136, 120), grain=0.05)
     p.faces(horn_mid, (128, 116, 104), grain=0.05)
@@ -732,62 +758,96 @@ def paint_bison():
     p.save(os.path.join(ENTITY, 'sky_bison.png'))
 
 def paint_lion_turtle():
-    """The lion turtle's head (256x128 over LionTurtleModel.createBodyLayer): a broad sandy-grey lion's face with amber
-    eyes under a heavy brow, a pale wide muzzle and a dark nose, a mane and beard of mossy green weed, a grey-green neck
-    paler below, and grey-green flippers with darker spots."""
-    p = Painter('lion_turtle', (256, 128))
-    face = (178, 170, 142)
-    weed = (72, 104, 62)
-    skin = (112, 128, 104)
-    head = cube(0, 0, 32, 28, 24)
-    mane = cube(112, 0, 48, 44, 8)
-    muzzle = cube(0, 52, 20, 10, 6)
-    nose = cube(52, 52, 8, 4, 2)
-    beard = cube(72, 52, 24, 10, 10)
-    ear = cube(140, 52, 6, 6, 4)
-    neck = cube(0, 72, 24, 24, 30)
-    flipper = cube(108, 72, 40, 4, 22)
-    p.faces(head, face, grain=0.06, vgrad=0.08)
-    # The mane and beard: weed in strands, darker and lighter, hanging down.
-    for c in (mane, beard):
-        p.faces(c, weed, grain=0.08, vgrad=0.0)
-        for rect in c.values():
-            x, y, w, h = rect
+    """The lion turtle's head (512x512 over LionTurtleModel.createBodyLayer): a pale grey-tan face, wrinkled, with big amber
+    eyes ringed dark under heavy brows, a paler snout with a dark nose pad and a long dark mouth line, a crown and a beard
+    of dark grey-green fins with pale spines along them, a grey-green ruff and neck paler beneath, pale whiskers, and
+    grey-green flippers spotted darker."""
+    p = Painter('lion_turtle', (512, 512))
+    face = (176, 170, 146)
+    pale = (200, 192, 168)
+    fin = (78, 96, 74)
+    skin = (108, 122, 98)
+    skull = cube(0, 0, 48, 40, 40)
+    snout = cube(176, 0, 34, 20, 14)
+    nose = cube(272, 0, 18, 6, 8)
+    jaw = cube(0, 80, 40, 10, 46)
+    brow = cube(324, 0, 16, 6, 8)
+    eye = cube(372, 0, 12, 8, 2)
+    ruff = cube(176, 80, 60, 52, 6)
+    fin_base = cube(176, 34, 10, 5, 29)
+    fin_tip = cube(260, 34, 6, 3, 24)
+    whisker = cube(330, 34, 2, 2, 30)
+    neck = cube(0, 136, 40, 40, 50)
+    flipper = cube(0, 226, 60, 6, 28)
+    p.faces(skull, face, grain=0.06, vgrad=0.06)
+    # Wrinkles across the brow and down the cheeks.
+    x, y, w, h = skull['front']
+    for r in (3, 6, 9):
+        for i in range(x + 8, x + w - 8):
+            if (i + r) % 4:
+                p.dot(i, y + r, shade(face, 0.82))
+    for k in range(10):
+        p.dot(x + 4 + k // 2, y + 22 + k, shade(face, 0.78))
+        p.dot(x + w - 5 - k // 2, y + 22 + k, shade(face, 0.78))
+    for name in ('left', 'right'):
+        x, y, w, h = skull[name]
+        for j in range(y + 6, y + h, 7):
+            p.fill((x, j, w, 1), shade(face, 0.85), 0.03)
+    p.faces(snout, pale, grain=0.05, vgrad=0.0)
+    x, y, w, h = snout['front']
+    p.fill((x + 2, y + h - 4, w - 4, 1), (70, 56, 50), 0.0)
+    for wx in (4, 7, w - 8, w - 5):
+        for wy in (6, 9):
+            p.dot(x + wx, y + wy, shade(pale, 0.7))
+    for name in ('left', 'right'):
+        x, y, w, h = snout[name]
+        p.fill((x, y + h - 4, w, 1), (70, 56, 50), 0.0)
+    p.faces(nose, (58, 52, 48), grain=0.05, vgrad=0.0)
+    x, y, w, h = nose['front']
+    p.fill((x + 3, y + 2, 4, 3), (24, 20, 20), 0.0)
+    p.fill((x + w - 7, y + 2, 4, 3), (24, 20, 20), 0.0)
+    p.faces(jaw, shade(face, 0.92), grain=0.06, vgrad=0.0)
+    for name in ('front', 'left', 'right'):
+        x, y, w, h = jaw[name]
+        p.fill((x, y, w, 1), (70, 56, 50), 0.0)
+    p.faces(brow, shade(face, 0.72), grain=0.06)
+    # The eyes: amber, ringed dark, a round black pupil and a glint.
+    for name in ('front',):
+        x, y, w, h = eye[name]
+        p.fill((x, y, w, h), (40, 32, 26), 0.0)
+        p.fill((x + 1, y + 1, w - 2, h - 2), (222, 176, 60), 0.04)
+        p.fill((x + 2, y + 2, w - 4, h - 4), (238, 196, 80), 0.03)
+        p.fill((x + 4, y + 2, 4, 4), (16, 12, 10), 0.0)
+        p.dot(x + 4, y + 2, (255, 250, 230))
+        p.dot(x + 5, y + 2, (255, 250, 230))
+    for name in ('left', 'right', 'top', 'bottom', 'back'):
+        p.fill(eye[name], (40, 32, 26), 0.0)
+    # The ruff and the fins: dark grey-green, the fins with pale spines down their length.
+    p.faces(ruff, skin, grain=0.08, vgrad=0.0)
+    for c in (fin_base, fin_tip):
+        p.faces(c, fin, grain=0.07, vgrad=0.0)
+        for name in ('top', 'bottom'):
+            x, y, w, h = c[name]
+            p.fill((x + w // 2, y, 1, h), (196, 200, 170), 0.04)
             for i in range(x, x + w):
-                if p.rnd.random() < 0.45:
-                    tone = shade(weed, p.rnd.choice((0.7, 0.8, 1.2, 1.3)))
-                    top = y + p.rnd.randrange(max(1, h))
-                    p.fill((i, top, 1, y + h - top), tone, 0.05)
-    # The face: the heavy brow, amber eyes with dark pupils, the folds of the cheeks.
-    x, y, w, h = head['front']
-    p.fill((x + 3, y + 6, w - 6, 2), shade(face, 0.72), 0.04)
-    for ex in (5, 20):
-        p.fill((x + ex, y + 8, 7, 4), (232, 168, 52), 0.03)
-        p.fill((x + ex + 3, y + 8, 2, 4), (30, 24, 20), 0.0)
-        p.dot(x + ex + 1, y + 8, (255, 236, 170))
-    for k in range(4):
-        p.dot(x + 4 + k, y + 16 + k, shade(face, 0.75))
-        p.dot(x + w - 5 - k, y + 16 + k, shade(face, 0.75))
-    p.faces(muzzle, (206, 198, 170), grain=0.05, vgrad=0.0)
-    x, y, w, h = muzzle['front']
-    p.fill((x + 2, y + h - 2, w - 4, 1), (96, 70, 60), 0.0)
-    for wx in (2, 4, 15, 17):
-        p.dot(x + wx, y + 4, shade((206, 198, 170), 0.7))
-    p.faces(nose, (52, 44, 42), grain=0.04, vgrad=0.0)
-    p.faces(ear, shade(face, 0.9), grain=0.05)
-    x, y, w, h = ear['front']
-    p.fill((x + 1, y + 1, w - 2, h - 2), (150, 110, 100), 0.04)
+                if (i - x) % 3 == 0:
+                    p.fill((i, y, 1, h), shade(fin, 0.8), 0.04)
+            p.fill((x + w // 2, y, 1, h), (196, 200, 170), 0.04)
+        for name in ('left', 'right'):
+            x, y, w, h = c[name]
+            p.fill((x, y, w, 1), (170, 176, 146), 0.04)
+    p.faces(whisker, (214, 208, 184), grain=0.04, vgrad=0.0)
     # The neck: grey-green, folded, paler underneath.
     p.faces(neck, skin, grain=0.07)
     p.fill(neck['bottom'], (168, 170, 140), 0.05)
-    for face_name in ('left', 'right'):
-        x, y, w, h = neck[face_name]
-        for i in range(x + 3, x + w, 6):
+    for name in ('left', 'right', 'top'):
+        x, y, w, h = neck[name]
+        for i in range(x + 3, x + w, 7):
             p.fill((i, y, 1, h), shade(skin, 0.8), 0.03)
     # The flippers: grey-green with darker spots, the edge pale.
     p.faces(flipper, skin, grain=0.07, vgrad=0.0)
-    for face_name in ('top', 'bottom'):
-        p.speckle(flipper[face_name], shade(skin, 0.7), 0.1, 1.0)
+    for name in ('top', 'bottom'):
+        p.speckle(flipper[name], shade(skin, 0.7), 0.08, 1.0)
     x, y, w, h = flipper['front']
     p.fill((x, y + h - 1, w, 1), (168, 170, 140), 0.04)
     p.save(os.path.join(ENTITY, 'lion_turtle.png'))

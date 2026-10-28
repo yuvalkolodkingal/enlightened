@@ -107,9 +107,36 @@ public final class Variants {
         return looks.get(next);
     }
 
-    /** Whether the fire of this look is blue (Azula's). */
+    /** Whether the fire of this bender is blue (Azula's look, or chosen). */
     public static boolean blueFire(BendingData data) {
-        return data.element() == Element.FIRE && "azula".equals(data.variant());
+        return fireColour(data) == FIRE_BLUE;
+    }
+
+    public static final int FIRE_NORMAL = 0;
+    public static final int FIRE_BLUE = 1;
+    public static final int FIRE_RAINBOW = 2;
+    /** What a rainbow firebender's arts carry as their colour: his particles take every hue, his fire balls burn in all. */
+    public static final int RAINBOW_MARK = 0xFE01FE;
+
+    /** The colour (0xRRGGBB) of the rainbow at hue {@code h} (0 to 1 round the wheel). */
+    public static int rainbow(float h) {
+        int c = java.awt.Color.HSBtoRGB(h, 0.8F, 1.0F);
+        return c & 0xFFFFFF;
+    }
+
+    /** The names of the fire colours, for the command and the messages. */
+    public static final String[] FIRE_COLOURS = {"normal", "blue", "rainbow"};
+
+    /**
+     * The colour of this bender's fire: the one he chose (Sneak + Change Look, or the command), else his look's
+     * (Azula's is blue, the others' the colour of fire).
+     */
+    public static int fireColour(BendingData data) {
+        int chosen = data.fireChoice();
+        if (chosen > 0) {
+            return chosen - 1;
+        }
+        return data.element() == Element.FIRE && "azula".equals(data.variant()) ? FIRE_BLUE : FIRE_NORMAL;
     }
 
     private Variants() {

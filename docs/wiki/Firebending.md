@@ -23,13 +23,15 @@ Numbers are *novice / adept / master*. Names in `code` are [server options](Serv
 
 | Ability | Kind | What it does |
 |---|---|---|
-| **Lightning** | press | You gather the lightning for a second (sparks at your hand; a master's at both), then it strikes what you look at within 24: `lightningDamage` (9, four and a half hearts) and a **stun** of `lightningStunTicks` (2 s: no moving, no jumping). **A master strikes with both hands**: `lightningTwoHandsDamage` (12, six hearts). At nothing in sight it strikes the ground and hurts everyone within 2 blocks for 60%. It takes long to recharge: `lightningCooldown` (30 s) × **1 / 0.85 / 0.67**. |
+| **Lightning** | press | You gather the lightning for a second (sparks at your hand; a master's at both), then it leaves your hand as a **bolt** (drawn as Thor's lightning beam: a white-hot core, an electric-blue body and halo, strands crackling round it and forks branching off) and strikes what you look at within 24: `lightningDamage` (9, four and a half hearts) and a **stun** of `lightningStunTicks` (2 s: no moving, no jumping). **A master strikes with both hands**: `lightningTwoHandsDamage` (12, six hearts). At nothing in sight it strikes the ground and hurts everyone within 2 blocks for 60%. It takes long to recharge: `lightningCooldown` (30 s) × **1 / 0.85 / 0.67**. |
 | **Lightning Redirection** | toggle | Take the stance (sparks at your hand). Lightning that would hit you, a firebender's or the sky's, is **caught**: a **novice one time in three**, an **adept half the time**, else it burns through you as it would have; a **master always**, and he sends it on with its full damage at what he looks at, or back at whoever cast it. |
 
-## Azula's blue fire
+## The colour of your fire: normal, blue or rainbow
 
-Choose the look **Azula** and every flame of yours is blue: the fire ball, the fist, the whip, the ring. The numbers
-are the same.
+**Sneak + Change Look (H)** changes the colour of your fire: the colour of fire, **blue** (Azula's), or **rainbow**
+(bands of every hue running through the flames, and sparks of every colour). Every flame of yours takes it: the fire
+ball, the fist, the whip, the ring, the shield, the jet, the wall. The numbers are the same. Until you choose, your
+look decides (the look **Azula** burns blue). An operator can set it with `/enlightened firecolor <players> <normal|blue|rainbow|look>`.
 
 ## Default keys
 

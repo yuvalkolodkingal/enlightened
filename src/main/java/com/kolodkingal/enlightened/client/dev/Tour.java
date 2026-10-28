@@ -34,6 +34,20 @@ public final class Tour {
     private record Step(int delay, Runnable action) {
     }
 
+    /** A condition the script waits on (at most {@code holdLeft} ticks) before its next step. */
+    private static java.util.function.BooleanSupplier hold;
+    private static int holdLeft;
+    /** The sea's surface in the water world of the lion turtle's tour. */
+    private static volatile int sea = 62;
+    private static volatile boolean islandUp;
+
+    private static void until(java.util.function.BooleanSupplier condition, int maxTicks) {
+        STEPS.add(new Step(0, () -> {
+            hold = condition;
+            holdLeft = maxTicks;
+        }));
+    }
+
     private static final boolean ENABLED = Boolean.getBoolean("enlightened.tour");
     private static final boolean QUICK = Boolean.getBoolean("enlightened.tour.quick");
     private static final List<Step> STEPS = new ArrayList<>();
@@ -57,9 +71,18 @@ public final class Tour {
                 LevelSettings settings = new LevelSettings("tour", GameType.CREATIVE, false, Difficulty.EASY, true, new GameRules(),
                         WorldDataConfiguration.DEFAULT);
                 WorldOptions options = new WorldOptions(12345L, false, false);
-                mc.createWorldOpenFlows().createFreshLevel("tour", settings, options,
-                        access -> access.registryOrThrow(Registries.WORLD_PRESET).getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(),
-                        mc.screen);
+                boolean sea = "lionturtle".equals(System.getProperty("enlightened.tour.only", ""));
+                mc.createWorldOpenFlows().createFreshLevel("tour", settings, options, access -> {
+                    net.minecraft.world.level.levelgen.WorldDimensions dims = access.registryOrThrow(Registries.WORLD_PRESET)
+                            .getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions();
+                    if (!sea) {
+                        return dims;
+                    }
+                    // The lion turtle's tour: the "water world" flat preset, ninety blocks of sea.
+                    var flat = access.registryOrThrow(Registries.FLAT_LEVEL_GENERATOR_PRESET)
+                            .getHolderOrThrow(net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorPresets.WATER_WORLD).value().settings();
+                    return dims.replaceOverworldGenerator(access, new net.minecraft.world.level.levelgen.FlatLevelSource(flat));
+                }, mc.screen);
             }
             return;
         }
@@ -74,6 +97,12 @@ public final class Tour {
         if (wait > 0) {
             wait--;
             return;
+        }
+        if (hold != null) {
+            if (!hold.getAsBoolean() && --holdLeft > 0) {
+                return;
+            }
+            hold = null;
         }
         if (index >= STEPS.size()) {
             mc.stop();
@@ -332,6 +361,14 @@ public final class Tour {
         }
         if ("cosmic".equals(System.getProperty("enlightened.tour.only", ""))) {
             cosmic();
+            return;
+        }
+        if ("v15".equals(System.getProperty("enlightened.tour.only", ""))) {
+            fireColours();
+            return;
+        }
+        if ("bison".equals(System.getProperty("enlightened.tour.only", ""))) {
+            bisonFace();
             return;
         }
         if ("lionturtle".equals(System.getProperty("enlightened.tour.only", ""))) {
@@ -716,71 +753,184 @@ public final class Tour {
 
     }
 
+    /** The fire colours, the lightning after Thor's beam, bloodbending without lightning (alone: -Denlightened.tour.only=v15). */
+    private static void fireColours() {
+        element("fire", "zuko", "fire_ball", "fire_fist", "fire_whip", "lightning");
+        cmd("enlightened firecolor @s rainbow", 4);
+        held("fire_fist", "200_rainbow_fire_fist", 18, 40);
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        held("fire_fist", "201_rainbow_fire_fist_front", 18, 40);
+        held("fire_whip", "202_rainbow_fire_whip", 14, 30);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        held("fire_ball", "203_rainbow_fire_ball", 14, 16);
+        shot("204_rainbow_fire_ball_flight", 6);
+        wait(20);
+        cmd("enlightened firecolor @s blue", 4);
+        held("fire_fist", "205_blue_fire_fist", 18, 40);
+        cmd("enlightened firecolor @s normal", 4);
+        held("fire_fist", "206_normal_fire_fist", 18, 40);
+        // The lightning, from the hand, as Thor's beam: cast at the zombie, then seen from the side.
+        cmd("enlightened loadout @s 1 lightning", 6);
+        cmd("tp @s 0 -60 2 0 5", 4);
+        press(1, 2);
+        shot("207_lightning_charge", 12);
+        shot("208_lightning_strike", 6);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("gamemode spectator", 4);
+        cmd("tp @s 7 -58.5 3.5 90 5", 20);
+        for (int i = 0; i < 2; i++) {
+            server(p -> com.kolodkingal.enlightened.fx.Fx.send(p.serverLevel(), com.kolodkingal.enlightened.fx.Fx.LIGHTNING,
+                    new net.minecraft.world.phys.Vec3(0.3, -58.6, 1.0), new net.minecraft.world.phys.Vec3(0.5, -59.0, 7.5), 0, 1.0F), 3);
+            shot("209_lightning_side_" + i, 4);
+        }
+        cmd("gamemode creative", 4);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        cmd("tp @s 0 -60 0 0 10", 4);
+        // Bloodbending: the zombie held, no lightning.
+        element("water", "katara", "bloodbending");
+        cmd("time set 18000", 4);
+        cmd("tp @s 0 -60 4 0 10", 6);
+        held("bloodbending", "211_bloodbending", 20, 40);
+        cmd("time set 6000", 4);
+    }
+
+    /** The sky bison's face from the front, three quarters and the side (alone: -Denlightened.tour.only=bison). */
+    private static void bisonFace() {
+        cmd("kill @e[type=enlightened:sky_bison]", 2);
+        cmd("summon enlightened:sky_bison 0 -60 8 {Rotation:[180f,0f],NoAI:1b}", 20);
+        cmd("gamemode spectator", 5);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("tp @s 0.5 -58.3 1.5 0 10", 20);
+        shot("190_bison_front", 10);
+        cmd("tp @s 4 -58 3 35 10", 20);
+        shot("191_bison_three_quarters", 10);
+        cmd("tp @s 7 -58.5 7 90 5", 20);
+        shot("192_bison_side", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        cmd("gamemode creative", 5);
+    }
+
     /** A lion turtle in a sea dug for it, and the Avatar State seen through its own eyes (alone: -Denlightened.tour.only=lionturtle). */
     private static void lionTurtle() {
         element("avatar", "aang", "avatar_state", "energybending", "energy_restore", "fire_fist");
         cmd("enlightened guru @s taught", 2);
         cmd("enlightened chakras @s 7", 2);
-        cmd("enlightened avatar @s rest", 2);
-        camera(CameraType.FIRST_PERSON, 2);
-        cmd("tp @s 0 -60 0 0 10", 5);
-        cast("avatar_state", "175_avatar_state_view", 40);
-        cmd("enlightened avatar @s leave", 10);
-        camera(CameraType.THIRD_PERSON_BACK, 2);
-        // Facing north: the lion turtle raised by the command faces as he does.
-        cmd("tp @s 400 -40 0 180 10", 60);
-        // The flat world has no sea: dig one, 18 deep, its surface at y -45.
+        cmd("enlightened reset @s", 2);
+        cmd("enlightened element set @s fire zuko", 5);
+        cmd("gamemode spectator", 5);
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().options.renderDistance().set(16);
+            Minecraft.getInstance().options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
+        }));
+        // A great lion turtle (size 10) in the open sea, heading north, its centre at 0, 0.
         server(p -> {
             net.minecraft.server.level.ServerLevel level = p.serverLevel();
-            net.minecraft.core.BlockPos.MutableBlockPos at = new net.minecraft.core.BlockPos.MutableBlockPos();
-            for (int x = 330; x <= 470; x++) {
-                for (int z = -80; z <= 70; z++) {
-                    for (int y = -63; y <= -45; y++) {
-                        level.setBlock(at.set(x, y, z), net.minecraft.world.level.block.Blocks.WATER.defaultBlockState(), 2 | 16);
-                    }
+            sea = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, 0, 0) - 1;
+            Enlightened.LOGGER.info("[tour] sea at {}", sea);
+            p.teleportTo(level, 0.5, sea + 120, 260.5, 180.0F, 20.0F);
+            com.kolodkingal.enlightened.world.LionTurtles.get(level).add(new net.minecraft.core.BlockPos(0, sea, 0), net.minecraft.core.Direction.NORTH, 10);
+        }, 20);
+        until(() -> {
+            var server = Minecraft.getInstance().getSingleplayerServer();
+            if (server == null) {
+                return false;
+            }
+            server.execute(() -> islandUp = com.kolodkingal.enlightened.world.LionTurtles.get(server.overworld()).islands().stream()
+                    .allMatch(i -> i.phase != com.kolodkingal.enlightened.world.LionTurtles.Phase.BUILD));
+            return islandUp;
+        }, 6000);
+        STEPS.add(new Step(100, () -> Enlightened.LOGGER.info("[tour] the island is up")));
+        server(p -> Enlightened.LOGGER.info("[tour] heads on the server: {}", p.serverLevel().getEntities(
+                com.kolodkingal.enlightened.registry.ModEntities.LION_TURTLE.get(), e -> true).stream().map(e -> e.blockPosition() + " " + e.getBoundingBox()).toList()), 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.renderDistance().set(20)));
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        // From where it was watched rising (its chunks long sent): the whole island from the south.
+        server(p -> p.teleportTo(p.serverLevel(), 0.5, sea + 120, 260.5, 180.0F, 22.0F), 300);
+        shot("170_lion_turtle", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.renderDistance().set(8)));
+        // (Within the view distance the server knows of: the tour's client asked for 5 chunks.)
+        server(p -> p.teleportTo(p.serverLevel(), 25.5, sea + 22, -318.5, 20.0F, 6.0F), 300);
+        shot("171_lion_turtle_face", 10);
+        STEPS.add(new Step(2, () -> {
+            int n = 0;
+            for (net.minecraft.world.entity.Entity e : Minecraft.getInstance().level.entitiesForRendering()) {
+                if (e instanceof com.kolodkingal.enlightened.entity.LionTurtleEntity) {
+                    n++;
                 }
             }
-        }, 60);
-        cmd("enlightened lionturtle 400 -45 0", 60);
-        cmd("gamemode spectator", 5);
-        STEPS.add(new Step(5, () -> Minecraft.getInstance().options.renderDistance().set(10)));
-        cmd("tp @s 432 -24 -62 31 18", 120);
-        shot("170_lion_turtle", 10);
-        cmd("tp @s 400 -36 -42 0 4", 30);
-        shot("171_lion_turtle_face", 10);
+            Enlightened.LOGGER.info("[tour] heads on the client: {}", n);
+        }));
+        server(p -> {
+            net.minecraft.world.level.ChunkPos c = new net.minecraft.world.level.ChunkPos(0 >> 4, -255 >> 4);
+            Enlightened.LOGGER.info("[tour] head chunk in view {} pending {} view distance {} player at {}", p.getChunkTrackingView().contains(c),
+                    p.connection.chunkSender.isPending(c.toLong()), p.requestedViewDistance(), p.blockPosition());
+        }, 2);
+        server(p -> p.teleportTo(p.serverLevel(), -66.5, sea + 30, -262.5, -82.0F, 10.0F), 200);
+        shot("171b_lion_turtle_side", 10);
+        // On its back, in its forest.
         cmd("gamemode creative", 5);
-        cmd("tp @s 400 -37 4 180 12", 30);
+        server(p -> p.teleportTo(p.serverLevel(), 0.5, sea + 60, 40.5, 180.0F, 10.0F), 40);
+        STEPS.add(new Step(60, () -> {
+        }));
         shot("172_on_the_shell", 10);
-        // It swims: a block every stroke (forty seconds in the game; here six strokes at once), all on it carried along.
-        for (int i = 0; i < 6; i++) {
-            server(p -> {
-                for (com.kolodkingal.enlightened.entity.LionTurtleEntity t : p.serverLevel().getEntitiesOfClass(
-                        com.kolodkingal.enlightened.entity.LionTurtleEntity.class, p.getBoundingBox().inflate(80))) {
-                    t.swimOn(p.serverLevel());
-                }
-            }, 20);
-        }
-        STEPS.add(new Step(20, () -> Enlightened.LOGGER.info("[tour] after the swim the player is at {}", Minecraft.getInstance().player.position())));
+        // It swims a block: every row moved, the one on it with it.
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            double z0 = p.getZ();
+            var data = com.kolodkingal.enlightened.world.LionTurtles.get(level);
+            for (var i : data.islands()) {
+                data.swimNow(level, i, net.minecraft.core.Direction.NORTH);
+            }
+            Enlightened.LOGGER.info("[tour] a stroke: the player went from z {} to {}", z0, p.getZ());
+            islandUp = false;
+        }, 5);
+        until(() -> {
+            var server = Minecraft.getInstance().getSingleplayerServer();
+            if (server != null) {
+                server.execute(() -> islandUp = true);
+            }
+            return islandUp;
+        }, 400);
+        STEPS.add(new Step(40, () -> {
+        }));
         shot("173_on_the_shell_swam", 10);
-        // A Hero of the Village speaks to it.
+        // A Hero of the Village, on the rim behind the head, speaks to it.
         cmd("advancement grant @s only minecraft:adventure/hero_of_the_village", 5);
-        cmd("tp @s 400 -41 -25 180 0", 20);
-        STEPS.add(new Step(10, () -> {
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            // Beside its neck, at the very front of the shell (the island swam a block north).
+            int z = -1 - 219;
+            int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, 26, z);
+            p.teleportTo(level, 27.5, y, z + 0.5, -90.0F, -10.0F);
+            islandUp = false;
+        }, 5);
+        until(() -> {
+            var server = Minecraft.getInstance().getSingleplayerServer();
+            if (server != null) {
+                server.execute(() -> islandUp = true);
+            }
+            return islandUp;
+        }, 400);
+        STEPS.add(new Step(40, () -> {
+        }));
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        STEPS.add(new Step(14, () -> {
             Minecraft mc = Minecraft.getInstance();
             for (net.minecraft.world.entity.Entity e : mc.level.entitiesForRendering()) {
                 if (e instanceof com.kolodkingal.enlightened.entity.LionTurtleEntity) {
-                    mc.gameMode.interact(mc.player, e, net.minecraft.world.InteractionHand.MAIN_HAND);
+                    net.minecraft.world.InteractionResult r = mc.gameMode.interact(mc.player, e, net.minecraft.world.InteractionHand.MAIN_HAND);
+                    Enlightened.LOGGER.info("[tour] talk to the lion turtle -> {} (distance {})", r, e.distanceTo(mc.player));
                 }
             }
         }));
-        cmd("tp @s 400 -37 -12 0 10", 20);
-        shot("174_lion_turtle_gift", 10);
+        shot("174_lion_turtle_reaching", 26);
+        shot("175_lion_turtle_gift", 30);
+        shot("176_lion_turtle_gift_light", 30);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
         cmd("gamemode spectator", 5);
-        cmd("tp @s 432 -24 -62 31 18", 40);
-        shot("176_lion_turtle_swam", 10);
-        STEPS.add(new Step(5, () -> Minecraft.getInstance().options.renderDistance().set(5)));
-        cmd("gamemode creative", 5);
-        cmd("tp @s 0 -60 0 0 10", 10);
+        server(p -> p.teleportTo(p.serverLevel(), 60.5, sea + 35, -230.5, 120.0F, 10.0F), 200);
+        shot("177_lion_turtle_after", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
     }
 
     /** The cosmic plane (also alone, with -Denlightened.tour.only=cosmic). */

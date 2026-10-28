@@ -45,18 +45,20 @@ public class SkyBisonModel extends HierarchicalModel<SkyBisonEntity> {
                 .texOffs(0, 0).addBox(-20.0F, -26.0F, -28.0F, 40.0F, 26.0F, 56.0F)
                 .texOffs(0, 114).addBox(-16.0F, -22.0F, -31.0F, 32.0F, 16.0F, 4.0F)
                 .texOffs(0, 200).addBox(-9.0F, 0.0F, -24.0F, 18.0F, 5.0F, 48.0F), PartPose.offset(0.0F, 14.0F, 0.0F));
-        // The head, low and broad: the fringe of fur over the eyes, the tufts at the cheeks, the wide flat muzzle.
+        // The head, as Appa's: big and broad, a fringe of white fur hanging over the brow, small dark eyes under it, and
+        // the great flat grey muzzle filling the lower face, a rounded bridge above it; tufts of fur at the cheeks.
         PartDefinition head = body.addOrReplaceChild("head", CubeListBuilder.create()
-                .texOffs(0, 82).addBox(-14.0F, -10.0F, -14.0F, 28.0F, 18.0F, 14.0F)
-                .texOffs(84, 82).addBox(-13.0F, -14.0F, -16.0F, 26.0F, 6.0F, 8.0F)
-                .texOffs(152, 82).addBox(-18.0F, -6.0F, -12.0F, 4.0F, 10.0F, 10.0F)
-                .texOffs(152, 82).addBox(14.0F, -6.0F, -12.0F, 4.0F, 10.0F, 10.0F)
-                .texOffs(84, 96).addBox(-11.0F, 0.0F, -19.0F, 22.0F, 8.0F, 6.0F), PartPose.offset(0.0F, -8.0F, -28.0F));
-        // The horns: out from the head, then curving up and in, as Appa's do.
+                .texOffs(132, 200).addBox(-15.0F, -12.0F, -16.0F, 30.0F, 20.0F, 16.0F)
+                .texOffs(0, 103).addBox(-15.0F, -13.0F, -18.0F, 30.0F, 6.0F, 5.0F)
+                .texOffs(0, 82).addBox(-13.0F, -2.0F, -24.0F, 26.0F, 11.0F, 10.0F)
+                .texOffs(72, 82).addBox(-9.0F, -5.0F, -22.0F, 18.0F, 4.0F, 6.0F)
+                .texOffs(120, 82).addBox(-20.0F, -7.0F, -14.0F, 5.0F, 13.0F, 10.0F)
+                .texOffs(120, 82).mirror().addBox(15.0F, -7.0F, -14.0F, 5.0F, 13.0F, 10.0F), PartPose.offset(0.0F, -8.0F, -28.0F));
+        // The horns: out from the top of the head, then curving up and in, as Appa's do.
         for (int side = -1; side <= 1; side += 2) {
             PartDefinition base = head.addOrReplaceChild(side < 0 ? "right_horn" : "left_horn", CubeListBuilder.create()
                     .texOffs(180, 82).addBox(side < 0 ? -6.0F : 0.0F, -2.0F, -2.0F, 6.0F, 4.0F, 4.0F),
-                    PartPose.offset(side * 13.0F, -9.0F, -6.0F));
+                    PartPose.offset(side * 14.0F, -10.0F, -7.0F));
             PartDefinition mid = base.addOrReplaceChild("mid", CubeListBuilder.create()
                     .texOffs(200, 82).addBox(-2.0F, -9.0F, -2.0F, 4.0F, 9.0F, 4.0F),
                     PartPose.offsetAndRotation(side * 5.0F, 0.0F, 0.0F, 0.0F, 0.0F, side * 0.45F));

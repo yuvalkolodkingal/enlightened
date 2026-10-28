@@ -30,7 +30,7 @@ public enum Fx {
     /** A fire ball bursting (size). */
     FIRE_BURST(10),
     /** A bolt of lightning from a hand to its mark. */
-    LIGHTNING(10),
+    LIGHTNING(16),
     /** Lightning taken in at one hand and sent out of the other, through the body (entity: the redirector). */
     REDIRECT(12),
     /** A gust travelling from the hands along the look (range). */
@@ -80,7 +80,12 @@ public enum Fx {
     /** The Avatar State entered: light bursting out. */
     AVATAR_RISE(20),
     /** A chakra opening: a ring of light rising (data: the chakra's number). */
-    CHAKRA(30);
+    CHAKRA(30),
+    /**
+     * The lion turtle gives energybending (from: the one who receives it; to: where its claws reach from; data: the
+     * lion turtle's id; entity: the one who receives it): its claws on his forehead and chest, rings and rays of light.
+     */
+    LION_GIFT(120);
 
     public final int life;
 

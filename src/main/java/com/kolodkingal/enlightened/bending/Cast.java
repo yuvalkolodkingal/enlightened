@@ -93,6 +93,9 @@ public final class Cast {
      * fire, his water water), the Avatar's own light only for the Avatar's own arts.
      */
     public int color() {
+        if (ability.element == Element.FIRE && Variants.fireColour(data) == Variants.FIRE_RAINBOW) {
+            return Variants.RAINBOW_MARK;
+        }
         if (data.element() == Element.AVATAR && ability.element != Element.AVATAR) {
             return ability.element.color;
         }

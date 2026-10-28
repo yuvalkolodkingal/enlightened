@@ -27,7 +27,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -72,7 +71,15 @@ public final class FireBending {
 
     /** The fire particle of this bender's look (Azula's fire is blue). */
     public static ParticleOptions flame(BendingData data) {
-        return Variants.blueFire(data) ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
+        return flame(Variants.fireColour(data));
+    }
+
+    /** The fire particle of a fire colour: soul fire for blue, sparks of every hue for the rainbow. */
+    public static ParticleOptions flame(int colour) {
+        if (colour == Variants.FIRE_RAINBOW) {
+            return new com.kolodkingal.enlightened.particle.EnergyParticleOptions(Variants.rainbow(java.util.concurrent.ThreadLocalRandom.current().nextFloat()), 1.0F);
+        }
+        return colour == Variants.FIRE_BLUE ? ParticleTypes.SOUL_FIRE_FLAME : ParticleTypes.FLAME;
     }
 
     /** How much of the fire damage a firebender's skin takes away (0.5, 0.75, 1). */
@@ -299,7 +306,7 @@ public final class FireBending {
             }
             ParticleOptions flame = flame(c.data);
             Shots.ring(c.level(), p.position().add(0, 0.3, 0), radius, flame);
-            Fx.at(c.level(), Fx.FIRE_RING, p.position(), Variants.blueFire(c.data) ? 1 : 0, (float) radius);
+            Fx.at(c.level(), Fx.FIRE_RING, p.position(), Variants.fireColour(c.data), (float) radius);
             c.sound(ModSounds.FIRE_RING.get(), 1.2F, 1.0F);
             c.exhaust(0.3F);
             c.cooldownSeconds(8);
@@ -322,7 +329,7 @@ public final class FireBending {
             target.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 40, 0, false, true, true));
             c.level().sendParticles(flame(c.data), target.getX(), target.getY() + 1, target.getZ(), 15, 0.4, 0.5, 0.4, 0.01);
             c.level().sendParticles(ParticleTypes.HEART, target.getX(), target.getY() + target.getBbHeight() * 0.7, target.getZ(), 3, 0.3, 0.3, 0.3, 0.0);
-            Fx.around(c.level(), Fx.FIRE_HEAL, target, Variants.blueFire(c.data) ? 1 : 0, 1.0F);
+            Fx.around(c.level(), Fx.FIRE_HEAL, target, Variants.fireColour(c.data), 1.0F);
             c.sound(ModSounds.HEAL.get(), 1.0F, 0.8F);
             c.exhaust(0.2F);
             c.cooldownSeconds(10);
@@ -336,20 +343,12 @@ public final class FireBending {
         return (int) (base * c.by(1.0, 0.85, 0.67));
     }
 
-    /** A bolt of light at {@code at} that burns nothing by itself. */
-    public static void visualBolt(ServerLevel level, Vec3 at) {
-        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level);
-        if (bolt != null) {
-            bolt.moveTo(at.x, at.y, at.z);
-            bolt.setVisualOnly(true);
-            level.addFreshEntity(bolt);
-        }
-    }
-
-    /** Lightning strikes a creature from {@code caster}: the damage, the stun, the sound and the light. */
+    /**
+     * Lightning strikes a creature from {@code caster}: the damage, the stun, the sound, and the bolt from his hand to it
+     * (drawn as Thor's beam is, no bolt from the sky).
+     */
     public static void strike(ServerPlayer caster, LivingEntity target, float damage) {
         ServerLevel level = caster.serverLevel();
-        visualBolt(level, target.position());
         Fx.send(level, Fx.LIGHTNING, Shots.hand(caster), target.position().add(0, target.getBbHeight() * 0.5, 0), 0, 1.0F);
         target.hurt(ModDamageTypes.source(level, ModDamageTypes.LIGHTNING, caster, caster), damage);
         int stun = EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.LIGHTNING_STUN_TICKS.get() : 40;
@@ -402,7 +401,6 @@ public final class FireBending {
             if (aim.target() != null && AreaTargets.mayHurt(p, aim.target())) {
                 strike(p, aim.target(), damage);
             } else {
-                visualBolt(c.level(), aim.end());
                 Fx.send(c.level(), Fx.LIGHTNING, hand, aim.end(), 0, 1.0F);
                 for (LivingEntity e : Shots.area(p, aim.end(), 2.0)) {
                     e.hurt(ModDamageTypes.source(c.level(), ModDamageTypes.LIGHTNING, p, p), damage * 0.6F);
@@ -487,7 +485,7 @@ public final class FireBending {
             if (target != null && AreaTargets.mayHurt(victim, target)) {
                 strike(victim, target, amount);
             } else {
-                visualBolt(world, aim.end());
+                Fx.send(world, Fx.LIGHTNING, Shots.hand(victim), aim.end(), 0, 1.0F);
                 Shots.line(world, Shots.hand(victim), aim.end(), ParticleTypes.ELECTRIC_SPARK, 3.0);
             }
         }

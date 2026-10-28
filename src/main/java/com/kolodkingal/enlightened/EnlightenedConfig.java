@@ -88,6 +88,7 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue ENERGYBENDING_AIR_SECONDS;
     public static final ModConfigSpec.IntValue ENERGYBENDING_OTHER_SECONDS;
     public static final ModConfigSpec.IntValue LION_TURTLE_MOVE_SECONDS;
+    public static final ModConfigSpec.IntValue LION_TURTLE_SIZE;
     public static final ModConfigSpec.BooleanValue COMBOS;
     public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
     public static final ModConfigSpec.BooleanValue STEPS;
@@ -194,8 +195,11 @@ public final class EnlightenedConfig {
                 .defineInRange("energybendingAirSeconds", 360, 1, 1000000);
         ENERGYBENDING_OTHER_SECONDS = B.comment("Seconds the energybending of anyone else (bender or not) takes a bending for.")
                 .defineInRange("energybendingOtherSeconds", 180, 1, 1000000);
-        LION_TURTLE_MOVE_SECONDS = B.comment("Seconds between each block a lion turtle swims, while a player is near it.")
+        LION_TURTLE_MOVE_SECONDS = B.comment("Seconds a lion turtle rests between one block of swim and the next, while a player is near it.")
                 .defineInRange("lionTurtleMoveSeconds", 40, 5, 3600);
+        LION_TURTLE_SIZE = B.comment("How big new lion turtles are: 1 is an island some 45 blocks long, 10 (the default) some 440 long.",
+                        "A great island holds its own chunks loaded while a player is near it; lower this on a busy server.")
+                .defineInRange("lionTurtleSize", 10, 1, 10);
         COMBOS = B.comment("Whether sequences of casts trigger the combos (Twister, Earth Dome, Ice Wave, Fire Spin...).").define("combos", true);
         COMBO_WINDOW_TICKS = B.comment("Ticks between the casts of a combo (60 = 3 s).").defineInRange("comboWindowTicks", 60, 10, 600);
         STEPS = B.comment("Whether a double tap of a direction dashes a bender who learned his element's step.").define("steps", true);

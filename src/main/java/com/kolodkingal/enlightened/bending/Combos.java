@@ -248,7 +248,7 @@ public enum Combos {
                     com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 5);
                     Shots.push(e, p.position(), 1.0, 0.5);
                 }
-                Fx.send(level, Fx.BLAZE_ARC, p.position().add(0, 0.6, 0), p.position().add(facing), Variants.blueFire(data) ? 1 : 0, (float) range);
+                Fx.send(level, Fx.BLAZE_ARC, p.position().add(0, 0.6, 0), p.position().add(facing), Variants.fireColour(data), (float) range);
                 level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.FIRE_BLAST.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.3F, 0.7F);
             }
             case FIRE_SPIN -> {
@@ -258,7 +258,7 @@ public enum Combos {
                     com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 5);
                     Shots.push(e, p.position(), 2.2, 0.7);
                 }
-                Fx.at(level, Fx.FIRE_SPIN, p.position(), Variants.blueFire(data) ? 1 : 0, (float) radius);
+                Fx.at(level, Fx.FIRE_SPIN, p.position(), Variants.fireColour(data), (float) radius);
                 level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.FIRE_RING.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.5F, 0.6F);
             }
         }

@@ -8,11 +8,10 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 
-/** The lion turtle's head: its model four times over, its chin in the sea. */
+/** The lion turtle's head: its model 1.6 × its island's scale (a pixel a tenth of the scale), its chin in the sea. */
 public class LionTurtleRenderer extends MobRenderer<LionTurtleEntity, LionTurtleModel> {
     public static final ModelLayerLocation LAYER = new ModelLayerLocation(Enlightened.id("lion_turtle"), "main");
     private static final ResourceLocation TEXTURE = Enlightened.id("textures/entity/lion_turtle.png");
-    public static final float SCALE = 4.0F;
 
     public LionTurtleRenderer(EntityRendererProvider.Context context) {
         super(context, new LionTurtleModel(context.bakeLayer(LAYER)), 0.0F);
@@ -20,7 +19,8 @@ public class LionTurtleRenderer extends MobRenderer<LionTurtleEntity, LionTurtle
 
     @Override
     protected void scale(LionTurtleEntity turtle, PoseStack poseStack, float partialTick) {
-        poseStack.scale(SCALE, SCALE, SCALE);
+        float k = 1.6F * turtle.scale();
+        poseStack.scale(k, k, k);
     }
 
     @Override

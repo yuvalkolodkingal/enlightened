@@ -740,6 +740,26 @@ public final class EnlightenedTests {
         helper.succeed();
     }
 
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void aFirebenderChoosesTheColourOfHisFire(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer azula = f.player(10, FLOOR, 8);
+        BendingData data = f.bender(azula, Element.FIRE, Ability.FIRE_BALL, 1, Ability.FIRE_JET, 1);
+        Benders.setVariant(azula, com.kolodkingal.enlightened.bending.Variants.get(Element.FIRE, "azula"));
+        check(com.kolodkingal.enlightened.bending.Variants.fireColour(data) == com.kolodkingal.enlightened.bending.Variants.FIRE_BLUE, "Azula's look burns blue");
+        data.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW);
+        check(com.kolodkingal.enlightened.bending.Variants.fireColour(data) == com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW, "she chose the rainbow");
+        data.setOn(Ability.FIRE_JET, true);
+        check(data.on(Ability.FIRE_JET), "a toggle beside the choice still works");
+        data.clearToggles();
+        check(!data.on(Ability.FIRE_JET) && data.fireChoice() == 1 + com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW, "clearing the toggles keeps the choice");
+        check(new com.kolodkingal.enlightened.bending.Cast(azula, data, Ability.FIRE_BALL).color() == com.kolodkingal.enlightened.bending.Variants.RAINBOW_MARK,
+                "her fire balls carry the rainbow");
+        data.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_NORMAL);
+        check(!com.kolodkingal.enlightened.bending.Variants.blueFire(data), "and the colour of fire, if she wants it");
+        helper.succeed();
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 40)
     public static void spiritbendingCalmsAZombie(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);

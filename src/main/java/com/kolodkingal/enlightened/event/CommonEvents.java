@@ -61,6 +61,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         TempBlocks.tick(event.getServer());
+        com.kolodkingal.enlightened.world.LionTurtles.tick(event.getServer());
     }
 
     @SubscribeEvent
@@ -87,7 +88,7 @@ public final class CommonEvents {
     /** Whether the player may change the block: anywhere off a lion turtle, and on one only if it lets him. */
     private static boolean onShell(Player player, net.minecraft.world.level.LevelAccessor level, net.minecraft.core.BlockPos pos) {
         if (player == null || !(level instanceof net.minecraft.server.level.ServerLevel server)
-                || com.kolodkingal.enlightened.world.LionTurtle.islandAt(server, pos) == null
+                || com.kolodkingal.enlightened.world.LionTurtles.islandAt(server, pos) == null
                 || com.kolodkingal.enlightened.world.LionTurtle.mayBuild(player)) {
             return true;
         }

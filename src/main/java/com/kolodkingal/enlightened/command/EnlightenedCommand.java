@@ -108,10 +108,22 @@ public final class EnlightenedCommand {
                         .executes(ctx -> temple(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition())))
                         .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
                                 .executes(ctx -> temple(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos")))))
+                .then(Commands.literal("firecolor")
+                        .then(Commands.argument("players", EntityArgument.players())
+                                .then(Commands.argument("colour", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                java.util.stream.Stream.concat(java.util.stream.Stream.of("look"),
+                                                        Arrays.stream(com.kolodkingal.enlightened.bending.Variants.FIRE_COLOURS)), builder))
+                                        .executes(EnlightenedCommand::fireColour))))
                 .then(Commands.literal("lionturtle")
-                        .executes(ctx -> lionTurtle(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition()), false))
+                        .executes(ctx -> lionTurtle(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition()), false,
+                                com.kolodkingal.enlightened.world.LionTurtles.configuredScale()))
                         .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
-                                .executes(ctx -> lionTurtle(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos"), true))))
+                                .executes(ctx -> lionTurtle(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos"), true,
+                                        com.kolodkingal.enlightened.world.LionTurtles.configuredScale()))
+                                .then(Commands.argument("size", IntegerArgumentType.integer(1, 10))
+                                        .executes(ctx -> lionTurtle(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos"), true,
+                                                IntegerArgumentType.getInteger(ctx, "size"))))))
                 .then(Commands.literal("guru")
                         .then(Commands.argument("players", EntityArgument.players())
                                 .then(Commands.literal("taught").executes(ctx -> guru(ctx, true)))
@@ -138,15 +150,37 @@ public final class EnlightenedCommand {
         return count;
     }
 
+    /** Sets the colour of the players' fire: normal, blue, rainbow, or their look's. */
+    private static int fireColour(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        String name = StringArgumentType.getString(ctx, "colour");
+        int choice = java.util.Arrays.asList(com.kolodkingal.enlightened.bending.Variants.FIRE_COLOURS).indexOf(name) + 1;
+        if (choice == 0 && !"look".equals(name)) {
+            ctx.getSource().sendFailure(Component.translatable("command.enlightened.unknown_fire_colour", name));
+            return 0;
+        }
+        int n = 0;
+        for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
+            Benders.get(player).setFireChoice(choice);
+            Benders.syncIfDirty(player);
+            n++;
+        }
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.fire_colour", name), true);
+        return n;
+    }
+
     /**
-     * Raises a lion turtle and its island at {@code pos}, facing as the caller faces: at sea level where he stands, or,
-     * given a position, with the sea's surface at its height (for a sea of one's own making).
+     * Raises a lion turtle and its island at {@code pos}, facing as the caller faces, of the given size: at sea level
+     * where he stands, or, given a position, with the sea's surface at its height (for a sea of one's own making). The
+     * island rises over the next seconds.
      */
-    private static int lionTurtle(CommandContext<CommandSourceStack> ctx, net.minecraft.core.BlockPos pos, boolean atHeight) {
+    private static int lionTurtle(CommandContext<CommandSourceStack> ctx, net.minecraft.core.BlockPos pos, boolean atHeight, int size) {
         net.minecraft.server.level.ServerLevel level = ctx.getSource().getLevel();
         net.minecraft.core.Direction heading = net.minecraft.core.Direction.fromYRot(ctx.getSource().getRotation().y);
         net.minecraft.core.BlockPos center = new net.minecraft.core.BlockPos(pos.getX(), atHeight ? pos.getY() : level.getSeaLevel() - 1, pos.getZ());
-        com.kolodkingal.enlightened.world.LionTurtle.create(level, center, heading);
+        if (com.kolodkingal.enlightened.world.LionTurtles.get(level).add(center, heading, size) == null) {
+            ctx.getSource().sendFailure(Component.translatable("command.enlightened.lion_turtle_near"));
+            return 0;
+        }
         ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.lion_turtle", center.getX(), center.getY(), center.getZ()), true);
         return 1;
     }

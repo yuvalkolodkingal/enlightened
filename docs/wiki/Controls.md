@@ -5,7 +5,7 @@
 | Key | Default | What it does |
 |---|---|---|
 | Ability 1-5 | **R, G, V, B, N** | The ability on that key. **Sneak + the key** is the ability on the key's second slot. |
-| Change Look | **H** | The next look of your element (Sneak + H goes back). |
+| Change Look | **H** | The next look of your element (Sneak + H goes back; for a firebender or the Avatar, Sneak + H changes the colour of the fire: normal, blue, rainbow). |
 | Meditate | **M** | Press to sit and meditate, again (or move) to stand: opens the [chakras](Chakras-and-the-Avatar-State). A right-click on a Meditation Point sits you on it. |
 | Bending Scroll | **K** | Opens the Bending Scroll: your abilities, your points and your keys. (Your element's scroll item opens it too.) |
 

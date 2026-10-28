@@ -566,9 +566,9 @@
   "enlightened.configuration.energybendingAvatarMinutes": "כשפות אנרגיה של האווטאר (דקות)",
   "enlightened.configuration.energybendingAirSeconds": "כשפות אנרגיה של כשף אוויר (שניות)",
   "enlightened.configuration.energybendingOtherSeconds": "כשפות אנרגיה של אחרים (שניות)",
-  "enlightened.configuration.lionTurtleMoveSeconds": "צב אריה: שניות לכל בלוק שהוא שוחה",
+  "enlightened.configuration.lionTurtleMoveSeconds": "צב אריה: שניות מנוחה בין חתירה לחתירה",
   "entity.enlightened.lion_turtle": "צב אריה",
-  "command.enlightened.lion_turtle": "צב אריה עולה מן הים ב-%s %s %s.",
+  "command.enlightened.lion_turtle": "צב אריה עולה מן הים ב-%s %s %s (האי שלו עולה תוך כמה שניות).",
   "message.enlightened.lion_turtle.no_building": "צב האריה מרשה רק לגיבור הכפר לבנות על השריון שלו.",
   "lion_turtle.enlightened.says": "צב האריה: %s",
   "lion_turtle.enlightened.silent": "...צב האריה מביט בך ושותק. (הוא מדבר רק עם גיבור הכפר: מי שהציל כפר מפשיטה.)",
@@ -576,5 +576,13 @@
   "lion_turtle.enlightened.gift": "בעידן שלפני האווטאר, לא כישפנו את היסודות, אלא את האנרגיה שבתוכנו. אני נותן לך את זה: לקחת כישוף, ולהחזיר אותו. אבל היזהר: אם האנרגיה שלו חזקה משלך, אתה זה שתפסיד.",
   "lion_turtle.enlightened.again": "אתה כבר נושא את אומנות כשפות האנרגיה. השתמש בה בחוכמה.",
   "lion_turtle.enlightened.avatar_chakras": "אתה האווטאר: האנרגיה שלך תזרום דרך אחר רק כשכל שבע הצ'אקרות שלך פתוחות.",
-  "lion_turtle.enlightened.home": "בנה על השריון שלי וחיה כאן אם תרצה, כמו שאנשים חיו לפני זמן רב."
+  "lion_turtle.enlightened.home": "בנה על השריון שלי וחיה כאן אם תרצה, כמו שאנשים חיו לפני זמן רב.",
+  "message.enlightened.fire_colour": "האש שלך: %s",
+  "fire_colour.enlightened.normal": "בצבע של אש",
+  "fire_colour.enlightened.blue": "כחולה",
+  "fire_colour.enlightened.rainbow": "בצבעי הקשת",
+  "command.enlightened.fire_colour": "צבע האש נקבע ל-%s.",
+  "command.enlightened.unknown_fire_colour": "אין צבע אש כזה: %s (normal, blue, rainbow או look).",
+  "command.enlightened.lion_turtle_near": "צב אריה אחר שוחה קרוב מדי.",
+  "enlightened.configuration.lionTurtleSize": "גודל צב האריה (1 עד 10)"
 }

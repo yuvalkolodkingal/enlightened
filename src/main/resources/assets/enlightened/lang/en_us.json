@@ -566,9 +566,9 @@
   "enlightened.configuration.energybendingAvatarMinutes": "Avatar's energybending (minutes)",
   "enlightened.configuration.energybendingAirSeconds": "Airbender's energybending (seconds)",
   "enlightened.configuration.energybendingOtherSeconds": "Others' energybending (seconds)",
-  "enlightened.configuration.lionTurtleMoveSeconds": "Lion turtle: seconds per block swum",
+  "enlightened.configuration.lionTurtleMoveSeconds": "Lion turtle: seconds of rest between strokes",
   "entity.enlightened.lion_turtle": "Lion Turtle",
-  "command.enlightened.lion_turtle": "A lion turtle rises from the sea at %s %s %s.",
+  "command.enlightened.lion_turtle": "A lion turtle rises from the sea at %s %s %s (its island takes a few seconds to rise).",
   "message.enlightened.lion_turtle.no_building": "The lion turtle lets only a Hero of the Village build on its shell.",
   "lion_turtle.enlightened.says": "Lion Turtle: %s",
   "lion_turtle.enlightened.silent": "...The lion turtle looks at you and says nothing. (It speaks only to a Hero of the Village: one who saved a village from a raid.)",
@@ -576,5 +576,13 @@
   "lion_turtle.enlightened.gift": "In the era before the Avatar, we bent not the elements, but the energy within ourselves. I give you this: to take bending, and to give it back. But beware: if his energy is stronger than yours, it is you who will lose.",
   "lion_turtle.enlightened.again": "You already carry the art of energybending. Use it wisely.",
   "lion_turtle.enlightened.avatar_chakras": "You are the Avatar: your energy will flow through another only when all seven of your chakras are open.",
-  "lion_turtle.enlightened.home": "Build on my shell and live here if you wish, as people did long ago."
+  "lion_turtle.enlightened.home": "Build on my shell and live here if you wish, as people did long ago.",
+  "message.enlightened.fire_colour": "Your fire: %s",
+  "fire_colour.enlightened.normal": "the colour of fire",
+  "fire_colour.enlightened.blue": "blue",
+  "fire_colour.enlightened.rainbow": "rainbow",
+  "command.enlightened.fire_colour": "Fire colour set to %s.",
+  "command.enlightened.unknown_fire_colour": "No such fire colour: %s (normal, blue, rainbow or look).",
+  "command.enlightened.lion_turtle_near": "Another lion turtle swims too near.",
+  "enlightened.configuration.lionTurtleSize": "Lion turtle size (1 to 10)"
 }

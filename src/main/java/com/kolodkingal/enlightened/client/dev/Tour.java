@@ -363,6 +363,21 @@ public final class Tour {
             cosmic();
             return;
         }
+        if ("momo".equals(System.getProperty("enlightened.tour.only", ""))) {
+            server(p -> {
+                com.kolodkingal.enlightened.entity.FlyingLemurEntity momo = com.kolodkingal.enlightened.registry.ModEntities.LEMUR.get().create(p.serverLevel());
+                momo.moveTo(p.getX(), p.getY(), p.getZ() + 1);
+                p.serverLevel().addFreshEntity(momo);
+                momo.tame(p);
+                momo.setEntityOnShoulder(p);
+            }, 20);
+            STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+            camera(CameraType.THIRD_PERSON_FRONT, 10);
+            shot("220_momo_shoulder_front", 10);
+            camera(CameraType.THIRD_PERSON_BACK, 10);
+            shot("221_momo_shoulder_back", 10);
+            return;
+        }
         if ("v15".equals(System.getProperty("enlightened.tour.only", ""))) {
             fireColours();
             return;

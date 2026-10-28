@@ -20,7 +20,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -37,8 +36,8 @@ public class LionTurtleEntity extends PathfinderMob {
     private static final EntityDataAccessor<Integer> SCALE = SynchedEntityData.defineId(LionTurtleEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> GIFT_TIME = SynchedEntityData.defineId(LionTurtleEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> GIFT_TO = SynchedEntityData.defineId(LionTurtleEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> HEADING = SynchedEntityData.defineId(LionTurtleEntity.class, EntityDataSerializers.INT);
     private int island = -1;
-    private Direction heading = Direction.NORTH;
 
     public LionTurtleEntity(EntityType<? extends LionTurtleEntity> type, Level level) {
         super(type, level);
@@ -58,17 +57,20 @@ public class LionTurtleEntity extends PathfinderMob {
         builder.define(SCALE, 1);
         builder.define(GIFT_TIME, Integer.MIN_VALUE / 2);
         builder.define(GIFT_TO, -1);
+        builder.define(HEADING, Direction.NORTH.get2DDataValue());
     }
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(1, new LookAtPlayerGoal(this, Player.class, 96.0F, 1.0F));
+        // None: it does not turn its head to whoever is near (they stand behind it, on its shell, and its body would
+        // follow the head round); it always faces the way it swims.
     }
 
     /** Puts the head at the front of its island, facing its way, as big as the island is. */
     public void setIsland(LionTurtles.Island i) {
         this.island = i.id;
-        this.heading = i.heading;
+        entityData.set(HEADING, i.heading.get2DDataValue());
+        Direction heading = i.heading;
         setScale(i.scale);
         BlockPos head = LionTurtle.headPos(i.shape(), i.center, i.heading);
         float yaw = heading.toYRot();
@@ -102,7 +104,7 @@ public class LionTurtleEntity extends PathfinderMob {
     }
 
     public Direction heading() {
-        return heading;
+        return Direction.from2DDataValue(entityData.get(HEADING));
     }
 
     // ---- the gift ----
@@ -138,7 +140,14 @@ public class LionTurtleEntity extends PathfinderMob {
         super.tick();
         setDeltaMovement(Vec3.ZERO);
         noPhysics = true;
-        yBodyRot = heading.toYRot();
+        // Facing the way it swims, on the server and on every client alike.
+        float yaw = heading().toYRot();
+        setYRot(yaw);
+        yRotO = yaw;
+        yHeadRot = yaw;
+        yHeadRotO = yaw;
+        yBodyRot = yaw;
+        yBodyRotO = yaw;
     }
 
     @Override
@@ -197,7 +206,7 @@ public class LionTurtleEntity extends PathfinderMob {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("Island", island);
-        tag.putString("Heading", heading.getSerializedName());
+        tag.putString("Heading", heading().getSerializedName());
         tag.putInt("Scale", scale());
     }
 
@@ -206,7 +215,7 @@ public class LionTurtleEntity extends PathfinderMob {
         super.readAdditionalSaveData(tag);
         island = tag.contains("Island") ? tag.getInt("Island") : -1;
         Direction d = Direction.byName(tag.getString("Heading"));
-        heading = d != null && d.getAxis().isHorizontal() ? d : Direction.NORTH;
+        entityData.set(HEADING, (d != null && d.getAxis().isHorizontal() ? d : Direction.NORTH).get2DDataValue());
         setScale(tag.contains("Scale") ? tag.getInt("Scale") : 1);
     }
 }

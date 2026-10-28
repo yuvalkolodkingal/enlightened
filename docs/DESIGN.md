@@ -436,3 +436,12 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | Lightning | Drawn as Thor's lightning beam in Enhanced (`client/fx/ThorBolt`, from `ThorEffects.beam` and `EnergyGeometry`): a flowing midpoint-displacement path (`flowingPath`, a shape every 1.5 ticks blended into the next), a halo ribbon, tapered halo, blue and white-core strands, two loose strands and three forks cross-fading, flares at the hand and the strike. 16 ticks. The game's bolt from the sky is no longer spawned: the bolt leaves the hand. |
 | Bloodbending | No bolts from the hands (nor in suppression): a dark red throb round the one held. |
 | The sky bison's face | After Appa: a 30 × 20 × 16 head, a fringe of fur 30 × 6 × 5 hanging over the brow with a ragged cut-out edge and the arrow's point on it, small dark eyes with a glint under it, a grey-blue muzzle 26 × 11 × 10 filling the lower face with a rounded bridge, nostrils, a mouth line and a pale chin, shaggy cheek tufts. |
+
+## 24. The Avatar State beatable, the lion turtle's gift its own, Momo on the shoulder **(added in 1.4)**
+
+| | |
+|---|---|
+| The Avatar State | No longer cancels damage: `CommonEvents` scales each blow by `avatarStateDamageTaken` (0.3); `Chakras.applyBody` adds 8 armour and 0.7 knockback resistance while it lasts; bending damage × 2.5 (`damageFactor`), cooldowns halved. Bloodbending refuses an Avatar in the State (`blood_avatar`) and a grip breaks when he rises into it (`WaterBending.gripped`). |
+| Energybending | `Mastery.refusal`: a gift ability at level 0 cannot be learned with points (`learn.lion_turtle`); once the lion turtle gave it, it levels with points whatever the element. |
+| The lion turtle's head | No look goal; its yaw, head yaw and body yaw (and their previous values) are its heading's every tick on both sides; the heading is synced (`HEADING`), so the head never turns round toward players on its shell. |
+| Momo | `FlyingLemurEntity` is a `ShoulderRidingEntity`: `LandOnOwnersShoulderGoal`, and sneak + right-click with an empty hand by its owner (`setEntityOnShoulder`); the game drops it when he falls, flies or swims. `LemurShoulderLayer` draws it on the player's shoulder (the parrot's layer draws only parrots) from a lemur that never enters the world, seated. |

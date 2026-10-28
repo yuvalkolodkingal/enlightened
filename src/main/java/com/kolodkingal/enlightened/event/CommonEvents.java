@@ -143,8 +143,9 @@ public final class CommonEvents {
         float amount = event.getAmount();
         long now = victim.level().getGameTime();
         if (data.avatar(now) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            event.setCanceled(true);
-            return;
+            // The Avatar State is not invincible: it takes most of every blow away, and he can still be beaten.
+            amount *= avatarGuard();
+            event.setAmount(amount);
         }
         if (amount >= victim.getHealth() - 0.5F && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && Chakras.dire(victim, data)) {
             event.setCanceled(true);
@@ -247,6 +248,11 @@ public final class CommonEvents {
             event.setDamageMultiplier(0.0F);
             return;
         }
+    }
+
+    /** The share of a blow that reaches the Avatar in the Avatar State (config {@code avatarStateDamageTaken}). */
+    private static float avatarGuard() {
+        return (float) (EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.AVATAR_STATE_DAMAGE_TAKEN.get() : 0.3);
     }
 
     // ---- sessions ----

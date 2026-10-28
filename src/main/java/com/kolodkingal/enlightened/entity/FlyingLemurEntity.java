@@ -53,12 +53,14 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The flying lemur of the Air Nomads (Momo): a small winged creature of jungles, cherry groves and mountain meadows
  * that flits from tree to tree. Tamed with fruit (apples, berries, melon, glow berries: {@code enlightened:lemur_food},
- * one time in three), it follows its owner, sits when told (right-click) and breeds on the same fruit. It never falls
+ * one time in three), it follows its owner, sits when told (right-click), rides on his shoulder as a parrot does (it hops
+ * up by itself now and then, or when he sneaks and right-clicks it; it hops down when he jumps, flies or swims) and
+ * breeds on the same fruit. It never falls
  * hard, never drowns long (it lands), and chirps.
  *
  * <p>An airbender's lemur is his pet: the one whose death would sever his earthly tethers.
  */
-public class FlyingLemurEntity extends TamableAnimal {
+public class FlyingLemurEntity extends net.minecraft.world.entity.animal.ShoulderRidingEntity {
     private static final EntityDataAccessor<Boolean> DATA_FLYING = SynchedEntityData.defineId(FlyingLemurEntity.class, EntityDataSerializers.BOOLEAN);
 
     /** The flap of the wings, for the model (client), eased so it does not snap when it lands. */
@@ -106,6 +108,7 @@ public class FlyingLemurEntity extends TamableAnimal {
         goalSelector.addGoal(1, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(2, new BreedGoal(this, 1.0));
         goalSelector.addGoal(3, new TemptGoal(this, 1.2, Ingredient.of(ModTags.LEMUR_FOOD), false));
+        goalSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.LandOnOwnersShoulderGoal(this));
         goalSelector.addGoal(4, new FollowOwnerGoal(this, 1.0, 5.0F, 1.0F));
         goalSelector.addGoal(5, new FollowParentGoal(this, 1.1));
         goalSelector.addGoal(6, new LemurWanderGoal(this, 1.0));
@@ -211,6 +214,17 @@ public class FlyingLemurEntity extends TamableAnimal {
             }
             if (isFood(stack) && getAge() == 0 && canFallInLove()) {
                 return super.mobInteract(player, hand);
+            }
+            // Sneaking, with nothing in hand: up onto his shoulder.
+            if (player.isShiftKeyDown() && stack.isEmpty() && player instanceof net.minecraft.server.level.ServerPlayer owner) {
+                setOrderedToSit(false);
+                if (!setEntityOnShoulder(owner)) {
+                    owner.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.lemur.no_shoulder"), true);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            if (player.isShiftKeyDown() && stack.isEmpty()) {
+                return InteractionResult.SUCCESS;
             }
             if (!level().isClientSide) {
                 setOrderedToSit(!isOrderedToSit());

@@ -12,6 +12,7 @@ feeding in three tames it (hearts). A tamed lemur:
 
 * follows you, flying to keep up, and glides down to you;
 * **sits** when you right-click it with an empty hand, and stands again on the next click;
+* **rides on your shoulder** like a parrot: it hops up by itself now and then, or when you **sneak and right-click** it with an empty hand; it hops down when you jump, fly or swim;
 * can be leashed while standing;
 * heals when fed, and breeds with the same food: babies are small and grow up.
 

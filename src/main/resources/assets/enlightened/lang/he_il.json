@@ -584,5 +584,9 @@
   "command.enlightened.fire_colour": "צבע האש נקבע ל-%s.",
   "command.enlightened.unknown_fire_colour": "אין צבע אש כזה: %s (normal, blue, rainbow או look).",
   "command.enlightened.lion_turtle_near": "צב אריה אחר שוחה קרוב מדי.",
-  "enlightened.configuration.lionTurtleSize": "גודל צב האריה (1 עד 10)"
+  "enlightened.configuration.lionTurtleSize": "גודל צב האריה (1 עד 10)",
+  "message.enlightened.lemur.no_shoulder": "שתי הכתפיים שלך תפוסות.",
+  "message.enlightened.water.blood_avatar": "%s במצב האווטאר: הדם שלו לא נענה לך.",
+  "message.enlightened.learn.lion_turtle": "את %s אי אפשר ללמוד: רק צב אריה נותן אותה.",
+  "enlightened.configuration.avatarStateDamageTaken": "מצב האווטאר: החלק מכל מכה שעובר"
 }

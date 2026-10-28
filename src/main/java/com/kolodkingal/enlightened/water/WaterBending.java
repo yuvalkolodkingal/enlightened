@@ -609,7 +609,17 @@ public final class WaterBending {
             return null;
         }
         Entity e = p.serverLevel().getEntity(grip.target);
+        if (e instanceof ServerPlayer held && avatarState(held)) {
+            // The Avatar who rises into the Avatar State breaks the grip on his blood.
+            held.removeEffect(ModEffects.BLOODBENT);
+            return null;
+        }
         return e instanceof LivingEntity living && living.isAlive() ? living : null;
+    }
+
+    /** Whether he is in the Avatar State, where no bloodbender can take hold of him. */
+    static boolean avatarState(ServerPlayer p) {
+        return Benders.get(p).avatar(p.level().getGameTime());
     }
 
     static void letGo(Cast c, boolean cooldown) {
@@ -656,6 +666,10 @@ public final class WaterBending {
             }
             if (!AreaTargets.mayHurt(p, target)) {
                 c.refuse("message.enlightened.not_allowed");
+                return;
+            }
+            if (target instanceof ServerPlayer other && avatarState(other)) {
+                c.refuse("message.enlightened.water.blood_avatar", other.getDisplayName());
                 return;
             }
             if (target instanceof ServerPlayer other && Benders.is(other, Element.WATER) && Mastery.strength(other) >= Mastery.strength(p)) {

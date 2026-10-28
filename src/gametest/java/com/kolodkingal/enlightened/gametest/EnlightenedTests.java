@@ -6,6 +6,7 @@ import com.kolodkingal.enlightened.air.Projection;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.Benders;
 import com.kolodkingal.enlightened.bending.BendingData;
+import com.kolodkingal.enlightened.bending.BendingTicker;
 import com.kolodkingal.enlightened.bending.Element;
 import com.kolodkingal.enlightened.bending.Mastery;
 import com.kolodkingal.enlightened.bending.TempBlocks;
@@ -757,6 +758,58 @@ public final class EnlightenedTests {
                 "her fire balls carry the rainbow");
         data.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_NORMAL);
         check(!com.kolodkingal.enlightened.bending.Variants.blueFire(data), "and the colour of fire, if she wants it");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void energybendingIsOnlyTheLionTurtlesToGive(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer avatar = f.player(10, FLOOR, 8);
+        BendingData data = f.bender(avatar, Element.AVATAR, Ability.AVATAR_STATE, 1);
+        data.setPoints(50);
+        check(!com.kolodkingal.enlightened.bending.Mastery.canLearn(data, Ability.ENERGYBENDING), "no points buy energybending");
+        check(!com.kolodkingal.enlightened.bending.Mastery.canLearn(data, Ability.ENERGY_RESTORE), "nor its giving back");
+        data.setLevel(Ability.ENERGYBENDING, 1);
+        check(com.kolodkingal.enlightened.bending.Mastery.canLearn(data, Ability.ENERGYBENDING), "once given, it grows with points");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void theAvatarStateIsStrongButNotInvincible(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer avatar = f.player(10, FLOOR, 8);
+        BendingData data = f.bender(avatar, Element.AVATAR, Ability.AVATAR_STATE, 1);
+        data.setAvatarUntil(avatar.level().getGameTime() + 400);
+        BendingTicker.applyPassives(avatar, data);
+        float before = avatar.getHealth();
+        avatar.hurt(avatar.damageSources().generic(), 10.0F);
+        float lost = before - avatar.getHealth();
+        check(lost > 0.0F, "a blow still hurts him");
+        check(lost <= 3.01F, "but takes little (" + lost + " of 10)");
+        // No bloodbender takes hold of him.
+        ServerPlayer hama = f.player(10, FLOOR, 10);
+        f.bender(hama, Element.WATER, Ability.BLOODBENDING, 3);
+        f.lookAt(hama, avatar);
+        f.press(hama, Ability.BLOODBENDING, false);
+        check(!avatar.hasEffect(com.kolodkingal.enlightened.registry.ModEffects.BLOODBENT), "his blood does not answer");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void momoRidesOnHisOwnersShoulder(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer owner = f.player(10, FLOOR, 8);
+        com.kolodkingal.enlightened.entity.FlyingLemurEntity momo = helper.spawn(com.kolodkingal.enlightened.registry.ModEntities.LEMUR.get(),
+                new net.minecraft.world.phys.Vec3(10, FLOOR, 9));
+        momo.tame(owner);
+        owner.setShiftKeyDown(true);
+        for (int i = 0; i < 120; i++) {
+            momo.tick();
+        }
+        momo.mobInteract(owner, net.minecraft.world.InteractionHand.MAIN_HAND);
+        check(momo.isRemoved(), "Momo hopped up");
+        check("enlightened:flying_lemur".equals(owner.getShoulderEntityLeft().getString("id"))
+                || "enlightened:flying_lemur".equals(owner.getShoulderEntityRight().getString("id")), "and sits on his shoulder");
         helper.succeed();
     }
 

@@ -47,7 +47,7 @@ path, and it catches you again at its start.
 
 ## The Avatar State
 
-Only the Avatar has it. For `avatarStateLengthSeconds` (**two minutes**): nothing hurts you, your bending is **twice as strong** and
+Only the Avatar has it. For `avatarStateLengthSeconds` (**two minutes**): you are not invincible, but each blow reaches you at a **third** (`avatarStateDamageTaken`), with 8 more armour and steady against knockback, and no bloodbender can hold you; your bending is **two and a half times as strong** and
 its cooldowns **half**, every cooldown is cleared at the start, you move 30% faster, never drown, burn or fall, and
 glow with your element's light; everyone near is thrown back as you rise. The server announces who entered it.
 

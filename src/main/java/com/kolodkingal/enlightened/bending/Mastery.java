@@ -80,6 +80,15 @@ public final class Mastery {
 
     /** Why the next level of an ability cannot be learned, or null if it can. */
     public static String refusal(BendingData data, Ability a) {
+        // Energybending and its giving back are the lion turtle's to give: no points buy them until it has.
+        if (a.gift() && data.level(a) < 1) {
+            return "message.enlightened.learn.lion_turtle";
+        }
+        if (a.gift()) {
+            // Once given, they grow with points like any art, whatever the element.
+            return data.level(a) >= Ability.MAX_LEVEL ? "message.enlightened.learn.mastered"
+                    : data.points() < Ability.cost(data.level(a) + 1) ? "message.enlightened.learn.points" : null;
+        }
         if (!data.element().commands(a.element)) {
             return "message.enlightened.learn.wrong_element";
         }

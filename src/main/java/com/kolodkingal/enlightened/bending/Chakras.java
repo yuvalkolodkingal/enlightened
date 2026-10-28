@@ -32,6 +32,8 @@ public final class Chakras {
     public static final int COUNT = 7;
     private static final ResourceLocation HEALTH_ID = Enlightened.id("chakra_health");
     private static final ResourceLocation AVATAR_SPEED_ID = Enlightened.id("avatar_speed");
+    private static final ResourceLocation AVATAR_STEADY_ID = Enlightened.id("avatar_steady");
+    private static final ResourceLocation AVATAR_ARMOR_ID = Enlightened.id("avatar_armor");
 
     private static int seconds(net.neoforged.neoforge.common.ModConfigSpec.IntValue v, int fallback) {
         return EnlightenedConfig.SPEC.isLoaded() ? v.get() : fallback;
@@ -54,10 +56,10 @@ public final class Chakras {
 
     // ---- what the open chakras give ----
 
-    /** The factor on bending damage: +5 percent for the third and sixth chakra, doubled in the Avatar State. */
+    /** The factor on bending damage: +5 percent for the third and sixth chakra, two and a half times in the Avatar State. */
     public static float damageFactor(BendingData data, long now) {
         float f = 1.0F + (data.chakras() >= 3 ? 0.05F : 0.0F) + (data.chakras() >= 6 ? 0.05F : 0.0F);
-        return data.avatar(now) ? f * 2.0F : f;
+        return data.avatar(now) ? f * 2.5F : f;
     }
 
     /** The factor on cooldowns: -5 percent for the second and fifth chakra, halved in the Avatar State. */
@@ -73,6 +75,10 @@ public final class Chakras {
         boolean avatar = data.avatar(player.level().getGameTime());
         BendingTicker.setModifier(player, Attributes.MOVEMENT_SPEED, AVATAR_SPEED_ID, 0.3, avatar,
                 net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        // The Avatar State: not invincible, but hard to move and hard to hurt (most of each blow is taken away in
+        // CommonEvents), his armour stronger.
+        BendingTicker.setModifier(player, Attributes.KNOCKBACK_RESISTANCE, AVATAR_STEADY_ID, 0.7, avatar);
+        BendingTicker.setModifier(player, Attributes.ARMOR, AVATAR_ARMOR_ID, 8.0, avatar);
     }
 
     // ---- meditation ----

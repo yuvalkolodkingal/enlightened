@@ -584,5 +584,9 @@
   "command.enlightened.fire_colour": "Fire colour set to %s.",
   "command.enlightened.unknown_fire_colour": "No such fire colour: %s (normal, blue, rainbow or look).",
   "command.enlightened.lion_turtle_near": "Another lion turtle swims too near.",
-  "enlightened.configuration.lionTurtleSize": "Lion turtle size (1 to 10)"
+  "enlightened.configuration.lionTurtleSize": "Lion turtle size (1 to 10)",
+  "message.enlightened.lemur.no_shoulder": "Both your shoulders are taken.",
+  "message.enlightened.water.blood_avatar": "%s is in the Avatar State: his blood will not answer you.",
+  "message.enlightened.learn.lion_turtle": "%s is not learned: only a lion turtle gives it.",
+  "enlightened.configuration.avatarStateDamageTaken": "Avatar State: share of each blow taken"
 }

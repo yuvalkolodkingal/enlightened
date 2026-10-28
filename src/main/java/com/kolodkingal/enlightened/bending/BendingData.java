@@ -254,7 +254,12 @@ public final class BendingData {
     }
 
     public boolean has(Ability a) {
-        return element.commands(a.element) && levels[a.ordinal()] > 0;
+        return (element.commands(a.element) || a.gift()) && levels[a.ordinal()] > 0;
+    }
+
+    /** Whether he bends at all: an element, or the lion turtle's gift of energybending. */
+    public boolean canBend() {
+        return element.bends() || levels[Ability.ENERGYBENDING.ordinal()] > 0 || levels[Ability.ENERGY_RESTORE.ordinal()] > 0;
     }
 
     public void setLevel(Ability a, int level) {

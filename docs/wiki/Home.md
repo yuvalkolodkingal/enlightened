@@ -31,6 +31,7 @@ same authors, and plays the same way.
 * [Items and Crafting](Items-and-Crafting): the scrolls, the Water Skin, the Air Glider, the Meditation Point
 * [The Flying Lemur](Flying-Lemur): a tameable winged lemur, like Momo
 * [The Southern Air Temple](Southern-Air-Temple): the temple on the mountains, its sky bison, Guru Pathik and Momo
+* [The Lion Turtle](Lion-Turtle): an island that swims, energybending for a Hero of the Village, and a home on its shell
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)
 * [Building from Source](Building-from-Source)

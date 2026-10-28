@@ -56,5 +56,8 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 | `guruRequired` | true | Whether the chakras open only for a bender Guru Pathik has taught. |
 | `combos` | true | Whether sequences of casts trigger the combos. |
 | `comboWindowTicks` | 60 | Ticks between the casts of a combo. |
-| `energybendingMinutes` | 30 | Minutes the Avatar's energybending takes a bender's bending for. |
+| `energybendingAvatarMinutes` | 120 | Minutes the Avatar's energybending (all seven chakras open) takes a bending for. |
+| `energybendingAirSeconds` | 360 | Seconds an airbender's energybending (the lion turtle's gift) takes a bending for. |
+| `energybendingOtherSeconds` | 180 | Seconds anyone else's energybending (bender or not) takes a bending for. |
+| `lionTurtleMoveSeconds` | 40 | Seconds between each block a [lion turtle](Lion-Turtle) swims while a player is near it. |
 | `steps` | true | Whether a double tap of a direction dashes a bender who learned his element's step. |

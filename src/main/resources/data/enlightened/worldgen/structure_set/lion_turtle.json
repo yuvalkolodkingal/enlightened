@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "enlightened:lion_turtle",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 56,
+    "separation": 24,
+    "salt": 519327714
+  }
+}

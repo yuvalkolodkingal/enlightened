@@ -68,6 +68,33 @@ public final class CommonEvents {
         EnlightenedCommand.register(event.getDispatcher(), event.getBuildContext());
     }
 
+    // ---- the lion turtle's shell: only a Hero of the Village builds on it ----
+
+    @SubscribeEvent
+    public static void onBreak(net.neoforged.neoforge.event.level.BlockEvent.BreakEvent event) {
+        if (!onShell(event.getPlayer(), event.getLevel(), event.getPos())) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlace(net.neoforged.neoforge.event.level.BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof Player player && !onShell(player, event.getLevel(), event.getPos())) {
+            event.setCanceled(true);
+        }
+    }
+
+    /** Whether the player may change the block: anywhere off a lion turtle, and on one only if it lets him. */
+    private static boolean onShell(Player player, net.minecraft.world.level.LevelAccessor level, net.minecraft.core.BlockPos pos) {
+        if (player == null || !(level instanceof net.minecraft.server.level.ServerLevel server)
+                || com.kolodkingal.enlightened.world.LionTurtle.islandAt(server, pos) == null
+                || com.kolodkingal.enlightened.world.LionTurtle.mayBuild(player)) {
+            return true;
+        }
+        player.displayClientMessage(Component.translatable("message.enlightened.lion_turtle.no_building").withStyle(ChatFormatting.GRAY), true);
+        return false;
+    }
+
     // ---- deaths: experience for a kill with bending; an airbender's pet ----
 
     @SubscribeEvent

@@ -49,8 +49,14 @@ public final class ModEntities {
             () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.SkyBisonEntity::new, MobCategory.CREATURE)
                     .sized(3.0F, 2.5F).eyeHeight(2.0F).clientTrackingRange(12).build("sky_bison"));
 
+    /** A lion turtle's head, at the front of the island of its shell, which swims and carries all on it. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.LionTurtleEntity>> LION_TURTLE = ENTITIES.register("lion_turtle",
+            () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.LionTurtleEntity>of(com.kolodkingal.enlightened.entity.LionTurtleEntity::new, MobCategory.MISC)
+                    .sized(8.0F, 9.0F).eyeHeight(7.0F).clientTrackingRange(16).updateInterval(20).fireImmune().build("lion_turtle"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
         event.put(SKY_BISON.get(), com.kolodkingal.enlightened.entity.SkyBisonEntity.createAttributes().build());
+        event.put(LION_TURTLE.get(), com.kolodkingal.enlightened.entity.LionTurtleEntity.createAttributes().build());
         event.put(GURU_PATHIK.get(), com.kolodkingal.enlightened.entity.GuruPathikEntity.createAttributes().build());
         event.put(MEDITATING_BODY.get(), MeditatingBodyEntity.createAttributes().build());
         event.put(LEMUR.get(), FlyingLemurEntity.createAttributes().build());

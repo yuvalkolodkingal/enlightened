@@ -679,16 +679,64 @@ public final class EnlightenedTests {
     public static void energybendingTakesAndGivesBackBending(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer avatar = f.player(10, FLOOR, 8, GameType.CREATIVE);
-        f.bender(avatar, Element.AVATAR, Ability.ENERGYBENDING, 3, Ability.ROCK_THROW, 3, Ability.FIRE_BALL, 3, Ability.AIR_BLAST, 3);
+        BendingData mine = f.bender(avatar, Element.AVATAR, Ability.ENERGYBENDING, 3, Ability.ENERGY_RESTORE, 1, Ability.ROCK_THROW, 3,
+                Ability.FIRE_BALL, 3, Ability.AIR_BLAST, 3);
         ServerPlayer bender = f.player(10, FLOOR, 10);
         BendingData theirs = f.bender(bender, Element.FIRE, Ability.FIRE_BALL, 1);
         f.lookAt(avatar, bender);
-        f.press(avatar, Ability.ENERGYBENDING, false);
         long now = avatar.level().getGameTime();
-        check(theirs.suppressed(now), "the firebender's bending is taken");
-        Benders.get(avatar).clearCooldowns();
+        mine.setChakras(6);
         f.press(avatar, Ability.ENERGYBENDING, false);
-        check(!theirs.suppressed(now), "a second touch gives it back");
+        check(!theirs.suppressed(now), "with a chakra closed the Avatar cannot bend energy");
+        mine.setChakras(7);
+        mine.clearCooldowns();
+        f.press(avatar, Ability.ENERGYBENDING, false);
+        check(theirs.suppressed(now), "the firebender's bending is taken");
+        long left = theirs.suppressedUntil() - now;
+        check(left > 119 * 1200L && left <= 120 * 1200L, "for two hours (" + left + " ticks)");
+        mine.clearCooldowns();
+        f.press(avatar, Ability.ENERGY_RESTORE, false);
+        check(!theirs.suppressed(now), "the second art gives it back");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void theLionTurtlesGiftTakesForMinutesAndTurnsOnTheWeak(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        long now = helper.getLevel().getGameTime();
+        // An airbender with the gift takes a bending for six minutes.
+        ServerPlayer air = f.player(4, FLOOR, 4);
+        f.bender(air, Element.AIR, Ability.AIR_BLAST, 3, Ability.ENERGYBENDING, 1, Ability.ENERGY_RESTORE, 1);
+        ServerPlayer fire = f.player(4, FLOOR, 6);
+        BendingData burnt = f.bender(fire, Element.FIRE, Ability.FIRE_BALL, 1);
+        f.lookAt(air, fire);
+        f.press(air, Ability.ENERGYBENDING, false);
+        check(burnt.suppressed(now), "the airbender took it (strength " + com.kolodkingal.enlightened.bending.Mastery.energyStrength(air)
+                + " against " + com.kolodkingal.enlightened.bending.Mastery.energyStrength(fire) + ")");
+        long left = burnt.suppressedUntil() - now;
+        check(left > 350 * 20L && left <= 360 * 20L, "for six minutes (" + left + " ticks)");
+        Benders.get(air).clearCooldowns();
+        f.press(air, Ability.ENERGY_RESTORE, false);
+        check(!burnt.suppressed(now), "and gave it back");
+        // Someone who bends nothing, given the gift, takes it for three.
+        ServerPlayer plain = f.player(14, FLOOR, 4);
+        BendingData giver = f.bender(plain, Element.NONE, Ability.ENERGYBENDING, 1, Ability.ENERGY_RESTORE, 1);
+        check(giver.canBend() && giver.slotOf(Ability.ENERGYBENDING) >= 0, "the gift sits on a key though he bends nothing");
+        ServerPlayer earth = f.player(14, FLOOR, 6);
+        BendingData stoned = f.bender(earth, Element.EARTH, Ability.ROCK_THROW, 1);
+        f.lookAt(plain, earth);
+        f.press(plain, Ability.ENERGYBENDING, false);
+        left = stoned.suppressedUntil() - now;
+        check(left > 170 * 20L && left <= 180 * 20L, "for three minutes (" + left + " ticks)");
+        // Against a stronger energy it turns: the airbender loses his own bending.
+        ServerPlayer master = f.player(2, FLOOR, 4);
+        BendingData strong = f.bender(master, Element.WATER, Ability.WATER_WHIP, 5, Ability.OCTOPUS_FORM, 5);
+        BendingData weak = Benders.get(air);
+        weak.clearCooldowns();
+        f.lookAt(air, master);
+        f.press(air, Ability.ENERGYBENDING, false);
+        check(!strong.suppressed(now), "the master keeps his bending");
+        check(weak.suppressed(now), "the weaker one lost his own");
         helper.succeed();
     }
 

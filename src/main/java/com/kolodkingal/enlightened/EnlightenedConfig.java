@@ -84,7 +84,10 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue AVATAR_STATE_COOLDOWN_SECONDS;
     public static final ModConfigSpec.BooleanValue AVATAR_STATE_ON_LOW_HEALTH;
     public static final ModConfigSpec.BooleanValue GURU_REQUIRED;
-    public static final ModConfigSpec.IntValue ENERGYBENDING_MINUTES;
+    public static final ModConfigSpec.IntValue ENERGYBENDING_AVATAR_MINUTES;
+    public static final ModConfigSpec.IntValue ENERGYBENDING_AIR_SECONDS;
+    public static final ModConfigSpec.IntValue ENERGYBENDING_OTHER_SECONDS;
+    public static final ModConfigSpec.IntValue LION_TURTLE_MOVE_SECONDS;
     public static final ModConfigSpec.BooleanValue COMBOS;
     public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
     public static final ModConfigSpec.BooleanValue STEPS;
@@ -185,7 +188,14 @@ public final class EnlightenedConfig {
                 .define("avatarStateOnLowHealth", true);
         GURU_REQUIRED = B.comment("Whether the chakras open only for a bender Guru Pathik has taught (he meditates at the Southern Air Temple).")
                 .define("guruRequired", true);
-        ENERGYBENDING_MINUTES = B.comment("Minutes the Avatar's energybending takes a bender's bending for.").defineInRange("energybendingMinutes", 30, 1, 100000);
+        ENERGYBENDING_AVATAR_MINUTES = B.comment("Minutes the Avatar's energybending (all seven chakras open) takes a bender's bending for.")
+                .defineInRange("energybendingAvatarMinutes", 120, 1, 100000);
+        ENERGYBENDING_AIR_SECONDS = B.comment("Seconds an airbender's energybending (the lion turtle's gift) takes a bending for.")
+                .defineInRange("energybendingAirSeconds", 360, 1, 1000000);
+        ENERGYBENDING_OTHER_SECONDS = B.comment("Seconds the energybending of anyone else (bender or not) takes a bending for.")
+                .defineInRange("energybendingOtherSeconds", 180, 1, 1000000);
+        LION_TURTLE_MOVE_SECONDS = B.comment("Seconds between each block a lion turtle swims, while a player is near it.")
+                .defineInRange("lionTurtleMoveSeconds", 40, 5, 3600);
         COMBOS = B.comment("Whether sequences of casts trigger the combos (Twister, Earth Dome, Ice Wave, Fire Spin...).").define("combos", true);
         COMBO_WINDOW_TICKS = B.comment("Ticks between the casts of a combo (60 = 3 s).").defineInRange("comboWindowTicks", 60, 10, 600);
         STEPS = B.comment("Whether a double tap of a direction dashes a bender who learned his element's step.").define("steps", true);

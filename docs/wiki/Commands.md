@@ -16,6 +16,7 @@ All need operator rights (permission level 2).
 | `/enlightened reset <players>` | Takes back every level but the starter's and refunds the points. |
 | `/enlightened avatar <players> <enter\|leave\|rest>` | Enters or leaves the [Avatar State](Chakras-and-the-Avatar-State) (whatever the chakras), or ends its rest. Avatars only. |
 | `/enlightened guru <players> <taught\|untaught>` | Marks players as taught (or not) by Guru Pathik. |
+| `/enlightened lionturtle [pos]` | Raises a [lion turtle](Lion-Turtle) and its island: at sea level where you stand, or with the sea's surface at the given position; it faces as you face. |
 | `/enlightened temple [pos]` | Builds the [Southern Air Temple](Southern-Air-Temple) with its terrace floor at the position (default: where you stand). |
 | `/enlightened chakras <players> <0-7>` | Sets how many [chakras](Chakras-and-the-Avatar-State) are open. |
 | `/enlightened info [player]` | Element, points, experience, points spent, kills, and every learned ability with its level and slot. |

@@ -107,7 +107,8 @@ public enum Ability {
     SPIRITBENDING(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
     ELEMENTAL_SPHERE(Element.AVATAR, Gate.NONE, Kind.TOGGLE, false),
     // Added last, so the arts before it keep their places in saved data.
-    FROST_WALK(Element.WATER, Gate.NONE, Kind.TOGGLE, false);
+    FROST_WALK(Element.WATER, Gate.NONE, Kind.TOGGLE, false),
+    ENERGY_RESTORE(Element.AVATAR, Gate.NONE, Kind.PRESS, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }
@@ -177,5 +178,13 @@ public enum Ability {
             }
         }
         return null;
+    }
+
+    /**
+     * The lion turtle's gift: energybending and its giving back. Any player the lion turtle has given them to holds
+     * them, bender or not, whatever his element (the Avatar learns them as his own arts too).
+     */
+    public boolean gift() {
+        return this == ENERGYBENDING || this == ENERGY_RESTORE;
     }
 }

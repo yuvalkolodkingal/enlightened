@@ -29,14 +29,25 @@ public final class Loadout {
                     Ability.LIGHTNING, Ability.LIGHTNING_REDIRECT, Ability.FIRE_HEALING, Ability.FIRE_JET, Ability.FIRE_SHIELD,
                     Ability.WALL_OF_FIRE, Ability.BLAZE, Ability.COMBUSTION, Ability.HEAT_CONTROL, Ability.ILLUMINATION, Ability.PALM_FORGE);
             case AVATAR -> {
-                List<Ability> all = new java.util.ArrayList<>(List.of(Ability.AVATAR_STATE, Ability.ENERGYBENDING, Ability.SPIRITBENDING, Ability.ELEMENTAL_SPHERE));
+                List<Ability> all = new java.util.ArrayList<>(List.of(Ability.AVATAR_STATE, Ability.ENERGYBENDING, Ability.ENERGY_RESTORE, Ability.SPIRITBENDING, Ability.ELEMENTAL_SPHERE));
                 for (Element e : Element.FOUR) {
                     all.addAll(order(e));
                 }
                 yield all;
             }
-            case NONE -> List.of();
+            case NONE -> List.of(Ability.ENERGYBENDING, Ability.ENERGY_RESTORE);
         };
+    }
+
+    /** The element's order, and the lion turtle's gift after it (for a bender it gave energybending to). */
+    private static List<Ability> withGift(Element element) {
+        List<Ability> list = new java.util.ArrayList<>(order(element));
+        for (Ability a : List.of(Ability.ENERGYBENDING, Ability.ENERGY_RESTORE)) {
+            if (!list.contains(a)) {
+                list.add(a);
+            }
+        }
+        return list;
     }
 
     /** Lays the learned abilities out in the element's default order. */
@@ -45,7 +56,7 @@ public final class Loadout {
             data.setSlot(s, null);
         }
         int slot = 0;
-        for (Ability a : order(data.element())) {
+        for (Ability a : withGift(data.element())) {
             if (data.has(a) && a.bindable() && slot < BendingData.SLOTS) {
                 data.setSlot(slot++, a);
             }
@@ -54,7 +65,7 @@ public final class Loadout {
 
     /** Puts a newly learned ability on its default slot if that is free, else on the first free slot (if any). */
     public static void placeFree(BendingData data, Ability a) {
-        List<Ability> order = order(data.element());
+        List<Ability> order = withGift(data.element());
         int wanted = order.indexOf(a);
         if (wanted >= 0 && wanted < BendingData.SLOTS && data.slot(wanted) == null) {
             data.setSlot(wanted, a);

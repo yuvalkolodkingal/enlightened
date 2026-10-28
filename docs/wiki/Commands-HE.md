@@ -18,6 +18,7 @@
 | `/enlightened reset <players>` | לוקח בחזרה כל רמה מלבד של יכולת הפתיחה ומחזיר את הנקודות. |
 | `/enlightened avatar <players> <enter\|leave\|rest>` | נכנס או יוצא מ[מצב האווטאר](Chakras-and-the-Avatar-State-HE) (בלי קשר לצ'אקרות), או מסיים את המנוחה שלו. אווטארים בלבד. |
 | `/enlightened guru <players> <taught\|untaught>` | מסמן שחקנים כתלמידים (או לא) של גורו פאתיק. |
+| `/enlightened lionturtle [pos]` | מעלה [צב אריה](Lion-Turtle-HE) ואת האי שלו: בגובה פני הים היכן שאתה עומד, או עם פני הים במיקום הנתון; הוא פונה לאן שאתה פונה. |
 | `/enlightened temple [pos]` | בונה את [מקדש האוויר הדרומי](Southern-Air-Temple-HE) עם רצפת הטרסה במיקום (ברירת מחדל: היכן שאתה עומד). |
 | `/enlightened chakras <players> <0-7>` | קובע כמה [צ'אקרות](Chakras-and-the-Avatar-State-HE) פתוחות. |
 | `/enlightened info [player]` | יסוד, נקודות, ניסיון, נקודות שהושקעו, הריגות, וכל יכולת שנלמדה עם הרמה והמשבצת שלה. |

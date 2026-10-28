@@ -38,6 +38,7 @@ public final class AvatarBending {
         logic.put(Ability.AVATAR_STATE, new State());
         logic.put(Ability.ENERGYBENDING, new Energy());
         logic.put(Ability.SPIRITBENDING, new Spirit());
+        logic.put(Ability.ENERGY_RESTORE, new Restore());
         logic.put(Ability.ELEMENTAL_SPHERE, new Sphere());
     }
 
@@ -103,11 +104,78 @@ public final class AvatarBending {
     }
 
     /**
-     * Energybending: a touch to forehead and chest. A bender's bending is taken for {@code avatar.energybendingMinutes};
-     * one whose bending was taken (by this, or by a bloodbender) gets it back. A will stronger than the Avatar's turns
-     * the energy on him: he is stunned, and the touched one is unharmed.
+     * Energybending, the lion turtle's gift (and the Avatar's art): a touch to forehead and chest takes a bender's
+     * bending, for {@code avatar.energybendingAirSeconds} (six minutes) when an airbender bends it,
+     * {@code avatar.energybendingOtherSeconds} (three) for anyone else, bender or not, and
+     * {@code avatar.energybendingAvatarMinutes} (two hours) for the Avatar, who must have all seven chakras open. A will
+     * stronger than his own ({@link Mastery#energyStrength}) turns the energy on him: his own bending is taken for as
+     * long, and the touched one is unharmed. In the Avatar State no will is stronger.
      */
     static final class Energy implements AbilityLogic {
+        @Override
+        public void key(Cast c, boolean down) {
+            if (!down || !c.ready()) {
+                return;
+            }
+            ServerPlayer p = c.player;
+            BendingData mine = c.data;
+            long now = c.now();
+            if (mine.element() == com.kolodkingal.enlightened.bending.Element.AVATAR && mine.chakras() < Chakras.COUNT) {
+                c.refuse("message.enlightened.energy.chakras");
+                return;
+            }
+            if (!(aimed(p, 2.6) instanceof ServerPlayer other) || !Benders.get(other).element().bends()) {
+                c.refuse("message.enlightened.avatar.energy_nobody");
+                return;
+            }
+            BendingData theirs = Benders.get(other);
+            if (theirs.suppressed(now)) {
+                c.refuse("message.enlightened.energy.already", other.getDisplayName());
+                return;
+            }
+            ServerLevel level = c.level();
+            Fx.send(level, Fx.ENERGYBEND, p.position(), other.position(), c.color(), 0, other.getId());
+            level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 0.6F);
+            long ticks = duration(mine);
+            if (Mastery.energyStrength(other) > Mastery.energyStrength(p) && !mine.avatar(now)) {
+                // The will of the touched one is the stronger: the energy turns, and it is his own bending that goes.
+                mine.setSuppressedUntil(now + ticks);
+                BendingTicker.endAll(p, mine);
+                BendingTicker.applyPassives(p, mine);
+                p.addEffect(new MobEffectInstance(ModEffects.STUNNED, 60, 0, false, true, true));
+                Benders.syncIfDirty(p);
+                p.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_turned", minutes(ticks)).withStyle(ChatFormatting.RED), false);
+                return;
+            }
+            theirs.setSuppressedUntil(now + ticks);
+            BendingTicker.endAll(other, theirs);
+            BendingTicker.applyPassives(other, theirs);
+            Benders.syncIfDirty(other);
+            p.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_taken", other.getDisplayName()).withStyle(ChatFormatting.AQUA), true);
+            other.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_lost", p.getDisplayName(), minutes(ticks)).withStyle(ChatFormatting.RED), true);
+            level.sendParticles(ParticleTypes.END_ROD, other.getX(), other.getY() + 1.0, other.getZ(), 30, 0.4, 0.8, 0.4, 0.05);
+            c.exhaust(0.6F);
+            c.cooldownSeconds(30);
+        }
+
+        /** How long the energybending of this bender takes a bending for, in ticks. */
+        static long duration(BendingData mine) {
+            boolean loaded = EnlightenedConfig.SPEC.isLoaded();
+            return switch (mine.element()) {
+                case AVATAR -> (loaded ? EnlightenedConfig.ENERGYBENDING_AVATAR_MINUTES.get() : 120) * 1200L;
+                case AIR -> (loaded ? EnlightenedConfig.ENERGYBENDING_AIR_SECONDS.get() : 360) * 20L;
+                default -> (loaded ? EnlightenedConfig.ENERGYBENDING_OTHER_SECONDS.get() : 180) * 20L;
+            };
+        }
+
+        private static String minutes(long ticks) {
+            long seconds = ticks / 20;
+            return seconds % 60 == 0 ? String.valueOf(seconds / 60) : String.format(java.util.Locale.ROOT, "%.1f", seconds / 60.0);
+        }
+    }
+
+    /** Energybending given back: a touch, and one whose bending was taken (by energybending or a bloodbender) has it again. */
+    static final class Restore implements AbilityLogic {
         @Override
         public void key(Cast c, boolean down) {
             if (!down || !c.ready()) {
@@ -118,33 +186,20 @@ public final class AvatarBending {
                 c.refuse("message.enlightened.avatar.energy_nobody");
                 return;
             }
-            ServerLevel level = c.level();
             BendingData theirs = Benders.get(other);
-            long now = c.now();
-            Fx.send(level, Fx.ENERGYBEND, p.position(), other.position(), c.color(), 0, other.getId());
-            level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 0.6F);
-            if (theirs.suppressed(now)) {
-                theirs.setSuppressedUntil(0);
-                Benders.syncIfDirty(other);
-                p.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_given", other.getDisplayName()).withStyle(ChatFormatting.AQUA), true);
-                other.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_back").withStyle(ChatFormatting.AQUA), true);
-            } else if (Mastery.strength(other) > Mastery.strength(p) + 2 * (c.level - 1) && !c.data.avatar(now)) {
-                // The will of the touched one is the stronger: the Avatar's own energy is bent.
-                p.addEffect(new MobEffectInstance(ModEffects.STUNNED, 60, 0, false, true, true));
-                p.hurt(p.damageSources().magic(), 4.0F);
-                c.refuse("message.enlightened.avatar.energy_turned");
-            } else {
-                int minutes = EnlightenedConfig.SPEC.isLoaded() ? EnlightenedConfig.ENERGYBENDING_MINUTES.get() : 30;
-                theirs.setSuppressedUntil(now + minutes * 1200L);
-                BendingTicker.endAll(other, theirs);
-                BendingTicker.applyPassives(other, theirs);
-                Benders.syncIfDirty(other);
-                p.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_taken", other.getDisplayName()).withStyle(ChatFormatting.AQUA), true);
-                other.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_lost", minutes).withStyle(ChatFormatting.RED), true);
+            if (!theirs.suppressed(c.now())) {
+                c.refuse("message.enlightened.energy.not_taken", other.getDisplayName());
+                return;
             }
-            level.sendParticles(ParticleTypes.END_ROD, other.getX(), other.getY() + 1.0, other.getZ(), 30, 0.4, 0.8, 0.4, 0.05);
-            c.exhaust(0.6F);
-            c.cooldownSeconds(c.by(60, 45, 30));
+            theirs.setSuppressedUntil(0);
+            Benders.syncIfDirty(other);
+            ServerLevel level = c.level();
+            Fx.send(level, Fx.ENERGYBEND, p.position(), other.position(), c.color(), 0, other.getId());
+            level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 1.2F);
+            p.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_given", other.getDisplayName()).withStyle(ChatFormatting.AQUA), true);
+            other.displayClientMessage(Component.translatable("message.enlightened.avatar.energy_back", p.getDisplayName()).withStyle(ChatFormatting.AQUA), true);
+            c.exhaust(0.3F);
+            c.cooldownSeconds(10);
         }
     }
 

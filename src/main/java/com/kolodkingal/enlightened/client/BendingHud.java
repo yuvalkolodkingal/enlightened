@@ -44,7 +44,7 @@ public class BendingHud implements LayeredDraw.Layer {
         }
         BendingData data = Benders.get(player);
         Element element = data.element();
-        if (!element.bends()) {
+        if (!data.canBend()) {
             return;
         }
         Font font = mc.font;

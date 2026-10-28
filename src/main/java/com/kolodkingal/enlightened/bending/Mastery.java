@@ -38,6 +38,22 @@ public final class Mastery {
         return Benders.get(player).spent();
     }
 
+    /**
+     * The strength of a will in energybending: the points spent and the chakras opened (two each); the Avatar ten
+     * more; a non-bender the lion turtle blessed six (or no one could ever be weaker than a bender).
+     */
+    public static int energyStrength(Player player) {
+        BendingData d = Benders.get(player);
+        int s = d.spent() + 2 * d.chakras();
+        if (d.element() == Element.AVATAR) {
+            s += 10;
+        }
+        if (!d.element().bends() && d.has(Ability.ENERGYBENDING)) {
+            s += 6;
+        }
+        return s;
+    }
+
     /** The points a gate asks for (0 when it is open to all; -1 when no number of points opens it). */
     public static int gateCost(Gate gate) {
         boolean loaded = EnlightenedConfig.SPEC.isLoaded();

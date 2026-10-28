@@ -731,6 +731,67 @@ def paint_bison():
             p.fill((x, y + h - 1, w, 1), (150, 110, 60), 0.05)
     p.save(os.path.join(ENTITY, 'sky_bison.png'))
 
+def paint_lion_turtle():
+    """The lion turtle's head (256x128 over LionTurtleModel.createBodyLayer): a broad sandy-grey lion's face with amber
+    eyes under a heavy brow, a pale wide muzzle and a dark nose, a mane and beard of mossy green weed, a grey-green neck
+    paler below, and grey-green flippers with darker spots."""
+    p = Painter('lion_turtle', (256, 128))
+    face = (178, 170, 142)
+    weed = (72, 104, 62)
+    skin = (112, 128, 104)
+    head = cube(0, 0, 32, 28, 24)
+    mane = cube(112, 0, 48, 44, 8)
+    muzzle = cube(0, 52, 20, 10, 6)
+    nose = cube(52, 52, 8, 4, 2)
+    beard = cube(72, 52, 24, 10, 10)
+    ear = cube(140, 52, 6, 6, 4)
+    neck = cube(0, 72, 24, 24, 30)
+    flipper = cube(108, 72, 40, 4, 22)
+    p.faces(head, face, grain=0.06, vgrad=0.08)
+    # The mane and beard: weed in strands, darker and lighter, hanging down.
+    for c in (mane, beard):
+        p.faces(c, weed, grain=0.08, vgrad=0.0)
+        for rect in c.values():
+            x, y, w, h = rect
+            for i in range(x, x + w):
+                if p.rnd.random() < 0.45:
+                    tone = shade(weed, p.rnd.choice((0.7, 0.8, 1.2, 1.3)))
+                    top = y + p.rnd.randrange(max(1, h))
+                    p.fill((i, top, 1, y + h - top), tone, 0.05)
+    # The face: the heavy brow, amber eyes with dark pupils, the folds of the cheeks.
+    x, y, w, h = head['front']
+    p.fill((x + 3, y + 6, w - 6, 2), shade(face, 0.72), 0.04)
+    for ex in (5, 20):
+        p.fill((x + ex, y + 8, 7, 4), (232, 168, 52), 0.03)
+        p.fill((x + ex + 3, y + 8, 2, 4), (30, 24, 20), 0.0)
+        p.dot(x + ex + 1, y + 8, (255, 236, 170))
+    for k in range(4):
+        p.dot(x + 4 + k, y + 16 + k, shade(face, 0.75))
+        p.dot(x + w - 5 - k, y + 16 + k, shade(face, 0.75))
+    p.faces(muzzle, (206, 198, 170), grain=0.05, vgrad=0.0)
+    x, y, w, h = muzzle['front']
+    p.fill((x + 2, y + h - 2, w - 4, 1), (96, 70, 60), 0.0)
+    for wx in (2, 4, 15, 17):
+        p.dot(x + wx, y + 4, shade((206, 198, 170), 0.7))
+    p.faces(nose, (52, 44, 42), grain=0.04, vgrad=0.0)
+    p.faces(ear, shade(face, 0.9), grain=0.05)
+    x, y, w, h = ear['front']
+    p.fill((x + 1, y + 1, w - 2, h - 2), (150, 110, 100), 0.04)
+    # The neck: grey-green, folded, paler underneath.
+    p.faces(neck, skin, grain=0.07)
+    p.fill(neck['bottom'], (168, 170, 140), 0.05)
+    for face_name in ('left', 'right'):
+        x, y, w, h = neck[face_name]
+        for i in range(x + 3, x + w, 6):
+            p.fill((i, y, 1, h), shade(skin, 0.8), 0.03)
+    # The flippers: grey-green with darker spots, the edge pale.
+    p.faces(flipper, skin, grain=0.07, vgrad=0.0)
+    for face_name in ('top', 'bottom'):
+        p.speckle(flipper[face_name], shade(skin, 0.7), 0.1, 1.0)
+    x, y, w, h = flipper['front']
+    p.fill((x, y + h - 1, w, 1), (168, 170, 140), 0.04)
+    p.save(os.path.join(ENTITY, 'lion_turtle.png'))
+
 def paint_items():
     os.makedirs(ITEM, exist_ok=True)
     scrolls = {'earth_scroll': (90, 140, 70), 'air_scroll': (220, 170, 60), 'water_scroll': (50, 120, 200), 'fire_scroll': (200, 60, 30), 'avatar_scroll': (127, 214, 255)}
@@ -772,6 +833,7 @@ def main():
     paint_lemur()
     paint_pathik()
     paint_bison()
+    paint_lion_turtle()
     paint_items()
     print('wrote', len(LOOKS), 'skins, 2 shells, the lemur, 7 item icons')
 

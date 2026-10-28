@@ -495,28 +495,34 @@ public final class WorldFxRenderer {
     private static void avatarAura(AbstractClientPlayer p, BendingData data, float w) {
         Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
         VertexConsumer light = vc(FxGeometry.light());
-        Quaternionf rot = new Quaternionf().rotationY(age * 0.12F).mul(new Quaternionf().rotationX(0.3F * Mth.sin(age * 0.07F)));
-        FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, 0.75F, 0.9F, 1.0F, 0.18F * w, 1.5F, age * 0.3F, FULL, false, rot);
-        FxGeometry.sphere(pose, light, c, 1.2F, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.12F * w, 2.2F, -age * 0.4F, FULL, false, new Quaternionf().rotationZ(1.0F).mul(new Quaternionf().rotationY(-age * 0.2F)));
-        Vec3 eyes = rel(p.getEyePosition(partial).add(look(p).scale(0.15)));
-        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.9F * w, 0.85F, 0.95F, 1.0F, 0.95F * w, age * 0.3F);
-        Vec3 forehead = HandTracker.forehead(p, partial);
-        if (forehead != null) {
-            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(forehead), 0.6F * w, 0.85F, 0.95F, 1.0F, 0.9F * w, -age * 0.3F);
+        // Seen from inside (his own eyes), the spheres of light and the glow of his eyes would fill the whole screen:
+        // he sees only the streams of light climbing round him.
+        boolean ownView = p == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson();
+        if (!ownView) {
+            Quaternionf rot = new Quaternionf().rotationY(age * 0.12F).mul(new Quaternionf().rotationX(0.3F * Mth.sin(age * 0.07F)));
+            FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, 0.75F, 0.9F, 1.0F, 0.08F * w, 1.5F, age * 0.3F, FULL, false, rot);
+            FxGeometry.sphere(pose, light, c, 1.2F, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.05F * w, 2.2F, -age * 0.4F, FULL, false, new Quaternionf().rotationZ(1.0F).mul(new Quaternionf().rotationY(-age * 0.2F)));
+            Vec3 eyes = rel(p.getEyePosition(partial).add(look(p).scale(0.15)));
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.6F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.3F);
+            Vec3 forehead = HandTracker.forehead(p, partial);
+            if (forehead != null) {
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(forehead), 0.5F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, -age * 0.3F);
+            }
         }
-        for (HumanoidArm arm : HumanoidArm.values()) {
+        // The light at his hands (in his own eyes the hands are drawn apart, and a glow at their place in the world would hang before them).
+        for (HumanoidArm arm : ownView ? new HumanoidArm[0] : HumanoidArm.values()) {
             FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(hand(p, arm)), 0.5F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.4F);
         }
-        // Streams of light climbing round the body.
+        // Streams of light climbing round the body (in his own eyes, only as high as his chest: above it they cross his sight).
         for (int i = 0; i < 5; i++) {
             List<Vec3> pts = new ArrayList<>();
-            for (int k = 0; k <= 12; k++) {
+            for (int k = 0; k <= (ownView ? 6 : 12); k++) {
                 float t = k / 12.0F;
                 double a = i * 1.26 + age * 0.15 + t * 4;
                 double r = 0.8 + 0.5 * Mth.sin(t * Mth.PI);
                 pts.add(c.add(Math.cos(a) * r, -1.0 + 2.6 * t, Math.sin(a) * r));
             }
-            FxGeometry.ribbon(pose, light, pts, 0.10F, 0.02F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.0F, 0.5F * w, FULL, false);
+            FxGeometry.ribbon(pose, light, pts, 0.10F, 0.02F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.0F, (ownView ? 0.35F : 0.5F) * w, FULL, false);
         }
     }
 
@@ -1356,10 +1362,17 @@ public final class WorldFxRenderer {
                 }
             }
             case AVATAR_RISE -> {
+                // The burst as he rises: the one who rises sees it go out from him, not a white wall in his eyes.
+                boolean near = from.lengthSqr() < 9.0;
                 float r = e.data() * easeOut(f);
-                FxGeometry.sphere(pose, vc(FxGeometry.light()), from.add(0, 1.0, 0), r, 10, 20, 0, 1, 0.8F, 0.92F, 1.0F, 0.6F * (1.0F - f), 1.5F, a * 0.5F, FULL, false, new Quaternionf().rotationY(a * 0.3F));
-                FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(0, 0.05, 0), r * 1.3F, 2.0F * (1.0F - f), 32, 0, 1, 1.0F, 1.0F, 1.0F, 0.5F * (1.0F - f), FULL, false, a, 0.3F);
-                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 1.6, 0), 3.0F * (1.0F - f * 0.5F), 0.85F, 0.95F, 1.0F, 0.9F * (1.0F - f), a);
+                // From inside, the sphere and a tall band would be a wall of white round him: he sees a low ring go out.
+                if (!near) {
+                    FxGeometry.sphere(pose, vc(FxGeometry.light()), from.add(0, 1.0, 0), r, 10, 20, 0, 1, 0.8F, 0.92F, 1.0F, 0.4F * (1.0F - f), 1.5F, a * 0.5F, FULL, false, new Quaternionf().rotationY(a * 0.3F));
+                }
+                FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(0, 0.05, 0), r * 1.3F, (near ? 0.5F : 2.0F) * (1.0F - f), 32, 0, 1, 1.0F, 1.0F, 1.0F, (near ? 0.3F : 0.5F) * (1.0F - f), FULL, false, a, 0.3F);
+                if (!near) {
+                    FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 1.6, 0), 3.0F * (1.0F - f * 0.5F), 0.85F, 0.95F, 1.0F, 0.9F * (1.0F - f), a);
+                }
             }
             case CHAKRA -> {
                 float[] rgb = CHAKRA_RGB[Mth.clamp((int) e.data() - 1, 0, 6)];

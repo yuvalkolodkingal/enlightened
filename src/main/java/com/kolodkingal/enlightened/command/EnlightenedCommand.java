@@ -108,6 +108,10 @@ public final class EnlightenedCommand {
                         .executes(ctx -> temple(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition())))
                         .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
                                 .executes(ctx -> temple(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos")))))
+                .then(Commands.literal("lionturtle")
+                        .executes(ctx -> lionTurtle(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition()), false))
+                        .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
+                                .executes(ctx -> lionTurtle(ctx, net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(ctx, "pos"), true))))
                 .then(Commands.literal("guru")
                         .then(Commands.argument("players", EntityArgument.players())
                                 .then(Commands.literal("taught").executes(ctx -> guru(ctx, true)))
@@ -132,6 +136,19 @@ public final class EnlightenedCommand {
         }
         ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.chakras", count), true);
         return count;
+    }
+
+    /**
+     * Raises a lion turtle and its island at {@code pos}, facing as the caller faces: at sea level where he stands, or,
+     * given a position, with the sea's surface at its height (for a sea of one's own making).
+     */
+    private static int lionTurtle(CommandContext<CommandSourceStack> ctx, net.minecraft.core.BlockPos pos, boolean atHeight) {
+        net.minecraft.server.level.ServerLevel level = ctx.getSource().getLevel();
+        net.minecraft.core.Direction heading = net.minecraft.core.Direction.fromYRot(ctx.getSource().getRotation().y);
+        net.minecraft.core.BlockPos center = new net.minecraft.core.BlockPos(pos.getX(), atHeight ? pos.getY() : level.getSeaLevel() - 1, pos.getZ());
+        com.kolodkingal.enlightened.world.LionTurtle.create(level, center, heading);
+        ctx.getSource().sendSuccess(() -> Component.translatable("command.enlightened.lion_turtle", center.getX(), center.getY(), center.getZ()), true);
+        return 1;
     }
 
     /** Builds the Southern Air Temple with its terrace floor at {@code pos}, wherever that is (no mountain needed). */

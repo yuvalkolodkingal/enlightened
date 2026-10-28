@@ -64,6 +64,10 @@ panel in the top-left corner, items that awaken the power, a server config, oper
    before the guru). Each minute opens a chakra, each a little gift; the seventh sends your spirit to the cosmic plane,
    where you walk a path of light to your own vast self. For the Avatar, all seven open the **Avatar State at will**:
    invincible, twice as strong, in and out as he chooses.
+10. **The lion turtle.** An island as big as a hill swimming in the deep ocean, a lion's head at its front: walk on it
+    and it carries you off, a block at a time. To a **Hero of the Village** it gives energybending (take a bending:
+    6 minutes for an airbender, 3 for anyone else, 2 hours for the Avatar with seven chakras; give it back) and lets
+    him build a home on its shell. Touch someone stronger than you, and it is your own bending you lose.
 
 Every effect is drawn after the series itself (see `docs/SHOW-REFERENCE.md`), and bending hits every creature in
 its way, pets and villagers included (`general.hurtEverything`).

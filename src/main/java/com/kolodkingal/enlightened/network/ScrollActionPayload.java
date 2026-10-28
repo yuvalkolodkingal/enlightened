@@ -58,7 +58,7 @@ public record ScrollActionPayload(int action, int slot, int ability) implements 
                 return;
             }
             BendingData data = Benders.get(player);
-            if (!data.element().bends()) {
+            if (!data.canBend()) {
                 return;
             }
             Ability[] all = Ability.values();

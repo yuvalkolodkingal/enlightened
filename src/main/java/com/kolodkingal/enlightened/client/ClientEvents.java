@@ -118,7 +118,7 @@ public final class ClientEvents {
 
     private static void handleKeys(Minecraft mc, LocalPlayer player) {
         BendingData data = Benders.get(player);
-        boolean bends = data.element().bends();
+        boolean bends = data.canBend();
         boolean lookClicked = false;
         while (KeyBindings.CHANGE_LOOK.consumeClick()) {
             lookClicked = true;

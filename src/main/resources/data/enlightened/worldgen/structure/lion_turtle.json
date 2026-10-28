@@ -1,0 +1,7 @@
+{
+  "type": "enlightened:lion_turtle",
+  "biomes": "#enlightened:has_structure/lion_turtle",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

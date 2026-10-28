@@ -21,7 +21,7 @@ public final class BendingHandler {
             return;
         }
         BendingData data = Benders.get(player);
-        if (!data.element().bends()) {
+        if (!data.canBend()) {
             return;
         }
         // Releases always go through, so a hold ability can't get stuck on (e.g. when the player died holding the key).

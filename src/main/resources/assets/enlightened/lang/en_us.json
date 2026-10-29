@@ -588,5 +588,7 @@
   "message.enlightened.lemur.no_shoulder": "Both your shoulders are taken.",
   "message.enlightened.water.blood_avatar": "%s is in the Avatar State: his blood will not answer you.",
   "message.enlightened.learn.lion_turtle": "%s is not learned: only a lion turtle gives it.",
-  "enlightened.configuration.avatarStateDamageTaken": "Avatar State: share of each blow taken"
+  "enlightened.configuration.avatarStateDamageTaken": "Avatar State: share of each blow taken",
+  "look.enlightened.avatar.pavi": "Pavi",
+  "look.enlightened.avatar.nisha": "Nisha"
 }

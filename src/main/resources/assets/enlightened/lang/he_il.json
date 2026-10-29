@@ -588,5 +588,7 @@
   "message.enlightened.lemur.no_shoulder": "שתי הכתפיים שלך תפוסות.",
   "message.enlightened.water.blood_avatar": "%s במצב האווטאר: הדם שלו לא נענה לך.",
   "message.enlightened.learn.lion_turtle": "את %s אי אפשר ללמוד: רק צב אריה נותן אותה.",
-  "enlightened.configuration.avatarStateDamageTaken": "מצב האווטאר: החלק מכל מכה שעובר"
+  "enlightened.configuration.avatarStateDamageTaken": "מצב האווטאר: החלק מכל מכה שעובר",
+  "look.enlightened.avatar.pavi": "פאווי",
+  "look.enlightened.avatar.nisha": "נישה"
 }

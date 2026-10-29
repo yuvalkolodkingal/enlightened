@@ -363,6 +363,16 @@ public final class Tour {
             cosmic();
             return;
         }
+        if ("looks".equals(System.getProperty("enlightened.tour.only", ""))) {
+            STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+            camera(CameraType.THIRD_PERSON_FRONT, 4);
+            String[][] looks = {{"earth", "bumi"}, {"fire", "iroh"}, {"fire", "jeong_jeong"}, {"avatar", "pavi"}, {"avatar", "nisha"}};
+            for (String[] l : looks) {
+                cmd("enlightened element set @s " + l[0] + " " + l[1], 20);
+                shot("230_look_" + l[1], 10);
+            }
+            return;
+        }
         if ("momo".equals(System.getProperty("enlightened.tour.only", ""))) {
             server(p -> {
                 com.kolodkingal.enlightened.entity.FlyingLemurEntity momo = com.kolodkingal.enlightened.registry.ModEntities.LEMUR.get().create(p.serverLevel());

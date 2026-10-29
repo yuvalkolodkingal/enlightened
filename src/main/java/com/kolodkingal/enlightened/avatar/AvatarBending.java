@@ -240,12 +240,22 @@ public final class AvatarBending {
             ServerPlayer p = c.player;
             if (c.on()) {
                 c.setOn(false);
+                // Raised into the State by the sphere alone (the Avatar State not on his keys): he leaves it with it.
+                if (AUTO.remove(p.getUUID()) && c.data.avatar(c.now()) && Chakras.masters(c.data)) {
+                    Chakras.leaveAtWill(p, c.data);
+                }
                 BendingTicker.applyPassives(p, c.data);
                 return;
             }
             if (!c.data.avatar(c.now())) {
-                c.refuse("message.enlightened.avatar.sphere_needs");
-                return;
+                // Without the Avatar State on his keys, the sphere takes him into it (if he masters it and is rested).
+                if (c.data.slotOf(Ability.AVATAR_STATE) >= 0 || !enter(c)) {
+                    if (c.data.slotOf(Ability.AVATAR_STATE) >= 0) {
+                        c.refuse("message.enlightened.avatar.sphere_needs");
+                    }
+                    return;
+                }
+                AUTO.add(p.getUUID());
             }
             c.setOn(true);
             BendingTicker.applyPassives(p, c.data);
@@ -268,6 +278,7 @@ public final class AvatarBending {
             ServerPlayer p = c.player;
             if (!c.data.avatar(c.now())) {
                 c.setOn(false);
+                AUTO.remove(p.getUUID());
                 BendingTicker.applyPassives(p, c.data);
                 return;
             }
@@ -284,6 +295,30 @@ public final class AvatarBending {
         @Override
         public void end(Cast c) {
             c.setOn(false);
+            AUTO.remove(c.player.getUUID());
+        }
+
+        /** Those the sphere raised into the Avatar State itself, who leave it when the sphere goes. */
+        private static final java.util.Set<java.util.UUID> AUTO = new java.util.HashSet<>();
+
+        /** Enters the Avatar State for the sphere, as the Avatar State art would (refusing as it does); true if he is in it. */
+        private static boolean enter(Cast c) {
+            BendingData data = c.data;
+            long now = c.now();
+            if (!Chakras.taught(data)) {
+                c.refuse("message.enlightened.avatar.guru");
+                return false;
+            }
+            if (data.chakras() < Chakras.COUNT) {
+                c.refuse("message.enlightened.avatar.chakras");
+                return false;
+            }
+            if (now < data.avatarCooldownUntil()) {
+                c.refuse("message.enlightened.avatar.rest", (data.avatarCooldownUntil() - now) / 20);
+                return false;
+            }
+            Chakras.enterAtWill(c.player, data, 1.0F);
+            return data.avatar(now);
         }
     }
 

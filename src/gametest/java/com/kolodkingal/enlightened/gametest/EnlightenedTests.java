@@ -796,6 +796,25 @@ public final class EnlightenedTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void theElementalSphereRaisesTheAvatarStateWhenItIsNotOnTheKeys(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer avatar = f.player(10, FLOOR, 8, GameType.CREATIVE);
+        BendingData data = f.bender(avatar, Element.AVATAR, Ability.ELEMENTAL_SPHERE, 1);
+        data.setGuruTaught(true);
+        data.setChakras(7);
+        if (data.slotOf(Ability.AVATAR_STATE) >= 0) {
+            data.setSlot(data.slotOf(Ability.AVATAR_STATE), null);
+        }
+        check(data.slotOf(Ability.AVATAR_STATE) < 0, "the Avatar State is not on his keys");
+        long now = avatar.level().getGameTime();
+        f.press(avatar, Ability.ELEMENTAL_SPHERE, false);
+        check(data.on(Ability.ELEMENTAL_SPHERE) && data.avatar(now), "the sphere took him into the Avatar State");
+        f.press(avatar, Ability.ELEMENTAL_SPHERE, false);
+        check(!data.on(Ability.ELEMENTAL_SPHERE) && !data.avatar(now), "and out of it with the sphere");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
     public static void momoRidesOnHisOwnersShoulder(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer owner = f.player(10, FLOOR, 8);

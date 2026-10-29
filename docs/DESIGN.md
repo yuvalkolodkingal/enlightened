@@ -445,3 +445,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | Energybending | `Mastery.refusal`: a gift ability at level 0 cannot be learned with points (`learn.lion_turtle`); once the lion turtle gave it, it levels with points whatever the element. |
 | The lion turtle's head | No look goal; its yaw, head yaw and body yaw (and their previous values) are its heading's every tick on both sides; the heading is synced (`HEADING`), so the head never turns round toward players on its shell. |
 | Momo | `FlyingLemurEntity` is a `ShoulderRidingEntity`: `LandOnOwnersShoulderGoal`, and sneak + right-click with an empty hand by its owner (`setEntityOnShoulder`); the game drops it when he falls, flies or swims. `LemurShoulderLayer` draws it on the player's shoulder (the parrot's layer draws only parrots) from a lemur that never enters the world, seated. |
+
+## 25. Given skins, Pavi and Nisha, the sphere's Avatar State **(added in 1.4)**
+
+| | |
+|---|---|
+| Given skins | `tools/skins_provided/<look>.png` (64 × 64; an old 64 × 32 skin is converted as the game converts it, the left limbs mirrored from the right) is copied to `textures/entity/suit/` instead of a painted skin; looks that exist only as given skins are copied too. Bumi, Iroh and Jeong Jeong are given; Pavi and Nisha (the twin Avatars of *Seven Havens*, slim) are new Avatar looks. |
+| The elemental sphere | If the Avatar State is not on his keys, raising the sphere enters the State as its art would (taught, seven chakras, rested; refusing as it does), and letting the sphere go leaves it (`Sphere.AUTO`). |

@@ -464,7 +464,22 @@ LOOKS = {
 }
 
 
+PROVIDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'skins_provided')
+
+
+def provided(name):
+    """A skin given whole (tools/skins_provided/<name>.png, 64x64) is used as it is, instead of painting one."""
+    path = os.path.join(PROVIDED, name + '.png')
+    if not os.path.exists(path):
+        return False
+    os.makedirs(SUIT, exist_ok=True)
+    Image.open(path).convert('RGBA').save(os.path.join(SUIT, name + '.png'))
+    return True
+
+
 def paint_look(name, slim, s):
+    if provided(name):
+        return
     p = Painter(name)
     paint_head(p, s['skin'], s['eyes'], brows=s['hair'])
     if s.get('mask'):
@@ -888,6 +903,10 @@ def paint_items():
 def main():
     for name, (slim, spec) in LOOKS.items():
         paint_look(name, slim, spec)
+    # Looks that exist only as given skins (Pavi and Nisha, the Avatars of Seven Havens).
+    for f in sorted(os.listdir(PROVIDED)):
+        if f.endswith('.png') and f[:-4] not in LOOKS:
+            provided(f[:-4])
     paint_shell('earth_armor', (120, 105, 85), (80, 70, 55))
     paint_shell('metal_armor', (170, 175, 180), (110, 115, 120))
     paint_lemur()

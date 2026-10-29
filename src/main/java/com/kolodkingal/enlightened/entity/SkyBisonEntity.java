@@ -64,8 +64,7 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
     /** How long a calf takes to grow (ticks; vanilla's 20 minutes, then half again: a bison grows slowly). */
     public static final int CALF_AGE = -36000;
     public static final int MAX_RIDERS = 6;
-    private static final double FLY_SPEED = 0.6;
-    private static final double CLIMB = 0.35;
+
 
     private int wheatEaten;
 
@@ -74,7 +73,7 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return TamableAnimal.createMobAttributes().add(Attributes.MAX_HEALTH, 80.0).add(Attributes.MOVEMENT_SPEED, 0.2)
+        return TamableAnimal.createMobAttributes().add(Attributes.MAX_HEALTH, 80.0).add(Attributes.MOVEMENT_SPEED, 0.3)
                 .add(Attributes.KNOCKBACK_RESISTANCE, 0.8).add(Attributes.STEP_HEIGHT, 1.5).add(Attributes.SAFE_FALL_DISTANCE, 1000.0);
     }
 
@@ -331,17 +330,23 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
         Vec3 look = rider.getLookAngle();
         float yaw = getYRot() * Mth.DEG_TO_RAD;
         Vec3 left = new Vec3(Mth.cos(yaw), 0, Mth.sin(yaw));
-        Vec3 wish = look.scale(input.z * FLY_SPEED).add(left.scale(input.x * FLY_SPEED));
+        double speed = flySpeed();
+        Vec3 wish = look.scale(input.z * speed).add(left.scale(input.x * speed));
         if (climb) {
-            wish = wish.add(0, CLIMB, 0);
+            wish = wish.add(0, speed * 0.6, 0);
         } else if (input.z == 0 && input.x == 0) {
             wish = new Vec3(0, -0.04, 0);
         }
         // Heavy, as a bison is: it eases into a turn and out of a dive.
-        Vec3 next = v.add(wish.subtract(v).scale(0.08));
+        Vec3 next = v.add(wish.subtract(v).scale(0.1));
         move(MoverType.SELF, next);
         setDeltaMovement(next);
         calculateEntityAnimation(true);
+    }
+
+    /** Blocks a tick it flies at full speed (config {@code skyBisonFlySpeed}). */
+    private static double flySpeed() {
+        return com.kolodkingal.enlightened.EnlightenedConfig.SPEC.isLoaded() ? com.kolodkingal.enlightened.EnlightenedConfig.SKY_BISON_FLY_SPEED.get() : 1.2;
     }
 
     @Override

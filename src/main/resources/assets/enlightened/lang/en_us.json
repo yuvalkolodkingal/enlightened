@@ -590,5 +590,6 @@
   "message.enlightened.learn.lion_turtle": "%s is not learned: only a lion turtle gives it.",
   "enlightened.configuration.avatarStateDamageTaken": "Avatar State: share of each blow taken",
   "look.enlightened.avatar.pavi": "Pavi",
-  "look.enlightened.avatar.nisha": "Nisha"
+  "look.enlightened.avatar.nisha": "Nisha",
+  "enlightened.configuration.skyBisonFlySpeed": "Sky bison flying speed (blocks a tick)"
 }

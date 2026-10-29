@@ -90,6 +90,7 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue LION_TURTLE_MOVE_SECONDS;
     public static final ModConfigSpec.IntValue LION_TURTLE_SIZE;
     public static final ModConfigSpec.DoubleValue AVATAR_STATE_DAMAGE_TAKEN;
+    public static final ModConfigSpec.DoubleValue SKY_BISON_FLY_SPEED;
     public static final ModConfigSpec.BooleanValue COMBOS;
     public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
     public static final ModConfigSpec.BooleanValue STEPS;
@@ -200,6 +201,8 @@ public final class EnlightenedConfig {
                 .defineInRange("lionTurtleMoveSeconds", 40, 5, 3600);
         AVATAR_STATE_DAMAGE_TAKEN = B.comment("The share of every blow the Avatar takes in the Avatar State (0.3: a third; 0 makes him invincible).")
                 .defineInRange("avatarStateDamageTaken", 0.3, 0.0, 1.0);
+        SKY_BISON_FLY_SPEED = B.comment("Blocks a tick a ridden sky bison flies at full speed (1.2: 24 blocks a second).")
+                .defineInRange("skyBisonFlySpeed", 1.2, 0.2, 4.0);
         LION_TURTLE_SIZE = B.comment("How big new lion turtles are: 1 is an island some 45 blocks long, 10 (the default) some 440 long.",
                         "A great island holds its own chunks loaded while a player is near it; lower this on a busy server.")
                 .defineInRange("lionTurtleSize", 10, 1, 10);

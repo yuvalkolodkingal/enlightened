@@ -590,5 +590,6 @@
   "message.enlightened.learn.lion_turtle": "את %s אי אפשר ללמוד: רק צב אריה נותן אותה.",
   "enlightened.configuration.avatarStateDamageTaken": "מצב האווטאר: החלק מכל מכה שעובר",
   "look.enlightened.avatar.pavi": "פאווי",
-  "look.enlightened.avatar.nisha": "נישה"
+  "look.enlightened.avatar.nisha": "נישה",
+  "enlightened.configuration.skyBisonFlySpeed": "מהירות התעופה של ביזון האוויר (בלוקים לטיק)"
 }

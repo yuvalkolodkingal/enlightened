@@ -61,5 +61,6 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 | `energybendingOtherSeconds` | 180 | Seconds anyone else's energybending (bender or not) takes a bending for. |
 | `lionTurtleMoveSeconds` | 40 | Seconds a [lion turtle](Lion-Turtle) rests between one block of swim and the next, while a player is near it. |
 | `avatarStateDamageTaken` | 0.3 | The share of every blow the Avatar takes in the Avatar State (0 makes him invincible). |
+| `skyBisonFlySpeed` | 1.2 | Blocks a tick a ridden sky bison flies at full speed (1.2: 24 blocks a second). |
 | `lionTurtleSize` | 10 | How big new lion turtles are: 1 is an island some 45 blocks long, 10 some 440 long. A great island keeps its own chunks loaded while a player is near it; lower this on a busy server. |
 | `steps` | true | Whether a double tap of a direction dashes a bender who learned his element's step. |

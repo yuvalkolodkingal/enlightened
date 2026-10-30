@@ -55,6 +55,30 @@ public final class AnomalyTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 40)
+    public static void theArtOpensAPartWithoutTheGuruAndDeathCallsAsDeepAsTheChakras(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR, 8);
+        BendingData data = f.bender(player, Element.AVATAR, Ability.AVATAR_STATE, 1);
+        data.setGuruTaught(false);
+        data.setChakras(2);
+        helper.runAtTickTime(5, () -> {
+            f.press(player, Ability.AVATAR_STATE, false);
+            long now = player.level().getGameTime();
+            check(data.avatar(now) && Chakras.power(data, now) == 2, "two chakras open (no guru): the art draws on two sevenths");
+            int[][] cases = {{0, Chakras.POWER_WHOLE}, {3, 3}, {7, Chakras.POWER_MASTER}};
+            for (int[] k : cases) {
+                data.setAvatarUntil(0);
+                data.setAvatarCooldownUntil(0);
+                data.setChakras(k[0]);
+                check(Chakras.dire(player, data), "near death the State comes (" + k[0] + " chakras)");
+                long t = player.level().getGameTime();
+                check(Chakras.power(data, t) == k[1], "as deep as the chakras reach: " + k[0] + " open, depth " + Chakras.power(data, t));
+            }
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 40)
     public static void theMastersAvatarStateIsTwiceTheWhole(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer player = f.player(10, FLOOR, 8);

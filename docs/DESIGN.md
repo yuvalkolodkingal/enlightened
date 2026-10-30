@@ -514,3 +514,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | The Anomaly | 200 health (from 400), 4 armour (from 10); every harm but energybending's does three quarters (from half); suffocation (`IN_WALL`) does nothing. `noPhysics` every tick: it drifts through blocks. `drain` takes half its life (`DRAIN` 0.5, from a quarter), a critical blow (crit and enchanted-hit sparks, the critical sound); energybending's cooldown on it 3 s. |
 | Energybending | No chakra need be open for the Avatar (the check in `AvatarBending.Energy` and the lion turtle's word about it are gone). |
 
+## 32. 1.0.9: the State by the chakras, by the art and near death
+
+| | |
+|---|---|
+| The art | The Avatar State art asks only for one open chakra, however it was opened (no guru check); `masters` is all seven open, taught or not; the sphere asks for seven. |
+| Near death | `Chakras.dire` enters as deep as the chakras reach: none open, the whole (`POWER_WHOLE`); one to six, that part; seven, the master's. |
+

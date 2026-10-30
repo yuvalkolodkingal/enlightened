@@ -1,3 +1,9 @@
+# Enlightened 1.0.9
+
+* **The partial Avatar State works from the Avatar State key**, however your chakras were opened (no guru needed).
+* **Near death, the Avatar State comes as deep as your chakras reach**: a part of it with some open, the master's with
+  all seven (only with none open is it the old whole State).
+
 # Enlightened 1.0.8
 
 * **The Anomaly is easier to kill**: half its life and less armour, and blows and bending do it three quarters of their

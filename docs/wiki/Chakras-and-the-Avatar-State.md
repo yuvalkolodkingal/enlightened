@@ -69,13 +69,14 @@ Only the Avatar has it. For `avatarStateLengthSeconds` (**two minutes**): you ar
 its cooldowns **half**, every cooldown is cleared at the start, you move 30% faster, never drown, burn or fall, and
 glow with your element's light; everyone near is thrown back as you rise. The server announces who entered it.
 
-* **Untaught**, it takes the Avatar only by itself, when a blow would kill him (`avatarStateOnLowHealth`), and then
-  rests `avatarStateCooldownSeconds` (5 min).
-* **Taught by the guru, with all seven chakras open**, the Avatar enters it **at will**: the Avatar State art. This is
+* **Near death**, it takes the Avatar by itself, when a blow would kill him (`avatarStateOnLowHealth`), and then rests
+  `avatarStateCooldownSeconds` (5 min). It comes **as deep as his chakras reach**: a part of it with some open, the
+  master's with all seven, and the whole raw State with none.
+* **With all seven chakras open**, the Avatar enters it **at will**: the Avatar State art. This is
   the **master's State, twice as strong** as the one that takes him near death: every art **five times** as strong and
   its cooldowns a **quarter**. Pressed again inside it, the art **brings him out**. He rests three times as long as he
   stayed in it (at least 10 s).
-* **Taught, with some chakras open but not all**, he can draw on **a part of it** at will, with the same art: as many
+* **With some chakras open but not all** (however they were opened: by the guru, or the Anomaly's light), he can draw on **a part of it** at will, with the same art: as many
   sevenths of its strength as he has chakras open (three open: three sevenths of its harm, its quick cooldowns, its
   armour, steadiness and speed). He leaves it with the art too. A part of the State does not light his eyes: he is
   **wrapped in the glow of the highest chakra he has opened**, red for the first up to indigo for the sixth.

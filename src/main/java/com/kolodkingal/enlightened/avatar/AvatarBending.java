@@ -88,10 +88,7 @@ public final class AvatarBending {
             if (!c.ready()) {
                 return;
             }
-            if (!Chakras.taught(data)) {
-                c.refuse("message.enlightened.avatar.guru");
-                return;
-            }
+            // His open chakras are the way in, however they were opened (by the guru, or the Anomaly's light).
             if (data.chakras() < 1) {
                 // Not one chakra open: the State is not his to call on yet.
                 c.refuse("message.enlightened.avatar.no_chakra");
@@ -315,10 +312,6 @@ public final class AvatarBending {
         private static boolean enter(Cast c) {
             BendingData data = c.data;
             long now = c.now();
-            if (!Chakras.taught(data)) {
-                c.refuse("message.enlightened.avatar.guru");
-                return false;
-            }
             if (data.chakras() < Chakras.COUNT) {
                 c.refuse("message.enlightened.avatar.chakras");
                 return false;

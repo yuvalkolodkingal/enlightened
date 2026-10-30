@@ -273,9 +273,9 @@ public final class Chakras {
         return data.guruTaught() || !required;
     }
 
-    /** The master Avatar: taught, all seven chakras open. He enters and leaves the Avatar State at will. */
+    /** The master Avatar: all seven chakras open. He enters and leaves the Avatar State at will, twice as strong. */
     public static boolean masters(BendingData data) {
-        return data.element() == Element.AVATAR && data.chakras() >= COUNT && taught(data);
+        return data.element() == Element.AVATAR && data.chakras() >= COUNT;
     }
 
     /**
@@ -379,7 +379,8 @@ public final class Chakras {
 
     /**
      * The Avatar near death: the Avatar State takes him by itself, if it is rested, taught or not (the way it took
-     * Aang before the guru). Only the Avatar has it. Returns whether it did.
+     * Aang before the guru): a part of it if some chakras are open, the master's if all are, the whole if none. Only the
+     * Avatar has it. Returns whether it did.
      */
     public static boolean dire(ServerPlayer p, BendingData data) {
         boolean allowed = !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.AVATAR_STATE_ON_LOW_HEALTH.get();
@@ -387,7 +388,10 @@ public final class Chakras {
         if (!allowed || data.element() != Element.AVATAR || data.avatar(now) || now < data.avatarCooldownUntil()) {
             return false;
         }
-        enterAvatar(p, data, true);
+        // Near death, the State comes as deep as his chakras reach: a part of it for some open, the master's for all
+        // seven; with none open, the whole raw State takes him, as it took Aang before the guru.
+        int open = data.chakras();
+        enterAvatar(p, data, true, 1.0F, open <= 0 ? POWER_WHOLE : open >= COUNT ? POWER_MASTER : open);
         return true;
     }
 

@@ -1,3 +1,11 @@
+# Enlightened 1.0.8
+
+* **The Anomaly is easier to kill**: half its life and less armour, and blows and bending do it three quarters of their
+  harm (no longer half).
+* **Energybending strikes it critically**: half its life at a touch, two touches finish it, ready again in 3 seconds.
+* **The Anomaly drifts through walls**: stone and walls no longer stop it.
+* **Energybending needs no chakras**: the Avatar bends energy without opening any.
+
 # Enlightened 1.0.7
 
 * **The Anomaly shines through the dark**: the darkness of its dread no longer hides it.

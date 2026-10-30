@@ -30,16 +30,16 @@ import java.util.List;
 /**
  * The Anomaly of <i>Seven Havens</i>: a tilted square of burning frames hung in the air, red lightning crawling out of
  * it. It sleeps in the red cubes of Ellora and wakes when someone tries to break one. It drifts round whoever fights
- * it, strikes them with red lightning, and now and then bursts outward. Blows and bending do it only half their harm;
- * <b>energybending</b> drains its life (a quarter of it at a time) and gives some to the bender, the surest way to beat
- * it. Beaten, it sends every bender who fought it to the cosmic plane, where the first chakra opens for them.
+ * it (through walls and stone, as through air), strikes them with red lightning, and now and then bursts outward. Blows
+ * and bending do it three quarters of their harm; <b>energybending</b> strikes it critically, draining half its life at
+ * a time and giving some to the bender, the surest way to beat it. Beaten, it sends every bender who fought it to the cosmic plane, where the first chakra opens for them.
  */
 public class AnomalyEntity extends Monster implements Enemy {
     /** How far from where it woke it drifts, and how far it looks for someone to fight. */
     public static final double LEASH = 18.0;
     public static final double SIGHT = 32.0;
     /** The share of its life one touch of energybending drains. */
-    public static final float DRAIN = 0.25F;
+    public static final float DRAIN = 0.5F;
 
     private final ServerBossEvent bar = new ServerBossEvent(Component.translatable("entity.enlightened.anomaly"),
             BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.NOTCHED_10);
@@ -54,7 +54,7 @@ public class AnomalyEntity extends Monster implements Enemy {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 400.0).add(Attributes.ARMOR, 10.0)
+        return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 200.0).add(Attributes.ARMOR, 4.0)
                 .add(Attributes.FOLLOW_RANGE, SIGHT).add(Attributes.KNOCKBACK_RESISTANCE, 1.0).add(Attributes.MOVEMENT_SPEED, 0.0);
     }
 
@@ -70,6 +70,14 @@ public class AnomalyEntity extends Monster implements Enemy {
 
     @Override
     protected void registerGoals() {
+    }
+
+    @Override
+    public void tick() {
+        // It is not of this world: it drifts through stone as through air.
+        noPhysics = true;
+        super.tick();
+        noPhysics = true;
     }
 
     @Override
@@ -166,6 +174,10 @@ public class AnomalyEntity extends Monster implements Enemy {
         }
         bender.heal(6.0F);
         ServerLevel level = (ServerLevel) level();
+        // A critical blow: it shows it.
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, getX(), getY() + getBbHeight() / 2, getZ(), 40, 1.0, 1.0, 1.0, 0.6);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.ENCHANTED_HIT, getX(), getY() + getBbHeight() / 2, getZ(), 30, 1.0, 1.0, 1.0, 0.4);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.5F, 0.7F);
         Fx.send(level, Fx.ENERGYBEND, bender.position(), position(), Benders.color(bender), 0, getId());
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.BEACON_DEACTIVATE, SoundSource.HOSTILE, 1.2F, 0.6F);
         return true;
@@ -173,12 +185,13 @@ public class AnomalyEntity extends Monster implements Enemy {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (source.is(DamageTypeTags.IS_FALL) || source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_DROWNING)) {
+        if (source.is(DamageTypeTags.IS_FALL) || source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_DROWNING)
+                || source.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL)) {
             return false;
         }
-        // Only energybending reaches its heart; every other blow does half.
+        // Energybending reaches its heart; every other blow does three quarters.
         if (!draining && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            amount *= 0.5F;
+            amount *= 0.75F;
         }
         return super.hurt(source, amount);
     }

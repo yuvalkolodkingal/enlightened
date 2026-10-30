@@ -66,8 +66,10 @@ closing in (but the Anomaly itself shines through the dark), the world shakes, y
 strikes with **red lightning** and now and then **bursts** outward, throwing back everyone near; below half its life it
 strikes faster and harder. Only one is awake near a place at a time.
 
-Every blow and every bending does it only **half** its harm. **Energybending** is the way to beat it: aimed at it from
-up to 12 blocks, it **drains a quarter of its life** at a time and heals you a little.
+Every blow and every bending does it **three quarters** of its harm. **Energybending** is the way to beat it: aimed at
+it from up to 12 blocks, it strikes **critically**, draining **half its life** at a time (two touches finish it), and
+heals you a little; it is ready again in 3 seconds. It is not of this world: it **drifts through walls and stone** as
+through air, so no wall keeps it out.
 
 **Beat it**, and every bender who fought it is carried to the **cosmic plane** of the seven chakras: a **path of
 energy**, but at its end, instead of your giant self, **the seven chakras** as the show draws them: dark circles ringed

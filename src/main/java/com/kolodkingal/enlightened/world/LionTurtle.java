@@ -3,7 +3,6 @@ package com.kolodkingal.enlightened.world;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.Benders;
 import com.kolodkingal.enlightened.bending.BendingData;
-import com.kolodkingal.enlightened.bending.Chakras;
 import com.kolodkingal.enlightened.bending.Element;
 import com.kolodkingal.enlightened.bending.Loadout;
 import com.kolodkingal.enlightened.entity.LionTurtleEntity;
@@ -501,9 +500,6 @@ public final class LionTurtle {
                     net.minecraft.sounds.SoundSource.PLAYERS, 1.6F, 0.5F);
         } else {
             say(p, "lion_turtle.enlightened.again");
-        }
-        if (data.element() == Element.AVATAR && data.chakras() < Chakras.COUNT) {
-            say(p, "lion_turtle.enlightened.avatar_chakras");
         }
         say(p, "lion_turtle.enlightened.home");
     }

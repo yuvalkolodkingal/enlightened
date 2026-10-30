@@ -41,7 +41,7 @@ with black, to your **forehead** and your **chest**; light blooms where they tou
 points and long rays crossing through them; then the claws draw back.
 
 * **Energybending**: touch a bender within reach and take his bending, for
-  * **2 hours** if you are the Avatar, and only with all seven chakras open;
+  * **2 hours** if you are the Avatar (no chakra need be open);
   * **6 minutes** if you are an airbender;
   * **3 minutes** for anyone else (any other bender, or someone who bends nothing).
 * **Energy Restore**: touch one whose bending was taken and give it back before its time ends.

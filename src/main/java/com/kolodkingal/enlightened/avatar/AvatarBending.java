@@ -112,7 +112,7 @@ public final class AvatarBending {
      * Energybending, the lion turtle's gift (and the Avatar's art): a touch to forehead and chest takes a bender's
      * bending, for {@code avatar.energybendingAirSeconds} (six minutes) when an airbender bends it,
      * {@code avatar.energybendingOtherSeconds} (three) for anyone else, bender or not, and
-     * {@code avatar.energybendingAvatarMinutes} (two hours) for the Avatar, who must have all seven chakras open. A will
+     * {@code avatar.energybendingAvatarMinutes} (two hours) for the Avatar; no chakra need be open. A will
      * stronger than his own ({@link Mastery#energyStrength}) turns the energy on him: his own bending is taken for as
      * long, and the touched one is unharmed. In the Avatar State no will is stronger.
      */
@@ -125,16 +125,12 @@ public final class AvatarBending {
             ServerPlayer p = c.player;
             BendingData mine = c.data;
             long now = c.now();
-            if (mine.element() == com.kolodkingal.enlightened.bending.Element.AVATAR && mine.chakras() < Chakras.COUNT) {
-                c.refuse("message.enlightened.energy.chakras");
-                return;
-            }
             // The Anomaly: energy against energy, from as far as it can be seen clearly; its life is drawn out.
             if (aimed(p, 12.0) instanceof com.kolodkingal.enlightened.entity.AnomalyEntity anomaly) {
                 if (anomaly.drain(p)) {
                     p.displayClientMessage(Component.translatable("message.enlightened.anomaly.drained").withStyle(ChatFormatting.AQUA), true);
                     c.exhaust(0.6F);
-                    c.cooldownSeconds(6);
+                    c.cooldownSeconds(3);
                 }
                 return;
             }

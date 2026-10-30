@@ -506,3 +506,11 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | Dread | `ModEffects.DREAD` (`DreadEffect`, 100 ticks, −15 % speed): the Anomaly's bolt gives it with Darkness (140 ticks) and a warden's roar; it shrieks every 160 ticks while fighting. `DreadOverlay` (a GUI layer): the screen tinted blood red or black on an uneven beat (two quick red flashes, a long dark), the edges closing in, strongest just after a strike, fading at the end. `ClientEvents.onCameraAngles` shakes the view; `onClientTick` plays a heartbeat, faster when fresh. |
 | Two looks | `AnomalyArt.draw` picks by the viewer: with `DREAD` on him, `drawEnergy` (pure energy in its darkness, above); otherwise `drawNeon`, the neon square of 1.0.4 (each frame solid under its glows and core, maroon fills, a yellow-white heart, a red bloom, the bolts a solid red line with a glow). The Anomaly and its cubes alike. **(1.0.6)** |
 | Seen through the dark | The Anomaly is not drawn with the other creatures: `AnomalyRenderer.drawAll` (from `ClientEvents.onRenderLevel`, after particles) draws every Anomaly within 128 blocks with the shader fog lifted (start and end set far, put back after), so the Darkness it brings (which closes the fog in) never hides it. **(1.0.7)** |
+
+## 31. 1.0.8: an easier Anomaly, energybending for all
+
+| | |
+|---|---|
+| The Anomaly | 200 health (from 400), 4 armour (from 10); every harm but energybending's does three quarters (from half); suffocation (`IN_WALL`) does nothing. `noPhysics` every tick: it drifts through blocks. `drain` takes half its life (`DRAIN` 0.5, from a quarter), a critical blow (crit and enchanted-hit sparks, the critical sound); energybending's cooldown on it 3 s. |
+| Energybending | No chakra need be open for the Avatar (the check in `AvatarBending.Energy` and the lion turtle's word about it are gone). |
+

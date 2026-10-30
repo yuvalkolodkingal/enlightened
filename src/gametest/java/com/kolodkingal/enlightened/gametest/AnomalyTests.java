@@ -97,14 +97,19 @@ public final class AnomalyTests {
         float full = anomaly.getHealth();
         anomaly.hurt(helper.getLevel().damageSources().generic(), 20.0F);
         float afterBlow = anomaly.getHealth();
-        check(full - afterBlow <= 10.5F, "a blow does only half its harm (" + (full - afterBlow) + ")");
+        check(full - afterBlow <= 15.5F && full - afterBlow > 10.5F, "a blow does three quarters of its harm (" + (full - afterBlow) + ")");
         anomaly.invulnerableTime = 0;
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer p = f.player(8, FLOOR, 4);
         f.bender(p, Element.AVATAR);
         check(anomaly.drain(p), "energybending reaches it");
-        check(afterBlow - anomaly.getHealth() >= anomaly.getMaxHealth() * AnomalyEntity.DRAIN * 0.9F, "and drains a quarter of its life");
-        anomaly.discard();
+        check(afterBlow - anomaly.getHealth() >= anomaly.getMaxHealth() * AnomalyEntity.DRAIN * 0.9F, "and strikes critically: half its life");
+        anomaly.invulnerableTime = 0;
+        anomaly.drain(p);
+        check(!anomaly.isAlive() || anomaly.getHealth() <= 1.0F, "two touches finish it");
+        if (anomaly.isAlive()) {
+            anomaly.discard();
+        }
         helper.succeed();
     }
 

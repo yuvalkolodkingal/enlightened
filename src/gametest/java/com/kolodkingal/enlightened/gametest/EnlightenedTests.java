@@ -831,13 +831,9 @@ public final class EnlightenedTests {
         BendingData theirs = f.bender(bender, Element.FIRE, Ability.FIRE_BALL, 1);
         f.lookAt(avatar, bender);
         long now = avatar.level().getGameTime();
-        mine.setChakras(6);
+        mine.setChakras(0);
         f.press(avatar, Ability.ENERGYBENDING, false);
-        check(!theirs.suppressed(now), "with a chakra closed the Avatar cannot bend energy");
-        mine.setChakras(7);
-        mine.clearCooldowns();
-        f.press(avatar, Ability.ENERGYBENDING, false);
-        check(theirs.suppressed(now), "the firebender's bending is taken");
+        check(theirs.suppressed(now), "no chakra need be open: the firebender's bending is taken");
         long left = theirs.suppressedUntil() - now;
         check(left > 119 * 1200L && left <= 120 * 1200L, "for two hours (" + left + " ticks)");
         mine.clearCooldowns();

@@ -864,8 +864,27 @@ def paint_chakra_symbols():
 
 
 def paint_anomaly():
-    """The Anomaly's texture (entity/anomaly.png): plain white, its colours are given as it is drawn."""
+    """The Anomaly's textures: entity/anomaly.png plain white (its colours are given as it is drawn); the darkness it
+    swallows the light with, entity/anomaly_void.png, black at the middle fading to clear; and the icon of its dread,
+    mob_effect/dread.png, a small red Anomaly on black."""
+    import math
     Image.new('RGBA', (16, 16), (255, 255, 255, 255)).save(os.path.join(ENTITY, 'anomaly.png'))
+    size = 128
+    void = Image.new('RGBA', (size, size))
+    px = void.load()
+    for x in range(size):
+        for y in range(size):
+            d = math.hypot(x - size / 2 + 0.5, y - size / 2 + 0.5) / (size / 2)
+            a = min(1.0, 1.3 * max(0.0, 1.0 - d) ** 0.6)
+            px[x, y] = (255, 255, 255, int(255 * a))
+    void.save(os.path.join(ENTITY, 'anomaly_void.png'))
+    icon = Image.new('RGBA', (18, 18), (0, 0, 0, 0))
+    d = ImageDraw.Draw(icon)
+    d.polygon([(9, 0), (17, 9), (9, 17), (0, 9)], fill=(20, 0, 0, 255), outline=(220, 30, 20, 255))
+    d.polygon([(9, 3), (14, 9), (9, 14), (4, 9)], outline=(250, 200, 60, 255))
+    d.polygon([(9, 7), (11, 9), (9, 11), (7, 9)], fill=(255, 240, 180, 255))
+    os.makedirs(os.path.join(ROOT, 'mob_effect'), exist_ok=True)
+    icon.save(os.path.join(ROOT, 'mob_effect', 'dread.png'))
 
 
 def paint_anomaly_block():

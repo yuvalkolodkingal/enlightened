@@ -1,3 +1,12 @@
+# Enlightened 1.0.5
+
+* **The Anomaly is pure energy**: nothing solid in it, only light, motes of energy drawn into its burning heart and
+  flung out, in a **halo of darkness** that swallows the light round it; its red lightning crawls out in dark smoke.
+  It shudders as if it were not quite there, and shrieks.
+* **The red cubes are small Anomalies** of the same energy, hung in Ellora's keep.
+* **Its red lightning brings dread**: darkness, your sight flashing red and black, the world shaking, your heart
+  pounding.
+
 # Enlightened 1.0.4
 
 * **The Anomaly in neon**, as the show draws it: a square on its corner always facing you in a red glow, broken red

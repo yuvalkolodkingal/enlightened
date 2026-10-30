@@ -113,12 +113,31 @@ public final class ClientEvents {
         com.kolodkingal.enlightened.client.fx.BlueScreenFire.render(event.getPoseStack());
     }
 
+    /** The Anomaly's dread shakes the world in his eyes. */
+    @SubscribeEvent
+    public static void onCameraAngles(net.neoforged.neoforge.client.event.ViewportEvent.ComputeCameraAngles event) {
+        float s = DreadOverlay.strength(Minecraft.getInstance());
+        if (s <= 0.0F) {
+            return;
+        }
+        double t = event.getPartialTick() + (Minecraft.getInstance().level == null ? 0 : Minecraft.getInstance().level.getGameTime());
+        event.setRoll(event.getRoll() + (float) (Math.sin(t * 1.9) * 2.5 * s));
+        event.setYaw(event.getYaw() + (float) (Math.sin(t * 3.7) * 0.8 * s));
+        event.setPitch(event.getPitch() + (float) (Math.cos(t * 4.3) * 0.6 * s));
+    }
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || mc.level == null) {
             return;
+        }
+        // Under the Anomaly's dread, a heart pounds, faster the fresher it is.
+        float dread = DreadOverlay.strength(mc);
+        if (dread > 0.0F && player.tickCount % (dread > 0.8F ? 12 : 18) == 0) {
+            mc.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                    net.minecraft.sounds.SoundEvents.WARDEN_HEARTBEAT, 0.8F, 0.4F + 0.6F * dread));
         }
         handleKeys(mc, player);
         handleMeditate(mc, player);

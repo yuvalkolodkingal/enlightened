@@ -52,7 +52,9 @@ PICTURES = {
         ('## City guards|## שומרי העיר', 'city-guards', 'The guards of Omashu, Ba Sing Se and Ellora', 'השומרים של אומאשו, בה סינג סה ואלורה')],
     'Seven-Havens': [
         ('## The brigade armor trim|## עיטור השריון של הבריגדה', 'brigade-trim', 'The brigade armor trim', 'עיטור השריון של הבריגדה'),
-        ('## The Anomaly|## האנומליה', 'anomaly', 'The Anomaly, woken from the red cubes', 'האנומליה, שהתעוררה מהקוביות האדומות'),
+        ('## The Anomaly|## האנומליה', 'anomaly-cubes', 'The red cubes: small Anomalies of energy', 'הקוביות האדומות: אנומליות קטנות של אנרגיה'),
+        ('## The Anomaly|## האנומליה', 'anomaly', 'The Anomaly, pure energy in a halo of darkness', 'האנומליה, אנרגיה טהורה בהילה של חושך'),
+        ('## The Anomaly|## האנומליה', 'dread', 'Struck by its red lightning: dread', 'פגיעה מהברק האדום שלה: אימה'),
         ('## The Anomaly|## האנומליה', 'anomaly-day', 'Its red lightning by day', 'הברק האדום שלה ביום'),
         ('## The Anomaly|## האנומליה', 'seven-chakras', 'Beaten, it shows you the seven chakras', 'כשמנצחים אותה, היא מראה את שבע הצ\'אקרות'),
         ('## The Anomaly|## האנומליה', 'first-chakra', 'The first chakra, Muladhara: walk into it', 'הצ\'אקרה הראשונה, מולדהרה: היכנסו אליה'),

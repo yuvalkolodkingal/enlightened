@@ -30,8 +30,15 @@ sandstone make two.
 
 ## The Anomaly
 
-![The Anomaly, woken from the red cubes](images/anomaly.jpg)
-*The Anomaly, woken from the red cubes*
+![The red cubes: small Anomalies of energy](images/anomaly-cubes.jpg)
+*The red cubes: small Anomalies of energy*
+
+![Struck by its red lightning: dread](images/dread.jpg)
+*Struck by its red lightning: dread*
+
+
+![The Anomaly, pure energy in a halo of darkness](images/anomaly.jpg)
+*The Anomaly, pure energy in a halo of darkness*
 
 ![Its red lightning by day](images/anomaly-day.jpg)
 *Its red lightning by day*
@@ -43,10 +50,16 @@ sandstone make two.
 *The first chakra, Muladhara: walk into it*
 
 
-In the middle of the keep's hall in Ellora hang **red cubes**, as if the space there had broken. They cannot be broken:
-**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen), drawn in neon as in the show: a
-square on its corner, always facing you, in a red glow: broken red outlines, a thick yellow frame broken into
-flickering dashes, dark maroon rings and a small heart burning yellow and white, red lightning crawling out of it. It drifts round whoever fights it,
+In the middle of the keep's hall in Ellora hang **red cubes**: small Anomalies of pure energy, each a glowing square in
+its own shadow, as if the space there had broken. They are as solid as blocks, but they cannot be broken:
+**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen) of **pure energy** as in the
+show: a square on its corner, always facing you, nothing solid in it, only light: broken red outlines, a thick yellow
+frame broken into flickering dashes, rings of dim red energy, a heart burning white and yellow, motes of energy drawn
+in and flung out. It swallows the light round it in a **halo of darkness**, and its red lightning crawls out of it in
+**dark smoke**. Now and then it shudders, as if it were not quite there, and shrieks.
+
+Its **red lightning brings dread**: you are thrown into **darkness**, your sight **flashes red and black**, the edges
+closing in, the world shakes, your heart pounds, and your legs go heavy (a few seconds, renewed by every strike). It drifts round whoever fights it,
 strikes with **red lightning** and now and then **bursts** outward, throwing back everyone near; below half its life it
 strikes faster and harder. Only one is awake near a place at a time.
 

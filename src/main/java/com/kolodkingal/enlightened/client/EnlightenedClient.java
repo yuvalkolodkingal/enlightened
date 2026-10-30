@@ -62,6 +62,7 @@ public final class EnlightenedClient {
 
     private static void onGuiLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(Enlightened.id("bending"), new BendingHud());
+        event.registerAboveAll(Enlightened.id("dread"), new DreadOverlay());
     }
 
     private static void onParticles(RegisterParticleProvidersEvent event) {
@@ -80,6 +81,8 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.CITY_GUARD.get(), com.kolodkingal.enlightened.client.render.CityGuardRenderer::new);
         event.registerEntityRenderer(ModEntities.KING_BUMI.get(), com.kolodkingal.enlightened.client.render.KingBumiRenderer::new);
         event.registerEntityRenderer(ModEntities.ANOMALY.get(), com.kolodkingal.enlightened.client.render.AnomalyRenderer::new);
+        event.registerBlockEntityRenderer(com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_CUBE.get(),
+                com.kolodkingal.enlightened.client.render.AnomalyCubeRenderer::new);
     }
 
     private static void onLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

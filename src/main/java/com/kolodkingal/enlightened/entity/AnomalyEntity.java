@@ -106,6 +106,10 @@ public class AnomalyEntity extends Monster implements Enemy {
         if (tickCount % (angry ? 90 : 130) == 0) {
             burst(level, angry);
         }
+        if (target != null && tickCount % 160 == 0) {
+            // Now and then it shrieks, low, from everywhere at once.
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.HOSTILE, 1.5F, 0.5F);
+        }
         if (tickCount % 3 == 0) {
             level.sendParticles(new EnergyParticleOptions(0xFF2A1A, 0.9F), getX(), getY() + getBbHeight() / 2, getZ(), 2, 1.0, 1.0, 1.0, 0.02);
         }
@@ -118,7 +122,13 @@ public class AnomalyEntity extends Monster implements Enemy {
         Vec3 to = target.position().add(0, target.getBbHeight() * 0.6, 0);
         Fx.send(level, Fx.ANOMALY_BOLT, from, to, 0xFF2A1A, 1.0F);
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 0.8F, 1.6F);
-        target.hurt(damageSources().indirectMagic(this, this), damage);
+        if (target.hurt(damageSources().indirectMagic(this, this), damage) || target.isAlive()) {
+            // The red lightning brings darkness and dread: the sight flashes red and black, the heart pounds.
+            target.addEffect(new net.minecraft.world.effect.MobEffectInstance(com.kolodkingal.enlightened.registry.ModEffects.DREAD,
+                    com.kolodkingal.enlightened.effect.DreadEffect.DURATION, 0, false, false, true));
+            target.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DARKNESS, 140, 0, false, false, true));
+            level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.WARDEN_ROAR, SoundSource.HOSTILE, 0.5F, 1.6F);
+        }
     }
 
     /** A burst of red energy all round it: whoever is near is hurt and thrown back. */

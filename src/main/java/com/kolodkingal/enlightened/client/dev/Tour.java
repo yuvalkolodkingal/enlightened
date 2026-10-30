@@ -141,6 +141,16 @@ public final class Tour {
         }));
     }
 
+    /** A shot with the screen's overlays shown even in a clean tour (the Anomaly's dread is drawn over the screen). */
+    private static void shotWithOverlays(String name, int delay) {
+        STEPS.add(new Step(1, () -> Minecraft.getInstance().getToasts().clear()));
+        STEPS.add(new Step(delay, () -> {
+            Minecraft mc = Minecraft.getInstance();
+            Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), msg -> {
+            });
+        }));
+    }
+
     /** Logs where the renderer thinks the hands and the effects are at this screenshot, for a look at the log. */
     private static void diagnose(String name) {
         Minecraft mc = Minecraft.getInstance();
@@ -1286,6 +1296,10 @@ public final class Tour {
         camera(CameraType.THIRD_PERSON_FRONT, 2);
         for (int i = 0; i < 6; i++) {
             shot("304b_anomaly_front_" + i, 9);
+        }
+        // Its red lightning brings dread: the sight flashes red and black.
+        for (int i = 0; i < 8; i++) {
+            shotWithOverlays("308_dread_" + i, 4);
         }
         // Neon shines best at night.
         cmd("time set midnight", 2);

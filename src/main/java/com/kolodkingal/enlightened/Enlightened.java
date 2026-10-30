@@ -28,6 +28,7 @@ public class Enlightened {
 
     public Enlightened(IEventBus modBus, ModContainer container) {
         ModBlocks.BLOCKS.register(modBus);
+        ModBlocks.BLOCK_ENTITIES.register(modBus);
         ModBlocks.registerItems();
         ModItems.ITEMS.register(modBus);
         ModEffects.EFFECTS.register(modBus);

@@ -26,12 +26,22 @@ public final class ModBlocks {
                     .lightLevel(s -> 12).noLootTable()));
 
     /**
-     * A red cube of the Anomaly, in Ellora: it cannot be broken, and whoever tries wakes the Anomaly itself.
+     * A red cube of the Anomaly, in Ellora: a small Anomaly of pure energy, as hard as a block to strike; it cannot be
+     * broken, and whoever tries wakes the Anomaly itself.
      */
-    public static final DeferredBlock<net.minecraft.world.level.block.Block> ANOMALY_BLOCK = BLOCKS.register("anomaly_block",
-            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED)
-                    .strength(-1.0F, 3600000.0F).noLootTable().lightLevel(s -> 10).emissiveRendering((s, l, p) -> true)
+    public static final DeferredBlock<com.kolodkingal.enlightened.block.AnomalyBlock> ANOMALY_BLOCK = BLOCKS.register("anomaly_block",
+            () -> new com.kolodkingal.enlightened.block.AnomalyBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED)
+                    .strength(-1.0F, 3600000.0F).noLootTable().lightLevel(s -> 10).noOcclusion()
                     .sound(net.minecraft.world.level.block.SoundType.AMETHYST)));
+
+    public static final net.neoforged.neoforge.registries.DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
+            net.neoforged.neoforge.registries.DeferredRegister.create(net.minecraft.core.registries.Registries.BLOCK_ENTITY_TYPE, Enlightened.MODID);
+
+    /** What draws a red cube as a small Anomaly. */
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<com.kolodkingal.enlightened.block.AnomalyCubeBlockEntity>> ANOMALY_CUBE =
+            BLOCK_ENTITIES.register("anomaly_cube", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(com.kolodkingal.enlightened.block.AnomalyCubeBlockEntity::new, ANOMALY_BLOCK.get()).build(null));
 
     public static void registerItems() {
         ModItems.ITEMS.register("meditation_point", () -> new BlockItem(MEDITATION_POINT.get(), new Item.Properties()));

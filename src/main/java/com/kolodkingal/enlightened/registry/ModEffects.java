@@ -23,6 +23,9 @@ public final class ModEffects {
     /** Struck by lightning: cannot move for a moment. */
     public static final DeferredHolder<MobEffect, StunnedEffect> STUNNED = EFFECTS.register("stunned", StunnedEffect::new);
 
+    /** Struck by the Anomaly's red lightning: the sight flashes red and black, the world shakes, the heart pounds. */
+    public static final DeferredHolder<MobEffect, com.kolodkingal.enlightened.effect.DreadEffect> DREAD = EFFECTS.register("dread", com.kolodkingal.enlightened.effect.DreadEffect::new);
+
     private ModEffects() {
     }
 }

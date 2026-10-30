@@ -672,5 +672,6 @@
   "message.enlightened.cosmic.anomaly_open": "צ'אקרת האדמה שלך כבר פתוחה. האור האדום שולח אותך הביתה.",
   "message.enlightened.avatar.no_chakra": "פתח קודם לפחות צ'אקרה אחת: מצב האווטאר זורם דרכן.",
   "message.enlightened.avatar.enter_part": "%s שואב ממצב האווטאר, עד צ'אקרת ה%s (%s מתוך %s)!",
-  "message.enlightened.avatar.enter_master": "%s נכנס למצב האווטאר, אדון כל שבע הצ'אקרות!"
+  "message.enlightened.avatar.enter_master": "%s נכנס למצב האווטאר, אדון כל שבע הצ'אקרות!",
+  "effect.enlightened.dread": "אימה"
 }

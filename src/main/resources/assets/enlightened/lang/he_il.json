@@ -596,5 +596,11 @@
   "look.enlightened.avatar.pavi": "פאווי",
   "look.enlightened.avatar.nisha": "נישה",
   "enlightened.configuration.skyBisonFlySpeed": "מהירות התעופה של ביזון האוויר (בלוקים לטיק)",
-  "slot.enlightened.back": "גב: אפשר לשים כאן כל דבר (דאון, חרב...)"
+  "slot.enlightened.back": "גב: אפשר לשים כאן כל דבר (דאון, חרב...)",
+  "message.enlightened.born_none": "נולדת בלי כשפות. (מגילות הכשפות הן פריטים של מצב יצירה בלבד.)",
+  "block.enlightened.spirit_portal": "שער רוחות",
+  "message.enlightened.spirit.enter": "עברת אל עולם הרוחות.",
+  "message.enlightened.spirit.leave": "חזרת לעולם החיים.",
+  "message.enlightened.spirit.crossing": "הרוח שלך מתכנסת כדי לעבור...",
+  "message.enlightened.ba_sing_se.forbidden": "אין מלחמה בבה סינג סה: שום דבר נורא לא יכול לקום בין חומותיה."
 }

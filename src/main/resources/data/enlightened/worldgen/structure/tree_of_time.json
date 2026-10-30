@@ -1,0 +1,8 @@
+{
+  "type": "enlightened:site",
+  "kind": "tree_of_time",
+  "biomes": "#enlightened:has_structure/tree_of_time",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

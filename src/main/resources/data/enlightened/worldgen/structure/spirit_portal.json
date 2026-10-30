@@ -1,0 +1,8 @@
+{
+  "type": "enlightened:site",
+  "kind": "spirit_portal",
+  "biomes": "#enlightened:has_structure/spirit_portal",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {}
+}

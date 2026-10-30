@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "pattern": ["MBM", "BPB", "MBM"],
-  "key": {"M": {"item": "minecraft:magma_cream"}, "B": {"item": "minecraft:blaze_rod"}, "P": {"item": "minecraft:paper"}},
-  "result": {"id": "enlightened:fire_scroll", "count": 1}
-}

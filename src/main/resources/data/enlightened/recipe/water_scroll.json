@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "pattern": ["NCN", "CPC", "NCN"],
-  "key": {"N": {"item": "minecraft:nautilus_shell"}, "C": {"item": "minecraft:prismarine_crystals"}, "P": {"item": "minecraft:paper"}},
-  "result": {"id": "enlightened:water_scroll", "count": 1}
-}

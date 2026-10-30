@@ -400,6 +400,14 @@ public final class Tour {
             lionTurtle();
             return;
         }
+        if ("cities".equals(System.getProperty("enlightened.tour.only", ""))) {
+            cities();
+            return;
+        }
+        if ("spirit".equals(System.getProperty("enlightened.tour.only", ""))) {
+            spirit();
+            return;
+        }
         if ("back".equals(System.getProperty("enlightened.tour.only", ""))) {
             cmd("item replace entity @s armor.chest with minecraft:iron_chestplate", 2);
             server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD)), 15);
@@ -855,6 +863,80 @@ public final class Tour {
         shot("192_bison_side", 10);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
         cmd("gamemode creative", 5);
+    }
+
+    /** Builds a piece whole, chunk by chunk, as the world would. */
+    private static void build(net.minecraft.server.level.ServerLevel level, net.minecraft.world.level.levelgen.structure.StructurePiece piece) {
+        net.minecraft.world.level.levelgen.structure.BoundingBox all = piece.getBoundingBox();
+        net.minecraft.core.BlockPos pivot = new net.minecraft.core.BlockPos(all.getCenter());
+        for (int cx = all.minX() >> 4; cx <= all.maxX() >> 4; cx++) {
+            for (int cz = all.minZ() >> 4; cz <= all.maxZ() >> 4; cz++) {
+                net.minecraft.world.level.levelgen.structure.BoundingBox box = new net.minecraft.world.level.levelgen.structure.BoundingBox(
+                        cx << 4, all.minY(), cz << 4, (cx << 4) + 15, all.maxY(), (cz << 4) + 15);
+                piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), level.getRandom(), box,
+                        new net.minecraft.world.level.ChunkPos(cx, cz), pivot);
+            }
+        }
+    }
+
+    /** Ba Sing Se and Omashu, built on the flat world (alone: -Denlightened.tour.only=cities). */
+    private static void cities() {
+        cmd("gamemode spectator", 5);
+        cmd("time set noon", 2);
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().options.renderDistance().set(16);
+            Minecraft.getInstance().options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
+            Minecraft.getInstance().options.hideGui = true;
+        }));
+        server(p -> {
+            build(p.serverLevel(), new com.kolodkingal.enlightened.world.BaSingSePiece(new net.minecraft.core.BlockPos(0, -61, 0)));
+            p.teleportTo(p.serverLevel(), 0.5, -15, 135.5, 180.0F, 18.0F);
+        }, 120);
+        shot("280_ba_sing_se_outer_wall", 40);
+        cmd("tp @s 70.5 -20 70.5 135 30", 60);
+        shot("281_ba_sing_se_rings", 30);
+        cmd("tp @s 0.5 -42 40.5 180 10", 60);
+        shot("282_ba_sing_se_palace", 30);
+        cmd("tp @s 0.5 -55 90.5 180 0", 60);
+        shot("283_ba_sing_se_lower_ring", 30);
+        server(p -> {
+            build(p.serverLevel(), new com.kolodkingal.enlightened.world.OmashuPiece(new net.minecraft.core.BlockPos(400, -61, 0)));
+            p.teleportTo(p.serverLevel(), 400.5, -25, 125.5, 180.0F, 10.0F);
+        }, 160);
+        shot("285_omashu_bridge", 40);
+        cmd("tp @s 470.5 -10 60.5 130 15", 60);
+        shot("286_omashu_mountain", 30);
+        cmd("tp @s 400.5 -40 30.5 180 -25", 60);
+        shot("287_omashu_stairway", 30);
+    }
+
+    /** A spirit gate, the crossing, the Spirit World and the Tree of Time (alone: -Denlightened.tour.only=spirit). */
+    private static void spirit() {
+        cmd("time set noon", 2);
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().options.renderDistance().set(12);
+            Minecraft.getInstance().options.hideGui = true;
+        }));
+        server(p -> build(p.serverLevel(), new com.kolodkingal.enlightened.world.SpiritPortalPiece(new net.minecraft.core.BlockPos(0, -61, 20))), 40);
+        cmd("tp @s 0.5 -58 8.5 0 5", 30);
+        shot("290_spirit_portal", 20);
+        cmd("tp @s 9.5 -55 10.5 40 25", 20);
+        shot("291_spirit_portal_stones", 20);
+        server(p -> com.kolodkingal.enlightened.world.SpiritWorld.enter(p), 100);
+        shot("292_spirit_world_arrival", 40);
+        cmd("gamemode spectator", 5);
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            int x = p.getBlockX() + 40;
+            int z = p.getBlockZ();
+            level.getChunk(x >> 4, z >> 4);
+            int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE_WG, x, z) - 1;
+            build(level, new com.kolodkingal.enlightened.world.TreeOfTimePiece(new net.minecraft.core.BlockPos(x, y, z)));
+            p.teleportTo(level, x - 30.5, y + 18, z + 0.5, -90.0F, 5.0F);
+        }, 120);
+        shot("293_tree_of_time", 40);
+        server(p -> p.teleportTo(p.serverLevel(), p.getX() - 20, p.getY() + 30, p.getZ() + 20, -135.0F, 35.0F), 80);
+        shot("294_spirit_world_view", 40);
     }
 
     /** The glider of the show, open in a glide (alone: -Denlightened.tour.only=glider). */

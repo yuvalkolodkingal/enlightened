@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "enlightened:ba_sing_se",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 80,
+    "separation": 32,
+    "salt": 912334871
+  }
+}

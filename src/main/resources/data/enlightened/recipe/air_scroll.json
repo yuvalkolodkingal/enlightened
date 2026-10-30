@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "pattern": ["FBF", "BPB", "FBF"],
-  "key": {"F": {"item": "minecraft:feather"}, "B": {"item": "minecraft:breeze_rod"}, "P": {"item": "minecraft:paper"}},
-  "result": {"id": "enlightened:air_scroll", "count": 1}
-}

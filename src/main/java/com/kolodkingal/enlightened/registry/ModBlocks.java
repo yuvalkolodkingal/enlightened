@@ -20,6 +20,11 @@ public final class ModBlocks {
     public static final DeferredBlock<com.kolodkingal.enlightened.block.BlueFireBlock> BLUE_FIRE = BLOCKS.register("blue_fire",
             () -> new com.kolodkingal.enlightened.block.BlueFireBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SOUL_FIRE)));
 
+    /** The light inside a spirit portal: walk into it to cross to the Spirit World and back. */
+    public static final DeferredBlock<com.kolodkingal.enlightened.block.SpiritPortalBlock> SPIRIT_PORTAL = BLOCKS.register("spirit_portal",
+            () -> new com.kolodkingal.enlightened.block.SpiritPortalBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_PORTAL)
+                    .lightLevel(s -> 12).noLootTable()));
+
     public static void registerItems() {
         ModItems.ITEMS.register("meditation_point", () -> new BlockItem(MEDITATION_POINT.get(), new Item.Properties()));
     }

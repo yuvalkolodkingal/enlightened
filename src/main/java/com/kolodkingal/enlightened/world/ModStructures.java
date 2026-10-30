@@ -26,6 +26,17 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> ELLORA_PIECE = PIECES.register("ellora",
             () -> (StructurePieceType.ContextlessType) ElloraPiece::new);
 
+    public static final DeferredHolder<StructureType<?>, StructureType<SiteStructure>> SITE = TYPES.register("site",
+            () -> () -> SiteStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> BA_SING_SE_PIECE = PIECES.register("ba_sing_se",
+            () -> (StructurePieceType.ContextlessType) BaSingSePiece::new);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> OMASHU_PIECE = PIECES.register("omashu",
+            () -> (StructurePieceType.ContextlessType) OmashuPiece::new);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> SPIRIT_PORTAL_PIECE = PIECES.register("spirit_portal",
+            () -> (StructurePieceType.ContextlessType) SpiritPortalPiece::new);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> TREE_OF_TIME_PIECE = PIECES.register("tree_of_time",
+            () -> (StructurePieceType.ContextlessType) TreeOfTimePiece::new);
+
     private ModStructures() {
     }
 }

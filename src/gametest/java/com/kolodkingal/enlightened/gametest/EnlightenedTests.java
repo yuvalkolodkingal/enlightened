@@ -625,6 +625,22 @@ public final class EnlightenedTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void everyoneIsBornToOneInSix(GameTestHelper helper) {
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(42L);
+        java.util.Map<Element, Integer> counts = new java.util.EnumMap<>(Element.class);
+        for (int i = 0; i < 6000; i++) {
+            counts.merge(Benders.birth(random), 1, Integer::sum);
+        }
+        for (Element e : Benders.BIRTHS) {
+            int n = counts.getOrDefault(e, 0);
+            check(n > 850 && n < 1150, e + " is one in six (" + n + " of 6000)");
+        }
+        check(counts.size() == 6, "and nothing else");
+        check(helper.getLevel().getServer().getRecipeManager().byKey(Enlightened.id("fire_scroll")).isEmpty(), "the scrolls are not crafted");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
     public static void airJumpDrivesTheGliderOn(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer player = f.player(10, FLOOR + 12, 8);

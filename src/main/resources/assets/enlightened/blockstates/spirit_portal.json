@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "enlightened:block/spirit_portal_ns"
+    },
+    "axis=z": {
+      "model": "enlightened:block/spirit_portal_ew"
+    }
+  }
+}

@@ -596,5 +596,11 @@
   "look.enlightened.avatar.pavi": "Pavi",
   "look.enlightened.avatar.nisha": "Nisha",
   "enlightened.configuration.skyBisonFlySpeed": "Sky bison flying speed (blocks a tick)",
-  "slot.enlightened.back": "Back: wear anything here (a glider, a sword...)"
+  "slot.enlightened.back": "Back: wear anything here (a glider, a sword...)",
+  "message.enlightened.born_none": "You were born without bending. (The bending scrolls are Creative items only.)",
+  "block.enlightened.spirit_portal": "Spirit Portal",
+  "message.enlightened.spirit.enter": "You cross into the Spirit World.",
+  "message.enlightened.spirit.leave": "You return to the world of the living.",
+  "message.enlightened.spirit.crossing": "Your spirit gathers itself to cross over...",
+  "message.enlightened.ba_sing_se.forbidden": "There is no war in Ba Sing Se: nothing so terrible can rise within its walls."
 }

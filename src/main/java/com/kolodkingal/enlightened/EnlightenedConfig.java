@@ -16,7 +16,7 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue PLAYER_XP;
     public static final ModConfigSpec.BooleanValue HURT_PASSIVES;
     public static final ModConfigSpec.BooleanValue HURT_EVERYTHING;
-    public static final ModConfigSpec.BooleanValue SCROLLS_IN_CHESTS;
+    public static final ModConfigSpec.BooleanValue BORN_BENDING;
     public static final ModConfigSpec.IntValue RAISED_BLOCK_SECONDS;
 
     // ---- earth ----
@@ -108,8 +108,8 @@ public final class EnlightenedConfig {
                 .define("hurtPassives", true);
         HURT_EVERYTHING = B.comment("Whether bending hurts every creature in its way: the bender's own pets, his teammates, villagers, golems, everything alive but himself (players still by the server's PvP rule). On, hurtPassives does not matter.")
                 .define("hurtEverything", true);
-        SCROLLS_IN_CHESTS = B.comment("Whether the bending scrolls are found in chests (besides being crafted).")
-                .define("scrollsInChests", true);
+        BORN_BENDING = B.comment("Whether each player is born to an element the first time he joins: one in six each a firebender, an airbender, a waterbender, an earthbender, the Avatar, or no bender at all. (The scrolls are Creative items only.)")
+                .define("bornBending", true);
         RAISED_BLOCK_SECONDS = B.comment("How long a wall or pillar bending raised stands before it goes back.")
                 .defineInRange("raisedBlockSeconds", 10, 1, 600);
         B.pop();

@@ -1,0 +1,11 @@
+{
+  "type": "enlightened:spirit_world",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "enlightened:spirit_world",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "enlightened:spirit_wilds"
+    }
+  }
+}

@@ -24,6 +24,7 @@ import com.kolodkingal.enlightened.registry.ModTags;
 import com.kolodkingal.enlightened.water.WaterBending;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
@@ -97,6 +98,42 @@ public final class CommonEvents {
     }
 
     // ---- deaths: experience for a kill with bending; an airbender's pet ----
+
+    /**
+     * Ba Sing Se keeps its peace: no monster comes into the city (from a spawner, an egg, a raid, anything), and no
+     * wither or other boss can be raised inside its walls. Omashu keeps monsters out too.
+     */
+    @SubscribeEvent
+    public static void onJoinLevel(net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event) {
+        net.minecraft.world.entity.Entity e = event.getEntity();
+        boolean boss = e instanceof net.minecraft.world.entity.boss.wither.WitherBoss || e instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon
+                || e instanceof net.minecraft.world.entity.monster.warden.Warden || e instanceof net.minecraft.world.entity.monster.ElderGuardian;
+        if (!(event.getLevel() instanceof ServerLevel level) || !(boss || e instanceof net.minecraft.world.entity.monster.Enemy)) {
+            return;
+        }
+        if (inPeacefulCity(level, e.blockPosition(), boss)) {
+            event.setCanceled(true);
+            if (boss) {
+                for (ServerPlayer p : level.getEntitiesOfClass(ServerPlayer.class, e.getBoundingBox().inflate(32))) {
+                    p.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.ba_sing_se.forbidden")
+                            .withStyle(net.minecraft.ChatFormatting.GREEN), false);
+                }
+            }
+        }
+    }
+
+    /** Whether a place is inside Ba Sing Se (or, for monsters, Omashu). */
+    public static boolean inPeacefulCity(ServerLevel level, net.minecraft.core.BlockPos pos, boolean bossOnlyBaSingSe) {
+        var structures = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
+        String[] cities = bossOnlyBaSingSe ? new String[]{"ba_sing_se"} : new String[]{"ba_sing_se", "omashu"};
+        for (String id : cities) {
+            net.minecraft.world.level.levelgen.structure.Structure s = structures.get(com.kolodkingal.enlightened.Enlightened.id(id));
+            if (s != null && level.structureManager().getStructureAt(pos, s).isValid()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /** What he carried on his back falls with the rest of his things, unless the world keeps inventories. */
     @SubscribeEvent
@@ -273,6 +310,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            Benders.castFate(player);
             BendingData data = Benders.get(player);
             data.clearActive();
             BendingTicker.applyPassives(player, data);

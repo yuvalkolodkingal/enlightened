@@ -37,6 +37,42 @@ public final class Benders {
         }
     }
 
+    /** What a player may be born to, one in six each: the four elements, the Avatar, or no bending at all. */
+    public static final Element[] BIRTHS = {Element.FIRE, Element.AIR, Element.WATER, Element.EARTH, Element.AVATAR, Element.NONE};
+
+    /** The element a newborn player is given, one in six each of {@link #BIRTHS}. */
+    public static Element birth(net.minecraft.util.RandomSource random) {
+        return BIRTHS[random.nextInt(BIRTHS.length)];
+    }
+
+    /**
+     * The first time a player joins: his fate is cast, once (it is remembered through deaths). If he was born a bender
+     * he awakens to it at once; if not, he is told so. A player who already bends keeps his element.
+     */
+    public static void castFate(ServerPlayer player) {
+        if (player.getClass() != ServerPlayer.class) {
+            // Fake players (machines, the GameTests' mock players) are not born.
+            return;
+        }
+        net.minecraft.nbt.CompoundTag kept = player.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
+        if (kept.getBoolean("enlightened_fated")) {
+            return;
+        }
+        kept.putBoolean("enlightened_fated", true);
+        player.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, kept);
+        boolean on = !com.kolodkingal.enlightened.EnlightenedConfig.SPEC.isLoaded() || com.kolodkingal.enlightened.EnlightenedConfig.BORN_BENDING.get();
+        if (!on || get(player).element() != Element.NONE) {
+            return;
+        }
+        Element born = birth(player.getRandom());
+        if (born == Element.NONE) {
+            player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.born_none")
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
+        } else {
+            awaken(player, born);
+        }
+    }
+
     /**
      * Gives (or removes, with {@link Element#NONE}) an element. Cleans up whatever the old element was doing, and
      * gives the new element's starter ability and starting points and loadout.

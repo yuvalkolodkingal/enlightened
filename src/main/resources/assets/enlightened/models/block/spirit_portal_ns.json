@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/nether_portal_ns",
+  "textures": {
+    "particle": "enlightened:block/spirit_portal",
+    "portal": "enlightened:block/spirit_portal"
+  },
+  "render_type": "minecraft:translucent"
+}

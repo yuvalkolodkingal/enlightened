@@ -145,6 +145,15 @@ public final class Chakras {
             return;
         }
         boolean point = onMeditationPoint(p);
+        // The Avatar, meditating on a Meditation Point, crosses into the Spirit World (or back out of it).
+        if (point && data.element() == Element.AVATAR && now - data.meditateSince() >= com.kolodkingal.enlightened.world.SpiritWorld.AVATAR_CROSSING) {
+            data.setMeditating(false);
+            com.kolodkingal.enlightened.world.SpiritWorld.cross(p, null);
+            return;
+        }
+        if (point && data.element() == Element.AVATAR && p.tickCount % 40 == 0) {
+            p.displayClientMessage(Component.translatable("message.enlightened.spirit.crossing").withStyle(ChatFormatting.LIGHT_PURPLE), true);
+        }
         boolean guru = Guru.near(p);
         if (!taught(data)) {
             // No guru has shown him the way: the meditation calms him, but his chakras stay closed.

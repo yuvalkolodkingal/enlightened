@@ -4,11 +4,10 @@
 
 All in the *Enlightened* creative tab.
 
-## The four scrolls
+## The scrolls
 
-See [Becoming a Bender](Becoming-a-Bender): paper in the middle, four of one thing on the sides, four of another in
-the corners (earth: emerald and obsidian; air: breeze rod and feather; water: prismarine crystals and nautilus
-shell; fire: blaze rod and magma cream), or found in chests.
+Creative items only: they are no longer crafted or found. Everyone is born to an element instead: see
+[Becoming a Bender](Becoming-a-Bender).
 
 ## Water Skin
 

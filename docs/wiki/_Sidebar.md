@@ -20,6 +20,8 @@
 * [Southern Air Temple](Southern-Air-Temple)
 * [The Lion Turtle](Lion-Turtle)
 * [Seven Havens](Seven-Havens)
+* [Ba Sing Se and Omashu](Earth-Kingdom-Cities)
+* [The Spirit World](Spirit-World)
 * [The Flying Lemur](Flying-Lemur)
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)

@@ -73,7 +73,9 @@ panel in the top-left corner, items that awaken the power, a server config, oper
     redstone fire, coal earth, netherite the Avatar's); its template is found in **Ellora**, the walled golden city of
     the desert.
 13. **Ba Sing Se and Omashu.** The Earth Kingdom's great walled capital, where no monster comes and no boss can be
-    raised, and King Bumi's mountain city over its chasm.
+    raised, and King Bumi's sandstone mountain city over its chasm, with the king himself on his throne. **City guards**
+    keep Omashu, Ba Sing Se and Ellora, each city's in its own uniform: they fight the monsters that come near, and
+    they talk about their city.
 14. **The Spirit World.** Step through a spirit portal in the forest (or, as the Avatar, meditate on a Meditation
     Point) into a world of its own, where the Tree of Time grows.
 15. **The back slot.** One more inventory slot, for whatever you wear on your back: your glider (which flies from

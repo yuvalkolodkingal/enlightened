@@ -77,6 +77,8 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.GURU_PATHIK.get(), com.kolodkingal.enlightened.client.render.GuruPathikRenderer::new);
         event.registerEntityRenderer(ModEntities.SKY_BISON.get(), com.kolodkingal.enlightened.client.render.SkyBisonRenderer::new);
         event.registerEntityRenderer(ModEntities.LION_TURTLE.get(), com.kolodkingal.enlightened.client.render.LionTurtleRenderer::new);
+        event.registerEntityRenderer(ModEntities.CITY_GUARD.get(), com.kolodkingal.enlightened.client.render.CityGuardRenderer::new);
+        event.registerEntityRenderer(ModEntities.KING_BUMI.get(), com.kolodkingal.enlightened.client.render.KingBumiRenderer::new);
     }
 
     private static void onLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -86,6 +88,8 @@ public final class EnlightenedClient {
                 com.kolodkingal.enlightened.client.render.SkyBisonModel::createBodyLayer);
         event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.LionTurtleRenderer.LAYER,
                 com.kolodkingal.enlightened.client.render.LionTurtleModel::createBodyLayer);
+        event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.CityGuardRenderer.HELMET,
+                com.kolodkingal.enlightened.client.render.CityGuardRenderer::createHelmetLayer);
         event.registerLayerDefinition(SHELL_WIDE, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.6F), false), 64, 64));
         event.registerLayerDefinition(SHELL_SLIM, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.6F), true), 64, 64));
     }

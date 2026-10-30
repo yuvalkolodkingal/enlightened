@@ -1,3 +1,14 @@
+# Enlightened 1.0.2
+
+* **Omashu, as the show draws it.** A mountain of sandstone over its chasm, the cliff ribbed with pointed buttresses,
+  one long bridge on tall arches, a wall and a gate on the rim, terraces crowded with houses and towers under green
+  pagoda roofs, the grand stairway, and a great stepped pyramid on the summit.
+* **King Bumi** sits on his golden throne in the hall inside the pyramid. Right-click him to talk.
+* **City guards** in Omashu, Ba Sing Se and Ellora, in place of the iron golems: each city's in its own uniform and
+  helmet, with three faces. They keep their posts, fight any monster that comes near, and fight back together against
+  anyone who strikes one of them. **Talk to them**: a greeting of their own, then the talk of their city, and a word
+  for the Avatar. A City Guard Spawn Egg in Creative.
+
 # Enlightened 1.0.1
 
 * **The Avatar is strongest in the element he was born to.** Every Avatar is born to an element (going round Fire,

@@ -436,8 +436,13 @@ public class BaSingSePiece extends DesignPiece {
             for (int dist : new int[]{24, 40, 52, 70, 86}) {
                 villager(level, box, random, origin.offset(d[0] * dist + d[1] * 2, 1, d[1] * dist + d[0] * 2), VillagerType.PLAINS);
             }
-            golem(level, box, random, origin.offset(d[0] * 92, 1, d[1] * 92));
-            golem(level, box, random, origin.offset(d[0] * 28, 1, d[1] * 28));
+            // The guards: a pair on each street inside each gate, and at the foot of the palace's stairs.
+            for (int dist : new int[]{92, 57, 28, 20}) {
+                for (int side : new int[]{-3, 3}) {
+                    guard(level, box, random, origin.offset(d[0] * dist + d[1] * side, 1, d[1] * dist + d[0] * side),
+                            com.kolodkingal.enlightened.entity.CityGuardEntity.City.BA_SING_SE, Float.NaN);
+                }
+            }
         }
         villager(level, box, random, origin.offset(0, PAL_H + 1, 3), VillagerType.PLAINS);
     }

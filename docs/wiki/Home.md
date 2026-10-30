@@ -32,7 +32,7 @@ same authors, and plays the same way.
 * [The Flying Lemur](Flying-Lemur): a tameable winged lemur, like Momo
 * [The Southern Air Temple](Southern-Air-Temple): the temple on the mountains, its sky bison, Guru Pathik and Momo
 * [The Lion Turtle](Lion-Turtle): an island that swims, energybending for a Hero of the Village, and a home on its shell
-* [Ba Sing Se and Omashu](Earth-Kingdom-Cities): the walled capital that keeps all monsters out, and the mountain city over its chasm
+* [Ba Sing Se and Omashu](Earth-Kingdom-Cities): the walled capital that keeps all monsters out, the mountain city over its chasm with King Bumi on his throne, and the city guards you can talk to
 * [The Spirit World](Spirit-World): a world of its own through the spirit portals, and the Tree of Time
 * [Seven Havens](Seven-Havens): the brigade armor trim for any armor, and Ellora, the golden city where it is found
 * [Commands](Commands)

@@ -82,7 +82,9 @@ public class ElloraPiece extends StructurePiece {
     /** Townsfolk in the streets (x, z, at the ground) and the guards at the gates. */
     private static final int[][] STREET_FOLK = {{40, 1}, {-40, -1}, {1, 40}, {-1, -40}, {66, 0}, {-66, 0}, {0, 66}, {0, -66},
             {40, 41}, {-41, 40}, {41, -40}, {-40, -41}};
-    private static final int[][] GUARDS = {{84, 4}, {-84, -4}, {4, 84}, {-4, -84}};
+    /** The guards (x, y, z): a pair inside each gate, a pair where each street meets the ring road, two at the keep's gate. */
+    private static final int[][] GUARDS = {{84, 1, 2}, {84, 1, -2}, {-84, 1, 2}, {-84, 1, -2}, {2, 1, 84}, {-2, 1, 84}, {2, 1, -84}, {-2, 1, -84},
+            {62, 1, 2}, {-62, 1, -2}, {2, 1, 62}, {-2, 1, -62}, {2, PLAZA + 1, -KEEP - 2}, {-2, PLAZA + 1, -KEEP - 2}};
     /** The towers: centre x, z, radius, height. The eight at the wall's corners, then two either side of each gate. */
     private static final double[][] TOWERS = towers();
 
@@ -199,16 +201,7 @@ public class ElloraPiece extends StructurePiece {
             villager(level, box, random, origin.offset(v[0], 1, v[1]));
         }
         for (int[] g : GUARDS) {
-            BlockPos at = origin.offset(g[0], 1, g[1]);
-            if (!box.isInside(at)) {
-                continue;
-            }
-            net.minecraft.world.entity.animal.IronGolem golem = EntityType.IRON_GOLEM.create(level.getLevel());
-            if (golem != null) {
-                golem.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, random.nextFloat() * 360.0F, 0.0F);
-                golem.setPersistenceRequired();
-                level.addFreshEntityWithPassengers(golem);
-            }
+            DesignPiece.guard(level, box, random, origin.offset(g[0], g[1], g[2]), com.kolodkingal.enlightened.entity.CityGuardEntity.City.ELLORA, Float.NaN);
         }
     }
 

@@ -37,6 +37,9 @@ public final class ModItems {
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> SKY_BISON_SPAWN_EGG = ITEMS.register("sky_bison_spawn_egg",
             () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.SKY_BISON, 0xEEEADE, 0x7A5032, new Item.Properties()));
 
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> CITY_GUARD_SPAWN_EGG = ITEMS.register("city_guard_spawn_egg",
+            () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.CITY_GUARD, 0x4A6E3A, 0xC8A050, new Item.Properties()));
+
     /** The Seven Havens brigade armor trim: set in lapis, gold, redstone or coal it is the water, air, fire or earth brigade's uniform; in netherite the Avatar's, all four. */
     public static final net.minecraft.resources.ResourceKey<net.minecraft.world.item.armortrim.TrimPattern> BRIGADE_TRIM =
             net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.TRIM_PATTERN, Enlightened.id("brigade"));

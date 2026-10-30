@@ -642,6 +642,120 @@ def paint_pathik():
     p.save(os.path.join(ENTITY, 'guru_pathik.png'))
 
 
+# The guards of the three great cities: the uniform of the city (its colours, its armour), three faces each.
+GUARD_FACES = [
+    dict(skin=(232, 200, 168), eyes=(60, 50, 40), hair=(36, 30, 28), style='short'),
+    dict(skin=(204, 164, 124), eyes=(70, 56, 40), hair=(70, 48, 32), style='short'),
+    dict(skin=(176, 128, 92), eyes=(50, 40, 34), hair=(28, 24, 24), style='short', mustache=True),
+]
+GUARDS = {
+    # Omashu: green tunics under tan leather plates, a brown belt, the round tan cap.
+    'omashu': dict(garment='robe', shirt=(70, 112, 60), sleeves=(70, 112, 60), pants=(56, 86, 50), boots=(80, 60, 40), trim=(196, 172, 120),
+                   belt=(104, 78, 48), plate=(188, 162, 112), helmet=(192, 166, 116), helmet_trim=(70, 112, 60)),
+    # Ba Sing Se: the dark green of the royal army, scale armour edged in gold, the green tiered cone.
+    'ba_sing_se': dict(garment='robe', shirt=(48, 84, 46), sleeves=(48, 84, 46), pants=(40, 62, 38), boots=(50, 40, 30), trim=(204, 172, 80),
+                       belt=(204, 172, 80), plate=(62, 104, 56), helmet=(74, 116, 62), helmet_trim=(204, 172, 80), scales=True),
+    # Ellora: white robes of the desert, a gold breastplate, a teal sash after the city's copper domes, the golden helm.
+    'ellora': dict(garment='robe', shirt=(232, 224, 202), sleeves=(232, 224, 202), pants=(212, 198, 162), boots=(124, 92, 52), trim=(222, 182, 62),
+                   belt=(62, 150, 140), plate=(222, 182, 62), helmet=(226, 186, 70), helmet_trim=(62, 150, 140)),
+}
+
+
+def paint_guards():
+    out = os.path.join(ENTITY, 'guard')
+    for city, spec in GUARDS.items():
+        for v, face in enumerate(GUARD_FACES):
+            s = dict(spec)
+            s.update(face)
+            p = Painter(city + str(v))
+            paint_head(p, s['skin'], s['eyes'], brows=s['hair'])
+            paint_hair(p, s['hair'], s['style'])
+            paint_body(p, s, False)
+            if s.get('mustache'):
+                paint_mustache(p, s['hair'])
+            # The breastplate on the jacket layer, a pauldron on each shoulder, greaves over the boots.
+            plate = s['plate']
+            jx, jy, jw, jh = JACKET['front']
+            p.fill((jx + 1, jy + 1, 6, 6), plate, 0.05, vgrad=0.15)
+            if s.get('scales'):
+                for j in range(1, 7):
+                    for i in range(1, 7):
+                        if (i + j) % 2 == 0:
+                            p.dot(jx + i, jy + j, s['trim'], 0.95)
+            else:
+                p.rows({'front': (jx + 1, jy + 1, 6, 6)}, shade(plate, 0.75), (2, 4), names=('front',))
+            p.cols({'front': (jx, jy, jw, jh)}, s['trim'], (1, 6), names=('front',))
+            p.dot(jx + 3, jy + 7, s['trim'], 1.2)
+            p.dot(jx + 4, jy + 7, s['trim'], 1.2)
+            bx, by, bw, bh = JACKET['back']
+            p.fill((bx + 1, by + 1, 6, 6), plate, 0.05, vgrad=0.15)
+            for a in (arm(40, 32, False), arm(48, 48, False)):
+                p.rows(a, plate, (0, 1, 2), names=('front', 'left', 'right', 'back'))
+                p.rows(a, s['trim'], (3,), names=('front', 'left', 'right', 'back'))
+                x, y, w, h = a['top']
+                p.fill((x, y, w, h), plate, 0.05)
+            for leg in (cube(0, 32, 4, 12, 4), cube(0, 48, 4, 12, 4)):
+                p.rows(leg, plate, (6, 7, 8), names=('front',))
+                p.rows(leg, shade(plate, 0.75), (8,), names=('front',))
+            p.save(os.path.join(out, '%s_%d.png' % (city, v)))
+        # The helmet: its colour, a band of the city's second colour along the bottom of every face, a glint.
+        h = Painter(city + '_helmet', (64, 32))
+        h.fill((0, 0, 64, 32), spec['helmet'], 0.06)
+        for y in (8, 11, 25):
+            h.fill((0, y, 64, 1), spec['helmet_trim'], 0.04)
+        h.fill((36, 0, 28, 12), spec['helmet_trim'], 0.05)
+        h.speckle((0, 0, 64, 32), shade(spec['helmet'], 1.25), 0.06)
+        h.save(os.path.join(out, city + '_helmet.png'))
+
+
+def paint_king_bumi():
+    """King Bumi on his throne, as Aang found him: green royal robes with a lighter collar, a gold-edged green cap,
+    wild white hair and brows, a white goatee, one eye wider than the other (entity/king_bumi.png)."""
+    p = Painter('king_bumi')
+    skin = (186, 138, 98)
+    white = (240, 240, 232)
+    s = dict(garment='robe', skin=skin, shirt=(46, 112, 52), sleeves=(40, 100, 46), pants=(36, 88, 42), boots=(36, 70, 38),
+             trim=(120, 196, 96), belt=(30, 70, 34))
+    paint_head(p, skin, (90, 140, 120), brows=white)
+    paint_hair(p, white, 'wild')
+    fx, fy = HEAD['front'][0], HEAD['front'][1]
+    # The cap: green, a gold band, the jade badge at the front.
+    for name in ('front', 'left', 'right', 'back', 'top'):
+        x, y, w, h = HAT[name]
+        if name == 'top':
+            p.fill((x + 2, y + 2, 4, 4), (52, 120, 56), 0.05)
+        else:
+            p.fill((x + 1, y, w - 2, 1), (52, 120, 56), 0.05)
+            p.fill((x + 1, y + 1, w - 2, 1), (214, 176, 64), 0.05)
+    p.dot(HAT['front'][0] + 3, HAT['front'][1], (110, 200, 110))
+    p.dot(HAT['front'][0] + 4, HAT['front'][1], (110, 200, 110))
+    # One eye wide and pale, the other narrowed; bushy white brows; lines of age; the goatee.
+    p.dot(fx + 1, fy + 4, (250, 250, 250))
+    p.dot(fx + 2, fy + 4, (90, 140, 120))
+    p.dot(fx + 1, fy + 3, white)
+    p.dot(fx + 2, fy + 3, white)
+    p.dot(fx + 5, fy + 3, white)
+    p.dot(fx + 6, fy + 3, white)
+    p.dot(fx + 6, fy + 4, skin, 0.8)
+    for i in range(2, 6):
+        p.dot(fx + i, fy + 2, skin, 0.86)
+    p.dot(fx + 3, fy + 6, (120, 50, 50))
+    p.dot(fx + 4, fy + 6, (120, 50, 50))
+    p.dot(fx + 3, fy + 7, white)
+    p.dot(fx + 4, fy + 7, white)
+    paint_body(p, s, False)
+    # The broad collar of a lighter green over the shoulders, and the wide sleeves' cuffs.
+    p.rows(BODY, s['trim'], (0, 1), names=('front', 'back', 'left', 'right'))
+    bx, by = BODY['front'][0], BODY['front'][1]
+    for j in range(2, 6):
+        p.dot(bx + 1 + j // 2, by + j, s['trim'])
+        p.dot(bx + 6 - j // 2, by + j, s['trim'])
+    for a in (arm(40, 16, False), arm(32, 48, False)):
+        p.rows(a, s['trim'], (0, 1), names=('front', 'back', 'left', 'right', ))
+        p.rows(a, s['trim'], (9,))
+    p.save(os.path.join(ENTITY, 'king_bumi.png'))
+
+
 def paint_bison():
     """The sky bison (Appa): 256x256 over SkyBisonModel.createBodyLayer. Shaggy white fur, the brown arrow from the brow
     over the back, a broad flat grey muzzle with dark nostrils, small dark eyes under the fringe, horns grey-brown and
@@ -911,6 +1025,8 @@ def main():
     paint_shell('metal_armor', (170, 175, 180), (110, 115, 120))
     paint_lemur()
     paint_pathik()
+    paint_guards()
+    paint_king_bumi()
     paint_bison()
     paint_lion_turtle()
     paint_items()

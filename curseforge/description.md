@@ -33,7 +33,10 @@ elemental sphere, and receive **energybending** from the **lion turtle**, an isl
 
 * **Ba Sing Se**: the Earth Kingdom's walled capital, three rings and the palace. *There is no war in Ba Sing Se*:
   no monster comes in, and no boss can be raised there.
-* **Omashu**: King Bumi's mountain city over its chasm.
+* **Omashu**: King Bumi's sandstone mountain city over its chasm, one long bridge on tall arches, the great pyramid on
+  the summit and the king himself on his throne inside it. Talk to him.
+* **City guards** keep Omashu, Ba Sing Se and Ellora, each city's in its own uniform: they fight the monsters that come
+  near, and they tell you about their city.
 * **The Southern Air Temple**, with sky bison to tame and fly, and flying lemurs (Momo rides on your shoulder).
 * **Ellora**, the golden city of *Seven Havens*, where the **brigade armor trim** is found.
 * **The Spirit World**, through the spirit portals of the forests, and the **Tree of Time**.

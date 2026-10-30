@@ -54,7 +54,19 @@ public final class ModEntities {
             () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.LionTurtleEntity>of(com.kolodkingal.enlightened.entity.LionTurtleEntity::new, MobCategory.MISC)
                     .sized(8.0F, 9.0F).eyeHeight(7.0F).clientTrackingRange(16).updateInterval(20).fireImmune().build("lion_turtle"));
 
+    /** A guard of Omashu, Ba Sing Se or Ellora: keeps his post, fights monsters, talks. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.CityGuardEntity>> CITY_GUARD = ENTITIES.register("city_guard",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.CityGuardEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.95F).clientTrackingRange(10).build("city_guard"));
+
+    /** King Bumi, on his throne under the summit of Omashu. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.KingBumiEntity>> KING_BUMI = ENTITIES.register("king_bumi",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.KingBumiEntity::new, MobCategory.MISC)
+                    .sized(0.7F, 1.5F).clientTrackingRange(10).build("king_bumi"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
+        event.put(CITY_GUARD.get(), com.kolodkingal.enlightened.entity.CityGuardEntity.createAttributes().build());
+        event.put(KING_BUMI.get(), com.kolodkingal.enlightened.entity.KingBumiEntity.createAttributes().build());
         event.put(SKY_BISON.get(), com.kolodkingal.enlightened.entity.SkyBisonEntity.createAttributes().build());
         event.put(LION_TURTLE.get(), com.kolodkingal.enlightened.entity.LionTurtleEntity.createAttributes().build());
         event.put(GURU_PATHIK.get(), com.kolodkingal.enlightened.entity.GuruPathikEntity.createAttributes().build());

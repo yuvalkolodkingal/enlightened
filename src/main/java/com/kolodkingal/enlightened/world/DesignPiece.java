@@ -143,4 +143,22 @@ public abstract class DesignPiece extends StructurePiece {
             level.addFreshEntityWithPassengers(g);
         }
     }
+
+    /** A guard of a city at his post, facing a given yaw (or a random one if the yaw is NaN). */
+    public static void guard(WorldGenLevel level, BoundingBox box, RandomSource random, BlockPos at,
+                             com.kolodkingal.enlightened.entity.CityGuardEntity.City city, float yaw) {
+        if (!box.isInside(at)) {
+            return;
+        }
+        var g = com.kolodkingal.enlightened.registry.ModEntities.CITY_GUARD.get().create(level.getLevel());
+        if (g == null) {
+            return;
+        }
+        float y = Float.isNaN(yaw) ? random.nextFloat() * 360.0F : yaw;
+        g.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, y, 0.0F);
+        g.setYHeadRot(y);
+        g.finalizeSpawn(level, level.getCurrentDifficultyAt(at), MobSpawnType.STRUCTURE, null);
+        g.station(city, random.nextInt(com.kolodkingal.enlightened.entity.CityGuardEntity.VOICES), at);
+        level.addFreshEntityWithPassengers(g);
+    }
 }

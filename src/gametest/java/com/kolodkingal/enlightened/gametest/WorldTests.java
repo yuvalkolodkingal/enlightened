@@ -60,17 +60,42 @@ public final class WorldTests {
     @GameTest(template = ARENA, timeoutTicks = 20)
     public static void omashuRisesFromItsChasmOverOneBridge(GameTestHelper helper) {
         OmashuPiece city = new OmashuPiece(BlockPos.ZERO);
-        check(at(city, 60, -10, 0).isAir(), "a deep chasm rings the city");
-        check(at(city, 60, -OmashuPiece.DEEP, 0).is(Blocks.WATER), "a river at its bottom");
-        check(!at(city, 0, 2, 60).isAir(), "one bridge crosses it");
+        check(at(city, 75, -10, 0).isAir(), "a deep chasm rings the city");
+        check(at(city, 75, -OmashuPiece.DEEP, 0).is(Blocks.WATER), "a river at its bottom");
+        check(!at(city, 0, 2, 75).isAir(), "one bridge crosses it");
+        check(!at(city, 0, -30, 61).isAir() && at(city, 0, -30, 66).isAir(), "on tall arches over the chasm");
+        int ribs = 0;
+        for (int a = 0; a < 360; a++) {
+            double t = Math.toRadians(a);
+            var b = at(city, (int) Math.round(Math.cos(t) * 62.5), -2, (int) Math.round(Math.sin(t) * 62.5));
+            if (b != null && b.is(Blocks.SMOOTH_SANDSTONE)) {
+                ribs++;
+            }
+        }
+        check(ribs > 40, "buttresses rib the cliff (" + ribs + ")");
+        check(at(city, 59, 5, 0).is(Blocks.SMOOTH_SANDSTONE) && at(city, 0, 5, 59).isAir(), "a wall on the cliff's edge, its gate at the bridge");
         check(OmashuPiece.surface(0, 30) > OmashuPiece.surface(0, 40) && OmashuPiece.surface(0, 10) > OmashuPiece.surface(0, 30), "the stairway climbs the mountain");
         check(OmashuPiece.surface(20, -20) == OmashuPiece.H[OmashuPiece.tier(Math.sqrt(800))], "the terraces are level");
+        int roofs = 0;
+        for (int x = -60; x <= 60; x++) {
+            for (int z = -60; z <= 60; z++) {
+                for (int y = 3; y < 44; y++) {
+                    var b = at(city, x, y, z);
+                    if (b != null && b.is(Blocks.GREEN_TERRACOTTA)) {
+                        roofs++;
+                    }
+                }
+            }
+        }
+        check(roofs > 2000, "the terraces crowded with green roofs (" + roofs + ")");
+        check(OmashuPiece.H[5] + OmashuPiece.PYRAMID > 50 && !at(city, 0, OmashuPiece.H[5] + OmashuPiece.PYRAMID, 0).isAir(),
+                "the great pyramid on the summit");
         boolean gold = false;
-        for (int y = 40; y < 56; y++) {
+        for (int y = 50; y < 66; y++) {
             var b = at(city, 0, y, 0);
             gold |= b != null && b.is(Blocks.GOLD_BLOCK);
         }
-        check(gold, "the palace on the summit has its golden tip");
+        check(gold, "with its golden tip");
         helper.succeed();
     }
 

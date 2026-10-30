@@ -417,6 +417,10 @@ public final class Tour {
             cities();
             return;
         }
+        if ("omashu".equals(System.getProperty("enlightened.tour.only", ""))) {
+            omashu();
+            return;
+        }
         if ("spirit".equals(System.getProperty("enlightened.tour.only", ""))) {
             spirit();
             return;
@@ -912,15 +916,74 @@ public final class Tour {
         shot("282_ba_sing_se_palace", 30);
         cmd("tp @s 0.5 -55 90.5 180 0", 60);
         shot("283_ba_sing_se_lower_ring", 30);
+        omashuShots();
+    }
+
+    /** Omashu, King Bumi on his throne, and the guards of the three cities (alone: -Denlightened.tour.only=omashu). */
+    private static void omashu() {
+        cmd("gamemode spectator", 5);
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().options.renderDistance().set(16);
+            Minecraft.getInstance().options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
+            Minecraft.getInstance().options.hideGui = true;
+        }));
+        omashuShots();
+        // The guards of the three cities side by side, three faces each.
+        cmd("tp @s 200.5 -58.4 6.5 180 8", 40);
+        for (int c = 0; c < 3; c++) {
+            for (int v = 0; v < 3; v++) {
+                double x = 196.5 + c * 3.2 + v * 0.9 - 0.9;
+                double z = 1.5 - (v == 1 ? 0.6 : 0.0);
+                cmd(String.format(java.util.Locale.ROOT, "summon enlightened:city_guard %.1f -60 %.1f {City:%d,Voice:%d,NoAI:1b,Rotation:[0f,0f]}", x, z, c, v), 2);
+            }
+        }
+        shot("288_city_guards", 40);
+        // A guard of Ellora cuts down a husk.
+        cmd("tp @s 260.5 -57.5 7.5 160 15", 20);
+        cmd("summon enlightened:city_guard 260.5 -60 0.5 {City:2,Voice:1}", 2);
+        cmd("summon minecraft:husk 262.5 -60 -1.5", 30);
+        shot("289_guard_fights", 2);
+    }
+
+    private static void omashuShots() {
         server(p -> {
-            build(p.serverLevel(), new com.kolodkingal.enlightened.world.OmashuPiece(new net.minecraft.core.BlockPos(400, -61, 0)));
-            p.teleportTo(p.serverLevel(), 400.5, -25, 125.5, 180.0F, 10.0F);
-        }, 160);
-        shot("285_omashu_bridge", 40);
-        cmd("tp @s 470.5 -10 60.5 130 15", 60);
-        shot("286_omashu_mountain", 30);
-        cmd("tp @s 400.5 -40 30.5 180 -25", 60);
+            // Raise the flat world round the city forty blocks, so the chasm has its walls and its river.
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            net.minecraft.core.BlockPos.MutableBlockPos at = new net.minecraft.core.BlockPos.MutableBlockPos();
+            for (int x = 400 - 120; x <= 400 + 120; x++) {
+                for (int z = -120; z <= 120; z++) {
+                    double r = Math.sqrt((x - 400) * (x - 400) + z * z);
+                    if (r < com.kolodkingal.enlightened.world.OmashuPiece.CHASM - 1 || r > 120) {
+                        continue;
+                    }
+                    level.getChunk(x >> 4, z >> 4);
+                    for (int y = -60; y <= -21; y++) {
+                        level.setBlock(at.set(x, y, z), y == -21 ? net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState()
+                                : y > -25 ? net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState()
+                                : net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
+                    }
+                }
+            }
+            build(level, new com.kolodkingal.enlightened.world.OmashuPiece(new net.minecraft.core.BlockPos(400, -21, 0)));
+        }, 300);
+        cmd("tp @s 470.5 30 75.5 135 14", 80);
+        shot("286_omashu_mountain", 300);
+        cmd("tp @s 400.5 0 68.5 180 -22", 60);
         shot("287_omashu_stairway", 30);
+        cmd("tp @s 430.5 22 30.5 160 15", 40);
+        shot("287b_omashu_terraces", 30);
+        cmd("tp @s 400.5 23.4 2.5 180 12", 40);
+        shot("284_king_bumi_throne", 30);
+        cmd("data merge entity @e[type=enlightened:king_bumi,limit=1] {NoAI:1b}", 2);
+        cmd("execute as @e[type=enlightened:king_bumi] at @s run tp @s ~ ~ ~ 0 0", 2);
+        cmd("tp @s 402.0 23.4 -4.0 155 4", 2);
+        cmd("tp @e[type=enlightened:city_guard,distance=..8] 400.5 22 30.5", 30);
+        shot("284b_king_bumi", 30);
+
+        cmd("tp @s 412.5 -6 118.5 172 -8", 200);
+        shot("285_omashu_bridge", 200);
     }
 
     /** A spirit gate, the crossing, the Spirit World and the Tree of Time (alone: -Denlightened.tour.only=spirit). */

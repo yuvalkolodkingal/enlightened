@@ -21,8 +21,8 @@
 
 | Field | Value |
 |---|---|
-| File | `enlightened-1.0.0.jar` (from the GitHub release v1.0.0) |
-| Display name | Enlightened 1.0.0 |
+| File | `enlightened-1.0.1.jar` (from the GitHub release v1.0.1) |
+| Display name | Enlightened 1.0.1 |
 | Release type | Release |
 | Game version | 1.21.1 |
 | Loader | NeoForge |

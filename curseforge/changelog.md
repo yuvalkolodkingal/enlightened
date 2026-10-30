@@ -1,3 +1,10 @@
+# Enlightened 1.0.1
+
+* **The Avatar is strongest in the element he was born to.** Every Avatar is born to an element (going round Fire,
+  Air, Water, Earth); he begins with all its first arts already learned (not its sub-bendings), they work a level
+  higher (to a master's), cool down 20% faster, and that element's harm strikes 25% harder. Avatars from 1.0.0 get
+  their element of birth when they next join.
+
 # Enlightened 1.0.0
 
 The first full release.

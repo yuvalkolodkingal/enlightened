@@ -37,11 +37,8 @@ panel in the top-left corner, items that awaken the power, a server config, oper
 
 ## How to play
 
-1. **Become a bender.** Craft a scroll (or find one in a chest) and right-click with it:
-   * **Earth Scroll**: paper in the middle, 4 emeralds on the sides, 4 obsidian in the corners.
-   * **Air Scroll**: paper, 4 breeze rods on the sides, 4 feathers in the corners.
-   * **Water Scroll**: paper, 4 prismarine crystals on the sides, 4 nautilus shells in the corners.
-   * **Fire Scroll**: paper, 4 blaze rods on the sides, 4 magma cream in the corners.
+1. **Be born a bender.** The first time you join, your fate is cast, one in six each: a firebender, an airbender,
+   a waterbender, an earthbender, **the Avatar**, or no bender at all. (The scrolls are Creative items only.)
 2. **Use your keys.** **R G V B N** are abilities 1 to 5; **Sneak + key** is the ability on the key's second slot.
    The panel in the top-left corner shows what sits on every key, its level in stars and its state.
 3. **Grow.** Kill monsters with your bending (not with a sword) and watch the points come. Press **K** (or use your
@@ -54,8 +51,7 @@ panel in the top-left corner, items that awaken the power, a server config, oper
    **Air Glider** (2 leather, a breeze rod, 2 sticks) opens as an airbender falls; dye it in a crafting table.
 6. **Combos and steps.** Cast the right abilities within three seconds of each other for a combo (Earth Dome, Ice
    Wave, Fire Spin, Twister...); double-tap a direction to dash with your element's step.
-7. **The Avatar.** Bind the four scrolls round a nether star into the **Avatar Scroll** and read it: you bend all four
-   elements, take or give back bending by touch, calm creatures with spiritbending and fly inside the elemental
+7. **The Avatar.** Born the Avatar, you bend all four elements, take or give back bending by touch, calm creatures with spiritbending and fly inside the elemental
    sphere. Only the Avatar has the **Avatar State**: near death at first, and at will once the guru has taught you.
 8. **The Southern Air Temple.** On the mountain tops: **sky bison** calves to tame with wheat, raise, saddle and fly
    with up to six riders; **Guru Pathik**, who teaches the seven chakras; flying lemurs; gliders and saddles in its
@@ -71,6 +67,16 @@ panel in the top-left corner, items that awaken the power, a server config, oper
     stronger than you, and it is your own bending you lose.
 11. **Your fire, your colour.** Sneak + H: the colour of fire, blue, or rainbow. Lightning leaves your hand as Thor's
     beam does in Enhanced.
+
+12. **Seven Havens.** The brigade armor trim dresses any armor in a brigade's uniform (lapis water, gold air,
+    redstone fire, coal earth, netherite the Avatar's); its template is found in **Ellora**, the walled golden city of
+    the desert.
+13. **Ba Sing Se and Omashu.** The Earth Kingdom's great walled capital, where no monster comes and no boss can be
+    raised, and King Bumi's mountain city over its chasm.
+14. **The Spirit World.** Step through a spirit portal in the forest (or, as the Avatar, meditate on a Meditation
+    Point) into a world of its own, where the Tree of Time grows.
+15. **The back slot.** One more inventory slot, for whatever you wear on your back: your glider (which flies from
+    there), a sword, anything.
 
 Every effect is drawn after the series itself (see `docs/SHOW-REFERENCE.md`), and bending hits every creature in
 its way, pets and villagers included (`general.hurtEverything`).

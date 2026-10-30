@@ -72,6 +72,9 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Check out (for the release notes)
+        uses: actions/checkout@v5
+
       - name: Download the jar
         uses: actions/download-artifact@v5
         with:
@@ -86,7 +89,7 @@ jobs:
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             tag="$GITHUB_REF_NAME"
-            title="Enlightened $GITHUB_REF_NAME"
+            title="Enlightened ${GITHUB_REF_NAME#v}"
             kind="--latest"
           else
             tag="v${LABEL}"
@@ -97,6 +100,12 @@ jobs:
 
           Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,
           for multiplayer, on the server too."
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ -f curseforge/changelog.md ]; then
+            notes="$(cat curseforge/changelog.md)
+
+          Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,
+          for multiplayer, on the server too."
+          fi
           gh release create "$tag" dist/*.jar \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \

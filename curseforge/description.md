@@ -26,7 +26,8 @@ show. The **Bending Scroll** (K) is where you choose the arts you take into batt
 
 ## The Avatar
 
-Bend all four. Master the **seven chakras** with **Guru Pathik**, enter the **Avatar State** at will, raise the
+Bend all four. Master the **seven chakras** with **Guru Pathik**, enter the **Avatar State** at will (a part of it,
+glowing in your highest chakra's colour, before all seven are open; twice as strong once they are), raise the
 elemental sphere, and receive **energybending** from the **lion turtle**, an island that swims the deep ocean.
 
 ## The world
@@ -35,6 +36,8 @@ elemental sphere, and receive **energybending** from the **lion turtle**, an isl
   no monster comes in, and no boss can be raised there.
 * **Omashu**: King Bumi's sandstone mountain city over its chasm, one long bridge on tall arches, the great pyramid on
   the summit and the king himself on his throne inside it. Talk to him.
+* **The Anomaly**: strike the red cubes in Ellora and a boss of burning frames and red lightning wakes. Drain it with
+  energybending, beat it, and walk the cosmic path to the seven circles of the chakras.
 * **City guards** keep Omashu, Ba Sing Se and Ellora, each city's in its own uniform: they fight the monsters that come
   near, and they tell you about their city.
 * **The Southern Air Temple**, with sky bison to tame and fly, and flying lemurs (Momo rides on your shoulder).

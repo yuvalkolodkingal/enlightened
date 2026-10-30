@@ -1,3 +1,14 @@
+# Enlightened 1.0.3
+
+* **The Avatar State by the chakras.** With all seven chakras open, the master's Avatar State is **twice as strong**:
+  every art five times as strong, its cooldowns a quarter. With only some open, the Avatar can draw on **a part of it**
+  at will (as many sevenths as chakras open), **wrapped in the glow of the highest chakra** he has opened, red for the
+  first.
+* **The Anomaly** of Seven Havens: red cubes hang in Ellora's keep hall; strike one and the Anomaly wakes, a boss of
+  burning frames and red lightning. Every blow does it half its harm; **energybending drains a quarter of its life** at
+  a time. Beat it, and the cosmic plane shows you a path ending in **seven circles** of the chakras' colours: walk into
+  the red one, and your **first chakra opens**.
+
 # Enlightened 1.0.2
 
 * **Omashu, as the show draws it.** A mountain of sandstone over its chasm, the cliff ribbed with pointed buttresses,

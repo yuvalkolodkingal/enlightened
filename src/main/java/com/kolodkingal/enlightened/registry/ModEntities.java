@@ -64,7 +64,13 @@ public final class ModEntities {
             () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.KingBumiEntity::new, MobCategory.MISC)
                     .sized(0.7F, 1.5F).clientTrackingRange(10).build("king_bumi"));
 
+    /** The Anomaly of Seven Havens, woken from the red cubes of Ellora. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.AnomalyEntity>> ANOMALY = ENTITIES.register("anomaly",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.AnomalyEntity::new, MobCategory.MONSTER)
+                    .sized(2.6F, 2.6F).clientTrackingRange(12).fireImmune().build("anomaly"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
+        event.put(ANOMALY.get(), com.kolodkingal.enlightened.entity.AnomalyEntity.createAttributes().build());
         event.put(CITY_GUARD.get(), com.kolodkingal.enlightened.entity.CityGuardEntity.createAttributes().build());
         event.put(KING_BUMI.get(), com.kolodkingal.enlightened.entity.KingBumiEntity.createAttributes().build());
         event.put(SKY_BISON.get(), com.kolodkingal.enlightened.entity.SkyBisonEntity.createAttributes().build());

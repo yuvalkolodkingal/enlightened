@@ -76,9 +76,12 @@ panel in the top-left corner, items that awaken the power, a server config, oper
     raised, and King Bumi's sandstone mountain city over its chasm, with the king himself on his throne. **City guards**
     keep Omashu, Ba Sing Se and Ellora, each city's in its own uniform: they fight the monsters that come near, and
     they talk about their city.
-14. **The Spirit World.** Step through a spirit portal in the forest (or, as the Avatar, meditate on a Meditation
+14. **The Anomaly.** Strike the red cubes in Ellora's keep and the Anomaly of Seven Havens wakes: a boss of burning
+    frames and red lightning, beaten best by energybending. Beat it and walk the cosmic path to its seven circles: the
+    red one opens your first chakra.
+15. **The Spirit World.** Step through a spirit portal in the forest (or, as the Avatar, meditate on a Meditation
     Point) into a world of its own, where the Tree of Time grows.
-15. **The back slot.** One more inventory slot, for whatever you wear on your back: your glider (which flies from
+16. **The back slot.** One more inventory slot, for whatever you wear on your back: your glider (which flies from
     there), a sword, anything.
 
 Every effect is drawn after the series itself (see `docs/SHOW-REFERENCE.md`), and bending hits every creature in

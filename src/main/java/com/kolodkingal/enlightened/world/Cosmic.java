@@ -35,6 +35,16 @@ public final class Cosmic {
     /** Where the giant self sits, behind the end of the path, facing back along it. */
     public static final Vec3 GIANT = new Vec3(pathX(66) + 0.5, Y - 4, 104.5);
     private static final String RETURN = "enlightened_cosmic_return";
+    /** Set while he walks the Anomaly's path (to the seven circles), not the Thought chakra's (to his giant self). */
+    private static final String ANOMALY = "enlightened_cosmic_anomaly";
+    /** Where the Anomaly's path runs, far from the giant: straight out along z from x = {@code ANOMALY_X}. */
+    public static final int ANOMALY_X = 2000;
+    /** The seven circles across the end of the Anomaly's path, one for each chakra, the first nearest. */
+    public static final int[] CIRCLE_Z = {44, 52, 60, 68, 76, 84, 92};
+    public static final int CIRCLE_R = 3;
+    private static final net.minecraft.world.level.block.Block[] CIRCLE_BLOCKS = {Blocks.RED_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.YELLOW_CONCRETE,
+            Blocks.LIME_CONCRETE, Blocks.LIGHT_BLUE_CONCRETE, Blocks.BLUE_CONCRETE, Blocks.PURPLE_CONCRETE};
+    private static boolean builtAnomaly;
     private static boolean built;
 
     /** The path's centre line, swaying gently from side to side as it runs out over the stars. */
@@ -53,13 +63,8 @@ public final class Cosmic {
         if (cosmic == null) {
             return false;
         }
-        CompoundTag back = new CompoundTag();
-        back.putString("dim", p.level().dimension().location().toString());
-        back.putDouble("x", p.getX());
-        back.putDouble("y", p.getY());
-        back.putDouble("z", p.getZ());
-        back.putFloat("yaw", p.getYRot());
-        p.getPersistentData().put(RETURN, back);
+        remember(p);
+        p.getPersistentData().remove(ANOMALY);
         build(cosmic);
         p.fallDistance = 0;
         p.teleportTo(cosmic, 0.5, Y + 1, 0.5, 0.0F, 0.0F);
@@ -68,8 +73,88 @@ public final class Cosmic {
         return true;
     }
 
+    /**
+     * After the Anomaly is beaten: his spirit goes to the plane, onto a path that ends not at his giant self but at seven
+     * circles, one in each chakra's colour; the first, red, is open. Walking into it opens his first chakra and sends him
+     * back.
+     */
+    public static boolean sendForAnomaly(ServerPlayer p) {
+        MinecraftServer server = p.getServer();
+        ServerLevel cosmic = server == null ? null : server.getLevel(LEVEL);
+        if (cosmic == null) {
+            return false;
+        }
+        if (!in(p)) {
+            remember(p);
+        }
+        p.getPersistentData().putBoolean(ANOMALY, true);
+        buildAnomaly(cosmic);
+        p.fallDistance = 0;
+        p.teleportTo(cosmic, ANOMALY_X + 0.5, Y + 1, 0.5, 0.0F, 0.0F);
+        cosmic.playSound(null, p.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0F, 0.6F);
+        p.sendSystemMessage(Component.translatable("message.enlightened.cosmic.anomaly").withStyle(ChatFormatting.LIGHT_PURPLE));
+        return true;
+    }
+
+    public static boolean onAnomalyPath(ServerPlayer p) {
+        return p.getPersistentData().getBoolean(ANOMALY);
+    }
+
+    private static void remember(ServerPlayer p) {
+        CompoundTag back = new CompoundTag();
+        back.putString("dim", p.level().dimension().location().toString());
+        back.putDouble("x", p.getX());
+        back.putDouble("y", p.getY());
+        back.putDouble("z", p.getZ());
+        back.putFloat("yaw", p.getYRot());
+        p.getPersistentData().put(RETURN, back);
+    }
+
+    /** Every tick on the Anomaly's path: a fall puts him back at its start; the red circle opens the first chakra. */
+    private static void anomalyTick(ServerPlayer p, BendingData data) {
+        ServerLevel level = p.serverLevel();
+        buildAnomaly(level);
+        p.fallDistance = 0;
+        if (p.getY() < Y - 15) {
+            p.teleportTo(level, ANOMALY_X + 0.5, Y + 1, 0.5, 0.0F, 0.0F);
+            p.displayClientMessage(Component.translatable("message.enlightened.cosmic.fell").withStyle(ChatFormatting.LIGHT_PURPLE), true);
+            return;
+        }
+        if (p.tickCount % 4 == 0) {
+            // The red circle is open: its light swirls inside it.
+            for (int i = 0; i < 6; i++) {
+                double a = level.random.nextDouble() * Math.PI * 2;
+                double r = level.random.nextDouble() * (CIRCLE_R - 0.6);
+                level.sendParticles(new com.kolodkingal.enlightened.particle.EnergyParticleOptions(Chakras.colour(1), 0.8F),
+                        ANOMALY_X + 0.5 + Math.cos(a) * r, Y + CIRCLE_R + 0.5 + Math.sin(a) * r, CIRCLE_Z[0] + 0.5, 1, 0, 0, 0, 0.0);
+            }
+        }
+        if (inCircle(p.position(), 0)) {
+            if (data.chakras() < 1) {
+                Chakras.open(p, data, 1, false);
+            } else {
+                p.sendSystemMessage(Component.translatable("message.enlightened.cosmic.anomaly_open").withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            bringBack(p);
+        }
+    }
+
+    /** Whether a place is inside the n-th circle (0 the first), where it stands across the path. */
+    public static boolean inCircle(Vec3 at, int n) {
+        double cy = Y + CIRCLE_R + 0.5;
+        double dx = at.x - (ANOMALY_X + 0.5);
+        double dyFeet = at.y - cy;
+        double dyHead = at.y + 1.6 - cy;
+        boolean within = dx * dx + Math.min(dyFeet * dyFeet, dyHead * dyHead) < (CIRCLE_R - 0.4) * (CIRCLE_R - 0.4);
+        return within && Math.abs(at.z - (CIRCLE_Z[n] + 0.5)) < 0.8;
+    }
+
     /** Every tick of a bender on the plane: the end of the path opens the chakra; a fall puts him back on it. */
     public static void tick(ServerPlayer p, BendingData data) {
+        if (onAnomalyPath(p)) {
+            anomalyTick(p, data);
+            return;
+        }
         ServerLevel level = p.serverLevel();
         build(level);
         p.fallDistance = 0;
@@ -98,6 +183,7 @@ public final class Cosmic {
         }
         CompoundTag back = p.getPersistentData().getCompound(RETURN);
         p.getPersistentData().remove(RETURN);
+        p.getPersistentData().remove(ANOMALY);
         ServerLevel to = null;
         if (back.contains("dim")) {
             ResourceLocation id = ResourceLocation.tryParse(back.getString("dim"));
@@ -143,6 +229,42 @@ public final class Cosmic {
             }
         }
         built = true;
+    }
+
+    /** Lays the Anomaly's path, straight out, and the seven circles standing across its end, once. */
+    static void buildAnomaly(ServerLevel level) {
+        BlockPos check = new BlockPos(ANOMALY_X, Y, CIRCLE_Z[6] + 4);
+        if (builtAnomaly && level.getBlockState(check).is(Blocks.AMETHYST_BLOCK)) {
+            return;
+        }
+        BlockState glass = Blocks.PURPLE_STAINED_GLASS.defaultBlockState();
+        BlockState glow = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
+        disc(level, ANOMALY_X, 0, 3, Blocks.AMETHYST_BLOCK.defaultBlockState(), glass);
+        disc(level, ANOMALY_X, CIRCLE_Z[6] + 4, 3, Blocks.AMETHYST_BLOCK.defaultBlockState(), glass);
+        for (int z = 3; z <= CIRCLE_Z[6] + 1; z++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                level.setBlock(at.set(ANOMALY_X + dx, Y, z), glass, 2);
+                level.setBlock(at.set(ANOMALY_X + dx, Y - 1, z), glow, 2);
+            }
+            if (z % 4 == 0 && z < CIRCLE_Z[0]) {
+                level.setBlock(at.set(ANOMALY_X - 2, Y, z), Blocks.END_ROD.defaultBlockState(), 2);
+                level.setBlock(at.set(ANOMALY_X + 2, Y, z), Blocks.END_ROD.defaultBlockState(), 2);
+            }
+        }
+        // The circles, standing on the path, each in its chakra's colour.
+        for (int n = 0; n < CIRCLE_Z.length; n++) {
+            BlockState ring = CIRCLE_BLOCKS[n].defaultBlockState();
+            for (int dx = -CIRCLE_R - 1; dx <= CIRCLE_R + 1; dx++) {
+                for (int dy = -CIRCLE_R - 1; dy <= CIRCLE_R + 1; dy++) {
+                    double d = Math.sqrt(dx * dx + dy * dy);
+                    if (Math.abs(d - CIRCLE_R) < 0.5) {
+                        level.setBlock(at.set(ANOMALY_X + dx, Y + CIRCLE_R + dy, CIRCLE_Z[n]), ring, 2);
+                    }
+                }
+            }
+        }
+        builtAnomaly = true;
     }
 
     private static void disc(ServerLevel level, int cx, int cz, int r, BlockState core, BlockState rim) {

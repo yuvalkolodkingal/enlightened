@@ -662,5 +662,15 @@
   "bumi.enlightened.line.4": "Rock candy! The only candy hard enough for me. Have some... mind your teeth.",
   "bumi.enlightened.line.5": "I once had a friend, a young airbender. We rode the mail chutes all day long. Best days of my life.",
   "bumi.enlightened.line.6": "Neutral jing, my friend: sometimes the best thing to do is to wait, and listen.",
-  "bumi.enlightened.line.7": "Monsters on my bridge? My guards can handle them. And if they can't, I'll throw a mountain at them!"
+  "bumi.enlightened.line.7": "Monsters on my bridge? My guards can handle them. And if they can't, I'll throw a mountain at them!",
+  "entity.enlightened.anomaly": "The Anomaly",
+  "block.enlightened.anomaly_block": "Anomaly Cube",
+  "message.enlightened.anomaly.wakes": "The red cubes shudder... the Anomaly wakes!",
+  "message.enlightened.anomaly.drained": "Your energy draws the Anomaly's out of it.",
+  "message.enlightened.anomaly.defeated": "The Anomaly breaks apart in a blaze of light.",
+  "message.enlightened.cosmic.anomaly": "The Anomaly's light carries your spirit away... Seven circles wait at the end of the path. Walk into the red one.",
+  "message.enlightened.cosmic.anomaly_open": "Your Earth chakra is already open. The red light sends you home.",
+  "message.enlightened.avatar.no_chakra": "Open at least one chakra first: the Avatar State flows through them.",
+  "message.enlightened.avatar.enter_part": "%s draws on the Avatar State, as far as the %s chakra (%s of %s)!",
+  "message.enlightened.avatar.enter_master": "%s has entered the Avatar State, master of all seven chakras!"
 }

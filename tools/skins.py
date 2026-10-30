@@ -756,6 +756,61 @@ def paint_king_bumi():
     p.save(os.path.join(ENTITY, 'king_bumi.png'))
 
 
+def paint_aura():
+    """The glow of a part of the Avatar State (entity/chakra_aura.png): white, its alpha flickering in grains, tinted
+    to the chakra's colour when drawn."""
+    rnd = random.Random(7)
+    img = Image.new('RGBA', (64, 64))
+    px = img.load()
+    for x in range(64):
+        for y in range(64):
+            v = rnd.random()
+            px[x, y] = (255, 255, 255, int(140 + 115 * v) if v > 0.25 else int(60 + 200 * v))
+    img.save(os.path.join(ENTITY, 'chakra_aura.png'))
+
+
+def paint_anomaly():
+    """The Anomaly's texture (entity/anomaly.png): plain white, its colours are given as it is drawn."""
+    Image.new('RGBA', (16, 16), (255, 255, 255, 255)).save(os.path.join(ENTITY, 'anomaly.png'))
+
+
+def paint_anomaly_block():
+    """A red cube of the Anomaly (block/anomaly_block.png, 4 frames): nested square frames, red outside, a burning
+    yellow ring, a dark heart, the frames broken in places like the Anomaly's own, flickering from frame to frame."""
+    frames = 4
+    img = Image.new('RGBA', (16, 16 * frames))
+    px = img.load()
+    rnd = random.Random(11)
+    red, deep, orange, yellow, dark = (214, 30, 24), (120, 10, 10), (245, 110, 30), (255, 226, 90), (60, 8, 6)
+    for f in range(frames):
+        for x in range(16):
+            for y in range(16):
+                ring = min(x, y, 15 - x, 15 - y)
+                if ring == 0:
+                    c = deep
+                elif ring == 1:
+                    c = red if (x + y + f) % 5 else orange
+                elif ring == 2:
+                    c = deep
+                elif ring == 3:
+                    c = orange
+                elif ring in (4, 5):
+                    c = yellow
+                else:
+                    c = dark
+                glow = 0.9 + 0.1 * ((f + ring) % 2) + rnd.uniform(-0.05, 0.05)
+                px[x, y + 16 * f] = shade(c, glow)
+        # Gaps in the outer frames, moving.
+        for k in range(3):
+            gx = (3 + 5 * k + f * 2) % 14 + 1
+            px[gx, 1 + 16 * f] = shade(dark, 1.0)
+            px[14, (gx + 4) % 14 + 1 + 16 * f] = shade(dark, 1.0)
+    path = os.path.join(ROOT, 'block', 'anomaly_block.png')
+    img.save(path)
+    with open(path + '.mcmeta', 'w') as m:
+        m.write('{\n  "animation": {\n    "frametime": 3\n  }\n}\n')
+
+
 def paint_bison():
     """The sky bison (Appa): 256x256 over SkyBisonModel.createBodyLayer. Shaggy white fur, the brown arrow from the brow
     over the back, a broad flat grey muzzle with dark nostrils, small dark eyes under the fringe, horns grey-brown and
@@ -1027,6 +1082,9 @@ def main():
     paint_pathik()
     paint_guards()
     paint_king_bumi()
+    paint_aura()
+    paint_anomaly_block()
+    paint_anomaly()
     paint_bison()
     paint_lion_turtle()
     paint_items()

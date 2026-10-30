@@ -25,8 +25,10 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>The <b>Avatar State</b> is the Avatar's alone: a few seconds in which nothing can hurt him and his bending is twice
  * as strong. Untaught, it takes him only when he is near death, and leaves him to a long rest. Taught by the guru with
- * all seven chakras open, he enters it at will (his art) and leaves it at will, and rests three
- * times as long as he spent in it. Meditation also earns a little experience.
+ * all seven chakras open, he enters it at will (his art) and leaves it at will, twice as strong as
+ * the State that takes him near death, and rests three times as long as he spent in it. With only some chakras open,
+ * he may draw on a part of it at will: their share of its strength (three of seven, three sevenths), wrapped in the
+ * light of the highest chakra he has opened. Meditation also earns a little experience.
  */
 public final class Chakras {
     public static final int COUNT = 7;
@@ -56,29 +58,73 @@ public final class Chakras {
 
     // ---- what the open chakras give ----
 
-    /** The factor on bending damage: +5 percent for the third and sixth chakra, two and a half times in the Avatar State. */
-    public static float damageFactor(BendingData data, long now) {
-        float f = 1.0F + (data.chakras() >= 3 ? 0.05F : 0.0F) + (data.chakras() >= 6 ? 0.05F : 0.0F);
-        return data.avatar(now) ? f * 2.5F : f;
+    /** The depth of the whole Avatar State (as it takes him near death), and the master's, twice as strong. */
+    public static final int POWER_WHOLE = 7;
+    public static final int POWER_MASTER = 8;
+
+    /** How deep in the Avatar State he is now: 0 out of it, 1 to 6 a part, 7 the whole, 8 the master's. */
+    public static int power(BendingData data, long now) {
+        if (!data.avatar(now)) {
+            return 0;
+        }
+        int p = data.avatarPower();
+        return p <= 0 ? POWER_WHOLE : p;
     }
 
-    /** The factor on cooldowns: -5 percent for the second and fifth chakra, halved in the Avatar State. */
+    /** The share of the whole State's strength he has: his open chakras out of seven, all of it when whole. */
+    public static float stateShare(BendingData data, long now) {
+        return Math.min(power(data, now), POWER_WHOLE) / (float) POWER_WHOLE;
+    }
+
+    /** Whether he draws only on a part of the State (some chakras open, not all): he is wrapped in their light. */
+    public static boolean partial(BendingData data, long now) {
+        int p = power(data, now);
+        return p > 0 && p < POWER_WHOLE;
+    }
+
+    /**
+     * The factor on bending damage: +5 percent for the third and sixth chakra; in the Avatar State two and a half times
+     * (its share of that when only a part of it), and twice that again for the master Avatar with all seven chakras.
+     */
+    public static float damageFactor(BendingData data, long now) {
+        float f = 1.0F + (data.chakras() >= 3 ? 0.05F : 0.0F) + (data.chakras() >= 6 ? 0.05F : 0.0F);
+        if (!data.avatar(now)) {
+            return f;
+        }
+        f *= 1.0F + 1.5F * stateShare(data, now);
+        return power(data, now) == POWER_MASTER ? f * 2.0F : f;
+    }
+
+    /** The factor on cooldowns: -5 percent for the second and fifth chakra; halved in the Avatar State (by its share), halved again for the master. */
     public static float cooldownFactor(BendingData data, long now) {
         float f = 1.0F - (data.chakras() >= 2 ? 0.05F : 0.0F) - (data.chakras() >= 5 ? 0.05F : 0.0F);
-        return data.avatar(now) ? f * 0.5F : f;
+        if (!data.avatar(now)) {
+            return f;
+        }
+        f *= 1.0F - 0.5F * stateShare(data, now);
+        return power(data, now) == POWER_MASTER ? f * 0.5F : f;
+    }
+
+    /** The colour of each chakra, Earth to Thought: red, orange, yellow, green, blue, indigo, violet. */
+    public static final int[] COLOURS = {0xE8302A, 0xF5841F, 0xF7D33A, 0x3FB548, 0x2E86DE, 0x4B3FB0, 0x9B3FD0};
+
+    public static int colour(int chakra) {
+        return COLOURS[Math.max(0, Math.min(COUNT, chakra) - 1)];
     }
 
     /** The extra hearts (as health) of the first and fourth chakra, and the speed of the Avatar State. */
     public static void applyBody(ServerPlayer player, BendingData data) {
         double health = (data.chakras() >= 1 ? 2.0 : 0.0) + (data.chakras() >= 4 ? 2.0 : 0.0);
         BendingTicker.setModifier(player, Attributes.MAX_HEALTH, HEALTH_ID, health, health > 0);
-        boolean avatar = data.avatar(player.level().getGameTime());
-        BendingTicker.setModifier(player, Attributes.MOVEMENT_SPEED, AVATAR_SPEED_ID, 0.3, avatar,
+        long now = player.level().getGameTime();
+        boolean avatar = data.avatar(now);
+        float share = stateShare(data, now);
+        BendingTicker.setModifier(player, Attributes.MOVEMENT_SPEED, AVATAR_SPEED_ID, 0.3 * share, avatar,
                 net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         // The Avatar State: not invincible, but hard to move and hard to hurt (most of each blow is taken away in
-        // CommonEvents), his armour stronger.
-        BendingTicker.setModifier(player, Attributes.KNOCKBACK_RESISTANCE, AVATAR_STEADY_ID, 0.7, avatar);
-        BendingTicker.setModifier(player, Attributes.ARMOR, AVATAR_ARMOR_ID, 8.0, avatar);
+        // CommonEvents), his armour stronger; a part of the State gives its share.
+        BendingTicker.setModifier(player, Attributes.KNOCKBACK_RESISTANCE, AVATAR_STEADY_ID, 0.7 * share, avatar);
+        BendingTicker.setModifier(player, Attributes.ARMOR, AVATAR_ARMOR_ID, 8.0 * share, avatar);
     }
 
     // ---- meditation ----
@@ -237,7 +283,7 @@ public final class Chakras {
      * will rest three times as long as he stays in it.
      */
     public static void enterAtWill(ServerPlayer p, BendingData data, float scale) {
-        enterAvatar(p, data, false, scale);
+        enterAvatar(p, data, false, scale, masters(data) ? POWER_MASTER : Math.max(1, Math.min(data.chakras(), COUNT - 1)));
         long now = p.level().getGameTime();
         ENTERED.put(p.getUUID(), now);
         data.setAvatarCooldownUntil(data.avatarUntil() + (data.avatarUntil() - now) * 2);
@@ -274,6 +320,14 @@ public final class Chakras {
 
     /** Enters the Avatar State for the configured time times {@code scale} (the Avatar's own art lasts longer). */
     public static void enterAvatar(ServerPlayer p, BendingData data, boolean dire, float scale) {
+        enterAvatar(p, data, dire, scale, POWER_WHOLE);
+    }
+
+    /**
+     * Enters the Avatar State as deep as {@code power}: a part of it (1 to 6, his open chakras), the whole (7), or the
+     * master's (8).
+     */
+    public static void enterAvatar(ServerPlayer p, BendingData data, boolean dire, float scale, int power) {
         // The Avatar State is the Avatar's alone: no other bender ever enters it, by any road.
         if (data.element() != Element.AVATAR) {
             return;
@@ -281,20 +335,26 @@ public final class Chakras {
         long now = p.level().getGameTime();
         int seconds = Math.round(seconds(EnlightenedConfig.AVATAR_STATE_SECONDS, 120) * scale);
         data.setAvatarUntil(now + seconds * 20L);
+        data.setAvatarPower(power);
+        boolean part = power < POWER_WHOLE;
         data.setAvatarCooldownUntil(now + seconds(EnlightenedConfig.AVATAR_STATE_COOLDOWN_SECONDS, 300) * 20L);
         data.clearCooldowns();
         p.setHealth(Math.max(p.getHealth(), dire ? 6.0F : p.getHealth()));
-        p.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, seconds * 20, 1, false, false, true));
+        p.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, seconds * 20, part ? 0 : 1, false, false, true));
         BendingTicker.applyPassives(p, data);
         ServerLevel level = p.serverLevel();
         level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), SoundSource.PLAYERS, 1.5F, 0.5F);
         level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_SHIELD_BREAK.get(), SoundSource.PLAYERS, 1.0F, 0.6F);
-        Fx.at(level, Fx.AVATAR_RISE, p.position(), Benders.color(p), 4.0F);
-        for (net.minecraft.world.entity.LivingEntity e : Shots.area(p, p.position(), 4.0)) {
-            Shots.push(e, p.position(), 1.5, 0.6);
+        Fx.at(level, Fx.AVATAR_RISE, p.position(), part ? colour(power) : Benders.color(p), part ? 1.0F + power * 0.4F : 4.0F);
+        for (net.minecraft.world.entity.LivingEntity e : Shots.area(p, p.position(), part ? 1.0 + power * 0.4 : 4.0)) {
+            Shots.push(e, p.position(), part ? 0.3 + power * 0.15 : 1.5, 0.6);
         }
-        level.getServer().getPlayerList().broadcastSystemMessage(Component.translatable("message.enlightened.avatar.enter", p.getDisplayName())
-                .withStyle(ChatFormatting.AQUA), false);
+        Component msg = part
+                ? Component.translatable("message.enlightened.avatar.enter_part", p.getDisplayName(), name(power), power, COUNT)
+                .withStyle(net.minecraft.network.chat.Style.EMPTY.withColor(colour(power)))
+                : Component.translatable(power == POWER_MASTER ? "message.enlightened.avatar.enter_master" : "message.enlightened.avatar.enter", p.getDisplayName())
+                .withStyle(ChatFormatting.AQUA);
+        level.getServer().getPlayerList().broadcastSystemMessage(msg, false);
         Benders.syncIfDirty(p);
     }
 
@@ -302,7 +362,14 @@ public final class Chakras {
         p.fallDistance = 0;
         if (p.tickCount % 2 == 0) {
             ServerLevel level = p.serverLevel();
-            level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY() + 1.0, p.getZ(), 1, 0.4, 0.5, 0.4, 0.01);
+            if (partial(data, now)) {
+                // Wrapped in the light of the highest chakra he has opened.
+                int c = colour(power(data, now));
+                level.sendParticles(new com.kolodkingal.enlightened.particle.EnergyParticleOptions(c, 0.6F),
+                        p.getX(), p.getY() + 1.0, p.getZ(), 2, 0.4, 0.6, 0.4, 0.01);
+            } else {
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, p.getX(), p.getY() + 1.0, p.getZ(), 1, 0.4, 0.5, 0.4, 0.01);
+            }
         }
         if (p.tickCount % 20 == 0) {
             p.setAirSupply(p.getMaxAirSupply());

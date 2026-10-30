@@ -23,18 +23,24 @@ final class ThorBolt {
     private static final float SHAPE_TICKS = 1.5F;
 
     static void draw(PoseStack.Pose pose, VertexConsumer vc, Vec3 a, Vec3 b, long seed, float time, float alpha, float scale, int light) {
+        draw(pose, vc, a, b, seed, time, alpha, scale, light, BLUE);
+    }
+
+    static void draw(PoseStack.Pose pose, VertexConsumer vc, Vec3 a, Vec3 b, long seed, float time, float alpha, float scale, int light, float[] colour) {
         double length = a.distanceTo(b);
         if (length < 0.05 || alpha <= 0.0F) {
             return;
         }
+        // The halo is the bolt's colour, deeper (the blue of Thor's lightning keeps its own).
+        float[] halo = colour == BLUE ? HALO : new float[]{colour[0] * 0.75F, colour[1] * 0.4F, colour[2] * 0.4F};
         float flicker = 0.85F + 0.15F * Mth.sin(time * 2.9F) * Mth.cos(time * 1.3F);
         float phase = time / SHAPE_TICKS;
         double jitter = Math.max(0.12, Math.min(1.2, length * 0.035)) * 1.15;
         // A soft glow all along the line.
-        FxGeometry.ribbon(pose, vc, List.of(a, b), 0.12F * scale, 0.16F * scale, 0, 1, 1, 0, HALO[0], HALO[1], HALO[2], 0.10F * flicker * alpha, 0.14F * flicker * alpha, light, false);
+        FxGeometry.ribbon(pose, vc, List.of(a, b), 0.12F * scale, 0.16F * scale, 0, 1, 1, 0, halo[0], halo[1], halo[2], 0.10F * flicker * alpha, 0.14F * flicker * alpha, light, false);
         List<Vec3> path = flowingPath(a, b, jitter, seed, phase);
-        tapered(pose, vc, path, 0.30F * scale, HALO, 0.30F * flicker * alpha, light);
-        tapered(pose, vc, path, 0.15F * scale, BLUE, 0.75F * flicker * alpha, light);
+        tapered(pose, vc, path, 0.30F * scale, halo, 0.30F * flicker * alpha, light);
+        tapered(pose, vc, path, 0.15F * scale, colour, 0.75F * flicker * alpha, light);
         tapered(pose, vc, path, 0.055F * scale, CORE, 0.97F * alpha, light);
         Vec3 dir = b.subtract(a).scale(1.0 / length);
         long step = Mth.floor(phase);
@@ -48,7 +54,7 @@ final class ThorBolt {
             // Loose strands that crackle round the main bolt.
             for (int i = 0; i < 2; i++) {
                 List<Vec3> strand = lightningPath(a, b, jitter * 1.6, random);
-                tapered(pose, vc, strand, 0.05F * scale, BLUE, 0.55F * weight * alpha, light);
+                tapered(pose, vc, strand, 0.05F * scale, colour, 0.55F * weight * alpha, light);
             }
             // Forks.
             for (int i = 0; i < 3 && path.size() > 3; i++) {
@@ -57,7 +63,7 @@ final class ThorBolt {
                 Vec3 side = new Vec3(random.nextDouble() - 0.5, random.nextDouble() - 0.5, random.nextDouble() - 0.5).normalize();
                 Vec3 end = start.add(dir.scale(reach * 0.6)).add(side.scale(reach * 0.8));
                 List<Vec3> fork = lightningPath(start, end, reach * 0.2, random);
-                FxGeometry.ribbon(pose, vc, fork, 0.06F * scale, 0.02F * scale, 0, 1, 1, 0, BLUE[0], BLUE[1], BLUE[2], 0.6F * weight * alpha, 0.3F * weight * alpha, light, false);
+                FxGeometry.ribbon(pose, vc, fork, 0.06F * scale, 0.02F * scale, 0, 1, 1, 0, colour[0], colour[1], colour[2], 0.6F * weight * alpha, 0.3F * weight * alpha, light, false);
                 FxGeometry.ribbon(pose, vc, fork, 0.02F * scale, 0.01F * scale, 0, 1, 1, 0, CORE[0], CORE[1], CORE[2], 0.8F * weight * alpha, 0.4F * weight * alpha, light, false);
             }
         }

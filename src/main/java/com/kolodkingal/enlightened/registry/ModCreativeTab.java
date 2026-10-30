@@ -26,6 +26,7 @@ public final class ModCreativeTab {
                 output.accept(ModItems.LEMUR_SPAWN_EGG.get());
                 output.accept(ModItems.SKY_BISON_SPAWN_EGG.get());
                 output.accept(ModItems.CITY_GUARD_SPAWN_EGG.get());
+                output.accept(ModBlocks.ANOMALY_BLOCK.get());
                 output.accept(ModBlocks.MEDITATION_POINT.get());
             })
             .build());

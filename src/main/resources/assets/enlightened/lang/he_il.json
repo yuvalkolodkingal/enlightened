@@ -662,5 +662,15 @@
   "bumi.enlightened.line.4": "סוכריית סלע! הסוכרייה היחידה שקשה מספיק בשבילי. קח אחת... תשמור על השיניים.",
   "bumi.enlightened.line.5": "היה לי פעם חבר, כופף אוויר צעיר. רכבנו על מגלשות הדואר כל היום. הימים הכי טובים בחיי.",
   "bumi.enlightened.line.6": "ג'ינג ניטרלי, ידידי: לפעמים הדבר הכי טוב לעשות הוא לחכות, ולהקשיב.",
-  "bumi.enlightened.line.7": "מפלצות על הגשר שלי? השומרים שלי יטפלו בהן. ואם לא, אני אזרוק עליהן הר!"
+  "bumi.enlightened.line.7": "מפלצות על הגשר שלי? השומרים שלי יטפלו בהן. ואם לא, אני אזרוק עליהן הר!",
+  "entity.enlightened.anomaly": "האנומליה",
+  "block.enlightened.anomaly_block": "קוביית אנומליה",
+  "message.enlightened.anomaly.wakes": "הקוביות האדומות רועדות... האנומליה מתעוררת!",
+  "message.enlightened.anomaly.drained": "האנרגיה שלך שואבת את כוח החיים של האנומליה.",
+  "message.enlightened.anomaly.defeated": "האנומליה מתפרקת בהתפרצות של אור.",
+  "message.enlightened.cosmic.anomaly": "האור של האנומליה נושא את הרוח שלך... שבעה עיגולים מחכים בסוף השביל. היכנס לאדום.",
+  "message.enlightened.cosmic.anomaly_open": "צ'אקרת האדמה שלך כבר פתוחה. האור האדום שולח אותך הביתה.",
+  "message.enlightened.avatar.no_chakra": "פתח קודם לפחות צ'אקרה אחת: מצב האווטאר זורם דרכן.",
+  "message.enlightened.avatar.enter_part": "%s שואב ממצב האווטאר, עד צ'אקרת ה%s (%s מתוך %s)!",
+  "message.enlightened.avatar.enter_master": "%s נכנס למצב האווטאר, אדון כל שבע הצ'אקרות!"
 }

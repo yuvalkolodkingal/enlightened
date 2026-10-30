@@ -123,6 +123,36 @@ public final class CommonEvents {
         }
     }
 
+    /** Whoever tries to break a red cube of the Anomaly wakes it (one at a time near a place). */
+    @SubscribeEvent
+    public static void onLeftClickBlock(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event) {
+        if (!(event.getLevel() instanceof ServerLevel level) || event.getAction() != net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.START
+                || !level.getBlockState(event.getPos()).is(com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_BLOCK.get())) {
+            return;
+        }
+        wakeAnomaly(level, event.getPos());
+    }
+
+    /** Wakes the Anomaly over a red cube, unless one is awake near it already; returns it, or null. */
+    @javax.annotation.Nullable
+    public static com.kolodkingal.enlightened.entity.AnomalyEntity wakeAnomaly(ServerLevel level, net.minecraft.core.BlockPos cube) {
+        if (com.kolodkingal.enlightened.entity.AnomalyEntity.awakeNear(level, cube)) {
+            return null;
+        }
+        var anomaly = com.kolodkingal.enlightened.registry.ModEntities.ANOMALY.get().create(level);
+        if (anomaly == null) {
+            return null;
+        }
+        anomaly.wake(cube);
+        level.addFreshEntity(anomaly);
+        level.playSound(null, cube, net.minecraft.sounds.SoundEvents.WITHER_SPAWN, net.minecraft.sounds.SoundSource.HOSTILE, 1.0F, 1.5F);
+        for (ServerPlayer p : level.getEntitiesOfClass(ServerPlayer.class, new net.minecraft.world.phys.AABB(cube).inflate(48))) {
+            p.sendSystemMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.anomaly.wakes")
+                    .withStyle(net.minecraft.ChatFormatting.RED));
+        }
+        return anomaly;
+    }
+
     /** Whether a place is inside Ba Sing Se (or, for monsters, Omashu). */
     public static boolean inPeacefulCity(ServerLevel level, net.minecraft.core.BlockPos pos, boolean bossOnlyBaSingSe) {
         var structures = level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
@@ -202,7 +232,8 @@ public final class CommonEvents {
         long now = victim.level().getGameTime();
         if (data.avatar(now) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             // The Avatar State is not invincible: it takes most of every blow away, and he can still be beaten.
-            amount *= avatarGuard();
+            // A part of the State (some chakras open) takes that part of what the whole would.
+            amount *= 1.0F - (1.0F - avatarGuard()) * Chakras.stateShare(data, now);
             event.setAmount(amount);
         }
         if (amount >= victim.getHealth() - 0.5F && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && Chakras.dire(victim, data)) {

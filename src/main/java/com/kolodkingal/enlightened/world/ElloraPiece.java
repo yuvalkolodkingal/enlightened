@@ -380,6 +380,23 @@ public class ElloraPiece extends StructurePiece {
         return (ax & 3) == 0 || (az & 3) == 0 ? FLOOR_LINE : FLOOR;
     }
 
+    /**
+     * The red cubes of the Anomaly in the middle of the keep's hall (offsets from the hall's floor): a heap of them on
+     * the floor and more hanging in the air over it, scattered as if the space there had broken. Whoever tries to break
+     * one wakes the Anomaly.
+     */
+    public static final int[][] ANOMALY_CUBES = {{0, 1, 0}, {1, 1, 0}, {0, 1, 1}, {-1, 1, -1}, {0, 2, 0}, {-2, 1, 1}, {1, 3, 1},
+            {-1, 4, 0}, {2, 5, -1}, {0, 6, -1}, {-2, 7, 2}, {1, 8, 0}};
+
+    public static boolean anomaly(int dx, int ry, int dz) {
+        for (int[] c : ANOMALY_CUBES) {
+            if (c[0] == dx && c[1] == ry && c[2] == dz) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** The keep: walls with rows of arched windows and gates on its four sides, a hall with a gallery, a flat roof. */
     private static BlockState keep(int dx, int dy, int dz) {
         int ax = Math.abs(dx);
@@ -407,6 +424,9 @@ public class ElloraPiece extends StructurePiece {
         }
         if (dy == KEEP_TOP) {
             return ax <= 1 && az <= 1 ? LIGHT : WALL;
+        }
+        if (anomaly(dx, ry, dz)) {
+            return com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_BLOCK.get().defaultBlockState();
         }
         // The gallery round the hall, halfway up.
         if (ry == 13 && (ax >= 8 || az >= 8)) {

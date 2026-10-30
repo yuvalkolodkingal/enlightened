@@ -85,7 +85,9 @@ public enum Fx {
      * The lion turtle gives energybending (from: the one who receives it; to: where its claws reach from; data: the
      * lion turtle's id; entity: the one who receives it): its claws on his forehead and chest, rings and rays of light.
      */
-    LION_GIFT(120);
+    LION_GIFT(120),
+    /** The Anomaly's red lightning, from it to whom it strikes. */
+    ANOMALY_BOLT(14);
 
     public final int life;
 

@@ -622,23 +622,30 @@ public final class WorldFxRenderer {
     private static void avatarAura(AbstractClientPlayer p, BendingData data, float w) {
         Vec3 c = rel(p.getPosition(partial).add(0, 1.0, 0));
         VertexConsumer light = vc(FxGeometry.light());
+        // A part of the State (some chakras open) shines in the colour of the highest, and does not light the eyes.
+        long now = p.level().getGameTime();
+        boolean part = com.kolodkingal.enlightened.bending.Chakras.partial(data, now);
+        int tint = part ? com.kolodkingal.enlightened.bending.Chakras.colour(com.kolodkingal.enlightened.bending.Chakras.power(data, now)) : 0xFFFFFF;
+        float tr = (tint >> 16 & 255) / 255.0F, tg = (tint >> 8 & 255) / 255.0F, tb = (tint & 255) / 255.0F;
         // Seen from inside (his own eyes), the spheres of light and the glow of his eyes would fill the whole screen:
         // he sees only the streams of light climbing round him.
         boolean ownView = p == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson();
         if (!ownView) {
             Quaternionf rot = new Quaternionf().rotationY(age * 0.12F).mul(new Quaternionf().rotationX(0.3F * Mth.sin(age * 0.07F)));
-            FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, 0.75F, 0.9F, 1.0F, 0.08F * w, 1.5F, age * 0.3F, FULL, false, rot);
-            FxGeometry.sphere(pose, light, c, 1.2F, 8, 16, 0, 1, 1.0F, 1.0F, 1.0F, 0.05F * w, 2.2F, -age * 0.4F, FULL, false, new Quaternionf().rotationZ(1.0F).mul(new Quaternionf().rotationY(-age * 0.2F)));
+            FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, part ? tr : 0.75F, part ? tg : 0.9F, part ? tb : 1.0F, 0.08F * w, 1.5F, age * 0.3F, FULL, false, rot);
+            FxGeometry.sphere(pose, light, c, 1.2F, 8, 16, 0, 1, tr, tg, tb, 0.05F * w, 2.2F, -age * 0.4F, FULL, false, new Quaternionf().rotationZ(1.0F).mul(new Quaternionf().rotationY(-age * 0.2F)));
             Vec3 eyes = rel(p.getEyePosition(partial).add(look(p).scale(0.15)));
-            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.6F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.3F);
+            if (!part) {
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.6F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.3F);
+            }
             Vec3 forehead = HandTracker.forehead(p, partial);
-            if (forehead != null) {
+            if (forehead != null && !part) {
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(forehead), 0.5F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, -age * 0.3F);
             }
         }
         // The light at his hands (in his own eyes the hands are drawn apart, and a glow at their place in the world would hang before them).
         for (HumanoidArm arm : ownView ? new HumanoidArm[0] : HumanoidArm.values()) {
-            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(hand(p, arm)), 0.5F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.4F);
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(hand(p, arm)), 0.5F * w, part ? tr : 0.85F, part ? tg : 0.95F, part ? tb : 1.0F, 0.8F * w, age * 0.4F);
         }
         // Streams of light climbing round the body (in his own eyes, only as high as his chest: above it they cross his sight).
         for (int i = 0; i < 5; i++) {
@@ -649,7 +656,7 @@ public final class WorldFxRenderer {
                 double r = 0.8 + 0.5 * Mth.sin(t * Mth.PI);
                 pts.add(c.add(Math.cos(a) * r, -1.0 + 2.6 * t, Math.sin(a) * r));
             }
-            FxGeometry.ribbon(pose, light, pts, 0.10F, 0.02F, 0, 1, 1, 0, 1.0F, 1.0F, 1.0F, 0.0F, (ownView ? 0.35F : 0.5F) * w, FULL, false);
+            FxGeometry.ribbon(pose, light, pts, 0.10F, 0.02F, 0, 1, 1, 0, tr, tg, tb, 0.0F, (ownView ? 0.35F : 0.5F) * w, FULL, false);
         }
     }
 
@@ -1326,6 +1333,8 @@ public final class WorldFxRenderer {
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from, r * 2.2F, core[0], core[1], core[2], 0.8F * (1.0F - f), a * 0.2F);
             }
             case LIGHTNING -> lightningBolt(from, to, e, a, f);
+            case ANOMALY_BOLT -> ThorBolt.draw(pose, vc(FxGeometry.light()), from, to, e.born() * 7919L, a, f < 0.6F ? 1.0F : (1.0F - f) / 0.4F, 1.4F, FULL,
+                    new float[]{1.0F, 0.16F, 0.1F});
             case REDIRECT -> {
                 if (entity == null) {
                     break;

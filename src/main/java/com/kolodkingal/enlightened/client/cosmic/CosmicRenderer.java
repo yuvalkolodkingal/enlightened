@@ -34,6 +34,10 @@ public final class CosmicRenderer {
         if (mc.level == null || mc.player == null || !mc.level.dimension().equals(Cosmic.LEVEL)) {
             return;
         }
+        if (mc.player.getX() > Cosmic.ANOMALY_X / 2.0) {
+            // The Anomaly's path ends at the seven circles, not at his giant self.
+            return;
+        }
         if (model == null) {
             model = new MeditatingBodyModel<>(mc.getEntityModels().bakeLayer(ModelLayers.PLAYER));
         }

@@ -62,8 +62,10 @@ public final class AvatarBending {
     }
 
     /**
-     * The Avatar State at will, for the master Avatar (Guru Pathik's lessons, all seven chakras open), rested: 12 / 18 /
-     * ... it lasts two minutes (avatar.avatarStateLengthSeconds). Pressed again inside it, he leaves it.
+     * The Avatar State at will, rested, once Guru Pathik has taught him: with all seven chakras open the master's State,
+     * twice as strong as the whole; with fewer, the share of it they give (three open, three sevenths of its strength),
+     * wrapped in the light of the highest. It lasts two minutes (avatar.avatarStateLengthSeconds). Pressed again inside
+     * it, he leaves it.
      */
     static final class State implements AbilityLogic {
         @Override
@@ -75,7 +77,8 @@ public final class AvatarBending {
             BendingData data = c.data;
             long now = c.now();
             if (data.avatar(now)) {
-                if (Chakras.masters(data)) {
+                // He leaves at will what he entered at will (a part, or the master's); the whole State that took him near death holds him unless he masters it.
+                if (Chakras.masters(data) || Chakras.power(data, now) != Chakras.POWER_WHOLE) {
                     Chakras.leaveAtWill(p, data);
                 } else {
                     c.refuse("message.enlightened.avatar.no_control");
@@ -89,14 +92,16 @@ public final class AvatarBending {
                 c.refuse("message.enlightened.avatar.guru");
                 return;
             }
-            if (data.chakras() < Chakras.COUNT) {
-                c.refuse("message.enlightened.avatar.chakras");
+            if (data.chakras() < 1) {
+                // Not one chakra open: the State is not his to call on yet.
+                c.refuse("message.enlightened.avatar.no_chakra");
                 return;
             }
             if (now < data.avatarCooldownUntil()) {
                 c.refuse("message.enlightened.avatar.rest", (data.avatarCooldownUntil() - now) / 20);
                 return;
             }
+            // All seven open: the master's State, twice as strong; fewer: their share of it.
             Chakras.enterAtWill(p, data, 1.0F);
             c.exhaust(0.5F);
             c.cooldownSeconds(5);
@@ -122,6 +127,15 @@ public final class AvatarBending {
             long now = c.now();
             if (mine.element() == com.kolodkingal.enlightened.bending.Element.AVATAR && mine.chakras() < Chakras.COUNT) {
                 c.refuse("message.enlightened.energy.chakras");
+                return;
+            }
+            // The Anomaly: energy against energy, from as far as it can be seen clearly; its life is drawn out.
+            if (aimed(p, 12.0) instanceof com.kolodkingal.enlightened.entity.AnomalyEntity anomaly) {
+                if (anomaly.drain(p)) {
+                    p.displayClientMessage(Component.translatable("message.enlightened.anomaly.drained").withStyle(ChatFormatting.AQUA), true);
+                    c.exhaust(0.6F);
+                    c.cooldownSeconds(6);
+                }
                 return;
             }
             if (!(aimed(p, 2.6) instanceof ServerPlayer other) || !Benders.get(other).element().bends()) {

@@ -417,6 +417,10 @@ public final class Tour {
             cities();
             return;
         }
+        if ("anomaly".equals(System.getProperty("enlightened.tour.only", ""))) {
+            anomaly();
+            return;
+        }
         if ("omashu".equals(System.getProperty("enlightened.tour.only", ""))) {
             omashu();
             return;
@@ -1238,6 +1242,61 @@ public final class Tour {
     }
 
     /** The cosmic plane (also alone, with -Denlightened.tour.only=cosmic). */
+    /** A part of the Avatar State, the Anomaly and its path of seven circles (alone: -Denlightened.tour.only=anomaly). */
+    private static void anomaly() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        element("avatar", "korra", "avatar_state", "fire_fist");
+        cmd("gamemode creative", 2);
+        for (int n : new int[]{1, 4}) {
+            server(p -> {
+                var data = com.kolodkingal.enlightened.bending.Benders.get(p);
+                data.setAvatarUntil(0);
+                data.setAvatarCooldownUntil(0);
+                data.setGuruTaught(true);
+                data.setChakras(n);
+                com.kolodkingal.enlightened.bending.Chakras.enterAtWill(p, data, 1.0F);
+                com.kolodkingal.enlightened.bending.Benders.syncIfDirty(p);
+            }, 30);
+            camera(CameraType.THIRD_PERSON_FRONT, 10);
+            shot(n == 1 ? "300_avatar_state_first_chakra" : "301_avatar_state_fourth_chakra", 10);
+            camera(CameraType.THIRD_PERSON_BACK, 2);
+        }
+        server(p -> {
+            var data = com.kolodkingal.enlightened.bending.Benders.get(p);
+            data.setAvatarUntil(0);
+            com.kolodkingal.enlightened.bending.Benders.syncIfDirty(p);
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            net.minecraft.core.BlockPos base = new net.minecraft.core.BlockPos(30, -60, 0);
+            for (int[] c : com.kolodkingal.enlightened.world.ElloraPiece.ANOMALY_CUBES) {
+                level.setBlock(base.offset(c[0], c[1] - 1, c[2]), com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_BLOCK.get().defaultBlockState(), 3);
+            }
+            p.teleportTo(level, 30.5, -59, -12.5, 0.0F, -12.0F);
+        }, 30);
+        shot("302_anomaly_cubes", 20);
+        server(p -> com.kolodkingal.enlightened.event.CommonEvents.wakeAnomaly(p.serverLevel(), new net.minecraft.core.BlockPos(30, -60, 0)), 40);
+        shot("303_anomaly", 5);
+        cmd("gamemode survival", 2);
+        cmd("effect give @s minecraft:resistance 60 4 true", 2);
+        cmd("tp @s 30.5 -60 -9.5 0 -28", 2);
+        camera(CameraType.FIRST_PERSON, 2);
+        for (int i = 0; i < 8; i++) {
+            shot("304_anomaly_strikes_" + i, 7);
+        }
+        camera(CameraType.THIRD_PERSON_FRONT, 2);
+        for (int i = 0; i < 6; i++) {
+            shot("304b_anomaly_front_" + i, 9);
+        }
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        cmd("gamemode creative", 2);
+        cmd("kill @e[type=enlightened:anomaly]", 10);
+        server(com.kolodkingal.enlightened.world.Cosmic::sendForAnomaly, 100);
+        camera(CameraType.FIRST_PERSON, 2);
+        shot("305_anomaly_path", 20);
+        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.ANOMALY_X + ".5 101 30.5 0 0", 30);
+        shot("306_seven_circles", 20);
+    }
+
     private static void cosmic() {
         // The cosmic plane of the seventh chakra.
         element("avatar", "aang", "avatar_state", "fire_fist");

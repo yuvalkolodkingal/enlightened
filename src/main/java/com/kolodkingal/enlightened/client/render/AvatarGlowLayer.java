@@ -37,7 +37,9 @@ public class AvatarGlowLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
             return;
         }
         BendingData data = Benders.get(player);
-        if (!data.element().bends() || !data.avatar(player.level().getGameTime())) {
+        long now = player.level().getGameTime();
+        if (!data.element().bends() || !data.avatar(now) || com.kolodkingal.enlightened.bending.Chakras.partial(data, now)) {
+            // A part of the State does not light the eyes: it wraps him in his chakra's glow (ChakraAuraLayer).
             return;
         }
         float pulse = 0.85F + 0.15F * Mth.sin(ageInTicks * 0.35F);

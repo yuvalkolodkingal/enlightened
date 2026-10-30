@@ -427,8 +427,24 @@ public final class BendingData {
         return element == Element.AVATAR && ability.element != Element.AVATAR && ability.element == avatarBase();
     }
 
+    /**
+     * How deep in the Avatar State he went when he entered it (bits 55 to 58 of the second toggle word): 1 to 6 the
+     * part of it his open chakras give, 7 the whole State that takes him near death, 8 the master's; 0 for none.
+     */
+    public int avatarPower() {
+        return (int) ((toggles[1] >>> 55) & 15L);
+    }
+
+    public void setAvatarPower(int power) {
+        long bits = (toggles[1] & ~(15L << 55)) | ((long) (power & 15) << 55);
+        if (bits != toggles[1]) {
+            toggles[1] = bits;
+            dirty = true;
+        }
+    }
+
     public void clearToggles() {
-        long keep = toggles[1] & ((3L << 62) | (7L << 59));
+        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55));
         if (toggles[0] != 0 || toggles[1] != keep) {
             toggles[0] = 0L;
             toggles[1] = keep;

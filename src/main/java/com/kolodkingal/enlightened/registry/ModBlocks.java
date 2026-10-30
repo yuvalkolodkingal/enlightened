@@ -25,8 +25,17 @@ public final class ModBlocks {
             () -> new com.kolodkingal.enlightened.block.SpiritPortalBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.NETHER_PORTAL)
                     .lightLevel(s -> 12).noLootTable()));
 
+    /**
+     * A red cube of the Anomaly, in Ellora: it cannot be broken, and whoever tries wakes the Anomaly itself.
+     */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> ANOMALY_BLOCK = BLOCKS.register("anomaly_block",
+            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.COLOR_RED)
+                    .strength(-1.0F, 3600000.0F).noLootTable().lightLevel(s -> 10).emissiveRendering((s, l, p) -> true)
+                    .sound(net.minecraft.world.level.block.SoundType.AMETHYST)));
+
     public static void registerItems() {
         ModItems.ITEMS.register("meditation_point", () -> new BlockItem(MEDITATION_POINT.get(), new Item.Properties()));
+        ModItems.ITEMS.register("anomaly_block", () -> new BlockItem(ANOMALY_BLOCK.get(), new Item.Properties()));
     }
 
     private ModBlocks() {

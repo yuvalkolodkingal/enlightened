@@ -24,6 +24,21 @@ uniform in that material's colours. Coal also works as a trim material on the ga
 You find the template in **Ellora**. Copy it like any trim template: the template, seven diamonds and a cut red
 sandstone make two.
 
+## The Anomaly
+
+In the middle of the keep's hall in Ellora hang **red cubes**, as if the space there had broken. They cannot be broken:
+**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen): a tilted square of burning frames,
+red outside, a yellow ring and a dark heart, red lightning crawling out of it. It drifts round whoever fights it,
+strikes with **red lightning** and now and then **bursts** outward, throwing back everyone near; below half its life it
+strikes faster and harder. Only one is awake near a place at a time.
+
+Every blow and every bending does it only **half** its harm. **Energybending** is the way to beat it: aimed at it from
+up to 12 blocks, it **drains a quarter of its life** at a time and heals you a little.
+
+**Beat it**, and every bender who fought it is carried to the **cosmic plane** of the seven chakras: a path of light,
+but at its end, instead of your giant self, **seven circles**, one in each chakra's colour, the first red. Walk into
+the red circle: **your first chakra (Earth) opens**, and you are sent back where you were.
+
 ## Ellora
 
 A walled city of red sandstone, some 180 blocks across, that stands on level ground in **deserts and badlands**.

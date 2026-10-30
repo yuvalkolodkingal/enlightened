@@ -79,6 +79,7 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.LION_TURTLE.get(), com.kolodkingal.enlightened.client.render.LionTurtleRenderer::new);
         event.registerEntityRenderer(ModEntities.CITY_GUARD.get(), com.kolodkingal.enlightened.client.render.CityGuardRenderer::new);
         event.registerEntityRenderer(ModEntities.KING_BUMI.get(), com.kolodkingal.enlightened.client.render.KingBumiRenderer::new);
+        event.registerEntityRenderer(ModEntities.ANOMALY.get(), com.kolodkingal.enlightened.client.render.AnomalyRenderer::new);
     }
 
     private static void onLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -100,6 +101,7 @@ public final class EnlightenedClient {
                 boolean slim = skin == PlayerSkin.Model.SLIM;
                 renderer.addLayer(new ShellLayer(renderer, event.getEntityModels().bakeLayer(slim ? SHELL_SLIM : SHELL_WIDE), slim));
                 renderer.addLayer(new AvatarGlowLayer(renderer));
+                renderer.addLayer(new com.kolodkingal.enlightened.client.render.ChakraAuraLayer(renderer));
                 renderer.addLayer(new HandTrackerLayer(renderer));
                 renderer.addLayer(new com.kolodkingal.enlightened.client.render.BackItemLayer(renderer));
                 renderer.addLayer(new com.kolodkingal.enlightened.client.render.LemurShoulderLayer(renderer,

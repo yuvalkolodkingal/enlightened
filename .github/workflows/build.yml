@@ -44,11 +44,20 @@ jobs:
         id: jar
         run: |
           version=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          release=$(grep '^release_build=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')
+          kind=alpha
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
             label="$GITHUB_REF_NAME"
+            kind=release
+          elif [ "$release" = "true" ] && [ "$GITHUB_REF_NAME" = "main" ] && [ "$GITHUB_EVENT_NAME" = "push" ] \
+              && [ -z "$(git ls-remote --tags origin "refs/tags/v${version}")" ]; then
+            # A full release of this version, once: the first push to main with release_build=true.
+            label="${version}"
+            kind=release
           else
             label="${version}-alpha.${GITHUB_RUN_NUMBER}"
           fi
+          echo "kind=$kind" >> "$GITHUB_OUTPUT"
           mkdir -p dist
           cp "build/libs/enlightened-${version}.jar" "dist/enlightened-${label}.jar"
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -63,6 +72,7 @@ jobs:
     outputs:
       version: ${{ steps.jar.outputs.version }}
       label: ${{ steps.jar.outputs.label }}
+      kind: ${{ steps.jar.outputs.kind }}
 
   release:
     name: Publish the release
@@ -86,10 +96,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           LABEL: ${{ needs.build.outputs.label }}
           VERSION: ${{ needs.build.outputs.version }}
+          KIND: ${{ needs.build.outputs.kind }}
         run: |
-          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            tag="$GITHUB_REF_NAME"
-            title="Enlightened ${GITHUB_REF_NAME#v}"
+          if [ "$GITHUB_REF_TYPE" = "tag" ] || [ "$KIND" = "release" ]; then
+            tag="v${LABEL#v}"
+            title="Enlightened ${LABEL#v}"
             kind="--latest"
           else
             tag="v${LABEL}"
@@ -100,7 +111,7 @@ jobs:
 
           Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,
           for multiplayer, on the server too."
-          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ -f curseforge/changelog.md ]; then
+          if [ "$kind" = "--latest" ] && [ -f curseforge/changelog.md ]; then
             notes="$(cat curseforge/changelog.md)
 
           Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,

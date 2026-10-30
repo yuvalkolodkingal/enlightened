@@ -37,8 +37,9 @@ panel in the top-left corner, items that awaken the power, a server config, oper
 
 ## How to play
 
-1. **Be born a bender.** The first time you join, your fate is cast, one in six each: a firebender, an airbender,
-   a waterbender, an earthbender, **the Avatar**, or no bender at all. (The scrolls are Creative items only.)
+1. **Be born a bender.** The first time you join, your fate is cast: one in six no bending; otherwise a firebender,
+   an airbender, a waterbender, an earthbender or **the Avatar** (one Avatar per world by default, born to the next
+   element of the cycle Fire, Air, Water, Earth). The scrolls are Creative items only.
 2. **Use your keys.** **R G V B N** are abilities 1 to 5; **Sneak + key** is the ability on the key's second slot.
    The panel in the top-left corner shows what sits on every key, its level in stars and its state.
 3. **Grow.** Kill monsters with your bending (not with a sword) and watch the points come. Press **K** (or use your

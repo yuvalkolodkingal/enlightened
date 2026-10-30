@@ -15,6 +15,7 @@ All need operator rights (permission level 2).
 | `/enlightened tetherless <players> <true\|false>` | Makes an airbender [tetherless](Airbending#the-tetherless-airbender), or no longer (flight and suffocation are forgotten). |
 | `/enlightened reset <players>` | Takes back every level but the starter's and refunds the points. |
 | `/enlightened avatar <players> <enter\|leave\|rest>` | Enters or leaves the [Avatar State](Chakras-and-the-Avatar-State) (whatever the chakras), or ends its rest. Avatars only. |
+| `/enlightened avatars` / `/enlightened avatars max <count>` | List the Avatars (and the element each was born to, and the next one's); set how many Avatars a world may have at a time (default 1). |
 | `/enlightened guru <players> <taught\|untaught>` | Marks players as taught (or not) by Guru Pathik. |
 | `/enlightened lionturtle [pos [size]]` | Raises a [lion turtle](Lion-Turtle) and its island (it rises over a few seconds): at sea level where you stand, or with the sea's surface at the given position; it faces as you face. Size 1 to 10 (default `lionTurtleSize`). |
 | `/enlightened firecolor <players> <normal\|blue\|rainbow\|look>` | Sets the colour of the players' fire (`look`: their look's). |

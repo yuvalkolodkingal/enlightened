@@ -602,5 +602,11 @@
   "message.enlightened.spirit.enter": "עברת אל עולם הרוחות.",
   "message.enlightened.spirit.leave": "חזרת לעולם החיים.",
   "message.enlightened.spirit.crossing": "הרוח שלך מתכנסת כדי לעבור...",
-  "message.enlightened.ba_sing_se.forbidden": "אין מלחמה בבה סינג סה: שום דבר נורא לא יכול לקום בין חומותיה."
+  "message.enlightened.ba_sing_se.forbidden": "אין מלחמה בבה סינג סה: שום דבר נורא לא יכול לקום בין חומותיה.",
+  "message.enlightened.avatar.reborn": "%s הוא האווטאר, שנולד ל%s.",
+  "message.enlightened.avatar.lost": "האווטאר עבר למישהו אחר. אתה כשף %s, כמו שנולדת.",
+  "commands.enlightened.avatars.head": "אווטארים: %s מתוך %s לכל היותר. האווטאר הבא ייוולד ל%s.",
+  "commands.enlightened.avatars.line": "  %s, נולד ל%s",
+  "commands.enlightened.avatars.max": "לכל היותר %s אווטארים בבת אחת.",
+  "commands.enlightened.avatars.max_set": "עכשיו לכל היותר %s אווטארים בבת אחת."
 }

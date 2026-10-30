@@ -3,8 +3,11 @@
 The first full release.
 
 ## Becoming a bender
-* Everyone is **born** to an element the first time they join: one in six each a firebender, an airbender, a
-  waterbender, an earthbender, **the Avatar**, or no bender at all. The bending scrolls are Creative items only.
+* Everyone is **born** to an element the first time they join: one in six no bending; otherwise a firebender, an
+  airbender, a waterbender, an earthbender or **the Avatar**, alike. The bending scrolls are Creative items only.
+* **The Avatar Cycle**: one Avatar per world by default (`/enlightened avatars max <count>`). Each Avatar is born to an
+  element, going round Fire, Air, Water, Earth. A banned Avatar, or one who dies in hardcore, is reborn in another
+  player.
 
 ## The world
 * **Ba Sing Se**: three ring walls, the Lower, Middle and Upper Rings, a canal and the Earth King's palace. No monster

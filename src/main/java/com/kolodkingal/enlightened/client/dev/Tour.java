@@ -119,12 +119,21 @@ public final class Tour {
         STEPS.add(new Step(delay, () -> Minecraft.getInstance().player.connection.sendCommand(command)));
     }
 
+    /** Clean shots (-Denlightened.tour.clean=true): the interface is hidden for each picture, for the gallery. */
+    private static final boolean CLEAN = Boolean.getBoolean("enlightened.tour.clean");
+
     private static void shot(String name, int delay) {
+        if (CLEAN) {
+            STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        }
         STEPS.add(new Step(delay, () -> {
             Minecraft mc = Minecraft.getInstance();
             Screenshot.grab(mc.gameDirectory, name + ".png", mc.getMainRenderTarget(), msg -> {
             });
             diagnose(name);
+            if (CLEAN) {
+                mc.options.hideGui = false;
+            }
         }));
     }
 

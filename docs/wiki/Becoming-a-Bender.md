@@ -3,13 +3,19 @@
 [עברית](Becoming-a-Bender-HE)
 
 A player bends one element, forever (only an [operator command](Commands) changes it). It is chosen **at birth**:
-the first time you join a world, your fate is cast, one chance in six each:
+the first time you join a world, your fate is cast: one chance in six you are born **without bending**; otherwise
+you are a **firebender**, an **airbender**, a **waterbender**, an **earthbender** or **the Avatar**, alike.
 
-| | |
-|---|---|
-| a **firebender** | a **waterbender** |
-| an **airbender** | an **earthbender** |
-| **the Avatar**, bender of all four | **no bender at all** |
+## The Avatar Cycle
+
+* A world has **one Avatar** at a time by default. While it has all the Avatars it may, whoever would have been born
+  the Avatar is born to one of the four elements instead. An operator changes the number:
+  `/enlightened avatars max <count>`; `/enlightened avatars` lists the Avatars.
+* **Each Avatar is born to an element**, and the cycle goes round as in the show: **Fire, Air, Water, Earth**. Each
+  new Avatar is born to the element after the last one's (the first at random).
+* When the Avatar is **banned**, the Avatar is **reborn in another player**, at random among those online (or the next
+  one to join). If the banned player comes back, he is a bender of the element he was born to, no more.
+* In a **hardcore** world, when the Avatar dies, the Avatar is reborn in another player the same way.
 
 If you are born a bender you awaken at once: a title, a burst of your element's colour, a sound and a message to
 everyone on the server. If you are born without bending you are told so, and you stay a non-bender. Your fate is cast

@@ -63,6 +63,7 @@ public final class CommonEvents {
     public static void onServerTick(ServerTickEvent.Post event) {
         TempBlocks.tick(event.getServer());
         com.kolodkingal.enlightened.world.LionTurtles.tick(event.getServer());
+        com.kolodkingal.enlightened.bending.AvatarCycle.tick(event.getServer());
     }
 
     @SubscribeEvent
@@ -151,6 +152,13 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         LivingEntity killed = event.getEntity();
+        // In a hardcore world an Avatar who dies is gone for good: the Avatar is reborn in another player.
+        if (killed instanceof ServerPlayer dead && dead.getServer() != null && dead.serverLevel().getLevelData().isHardcore()) {
+            com.kolodkingal.enlightened.bending.AvatarCycle cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(dead.getServer());
+            if (cycle.isAvatar(dead.getUUID())) {
+                cycle.passOn(dead.getServer(), dead.getUUID(), false);
+            }
+        }
         DamageSource source = event.getSource();
         if (source.getEntity() instanceof ServerPlayer killer && killer != killed) {
             BendingData data = Benders.get(killer);
@@ -311,6 +319,14 @@ public final class CommonEvents {
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             Benders.castFate(player);
+            if (player.getClass() == ServerPlayer.class) {
+                com.kolodkingal.enlightened.bending.AvatarCycle cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(player.getServer());
+                // An Avatar from before the cycle was kept is counted now.
+                if (Benders.get(player).element() == Element.AVATAR && !cycle.isAvatar(player.getUUID())) {
+                    cycle.register(player);
+                }
+                cycle.onLogin(player);
+            }
             BendingData data = Benders.get(player);
             data.clearActive();
             BendingTicker.applyPassives(player, data);

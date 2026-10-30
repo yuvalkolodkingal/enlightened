@@ -37,12 +37,19 @@ public final class Benders {
         }
     }
 
-    /** What a player may be born to, one in six each: the four elements, the Avatar, or no bending at all. */
-    public static final Element[] BIRTHS = {Element.FIRE, Element.AIR, Element.WATER, Element.EARTH, Element.AVATAR, Element.NONE};
+    /** What a player may be born to: no bending at all (one in six), or one of the four elements or the Avatar. */
+    public static final Element[] BIRTHS = {Element.NONE, Element.FIRE, Element.AIR, Element.WATER, Element.EARTH, Element.AVATAR};
 
-    /** The element a newborn player is given, one in six each of {@link #BIRTHS}. */
-    public static Element birth(net.minecraft.util.RandomSource random) {
-        return BIRTHS[random.nextInt(BIRTHS.length)];
+    /**
+     * The element a newborn player is given: one in six no bending; the rest the four elements and the Avatar alike,
+     * unless the world has all the Avatars it may ({@code avatarsFull}), when it is one of the four.
+     */
+    public static Element birth(net.minecraft.util.RandomSource random, boolean avatarsFull) {
+        Element born = BIRTHS[random.nextInt(BIRTHS.length)];
+        if (born == Element.AVATAR && avatarsFull) {
+            born = AvatarCycle.CYCLE.get(random.nextInt(AvatarCycle.CYCLE.size()));
+        }
+        return born;
     }
 
     /**
@@ -64,10 +71,13 @@ public final class Benders {
         if (!on || get(player).element() != Element.NONE) {
             return;
         }
-        Element born = birth(player.getRandom());
+        AvatarCycle cycle = AvatarCycle.get(player.getServer());
+        Element born = birth(player.getRandom(), cycle.full());
         if (born == Element.NONE) {
             player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.born_none")
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
+        } else if (born == Element.AVATAR) {
+            AvatarCycle.becomeAvatar(player.getServer(), player);
         } else {
             awaken(player, born);
         }
@@ -85,6 +95,15 @@ public final class Benders {
         }
         BendingTicker.endAll(player, data);
         data.setElementRaw(element);
+        // The Avatar Cycle keeps count of the Avatars and the element each was born to.
+        if (player.getServer() != null && player.getClass() == ServerPlayer.class) {
+            AvatarCycle cycle = AvatarCycle.get(player.getServer());
+            if (element == Element.AVATAR) {
+                cycle.register(player);
+            } else if (old == Element.AVATAR) {
+                cycle.unregister(player.getUUID());
+            }
+        }
         if (element.bends()) {
             Ability starter = Ability.starterOf(element);
             if (starter != null) {

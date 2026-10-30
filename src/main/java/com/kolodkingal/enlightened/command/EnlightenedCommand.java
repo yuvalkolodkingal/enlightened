@@ -104,6 +104,21 @@ public final class EnlightenedCommand {
                                 .then(Commands.literal("enter").executes(ctx -> avatar(ctx, "enter")))
                                 .then(Commands.literal("leave").executes(ctx -> avatar(ctx, "leave")))
                                 .then(Commands.literal("rest").executes(ctx -> avatar(ctx, "rest")))))
+                .then(Commands.literal("avatars")
+                        .executes(EnlightenedCommand::avatars)
+                        .then(Commands.literal("max")
+                                .executes(ctx -> {
+                                    var cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(ctx.getSource().getServer());
+                                    ctx.getSource().sendSuccess(() -> Component.translatable("commands.enlightened.avatars.max", cycle.max()), false);
+                                    return cycle.max();
+                                })
+                                .then(Commands.argument("count", IntegerArgumentType.integer(0, 1000))
+                                        .executes(ctx -> {
+                                            int n = IntegerArgumentType.getInteger(ctx, "count");
+                                            com.kolodkingal.enlightened.bending.AvatarCycle.get(ctx.getSource().getServer()).setMax(n);
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.enlightened.avatars.max_set", n), true);
+                                            return n;
+                                        }))))
                 .then(Commands.literal("temple")
                         .executes(ctx -> temple(ctx, net.minecraft.core.BlockPos.containing(ctx.getSource().getPosition())))
                         .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
@@ -217,6 +232,17 @@ public final class EnlightenedCommand {
     }
 
     /** Enters or leaves the Avatar State, or ends its rest, for players (whatever their chakras). */
+    /** Who the Avatars are, the element each was born to, and the element the next one will be born to. */
+    private static int avatars(CommandContext<CommandSourceStack> ctx) {
+        var server = ctx.getSource().getServer();
+        var cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(server);
+        ctx.getSource().sendSuccess(() -> Component.translatable("commands.enlightened.avatars.head", cycle.avatars().size(), cycle.max(),
+                cycle.peekNext(server.overworld().getRandom()).displayName()), false);
+        cycle.avatars().forEach((id, base) -> ctx.getSource().sendSuccess(() -> Component.translatable("commands.enlightened.avatars.line",
+                cycle.name(id), base.displayName()), false));
+        return cycle.avatars().size();
+    }
+
     private static int avatar(CommandContext<CommandSourceStack> ctx, String what) throws CommandSyntaxException {
         int n = 0;
         for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {

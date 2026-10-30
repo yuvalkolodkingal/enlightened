@@ -602,5 +602,11 @@
   "message.enlightened.spirit.enter": "You cross into the Spirit World.",
   "message.enlightened.spirit.leave": "You return to the world of the living.",
   "message.enlightened.spirit.crossing": "Your spirit gathers itself to cross over...",
-  "message.enlightened.ba_sing_se.forbidden": "There is no war in Ba Sing Se: nothing so terrible can rise within its walls."
+  "message.enlightened.ba_sing_se.forbidden": "There is no war in Ba Sing Se: nothing so terrible can rise within its walls.",
+  "message.enlightened.avatar.reborn": "%s is the Avatar, born to %s.",
+  "message.enlightened.avatar.lost": "The Avatar has passed on to another. You are a bender of %s, as you were born.",
+  "commands.enlightened.avatars.head": "Avatars: %s of at most %s. The next Avatar will be born to %s.",
+  "commands.enlightened.avatars.line": "  %s, born to %s",
+  "commands.enlightened.avatars.max": "At most %s Avatars at a time.",
+  "commands.enlightened.avatars.max_set": "Now at most %s Avatars at a time."
 }

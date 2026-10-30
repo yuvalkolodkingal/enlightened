@@ -4,8 +4,10 @@
 
 **Water. Earth. Fire. Air.** Become a bender of the Avatar world, in Minecraft.
 
-The first time you join, your fate is cast: you are born a **firebender**, an **airbender**, a **waterbender**, an
-**earthbender**, **the Avatar**, or a non-bender, one chance in six each. Then you grow: every monster you defeat with
+The first time you join, your fate is cast: one chance in six you are born without bending; otherwise a
+**firebender**, an **airbender**, a **waterbender**, an **earthbender** or **the Avatar**. There is one Avatar at a
+time (a server may allow more), born to the next element of the cycle, Fire, Air, Water, Earth; a banned Avatar, or
+one who dies in hardcore, is reborn in another player. Then you grow: every monster you defeat with
 your bending earns experience, every few kills an ability point, and every point a new art or the next level of one.
 
 ## The four elements

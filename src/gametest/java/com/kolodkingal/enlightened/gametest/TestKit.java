@@ -89,6 +89,10 @@ public final class TestKit {
             // The fake client "supports" every channel, so synced attachments can be sent to it.
             connection.channel().attr(ChannelAttributes.ADHOC_CHANNELS).set(new AcceptAll());
             ChannelAttributes.setConnectionType(connection, ConnectionType.NEOFORGE);
+            // A test player is not born to a random element: each test gives him the one it wants.
+            net.minecraft.nbt.CompoundTag kept = new net.minecraft.nbt.CompoundTag();
+            kept.putBoolean("enlightened_fated", true);
+            player.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, kept);
             server.getPlayerList().placeNewPlayer(connection, player, cookie);
             player.setGameMode(gameType);
             clearSpawnInvulnerability(player);

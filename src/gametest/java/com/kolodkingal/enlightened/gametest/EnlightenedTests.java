@@ -629,14 +629,50 @@ public final class EnlightenedTests {
         net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(42L);
         java.util.Map<Element, Integer> counts = new java.util.EnumMap<>(Element.class);
         for (int i = 0; i < 6000; i++) {
-            counts.merge(Benders.birth(random), 1, Integer::sum);
+            counts.merge(Benders.birth(random, false), 1, Integer::sum);
         }
         for (Element e : Benders.BIRTHS) {
             int n = counts.getOrDefault(e, 0);
             check(n > 850 && n < 1150, e + " is one in six (" + n + " of 6000)");
         }
         check(counts.size() == 6, "and nothing else");
+        counts.clear();
+        for (int i = 0; i < 6000; i++) {
+            counts.merge(Benders.birth(random, true), 1, Integer::sum);
+        }
+        check(!counts.containsKey(Element.AVATAR), "no Avatar is born while the world has all it may");
+        int none = counts.getOrDefault(Element.NONE, 0);
+        check(none > 850 && none < 1150, "still one in six is born without bending (" + none + ")");
         check(helper.getLevel().getServer().getRecipeManager().byKey(Enlightened.id("fire_scroll")).isEmpty(), "the scrolls are not crafted");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void theAvatarCycleGoesFireAirWaterEarth(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        var server = helper.getLevel().getServer();
+        com.kolodkingal.enlightened.bending.AvatarCycle cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(server);
+        check(cycle.max() == 1, "one Avatar at a time by default");
+        ServerPlayer first = f.player(4, FLOOR, 4);
+        ServerPlayer second = f.player(8, FLOOR, 4);
+        int before = cycle.avatars().size();
+        try {
+            cycle.setMax(before + 1);
+            Element a = cycle.register(first);
+            check(cycle.full(), "with as many Avatars as allowed the world is full");
+            cycle.setMax(before + 2);
+            check(!cycle.full(), "an operator may allow more");
+            Element b = cycle.register(second);
+            var order = com.kolodkingal.enlightened.bending.AvatarCycle.CYCLE;
+            check(order.indexOf(b) == (order.indexOf(a) + 1) % 4, "the next Avatar is born to the next element (" + a + " then " + b + ")");
+            check(order.equals(java.util.List.of(Element.FIRE, Element.AIR, Element.WATER, Element.EARTH)), "the cycle is Fire, Air, Water, Earth");
+            check(cycle.peekNext(helper.getLevel().getRandom()) == order.get((order.indexOf(b) + 1) % 4), "and the one after that is known");
+            check(cycle.base(first.getUUID()) == a && cycle.base(second.getUUID()) == b, "each Avatar keeps the element he was born to");
+        } finally {
+            cycle.unregister(first.getUUID());
+            cycle.unregister(second.getUUID());
+            cycle.setMax(1);
+        }
         helper.succeed();
     }
 

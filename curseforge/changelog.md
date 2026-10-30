@@ -1,3 +1,8 @@
+# Enlightened 1.0.6
+
+* **Two faces of the Anomaly**: to your eyes it (and its red cubes) is again the **neon square of the show**; only
+  once its red lightning has struck you, in your **dread**, do you see it as it truly is, pure energy in its darkness.
+
 # Enlightened 1.0.5
 
 * **The Anomaly is pure energy**: nothing solid in it, only light, motes of energy drawn into its burning heart and

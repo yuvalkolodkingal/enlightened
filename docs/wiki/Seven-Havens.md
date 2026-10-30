@@ -52,8 +52,11 @@ sandstone make two.
 
 In the middle of the keep's hall in Ellora hang **red cubes**: small Anomalies of pure energy, each a glowing square in
 its own shadow, as if the space there had broken. They are as solid as blocks, but they cannot be broken:
-**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen) of **pure energy** as in the
-show: a square on its corner, always facing you, nothing solid in it, only light: broken red outlines, a thick yellow
+**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen). To your eyes it is the **neon
+square of the show**: a square on its corner, always facing you, in a red glow, its frames solid colour under their
+light, a thick yellow frame of flickering dashes, dark maroon rings, a heart burning yellow and white. But once its
+lightning has struck you, **in your dread you see it as it truly is**, and its red cubes too: **pure energy**, nothing
+solid in it, only light: broken red outlines, a thick yellow
 frame broken into flickering dashes, rings of dim red energy, a heart burning white and yellow, motes of energy drawn
 in and flung out. It swallows the light round it in a **halo of darkness**, and its red lightning crawls out of it in
 **dark smoke**. Now and then it shudders, as if it were not quite there, and shrieks.

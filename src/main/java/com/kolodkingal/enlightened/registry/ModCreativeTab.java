@@ -22,6 +22,7 @@ public final class ModCreativeTab {
                 output.accept(ModItems.FIRE_SCROLL.get());
                 output.accept(ModItems.WATER_SKIN.get());
                 output.accept(ModItems.AIR_GLIDER.get());
+                output.accept(ModItems.BRIGADE_TRIM_TEMPLATE.get());
                 output.accept(ModItems.LEMUR_SPAWN_EGG.get());
                 output.accept(ModItems.SKY_BISON_SPAWN_EGG.get());
                 output.accept(ModBlocks.MEDITATION_POINT.get());

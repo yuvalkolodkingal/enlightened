@@ -32,6 +32,7 @@ same authors, and plays the same way.
 * [The Flying Lemur](Flying-Lemur): a tameable winged lemur, like Momo
 * [The Southern Air Temple](Southern-Air-Temple): the temple on the mountains, its sky bison, Guru Pathik and Momo
 * [The Lion Turtle](Lion-Turtle): an island that swims, energybending for a Hero of the Village, and a home on its shell
+* [Seven Havens](Seven-Havens): the brigade armor trim for any armor, and Ellora, the golden city where it is found
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)
 * [Building from Source](Building-from-Source)

@@ -400,6 +400,10 @@ public final class Tour {
             lionTurtle();
             return;
         }
+        if ("havens".equals(System.getProperty("enlightened.tour.only", ""))) {
+            sevenHavens();
+            return;
+        }
 
         // ---- fire ----
         element("fire", "zuko", "fire_ball", "fire_fist", "fire_whip", "fire_ring", "fire_healing", "lightning", "lightning_redirect");
@@ -831,6 +835,61 @@ public final class Tour {
         shot("191_bison_three_quarters", 10);
         cmd("tp @s 7 -58.5 7 90 5", 20);
         shot("192_bison_side", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        cmd("gamemode creative", 5);
+    }
+
+    /** The four brigades' uniforms (the brigade trim on iron armor) and the city of Ellora (alone: -Denlightened.tour.only=havens). */
+    private static void sevenHavens() {
+        cmd("kill @e[type=armor_stand]", 2);
+        String[][] brigades = {{"minecraft:lapis", "-3"}, {"minecraft:quartz", "-1"}, {"minecraft:redstone", "1"}, {"enlightened:coal", "3"}};
+        for (String[] b : brigades) {
+            String trim = ",components:{\"minecraft:trim\":{pattern:\"enlightened:brigade\",material:\"" + b[0] + "\"}}";
+            String[] pieces = {"iron_boots", "iron_leggings", "iron_chestplate", "iron_helmet"};
+            StringBuilder armor = new StringBuilder();
+            for (String piece : pieces) {
+                armor.append(armor.length() == 0 ? "" : ",").append("{id:\"minecraft:").append(piece).append("\",count:1").append(trim).append("}");
+            }
+            cmd("summon armor_stand " + b[1] + ".5 -60 6.5 {ShowArms:1b,NoBasePlate:1b,Rotation:[180f,0f],ArmorItems:[" + armor + "]}", 4);
+        }
+        cmd("gamemode spectator", 5);
+        cmd("time set noon", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("tp @s 0.5 -58.6 1.5 0 12", 30);
+        shot("240_brigade_uniforms", 10);
+        cmd("tp @s 0.5 -58.6 11.5 180 12", 20);
+        shot("241_brigade_uniforms_back", 10);
+        cmd("tp @s -1.5 -58.4 3.8 20 15", 20);
+        shot("242_brigade_close", 10);
+        // Ellora, built round 0, 120 on the flat world.
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().options.renderDistance().set(12);
+            Minecraft.getInstance().options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
+        }));
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            net.minecraft.core.BlockPos origin = new net.minecraft.core.BlockPos(0, -61, 120);
+            com.kolodkingal.enlightened.world.ElloraPiece piece = new com.kolodkingal.enlightened.world.ElloraPiece(origin);
+            net.minecraft.world.level.levelgen.structure.BoundingBox all = piece.getBoundingBox();
+            for (int cx = all.minX() >> 4; cx <= all.maxX() >> 4; cx++) {
+                for (int cz = all.minZ() >> 4; cz <= all.maxZ() >> 4; cz++) {
+                    net.minecraft.world.level.levelgen.structure.BoundingBox box = new net.minecraft.world.level.levelgen.structure.BoundingBox(
+                            cx << 4, all.minY(), cz << 4, (cx << 4) + 15, all.maxY(), (cz << 4) + 15);
+                    piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), level.getRandom(), box,
+                            new net.minecraft.world.level.ChunkPos(cx, cz), origin);
+                }
+            }
+            p.teleportTo(level, 0.5, -10, 200.5, 180.0F, 18.0F);
+        }, 60);
+        shot("251_ellora_front", 30);
+        cmd("tp @s 40.5 -20 160.5 135 15", 60);
+        shot("252_ellora_terraces", 30);
+        cmd("tp @s 0.5 -1 152.5 180 -10", 40);
+        shot("253_ellora_crown", 30);
+        cmd("tp @s 0.5 -51 115.5 180 10", 40);
+        shot("254_ellora_hall", 30);
+        cmd("tp @s 70.5 10 190.5 135 22", 120);
+        shot("250_ellora_far", 30);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
         cmd("gamemode creative", 5);
     }

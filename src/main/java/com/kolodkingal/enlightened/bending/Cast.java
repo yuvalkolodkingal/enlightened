@@ -93,8 +93,18 @@ public final class Cast {
      * fire, his water water), the Avatar's own light only for the Avatar's own arts.
      */
     public int color() {
-        if (ability.element == Element.FIRE && Variants.fireColour(data) == Variants.FIRE_RAINBOW) {
-            return Variants.RAINBOW_MARK;
+        // Fire takes the colour he chose (or his look's): the shots and sparks are drawn from it.
+        if (ability.element == Element.FIRE) {
+            int fire = Variants.fireColour(data);
+            if (fire == Variants.FIRE_RAINBOW) {
+                return Variants.RAINBOW_MARK;
+            }
+            if (fire == Variants.FIRE_BLUE) {
+                return Variants.BLUE_FIRE_COLOUR;
+            }
+            int look = data.element() == Element.AVATAR ? ability.element.color : Benders.color(player);
+            // A blue look (Azula's) whose fire was chosen to be the colour of fire burns as fire does.
+            return (look & 0xFF) > ((look >> 16) & 0xFF) + 60 ? Element.FIRE.color : look;
         }
         if (data.element() == Element.AVATAR && ability.element != Element.AVATAR) {
             return ability.element.color;

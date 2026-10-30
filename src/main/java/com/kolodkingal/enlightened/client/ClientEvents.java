@@ -65,6 +65,15 @@ public final class ClientEvents {
     }
 
     /** The local player burning blue sees blue flames over the screen instead of orange. */
+    /** The brigade trim's template says which material makes which brigade, and where it is found. */
+    @SubscribeEvent
+    public static void onTooltip(net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) {
+        if (event.getItemStack().is(com.kolodkingal.enlightened.registry.ModItems.BRIGADE_TRIM_TEMPLATE.get())) {
+            event.getToolTip().add(net.minecraft.network.chat.Component.translatable("item.enlightened.brigade_armor_trim_smithing_template.desc")
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
+    }
+
     @SubscribeEvent
     public static void onScreenFire(net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent event) {
         if (event.getOverlayType() != net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent.OverlayType.FIRE

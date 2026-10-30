@@ -1,0 +1,8 @@
+{
+  "asset_id": "enlightened:brigade",
+  "decal": false,
+  "description": {
+    "translate": "trim_pattern.enlightened.brigade"
+  },
+  "template_item": "enlightened:brigade_armor_trim_smithing_template"
+}

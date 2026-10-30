@@ -19,6 +19,7 @@
 * [Items and Crafting](Items-and-Crafting)
 * [Southern Air Temple](Southern-Air-Temple)
 * [The Lion Turtle](Lion-Turtle)
+* [Seven Havens](Seven-Havens)
 * [The Flying Lemur](Flying-Lemur)
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)

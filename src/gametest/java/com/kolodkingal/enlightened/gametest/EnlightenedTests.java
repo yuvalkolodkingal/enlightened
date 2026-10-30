@@ -758,6 +758,13 @@ public final class EnlightenedTests {
                 "her fire balls carry the rainbow");
         data.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_NORMAL);
         check(!com.kolodkingal.enlightened.bending.Variants.blueFire(data), "and the colour of fire, if she wants it");
+        check(new com.kolodkingal.enlightened.bending.Cast(azula, data, Ability.FIRE_BALL).color() == Element.FIRE.color,
+                "her fire balls then fly the colour of fire, though her look is blue");
+        ServerPlayer zuko = f.player(12, FLOOR, 8);
+        BendingData his = f.bender(zuko, Element.FIRE, Ability.FIRE_BALL, 1);
+        his.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_BLUE);
+        check(new com.kolodkingal.enlightened.bending.Cast(zuko, his, Ability.FIRE_BALL).color() == com.kolodkingal.enlightened.bending.Variants.BLUE_FIRE_COLOUR,
+                "one who chose blue fire throws blue fire balls");
         helper.succeed();
     }
 

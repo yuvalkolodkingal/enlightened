@@ -119,6 +119,8 @@ public final class Variants {
     public static final int FIRE_RAINBOW = 2;
     /** What a rainbow firebender's arts carry as their colour: his particles take every hue, his fire balls burn in all. */
     public static final int RAINBOW_MARK = 0xFE01FE;
+    /** The colour of blue fire (Azula's), whoever burns it. */
+    public static final int BLUE_FIRE_COLOUR = 0x2F7BFF;
 
     /** The colour (0xRRGGBB) of the rainbow at hue {@code h} (0 to 1 round the wheel). */
     public static int rainbow(float h) {

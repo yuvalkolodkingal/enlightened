@@ -21,6 +21,11 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> LION_TURTLE_PIECE = PIECES.register("lion_turtle",
             () -> (StructurePieceType.ContextlessType) LionTurtlePiece::new);
 
+    public static final DeferredHolder<StructureType<?>, StructureType<ElloraStructure>> ELLORA = TYPES.register("ellora",
+            () -> () -> ElloraStructure.CODEC);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> ELLORA_PIECE = PIECES.register("ellora",
+            () -> (StructurePieceType.ContextlessType) ElloraPiece::new);
+
     private ModStructures() {
     }
 }

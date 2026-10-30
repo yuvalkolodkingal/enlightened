@@ -342,7 +342,7 @@ public final class TempleTests {
                     + data.meditating() + ", progress " + data.meditation() + " of " + Chakras.ticksPerChakra() + ")");
             check(data.chakras() == 6, "the chakra waits for the end of the path");
             ServerLevel cosmic = (ServerLevel) player.level();
-            check(cosmic.getBlockState(BlockPos.containing(Cosmic.END.x, Cosmic.Y, Cosmic.END.z)).is(Blocks.AMETHYST_BLOCK), "the path is laid");
+            check(cosmic.getBlockState(BlockPos.containing(Cosmic.END.x, Cosmic.Y, Cosmic.END.z)).is(Blocks.BARRIER), "the path is laid");
             player.teleportTo(cosmic, Cosmic.END.x, Cosmic.END.y, Cosmic.END.z, 0.0F, 0.0F);
         });
         helper.runAtTickTime(24, () -> {

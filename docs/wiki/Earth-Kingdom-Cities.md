@@ -4,6 +4,13 @@
 
 ## Ba Sing Se
 
+![Ba Sing Se: three rings round the palace](images/ba-sing-se.jpg)
+*Ba Sing Se: three rings round the palace*
+
+![The Outer Wall](images/ba-sing-se-wall.jpg)
+*The Outer Wall*
+
+
 The great city of the Earth Kingdom, in plains, meadows and savannas: about 200 blocks across. Three ring walls one
 inside the other, each with gates on four streets:
 
@@ -22,6 +29,16 @@ and no wither or other boss can be raised there.
 
 ## Omashu
 
+![Omashu over its chasm, the bridge on tall arches](images/omashu.jpg)
+*Omashu over its chasm, the bridge on tall arches*
+
+![The terraces and the pyramid on the summit](images/omashu-terraces.jpg)
+*The terraces and the pyramid on the summit*
+
+![King Bumi on his throne](images/king-bumi.jpg)
+*King Bumi on his throne*
+
+
 King Bumi's city, in plains, meadows and savannas, built as the show draws it: a mountain of **sandstone** rising out
 of a deep chasm with a river at its bottom, its cliff ribbed with pointed buttresses, reached only by **one long bridge
 on tall arches**. A battlemented wall rings the city at the cliff's edge, with a gate where the bridge comes in. Above
@@ -36,6 +53,10 @@ Inside the pyramid is the **throne hall**: pillars, hanging lanterns, a green ai
 Villagers live on its terraces; guards keep the gate, the stairway and the hall; no monster comes into the city.
 
 ## City guards
+
+![The guards of Omashu, Ba Sing Se and Ellora](images/city-guards.jpg)
+*The guards of Omashu, Ba Sing Se and Ellora*
+
 
 Omashu, Ba Sing Se and Ellora are kept by their own **guards**. A guard keeps to his post (about 20 blocks round it),
 **fights any monster that comes near** (not creepers), and fights back, with the other guards, against anyone who

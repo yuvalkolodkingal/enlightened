@@ -4,6 +4,20 @@
 
 [English](Southern-Air-Temple)
 
+![במעוף מעל המקדש](images/bison-flying.jpg)
+*במעוף מעל המקדש*
+
+![גורו פאתיק בחדר המדיטציה שלו](images/guru-pathik.jpg)
+*גורו פאתיק בחדר המדיטציה שלו*
+
+
+![מקדש האוויר הדרומי](images/air-temple.jpg)
+*מקדש האוויר הדרומי*
+
+![ביזון שמיים, עם אוכף ובמעוף](images/sky-bison.jpg)
+*ביזון שמיים, עם אוכף ובמעוף*
+
+
 המקדש של נוודי האוויר עומד על **פסגות הרים** (ביומות ההרים: אחו, חורשה, מדרונות מושלגים והפסגות, במקום שהקרקע
 גבוהה). `/locate structure enlightened:southern_air_temple` מוצא את הקרוב ביותר; `/enlightened temple [pos]` בונה
 אחד היכן שאתה עומד.

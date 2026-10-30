@@ -4,6 +4,13 @@
 
 [English](Items-and-Crafting)
 
+![כל דבר על הגב: כאן, חרב](images/back-slot.jpg)
+*כל דבר על הגב: כאן, חרב*
+
+![משבצת הגב, ליד הגוף](images/back-slot-inventory.jpg)
+*משבצת הגב, ליד הגוף*
+
+
 הכל בלשונית הקריאייטיב *Enlightened*.
 
 ## המגילות

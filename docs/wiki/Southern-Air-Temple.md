@@ -2,6 +2,20 @@
 
 [עברית](Southern-Air-Temple-HE)
 
+![Flying over the temple](images/bison-flying.jpg)
+*Flying over the temple*
+
+![Guru Pathik in his meditation room](images/guru-pathik.jpg)
+*Guru Pathik in his meditation room*
+
+
+![The Southern Air Temple](images/air-temple.jpg)
+*The Southern Air Temple*
+
+![A sky bison, saddled and flown](images/sky-bison.jpg)
+*A sky bison, saddled and flown*
+
+
 The Air Nomads' temple stands on **mountain tops** (the mountain biomes: meadows, groves, snowy slopes and the peaks,
 where the ground stands high). `/locate structure enlightened:southern_air_temple` finds the nearest;
 `/enlightened temple [pos]` builds one wherever you stand.

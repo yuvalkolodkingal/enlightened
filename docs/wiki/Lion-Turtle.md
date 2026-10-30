@@ -1,5 +1,14 @@
 # The Lion Turtle
 
+[עברית](Lion-Turtle-HE)
+
+![The lion turtle's head over the sea](images/lion-turtle.jpg)
+*The lion turtle's head over the sea*
+
+![The gift of energybending](images/lion-turtle-gift.jpg)
+*The gift of energybending*
+
+
 The lion turtles are the oldest creatures of the Avatar world: as big as islands, the first homes of people, who
 gave the first benders their bending. In Enlightened a lion turtle swims in the **deep ocean**: an island of real
 blocks some **440 blocks long and 360 wide**, a dome of grass and forest rising 40 blocks above the sea on a shell

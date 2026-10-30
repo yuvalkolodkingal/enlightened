@@ -2,6 +2,10 @@
 
 [עברית](Looks-HE)
 
+![Bumi, Iroh, Jeong Jeong, Pavi and Nisha](images/looks.jpg)
+*Bumi, Iroh, Jeong Jeong, Pavi and Nisha*
+
+
 Every element has several **looks**: the skin of a character of the Avatar world, which replaces yours wherever it
 is drawn (your body, your arms in first person, the inventory preview), and the colour of your energy. Press **H**
 to change look (Sneak + H goes back), or `/enlightened look`. A look changes only how you look: the abilities are

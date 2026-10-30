@@ -769,6 +769,100 @@ def paint_aura():
     img.save(os.path.join(ENTITY, 'chakra_aura.png'))
 
 
+def paint_chakra_symbols():
+    """The seven chakras' symbols (entity/chakra/1.png to 7.png, white lines on clear, tinted when drawn), the
+    traditional figures: a ring of pointed lotus petals round a circle, the chakra's shape inside it and its seed
+    syllable in Devanagari. Muladhara (Earth): four petals, a square, a falling triangle, LAM. Svadhisthana (Water):
+    six petals, a crescent moon, VAM. Manipura (Fire): ten petals, a falling triangle, RAM. Anahata (Air): twelve
+    petals, a six-pointed star, YAM. Vishuddha (Sound): sixteen petals, a falling triangle round a circle, HAM. Ajna
+    (Light): two great petals like wings, a falling triangle, OM. Sahasrara (Thought): a lotus of many petals in two
+    rows, OM."""
+    import math
+    from PIL import ImageFont
+    out = os.path.join(ENTITY, 'chakra')
+    os.makedirs(out, exist_ok=True)
+    big = 1024
+    c = big / 2
+    w = 22
+    white = (255, 255, 255, 255)
+    font_path = '/usr/share/fonts/truetype/freefont/FreeSerifBold.ttf'
+
+    def petal(d, angle, r, length, half, width=w):
+        """A pointed lotus petal from the circle of radius r, its tip length beyond, half its base angle wide."""
+        left, right = [], []
+        steps = 24
+        for k in range(steps + 1):
+            t = k / steps
+            # Wide near the base, swelling a little, then drawn to a point at the tip.
+            spread = half * (1 - t ** 1.8) * (1 + 0.35 * math.sin(t * math.pi))
+            rho = r + length * t
+            left.append((c + math.cos(angle - spread) * rho, c + math.sin(angle - spread) * rho))
+            right.append((c + math.cos(angle + spread) * rho, c + math.sin(angle + spread) * rho))
+        d.line(left + right[::-1], fill=white, width=width, joint='curve')
+
+    def tri(d, size, down=True, cy=0.0):
+        h = size * math.sqrt(3) / 2
+        y = c + cy
+        if down:
+            pts = [(c - size / 2, y - h / 3), (c + size / 2, y - h / 3), (c, y + 2 * h / 3)]
+        else:
+            pts = [(c - size / 2, y + h / 3), (c + size / 2, y + h / 3), (c, y - 2 * h / 3)]
+        d.line(pts + [pts[0]], fill=white, width=w, joint='curve')
+
+    def syllable(d, text, size, dy=0.0):
+        f = ImageFont.truetype(font_path, size)
+        box = d.textbbox((0, 0), text, font=f)
+        d.text((c - (box[0] + box[2]) / 2, c - (box[1] + box[3]) / 2 + dy), text, font=f, fill=white)
+
+    specs = {1: (4, 'लं'), 2: (6, 'वं'), 3: (10, 'रं'), 4: (12, 'यं'), 5: (16, 'हं'), 6: (2, 'ॐ'), 7: (20, 'ॐ')}
+    for n, (petals, seed) in specs.items():
+        img = Image.new('RGBA', (big, big), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        r = 250 if n != 6 else 205
+        if n == 6:
+            # Two great petals, out to either side like wings.
+            for a in (0.0, math.pi):
+                petal(d, a, r - 20, 270, 0.75)
+        elif n == 7:
+            # A thousand petals: two rows, the outer between the inner.
+            for k in range(petals):
+                a = 2 * math.pi * k / petals - math.pi / 2
+                petal(d, a + math.pi / petals, r + 40, 190, math.pi / petals * 1.05, w * 3 // 4)
+                petal(d, a, r - 10, 150, math.pi / petals * 1.0)
+        else:
+            length = {4: 210, 6: 200, 10: 180, 12: 170, 16: 150}[petals]
+            for k in range(petals):
+                a = 2 * math.pi * k / petals - math.pi / 2
+                petal(d, a, r - 10, length, math.pi / petals * 1.02)
+        d.ellipse((c - r, c - r, c + r, c + r), outline=white, width=w)
+        if n == 1:
+            s = 170
+            d.rectangle((c - s, c - s, c + s, c + s), outline=white, width=w)
+            tri(d, 300, True, 25)
+            syllable(d, seed, 170, -10)
+        elif n == 2:
+            d.arc((c - 200, c - 120, c + 200, c + 230), start=15, end=165, fill=white, width=w + 6)
+            d.arc((c - 160, c - 170, c + 160, c + 160), start=30, end=150, fill=white, width=w // 2)
+            syllable(d, seed, 200, -40)
+        elif n == 3:
+            tri(d, 420, True, 10)
+            syllable(d, seed, 170, -20)
+        elif n == 4:
+            tri(d, 400, True)
+            tri(d, 400, False)
+            syllable(d, seed, 150, 0)
+        elif n == 5:
+            tri(d, 420, True, 10)
+            d.ellipse((c - 95, c - 95, c + 95, c + 95), outline=white, width=w)
+            syllable(d, seed, 130, -10)
+        elif n == 6:
+            tri(d, 320, True, 10)
+            syllable(d, seed, 140, -15)
+        elif n == 7:
+            syllable(d, seed, 300, 10)
+        img.resize((256, 256), Image.LANCZOS).save(os.path.join(out, '%d.png' % n))
+
+
 def paint_anomaly():
     """The Anomaly's texture (entity/anomaly.png): plain white, its colours are given as it is drawn."""
     Image.new('RGBA', (16, 16), (255, 255, 255, 255)).save(os.path.join(ENTITY, 'anomaly.png'))
@@ -1085,6 +1179,7 @@ def main():
     paint_aura()
     paint_anomaly_block()
     paint_anomaly()
+    paint_chakra_symbols()
     paint_bison()
     paint_lion_turtle()
     paint_items()

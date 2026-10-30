@@ -2,6 +2,13 @@
 
 [עברית](Spirit-World-HE)
 
+![The Spirit World](images/spirit-world.jpg)
+*The Spirit World*
+
+![A spirit portal in the forest](images/spirit-portal.jpg)
+*A spirit portal in the forest*
+
+
 A world of its own, beside the world of the living: a lavender sky with sparks drifting in the air, groves of cherry
 blossom and azalea, trees with purple leaves, giant mushrooms, ferns and flowers. Foxes and rabbits live there, glow
 squid in its caves; no monster. Somewhere in it grows the **Tree of Time**: a vast pale tree on great roots, golden

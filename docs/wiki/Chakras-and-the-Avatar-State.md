@@ -2,6 +2,17 @@
 
 [עברית](Chakras-and-the-Avatar-State-HE)
 
+![Guru Pathik teaches the chakras](images/guru-pathik.jpg)
+*Guru Pathik teaches the chakras*
+
+
+![The cosmic plane of the seventh chakra](images/cosmic-plane.jpg)
+*The cosmic plane of the seventh chakra*
+
+![The seven chakras at the end of the path of energy](images/seven-chakras.jpg)
+*The seven chakras at the end of the path of energy*
+
+
 After Guru Pathik's lessons in "The Guru": **Guru Pathik**, who meditates at the
 [Southern Air Temple](Southern-Air-Temple), teaches a bender to open the seven chakras. Each open chakra strengthens
 any bender a little. For **the Avatar** they are the door to the **Avatar State** at will. The Avatar State is the
@@ -46,6 +57,13 @@ alight. Walk the path to its end: there the Thought chakra opens, and you come b
 path, and it catches you again at its start.
 
 ## The Avatar State
+
+![One chakra open: a part of the State, wrapped in red](images/avatar-state-part.jpg)
+*One chakra open: a part of the State, wrapped in red*
+
+![Four open: the glow is the Air chakra's green](images/avatar-state-fourth-chakra.jpg)
+*Four open: the glow is the Air chakra's green*
+
 
 Only the Avatar has it. For `avatarStateLengthSeconds` (**two minutes**): you are not invincible, but each blow reaches you at a **third** (`avatarStateDamageTaken`), with 8 more armour and steady against knockback, and no bloodbender can hold you; your bending is **two and a half times as strong** and
 its cooldowns **half**, every cooldown is cleared at the start, you move 30% faster, never drown, burn or fall, and

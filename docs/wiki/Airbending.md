@@ -2,10 +2,24 @@
 
 [עברית](Airbending-HE)
 
+![The air spout](images/air-spout.jpg)
+*The air spout*
+
+
+![The Air Glider, open in a glide](images/glider.jpg)
+*The Air Glider, open in a glide*
+
+![The bender hangs under the wings](images/glider-front.jpg)
+*The bender hangs under the wings*
+
+![The tornado](images/tornado.jpg)
+*The tornado*
+
+
 *"Air is the element of freedom."* The airbender throws everyone back with a wave of air, hides in a sphere of it,
 jumps high and glides on his **Air Glider**, cuts with blades of air, leaves his body in meditation, breathes under
 water, rides a ball of air and sends tornadoes; and the one who lets go of his earthly tethers flies, and takes
-his enemy's breath. Read the [Air Scroll](Becoming-a-Bender) to begin; you start with **Air Blast**.
+his enemy's breath. You are [born to it](Becoming-a-Bender); you start with **Air Blast**.
 
 Numbers are *novice / adept / master*. Names in `code` are [server options](Server-Configuration).
 

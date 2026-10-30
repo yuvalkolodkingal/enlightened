@@ -2,6 +2,13 @@
 
 [עברית](Items-and-Crafting-HE)
 
+![Anything on your back: here, a sword](images/back-slot.jpg)
+*Anything on your back: here, a sword*
+
+![The back slot, beside the body](images/back-slot-inventory.jpg)
+*The back slot, beside the body*
+
+
 All in the *Enlightened* creative tab.
 
 ## The scrolls

@@ -4,6 +4,10 @@ From *Avatar: Seven Havens*: the uniforms of the four brigades, and Ellora, the 
 
 ## The brigade armor trim
 
+![The brigade armor trim](images/brigade-trim.jpg)
+*The brigade armor trim*
+
+
 The **Brigade Armor Trim** is a smithing template. Use it in a smithing table on **any armor** (leather, chainmail,
 iron, gold, diamond, netherite, a turtle shell) to dress that armor in the uniform of a brigade. The material decides
 which brigade:
@@ -26,20 +30,41 @@ sandstone make two.
 
 ## The Anomaly
 
+![The Anomaly, woken from the red cubes](images/anomaly.jpg)
+*The Anomaly, woken from the red cubes*
+
+![Its red lightning by day](images/anomaly-day.jpg)
+*Its red lightning by day*
+
+![Beaten, it shows you the seven chakras](images/seven-chakras.jpg)
+*Beaten, it shows you the seven chakras*
+
+![The first chakra, Muladhara: walk into it](images/first-chakra.jpg)
+*The first chakra, Muladhara: walk into it*
+
+
 In the middle of the keep's hall in Ellora hang **red cubes**, as if the space there had broken. They cannot be broken:
-**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen): a tilted square of burning frames,
-red outside, a yellow ring and a dark heart, red lightning crawling out of it. It drifts round whoever fights it,
+**strike one and the Anomaly wakes**, a boss (with its bar at the top of the screen), drawn in neon as in the show: a
+square on its corner, always facing you, in a red glow: broken red outlines, a thick yellow frame broken into
+flickering dashes, dark maroon rings and a small heart burning yellow and white, red lightning crawling out of it. It drifts round whoever fights it,
 strikes with **red lightning** and now and then **bursts** outward, throwing back everyone near; below half its life it
 strikes faster and harder. Only one is awake near a place at a time.
 
 Every blow and every bending does it only **half** its harm. **Energybending** is the way to beat it: aimed at it from
 up to 12 blocks, it **drains a quarter of its life** at a time and heals you a little.
 
-**Beat it**, and every bender who fought it is carried to the **cosmic plane** of the seven chakras: a path of light,
-but at its end, instead of your giant self, **seven circles**, one in each chakra's colour, the first red. Walk into
-the red circle: **your first chakra (Earth) opens**, and you are sent back where you were.
+**Beat it**, and every bender who fought it is carried to the **cosmic plane** of the seven chakras: a **path of
+energy**, but at its end, instead of your giant self, **the seven chakras** as the show draws them: dark circles ringed
+with flames of their colours, rising one above another into the stars, each with its **symbol** glowing inside it
+(Muladhara, Svadhisthana, Manipura, Anahata, Vishuddha, Ajna, Sahasrara, with their lotus petals and seed syllables).
+The first, red, stands on the path, open and lit. Walk into it: **your first chakra (Earth) opens**, and you are sent
+back where you were.
 
 ## Ellora
+
+![Ellora, the golden city](images/ellora.jpg)
+*Ellora, the golden city*
+
 
 A walled city of red sandstone, some 180 blocks across, that stands on level ground in **deserts and badlands**.
 A high **wall** rings it, an octagon with a zigzag frieze, a walk behind its crenels, and round towers under teal domes

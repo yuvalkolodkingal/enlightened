@@ -34,7 +34,11 @@ public final class CosmicRenderer {
         if (mc.level == null || mc.player == null || !mc.level.dimension().equals(Cosmic.LEVEL)) {
             return;
         }
-        if (mc.player.getX() > Cosmic.ANOMALY_X / 2.0) {
+        // The paths of energy (and, on the Anomaly's path, the seven chakras at its end).
+        boolean anomaly = mc.player.getX() > Cosmic.ANOMALY_X / 2.0;
+        ChakraPathRenderer.render(event.getPoseStack().last(), event.getCamera().getPosition(),
+                mc.player.tickCount + event.getPartialTick().getGameTimeDeltaPartialTick(false), FxGeometry.source(), anomaly);
+        if (anomaly) {
             // The Anomaly's path ends at the seven circles, not at his giant self.
             return;
         }

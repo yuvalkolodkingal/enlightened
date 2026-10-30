@@ -2,9 +2,19 @@
 
 [עברית](Waterbending-HE)
 
+![Frost Walk: the water freezes under the feet](images/frost-walk.jpg)
+*Frost Walk: the water freezes under the feet*
+
+
+![The octopus form](images/octopus.jpg)
+*The octopus form*
+
+![The water spout](images/water-spout.jpg)
+*The water spout*
+
+
 *"Water is the element of change."* The waterbender whips, heals, wraps himself in the octopus form, rides a spout
-of water and wears arms of it, and learns **ice** and, under the full moon, **bloodbending**. Read the
-[Water Scroll](Becoming-a-Bender) to begin; you start with **Water Whip**.
+of water and wears arms of it, and learns **ice** and, under the full moon, **bloodbending**. You are [born to it](Becoming-a-Bender); you start with **Water Whip**.
 
 Numbers are *novice / adept / master*. Names in `code` are [server options](Server-Configuration).
 

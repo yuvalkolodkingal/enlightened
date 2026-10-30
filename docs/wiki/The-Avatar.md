@@ -2,6 +2,13 @@
 
 [עברית](The-Avatar-HE)
 
+![The elemental sphere](images/avatar-sphere.jpg)
+*The elemental sphere*
+
+![A part of the Avatar State, in the first chakra's red](images/avatar-state-part.jpg)
+*A part of the Avatar State, in the first chakra's red*
+
+
 *"Only the Avatar can master all four elements."* Whoever reads the **Avatar Scroll** (the four scrolls bound round
 a nether star, shapeless; anyone may read it, a bender's old element becomes part of the four) becomes the Avatar: a
 bender of **earth, air, water and fire** at once, with the four first arts to begin with, and every art of every

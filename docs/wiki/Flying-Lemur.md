@@ -2,6 +2,10 @@
 
 [עברית](Flying-Lemur-HE)
 
+![A tamed lemur rides on your shoulder](images/momo.jpg)
+*A tamed lemur rides on your shoulder*
+
+
 A small winged lemur, like Momo, inspired by the *Flying Lemur* Avatar add-on. It lives in **jungles, bamboo jungles,
 cherry groves, meadows and flower forests**, in small groups, and you can find a **spawn egg** in the creative tab.
 

@@ -2,9 +2,19 @@
 
 [עברית](Firebending-HE)
 
+![Fire in both fists](images/fire-fist.jpg)
+*Fire in both fists*
+
+![Lightning, drawn after Thor's beam](images/lightning.jpg)
+*Lightning, drawn after Thor's beam*
+
+![Fire in its chosen colour: here, rainbow](images/rainbow-fire.jpg)
+*Fire in its chosen colour: here, rainbow*
+
+
 *"Fire is the element of power."* The firebender hardly burns, throws balls of fire, streams it from his fists (a
 master breathes it), lashes with a whip of fire, spins a ring of it, heals with its warmth, and learns **lightning**
-and its redirection. Read the [Fire Scroll](Becoming-a-Bender) to begin; you start with the **Firebender's Skin**.
+and its redirection. You are [born to it](Becoming-a-Bender); you start with the **Firebender's Skin**.
 
 Numbers are *novice / adept / master*. Names in `code` are [server options](Server-Configuration).
 

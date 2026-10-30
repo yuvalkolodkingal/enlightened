@@ -2,9 +2,13 @@
 
 [עברית](Earthbending-HE)
 
+![Lavabending](images/lavabending.jpg)
+*Lavabending*
+
+
 *"You're going to have to face it head-on!"* The earthbender throws rock torn from the ground, lifts and holds it,
 wears a shell of earth, raises pillars and walls and feels every step through the ground; then he learns **sand**,
-**lava** and **metal**. Read the [Earth Scroll](Becoming-a-Bender) to begin; you start with **Rock Throw**.
+**lava** and **metal**. You are [born to it](Becoming-a-Bender); you start with **Rock Throw**.
 
 Numbers are *novice / adept / master*. Names in `code` are [server options](Server-Configuration).
 

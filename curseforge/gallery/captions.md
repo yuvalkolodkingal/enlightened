@@ -25,5 +25,7 @@
 | 21_city_guards.png | City guards | The guards of Omashu, Ba Sing Se and Ellora, each city in its own uniform. They fight monsters and talk about their city. |
 | 22_omashu_terraces.png | Omashu's terraces | Sandstone houses and towers under green pagoda roofs, climbing to the summit's pyramid. |
 | 23_avatar_state_part.png | A part of the Avatar State | With some chakras open, the Avatar draws on a part of the State, glowing in the colour of the highest: red for the first. |
-| 24_anomaly.png | The Anomaly | Woken from the red cubes of Ellora: burning frames and red lightning. Energybending drains its life. |
-| 25_seven_circles.png | The seven circles | Beat the Anomaly, and the cosmic path ends in seven circles: the red one opens your first chakra. |
+| 24_anomaly.png | The Anomaly | Woken from the red cubes of Ellora: neon frames round a burning heart, and red lightning. Energybending drains its life. |
+| 25_seven_circles.png | The seven circles | Beat the Anomaly, and the path of energy ends in the seven chakras, rising into the stars, each with its symbol. |
+| 26_red_circle.png | The first chakra | Muladhara, the Earth chakra, ringed in red fire: walk into it, and it opens. |
+| 27_anomaly_day.png | The Anomaly by day | Over the red cubes in Ellora's keep, striking with red lightning. |

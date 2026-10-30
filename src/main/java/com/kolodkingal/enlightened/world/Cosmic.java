@@ -39,11 +39,9 @@ public final class Cosmic {
     private static final String ANOMALY = "enlightened_cosmic_anomaly";
     /** Where the Anomaly's path runs, far from the giant: straight out along z from x = {@code ANOMALY_X}. */
     public static final int ANOMALY_X = 2000;
-    /** The seven circles across the end of the Anomaly's path, one for each chakra, the first nearest. */
+    /** The seven circles at the end of the Anomaly's path, one for each chakra, the first nearest (and lowest). */
     public static final int[] CIRCLE_Z = {44, 52, 60, 68, 76, 84, 92};
     public static final int CIRCLE_R = 3;
-    private static final net.minecraft.world.level.block.Block[] CIRCLE_BLOCKS = {Blocks.RED_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.YELLOW_CONCRETE,
-            Blocks.LIME_CONCRETE, Blocks.LIGHT_BLUE_CONCRETE, Blocks.BLUE_CONCRETE, Blocks.PURPLE_CONCRETE};
     private static boolean builtAnomaly;
     private static boolean built;
 
@@ -126,7 +124,7 @@ public final class Cosmic {
                 double a = level.random.nextDouble() * Math.PI * 2;
                 double r = level.random.nextDouble() * (CIRCLE_R - 0.6);
                 level.sendParticles(new com.kolodkingal.enlightened.particle.EnergyParticleOptions(Chakras.colour(1), 0.8F),
-                        ANOMALY_X + 0.5 + Math.cos(a) * r, Y + CIRCLE_R + 0.5 + Math.sin(a) * r, CIRCLE_Z[0] + 0.5, 1, 0, 0, 0, 0.0);
+                        ANOMALY_X + 0.5 + Math.cos(a) * r, circleCentre(0).y + Math.sin(a) * r, CIRCLE_Z[0] + 0.5, 1, 0, 0, 0, 0.0);
             }
         }
         if (inCircle(p.position(), 0)) {
@@ -139,9 +137,17 @@ public final class Cosmic {
         }
     }
 
+    /**
+     * The centre of the n-th circle (0 the first): the first stands on the path, the others rise one above another
+     * beyond it, a ladder of the chakras up into the stars, as the show draws them.
+     */
+    public static Vec3 circleCentre(int n) {
+        return new Vec3(ANOMALY_X + 0.5, Y + CIRCLE_R + 0.5 + n * (2 * CIRCLE_R + 1.5), CIRCLE_Z[n] + 0.5);
+    }
+
     /** Whether a place is inside the n-th circle (0 the first), where it stands across the path. */
     public static boolean inCircle(Vec3 at, int n) {
-        double cy = Y + CIRCLE_R + 0.5;
+        double cy = circleCentre(n).y;
         double dx = at.x - (ANOMALY_X + 0.5);
         double dyFeet = at.y - cy;
         double dyHead = at.y + 1.6 - cy;
@@ -199,68 +205,54 @@ public final class Cosmic {
         }
     }
 
-    /** Lays the path and its two platforms, once. */
+    /**
+     * Lays the path and its two platforms, once: an unseen floor (barrier blocks) under the path of energy the client
+     * draws over it (CosmicRenderer). Whatever an older build laid (glass, crying obsidian, end rods) is cleared.
+     */
     static void build(ServerLevel level) {
         BlockPos endPos = BlockPos.containing(END.x, Y, END.z);
-        if (built && level.getBlockState(endPos).is(Blocks.AMETHYST_BLOCK)) {
+        if (built && level.getBlockState(endPos).is(Blocks.BARRIER)) {
             return;
         }
-        BlockState glass = Blocks.PURPLE_STAINED_GLASS.defaultBlockState();
-        BlockState glow = Blocks.CRYING_OBSIDIAN.defaultBlockState();
-        BlockState stone = Blocks.AMETHYST_BLOCK.defaultBlockState();
+        BlockState floor = Blocks.BARRIER.defaultBlockState();
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        // The platform where he arrives, and the one at the end.
-        disc(level, 0, 0, 3, stone, glass);
-        disc(level, endPos.getX(), endPos.getZ(), 4, stone, glass);
+        disc(level, 0, 0, 3, floor, floor);
+        disc(level, endPos.getX(), endPos.getZ(), 4, floor, floor);
         for (int z = 3; z <= 63; z++) {
             int cx = pathX(z);
-            for (int dx = -1; dx <= 1; dx++) {
-                at.set(cx + dx, Y, z);
-                level.setBlock(at, glass, 2);
-                at.set(cx + dx, Y - 1, z);
-                level.setBlock(at, glow, 2);
-            }
-            // The path's edges shine.
-            if (z % 4 == 0) {
-                at.set(cx - 2, Y, z);
-                level.setBlock(at, Blocks.END_ROD.defaultBlockState(), 2);
-                at.set(cx + 2, Y, z);
-                level.setBlock(at, Blocks.END_ROD.defaultBlockState(), 2);
+            for (int dx = -2; dx <= 2; dx++) {
+                level.setBlock(at.set(cx + dx, Y, z), Math.abs(dx) <= 1 ? floor : Blocks.AIR.defaultBlockState(), 2);
+                level.setBlock(at.set(cx + dx, Y - 1, z), Blocks.AIR.defaultBlockState(), 2);
             }
         }
         built = true;
     }
 
-    /** Lays the Anomaly's path, straight out, and the seven circles standing across its end, once. */
+    /**
+     * Lays the Anomaly's path, straight out, once: an unseen floor under the energy the client draws, with its seven
+     * circles (drawn by the client too) standing across its end. Older builds' blocks are cleared.
+     */
     static void buildAnomaly(ServerLevel level) {
         BlockPos check = new BlockPos(ANOMALY_X, Y, CIRCLE_Z[6] + 4);
-        if (builtAnomaly && level.getBlockState(check).is(Blocks.AMETHYST_BLOCK)) {
+        if (builtAnomaly && level.getBlockState(check).is(Blocks.BARRIER)) {
             return;
         }
-        BlockState glass = Blocks.PURPLE_STAINED_GLASS.defaultBlockState();
-        BlockState glow = Blocks.CRYING_OBSIDIAN.defaultBlockState();
+        BlockState floor = Blocks.BARRIER.defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        disc(level, ANOMALY_X, 0, 3, Blocks.AMETHYST_BLOCK.defaultBlockState(), glass);
-        disc(level, ANOMALY_X, CIRCLE_Z[6] + 4, 3, Blocks.AMETHYST_BLOCK.defaultBlockState(), glass);
+        disc(level, ANOMALY_X, 0, 3, floor, floor);
+        disc(level, ANOMALY_X, CIRCLE_Z[6] + 4, 3, floor, floor);
         for (int z = 3; z <= CIRCLE_Z[6] + 1; z++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                level.setBlock(at.set(ANOMALY_X + dx, Y, z), glass, 2);
-                level.setBlock(at.set(ANOMALY_X + dx, Y - 1, z), glow, 2);
-            }
-            if (z % 4 == 0 && z < CIRCLE_Z[0]) {
-                level.setBlock(at.set(ANOMALY_X - 2, Y, z), Blocks.END_ROD.defaultBlockState(), 2);
-                level.setBlock(at.set(ANOMALY_X + 2, Y, z), Blocks.END_ROD.defaultBlockState(), 2);
+            for (int dx = -2; dx <= 2; dx++) {
+                level.setBlock(at.set(ANOMALY_X + dx, Y, z), Math.abs(dx) <= 1 ? floor : air, 2);
+                level.setBlock(at.set(ANOMALY_X + dx, Y - 1, z), air, 2);
             }
         }
-        // The circles, standing on the path, each in its chakra's colour.
+        // Where an older build stood the circles in concrete, clear them.
         for (int n = 0; n < CIRCLE_Z.length; n++) {
-            BlockState ring = CIRCLE_BLOCKS[n].defaultBlockState();
             for (int dx = -CIRCLE_R - 1; dx <= CIRCLE_R + 1; dx++) {
-                for (int dy = -CIRCLE_R - 1; dy <= CIRCLE_R + 1; dy++) {
-                    double d = Math.sqrt(dx * dx + dy * dy);
-                    if (Math.abs(d - CIRCLE_R) < 0.5) {
-                        level.setBlock(at.set(ANOMALY_X + dx, Y + CIRCLE_R + dy, CIRCLE_Z[n]), ring, 2);
-                    }
+                for (int dy = 1; dy <= 2 * CIRCLE_R + 2; dy++) {
+                    level.setBlock(at.set(ANOMALY_X + dx, Y + dy, CIRCLE_Z[n]), air, 2);
                 }
             }
         }
@@ -278,7 +270,7 @@ public final class Cosmic {
                 at.set(cx + dx, Y, cz + dz);
                 level.setBlock(at, d2 >= (r - 1) * (r - 1) + r - 1 ? rim : core, 2);
                 at.set(cx + dx, Y - 1, cz + dz);
-                level.setBlock(at, Blocks.CRYING_OBSIDIAN.defaultBlockState(), 2);
+                level.setBlock(at, Blocks.AIR.defaultBlockState(), 2);
             }
         }
     }

@@ -1,4 +1,4 @@
-# Publishes the wiki: the pages are the Markdown files in docs/wiki (and the screenshots in docs/screenshots), and this
+# Publishes the wiki: the pages are the Markdown files in docs/wiki (with their pictures in docs/wiki/images), and this
 # copies them into the repository's wiki on every push to main that changes them. Never edit the wiki itself: the next
 # run replaces everything in it.
 #
@@ -12,7 +12,6 @@ on:
     branches: [main]
     paths:
       - 'docs/wiki/**'
-      - 'docs/screenshots/**'
       - '.github/workflows/wiki.yml'
   workflow_dispatch:
 
@@ -60,11 +59,9 @@ jobs:
 
       - name: Replace the wiki's content
         run: |
-          # Everything but the git history goes, then docs/wiki and the screenshots (as images/) come in.
+          # Everything but the git history goes, then docs/wiki comes in (its pictures with it, in images/).
           find wiki -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           cp -R docs/wiki/. wiki/
-          mkdir -p wiki/images
-          cp docs/screenshots/*.png wiki/images/
 
       - name: Commit the changes
         id: commit

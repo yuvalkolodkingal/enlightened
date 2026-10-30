@@ -1287,14 +1287,24 @@ public final class Tour {
         for (int i = 0; i < 6; i++) {
             shot("304b_anomaly_front_" + i, 9);
         }
+        // Neon shines best at night.
+        cmd("time set midnight", 2);
+        cmd("tp @s 30.5 -60 -9.5 0 -28", 2);
+        camera(CameraType.FIRST_PERSON, 2);
+        for (int i = 0; i < 4; i++) {
+            shot("307_anomaly_night_" + i, 8);
+        }
+        cmd("time set noon", 2);
         camera(CameraType.THIRD_PERSON_BACK, 2);
         cmd("gamemode creative", 2);
         cmd("kill @e[type=enlightened:anomaly]", 10);
         server(com.kolodkingal.enlightened.world.Cosmic::sendForAnomaly, 100);
         camera(CameraType.FIRST_PERSON, 2);
         shot("305_anomaly_path", 20);
-        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.ANOMALY_X + ".5 101 30.5 0 0", 30);
+        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.ANOMALY_X + ".5 101 22.5 0 -28", 30);
         shot("306_seven_circles", 20);
+        cmd("tp @s " + com.kolodkingal.enlightened.world.Cosmic.ANOMALY_X + ".5 101 36.5 0 -8", 20);
+        shot("306b_red_circle", 20);
     }
 
     private static void cosmic() {

@@ -1,15 +1,23 @@
+# Enlightened 1.0.4
+
+* **The Anomaly in neon**, as the show draws it: a square on its corner always facing you in a red glow, broken red
+  outlines, a thick yellow frame of flickering dashes, dark maroon rings and a heart burning yellow and white, with red
+  neon lightning.
+* **The chakras on a path of energy**: the cosmic plane's paths are bands of violet light, and the seven chakras at the
+  end of the Anomaly's path are dark circles ringed in fire of their colours, rising into the stars, each with its
+  real symbol (its lotus petals, its figure and its seed syllable).
+* **A full wiki with pictures**, in English and Hebrew, published to the GitHub wiki by GitHub Actions.
+
 # Enlightened 1.0.3
 
 * **The Avatar State by the chakras.** With all seven chakras open, the master's Avatar State is **twice as strong**:
   every art five times as strong, its cooldowns a quarter. With only some open, the Avatar can draw on **a part of it**
   at will (as many sevenths as chakras open), **wrapped in the glow of the highest chakra** he has opened, red for the
   first.
-* **The Anomaly** of Seven Havens: red cubes hang in Ellora's keep hall; strike one and the Anomaly wakes, a boss in
-  neon as the show draws it, a square of glowing frames round a burning heart, with red lightning. Every blow does it half its harm; **energybending drains a quarter of its life** at
-  a time. Beat it, and the cosmic plane shows you a **path of energy** ending in **the seven chakras**, ringed in
-  fire of their colours with their real symbols, rising into the stars: walk into the red one, and your **first chakra
-  opens**.
-* **A full wiki with pictures**, in English and Hebrew, published to the GitHub wiki by GitHub Actions.
+* **The Anomaly** of Seven Havens: red cubes hang in Ellora's keep hall; strike one and the Anomaly wakes, a boss of
+  burning frames and red lightning. Every blow does it half its harm; **energybending drains a quarter of its life** at
+  a time. Beat it, and the cosmic plane shows you a path ending in **seven circles** of the chakras' colours: walk into
+  the red one, and your **first chakra opens**.
 
 # Enlightened 1.0.2
 

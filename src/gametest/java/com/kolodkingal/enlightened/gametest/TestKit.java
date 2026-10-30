@@ -108,8 +108,25 @@ public final class TestKit {
 
         /** Makes the player a bender of the element at the given ability levels (and lays out the keys). */
         public BendingData bender(ServerPlayer player, Element element, Object... levels) {
+            return bender(player, element, false, levels);
+        }
+
+        /** An Avatar with all the arts of the element he was born to, as the world gives them. */
+        public BendingData bornAvatar(ServerPlayer player, Object... levels) {
+            return bender(player, Element.AVATAR, true, levels);
+        }
+
+        private BendingData bender(ServerPlayer player, Element element, boolean keepBirth, Object... levels) {
             Benders.setElement(player, element);
             BendingData data = Benders.get(player);
+            if (element == Element.AVATAR && !keepBirth) {
+                // A test's Avatar has only the arts the test names (and the four first ones), not his birth's.
+                for (Ability a : Ability.values()) {
+                    if (a.element == data.avatarBase() && Ability.starterOf(a.element) != a) {
+                        data.setLevel(a, 0);
+                    }
+                }
+            }
             for (int i = 0; i + 1 < levels.length; i += 2) {
                 Ability a = (Ability) levels[i];
                 data.setLevel(a, (Integer) levels[i + 1]);

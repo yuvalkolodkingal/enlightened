@@ -24,7 +24,8 @@ public final class Cast {
         this.player = player;
         this.data = data;
         this.ability = ability;
-        this.level = data.level(ability);
+        // The Avatar's arts of the element he was born to work a level higher (to a master's).
+        this.level = data.bornTo(ability) && data.level(ability) > 0 ? Math.min(3, data.level(ability) + 1) : data.level(ability);
     }
 
     public ServerLevel level() {
@@ -54,7 +55,8 @@ public final class Cast {
     }
 
     public void cooldown(int ticks) {
-        data.startCooldown(ability, now(), Math.max(0, Math.round(ticks * Chakras.cooldownFactor(data, now()))));
+        float born = data.bornTo(ability) ? Avatar.BORN_COOLDOWN : 1.0F;
+        data.startCooldown(ability, now(), Math.max(0, Math.round(ticks * Chakras.cooldownFactor(data, now()) * born)));
     }
 
     public void cooldownSeconds(double seconds) {

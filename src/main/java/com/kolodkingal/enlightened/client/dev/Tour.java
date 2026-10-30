@@ -67,6 +67,8 @@ public final class Tour {
             if (!worldAsked && mc.screen instanceof TitleScreen) {
                 worldAsked = true;
                 mc.options.renderDistance().set(5);
+                // No chat in the pictures (faded out, not turned off: turned off, the commands could not be sent).
+                mc.options.chatOpacity().set(0.0);
                 mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
                 LevelSettings settings = new LevelSettings("tour", GameType.CREATIVE, false, Difficulty.EASY, true, new GameRules(),
                         WorldDataConfiguration.DEFAULT);
@@ -123,6 +125,8 @@ public final class Tour {
     private static final boolean CLEAN = Boolean.getBoolean("enlightened.tour.clean");
 
     private static void shot(String name, int delay) {
+        // No pop-ups (advancements, recipes) in the pictures.
+        STEPS.add(new Step(1, () -> Minecraft.getInstance().getToasts().clear()));
         if (CLEAN) {
             STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
         }

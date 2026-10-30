@@ -408,8 +408,27 @@ public final class BendingData {
     }
 
     /** Turns every toggle off (the chosen fire colour, kept in the same word, stays). */
+    /** The element an Avatar was born to (bits 59 to 61 of the second toggle word, kept with the fire colour), or NONE. */
+    public Element avatarBase() {
+        int o = (int) ((toggles[1] >>> 59) & 7L);
+        return o > 0 && o < Element.values().length ? Element.values()[o] : Element.NONE;
+    }
+
+    public void setAvatarBase(Element base) {
+        long bits = (toggles[1] & ~(7L << 59)) | ((long) (base.ordinal() & 7) << 59);
+        if (bits != toggles[1]) {
+            toggles[1] = bits;
+            dirty = true;
+        }
+    }
+
+    /** Whether this is an Avatar born to the element of {@code ability}: its arts are stronger for him. */
+    public boolean bornTo(Ability ability) {
+        return element == Element.AVATAR && ability.element != Element.AVATAR && ability.element == avatarBase();
+    }
+
     public void clearToggles() {
-        long keep = toggles[1] & (3L << 62);
+        long keep = toggles[1] & ((3L << 62) | (7L << 59));
         if (toggles[0] != 0 || toggles[1] != keep) {
             toggles[0] = 0L;
             toggles[1] = keep;

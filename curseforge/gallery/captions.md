@@ -20,3 +20,4 @@
 | 16_temple.png | The Southern Air Temple | Sky bison, Guru Pathik and the seven chakras. |
 | 17_bison.png | Sky bison | Tame a calf with wheat, raise it, saddle it and fly with up to six. |
 | 18_cosmic.png | The seventh chakra | Your spirit walks a path of light through the stars. |
+| 19_back_slot_inventory.png | The back slot in the inventory | One more slot, beside your body above the off hand: here, the glider. |

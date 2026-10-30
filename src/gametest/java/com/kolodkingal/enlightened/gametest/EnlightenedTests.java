@@ -677,6 +677,35 @@ public final class EnlightenedTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void theAvatarIsStrongestInTheElementHeWasBornTo(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer avatar = f.player(10, FLOOR, 8);
+        BendingData data = f.bornAvatar(avatar, Ability.AVATAR_STATE, 1);
+        try {
+            Element base = data.avatarBase();
+            check(com.kolodkingal.enlightened.bending.AvatarCycle.CYCLE.contains(base), "the Avatar was born to one of the four (" + base + ")");
+            Ability other = null;
+            for (Ability a : Ability.values()) {
+                if (a.element == base && a.gate == com.kolodkingal.enlightened.bending.Gate.NONE && !a.gift()) {
+                    check(data.level(a) >= 1, "he begins with " + a + ", an art of the element he was born to");
+                    check(new com.kolodkingal.enlightened.bending.Cast(avatar, data, a).level == Math.min(3, data.level(a) + 1),
+                            "which works a level higher for him");
+                }
+                if (other == null && a.element != base && com.kolodkingal.enlightened.bending.AvatarCycle.CYCLE.contains(a.element) && data.level(a) >= 1) {
+                    other = a;
+                }
+            }
+            check(other != null && new com.kolodkingal.enlightened.bending.Cast(avatar, data, other).level == data.level(other), "the others do not");
+            check(com.kolodkingal.enlightened.bending.Avatar.elementOf(com.kolodkingal.enlightened.registry.ModDamageTypes.LIGHTNING) == Element.FIRE
+                    && com.kolodkingal.enlightened.bending.Avatar.elementOf(com.kolodkingal.enlightened.registry.ModDamageTypes.ICE) == Element.WATER,
+                    "each kind of harm belongs to its element");
+        } finally {
+            Benders.setElement(avatar, Element.NONE);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
     public static void airJumpDrivesTheGliderOn(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer player = f.player(10, FLOOR + 12, 8);

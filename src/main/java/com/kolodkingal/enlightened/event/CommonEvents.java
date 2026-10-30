@@ -322,8 +322,11 @@ public final class CommonEvents {
             if (player.getClass() == ServerPlayer.class) {
                 com.kolodkingal.enlightened.bending.AvatarCycle cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(player.getServer());
                 // An Avatar from before the cycle was kept is counted now.
-                if (Benders.get(player).element() == Element.AVATAR && !cycle.isAvatar(player.getUUID())) {
-                    cycle.register(player);
+                BendingData born = Benders.get(player);
+                if (born.element() == Element.AVATAR && (!cycle.isAvatar(player.getUUID()) || born.avatarBase() == Element.NONE)) {
+                    com.kolodkingal.enlightened.bending.Avatar.bear(born, cycle.register(player));
+                    born.markDirty();
+                    Benders.syncIfDirty(player);
                 }
                 cycle.onLogin(player);
             }

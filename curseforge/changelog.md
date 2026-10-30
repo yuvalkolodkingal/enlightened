@@ -6,7 +6,8 @@ The first full release.
 * Everyone is **born** to an element the first time they join: one in six no bending; otherwise a firebender, an
   airbender, a waterbender, an earthbender or **the Avatar**, alike. The bending scrolls are Creative items only.
 * **The Avatar Cycle**: one Avatar per world by default (`/enlightened avatars max <count>`). Each Avatar is born to an
-  element, going round Fire, Air, Water, Earth. A banned Avatar, or one who dies in hardcore, is reborn in another
+  element, going round Fire, Air, Water, Earth, and is strongest in it: its first arts already learned, a level
+  higher, faster to cool down and 25% harder-hitting. A banned Avatar, or one who dies in hardcore, is reborn in another
   player.
 
 ## The world

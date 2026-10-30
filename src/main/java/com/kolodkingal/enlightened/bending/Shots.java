@@ -77,7 +77,12 @@ public final class Shots {
     }
 
     public static boolean hurt(ServerPlayer player, Entity target, float amount, ResourceKey<DamageType> type) {
-        amount *= Chakras.damageFactor(Benders.get(player), player.level().getGameTime());
+        BendingData data = Benders.get(player);
+        amount *= Chakras.damageFactor(data, player.level().getGameTime());
+        // The Avatar strikes harder with the element he was born to.
+        if (data.element() == Element.AVATAR && data.avatarBase() != Element.NONE && Avatar.elementOf(type) == data.avatarBase()) {
+            amount *= Avatar.BORN_DAMAGE;
+        }
         if (amount <= 0) {
             return false;
         }

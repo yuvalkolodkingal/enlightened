@@ -12,7 +12,9 @@ you are a **firebender**, an **airbender**, a **waterbender**, an **earthbender*
   the Avatar is born to one of the four elements instead. An operator changes the number:
   `/enlightened avatars max <count>`; `/enlightened avatars` lists the Avatars.
 * **Each Avatar is born to an element**, and the cycle goes round as in the show: **Fire, Air, Water, Earth**. Each
-  new Avatar is born to the element after the last one's (the first at random).
+  new Avatar is born to the element after the last one's (the first at random). He is strongest in it: he begins
+  with **all its first arts already learned** (not its sub-bendings), they work **a level higher** (to a master's),
+  cool down **20% faster**, and that element's harm strikes **25% harder**.
 * When the Avatar is **banned**, the Avatar is **reborn in another player**, at random among those online (or the next
   one to join). If the banned player comes back, he is a bender of the element he was born to, no more.
 * In a **hardcore** world, when the Avatar dies, the Avatar is reborn in another player the same way.

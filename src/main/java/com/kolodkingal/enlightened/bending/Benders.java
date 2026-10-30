@@ -99,7 +99,7 @@ public final class Benders {
         if (player.getServer() != null && player.getClass() == ServerPlayer.class) {
             AvatarCycle cycle = AvatarCycle.get(player.getServer());
             if (element == Element.AVATAR) {
-                cycle.register(player);
+                Avatar.bear(data, cycle.register(player));
             } else if (old == Element.AVATAR) {
                 cycle.unregister(player.getUUID());
             }

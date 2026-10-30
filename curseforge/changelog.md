@@ -1,8 +1,11 @@
+# Enlightened 1.0.7
+
+* **The Anomaly shines through the dark**: the darkness of its dread no longer hides it.
+
 # Enlightened 1.0.6
 
 * **Two faces of the Anomaly**: to your eyes it (and its red cubes) is again the **neon square of the show**; only
   once its red lightning has struck you, in your **dread**, do you see it as it truly is, pure energy in its darkness.
-* **The Anomaly shines through the dark**: the darkness of its dread no longer hides it.
 
 # Enlightened 1.0.5
 

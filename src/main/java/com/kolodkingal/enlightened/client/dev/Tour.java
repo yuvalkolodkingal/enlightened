@@ -842,7 +842,7 @@ public final class Tour {
     /** The four brigades' uniforms (the brigade trim on iron armor) and the city of Ellora (alone: -Denlightened.tour.only=havens). */
     private static void sevenHavens() {
         cmd("kill @e[type=armor_stand]", 2);
-        String[][] brigades = {{"minecraft:lapis", "-3"}, {"minecraft:quartz", "-1"}, {"minecraft:redstone", "1"}, {"enlightened:coal", "3"}};
+        String[][] brigades = {{"minecraft:lapis", "-4"}, {"minecraft:gold", "-2"}, {"minecraft:redstone", "0"}, {"enlightened:coal", "2"}, {"minecraft:netherite", "4"}};
         for (String[] b : brigades) {
             String trim = ",components:{\"minecraft:trim\":{pattern:\"enlightened:brigade\",material:\"" + b[0] + "\"}}";
             String[] pieces = {"iron_boots", "iron_leggings", "iron_chestplate", "iron_helmet"};
@@ -855,11 +855,11 @@ public final class Tour {
         cmd("gamemode spectator", 5);
         cmd("time set noon", 2);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
-        cmd("tp @s 0.5 -58.6 1.5 0 12", 30);
+        cmd("tp @s 0.5 -58.6 0.0 0 12", 30);
         shot("240_brigade_uniforms", 10);
         cmd("tp @s 0.5 -58.6 11.5 180 12", 20);
         shot("241_brigade_uniforms_back", 10);
-        cmd("tp @s -1.5 -58.4 3.8 20 15", 20);
+        cmd("tp @s 3.5 -58.6 3.6 15 12", 20);
         shot("242_brigade_close", 10);
         // Ellora, built round 0, 120 on the flat world.
         STEPS.add(new Step(5, () -> {

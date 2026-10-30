@@ -4,12 +4,15 @@
     python3 tools/brigade.py          # writes src/main/resources/assets/enlightened/textures/trims/... and the template icon
 
 The trim is one pattern (enlightened:brigade) whose look is chosen by the material it is set in, as in the show:
-lapis for the water brigade (lavender blue, the moon and its crescent), quartz for the air brigade (gold-orange, the
+lapis for the water brigade (lavender blue, the moon and its crescent), gold for the air brigade (gold-orange, the
 blue triangle), redstone for the fire brigade (red-orange, the diamond), coal for the earth brigade (green, the
-trapezoid). Those four are painted in full colour (the shoulder pads and the chest plate in the brigade's colour, the
+trapezoid); netherite makes the Avatar's brigade, all four at once (the chest plate quartered in the four colours,
+banded shoulder pads, a four-coloured headband and apron). Those five are painted in full colour (the shoulder pads and the chest plate in the brigade's colour, the
 sleeves grey, the belt, the apron with its white edge, the dark trousers and forearms, the headband); any other trim
 material gets the same uniform in its own palette, from a grey version keyed to vanilla's trim palette. The armor
-textures are the vanilla 64x32 armor layout: layer 1 (helmet, chestplate, boots) and layer 2 (leggings).
+textures are the vanilla 64x32 armor layout: layer 1 (helmet, chestplate, boots) and layer 2 (leggings). The helmet is
+only the headband: a helmet carrying this trim is not drawn (BrigadeHelmet), so the band sits on the head itself.
+Gold and netherite on armor of their own metal use the game's "_darker" names, so those are written too.
 """
 import os
 
@@ -34,7 +37,7 @@ BRIGADES = {
     'lapis': dict(main=(124, 130, 206), shade=(98, 104, 182), collar=(52, 54, 112), dark=(58, 58, 116),
                   symbol='moon', sym=(150, 174, 236), sym2=(242, 196, 82)),
     # Air: gold-orange, red collar and forearms, ochre trousers, the blue triangle.
-    'quartz': dict(main=(238, 176, 64), shade=(212, 146, 48), collar=(190, 66, 46), dark=(176, 116, 44),
+    'gold': dict(main=(238, 176, 64), shade=(212, 146, 48), collar=(190, 66, 46), dark=(176, 116, 44),
                    symbol='triangle', sym=(104, 176, 244), sym2=(214, 92, 52)),
     # Fire: red-orange, deep red collar, forearms and trousers, the orange diamond.
     'redstone': dict(main=(224, 96, 48), shade=(196, 74, 38), collar=(176, 44, 34), dark=(118, 32, 30),
@@ -169,6 +172,56 @@ def layer2(b):
     return img
 
 
+AVATAR = [BRIGADES['lapis'], BRIGADES['coal'], BRIGADES['redstone'], BRIGADES['gold']]
+AVATAR_BASE = dict(main=(236, 228, 210), shade=(206, 198, 180), collar=(56, 54, 82), dark=(54, 50, 66),
+                   symbol='moon', sym=(236, 228, 210), sym2=(236, 228, 210))
+
+
+def avatar1():
+    """The Avatar's brigade, layer 1: the four brigades in one uniform."""
+    img = layer1(AVATAR_BASE)
+    # The headband in the four colours, a segment each.
+    for x in range(0, 32):
+        c = AVATAR[(x // 2) % 4]['main']
+        put(img, x, 10, c)
+        put(img, x, 11, AVATAR[(x // 2 + 2) % 4]['main'])
+    # The chest plate quartered: water and earth above, fire and air below, each with its symbol's colour at the heart.
+    for i, b in enumerate(AVATAR):
+        x0 = 21 + (i % 2) * 3
+        y0 = 22 + (i // 2) * 3
+        rect(img, x0, y0, x0 + 2, y0 + 2, b['main'])
+        put(img, x0 + 1, y0 + 1, b['sym'])
+    # The back plate in the four colours, bands.
+    for i, b in enumerate(AVATAR):
+        rect(img, 32, 21 + i * 2, 39, 22 + i * 2, b['shade'])
+    # The shoulder pads banded in the four colours; the shoulder tops quartered.
+    for i, b in enumerate(AVATAR):
+        rect(img, 40, 20 + i, 55, 20 + i, b['main'])
+        put(img, 44 + (i % 2) * 2, 16 + (i // 2) * 2, b['main'])
+        put(img, 45 + (i % 2) * 2, 16 + (i // 2) * 2, b['main'])
+        put(img, 44 + (i % 2) * 2, 17 + (i // 2) * 2, b['main'])
+        put(img, 45 + (i % 2) * 2, 17 + (i // 2) * 2, b['main'])
+    # The apron below the belt in the four colours.
+    for x in range(21, 27):
+        rect(img, x, 30, x, 31, AVATAR[min(x - 21, 5 - (x - 21)) % 4]['main'])
+    put(img, 20, 30, WHITE)
+    put(img, 20, 31, WHITE)
+    put(img, 27, 30, WHITE)
+    put(img, 27, 31, WHITE)
+    return img
+
+
+def avatar2():
+    """The Avatar's brigade, layer 2: the apron banded in the four colours over dark trousers."""
+    img = layer2(AVATAR_BASE)
+    for i, b in enumerate(AVATAR):
+        rect(img, 5, 20 + i * 2, 7, 21 + i * 2, b['main'])
+        rect(img, 12, 20 + i, 15, 20 + i, b['shade'])
+    for x in range(20, 28):
+        put(img, x, 30, AVATAR[(x - 20) // 2]['main'])
+    return img
+
+
 def grey(img):
     """The uniform keyed to vanilla's trim palette: each colour to the key grey nearest its brightness."""
     out = Image.new('RGBA', img.size, (0, 0, 0, 0))
@@ -199,7 +252,7 @@ def icon():
     rect(img, 7, 4, 8, 11, gold)
     put(img, 7, 3, (255, 244, 170))
     for (x, y, c) in [(4, 4, BRIGADES['lapis']['sym']), (5, 4, BRIGADES['lapis']['sym2']),
-                      (10, 4, BRIGADES['quartz']['sym']), (11, 4, BRIGADES['quartz']['sym2']),
+                      (10, 4, BRIGADES['gold']['sym']), (11, 4, BRIGADES['gold']['sym2']),
                       (4, 11, BRIGADES['redstone']['sym2']), (5, 11, BRIGADES['redstone']['sym']),
                       (10, 11, BRIGADES['coal']['main']), (11, 11, BRIGADES['coal']['sym'])]:
         put(img, x, y, c)
@@ -213,6 +266,11 @@ def main():
     for name, b in BRIGADES.items():
         layer1(b).save(os.path.join(ARMOR, 'brigade_%s.png' % name))
         layer2(b).save(os.path.join(ARMOR, 'brigade_leggings_%s.png' % name))
+    avatar1().save(os.path.join(ARMOR, 'brigade_netherite.png'))
+    avatar2().save(os.path.join(ARMOR, 'brigade_leggings_netherite.png'))
+    for metal in ('gold', 'netherite'):
+        for part in ('brigade', 'brigade_leggings'):
+            Image.open(os.path.join(ARMOR, '%s_%s.png' % (part, metal))).save(os.path.join(ARMOR, '%s_%s_darker.png' % (part, metal)))
     grey(layer1(BRIGADES['lapis'])).save(os.path.join(ARMOR, 'brigade.png'))
     grey(layer2(BRIGADES['lapis'])).save(os.path.join(ARMOR, 'brigade_leggings.png'))
     pal = Image.new('RGBA', (8, 1))

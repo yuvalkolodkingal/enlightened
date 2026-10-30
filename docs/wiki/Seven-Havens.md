@@ -11,11 +11,12 @@ which brigade:
 | Material | Brigade | Look |
 |---|---|---|
 | Lapis lazuli | Water | lavender blue and navy, the moon and its crescent on the chest |
-| Quartz | Air | gold-orange, a red collar and forearms, the blue triangle |
+| Gold ingot | Air | gold-orange, a red collar and forearms, the blue triangle |
 | Redstone | Fire | red-orange and deep red, the diamond |
 | Coal | Earth | green and dark green, the golden trapezoid |
+| Netherite ingot | The Avatar | all four in one: the chest plate quartered in the four colours with their symbols, shoulder pads banded in the four colours, a four-coloured headband and apron |
 
-Each piece of the uniform is a piece of armor: the **helmet** is the headband, the **chestplate** has the shoulder
+Each piece of the uniform is a piece of armor: the **helmet** is only the headband (the helmet itself disappears, so the band sits on your head), the **chestplate** has the shoulder
 pads, the chest plate with its symbol, grey sleeves and the belt, the **leggings** have the apron with its white edge
 over the trousers, and the **boots** are the soft shoes. Any other trim material (iron, gold, emerald...) gives the same
 uniform in that material's colours. Coal also works as a trim material on the game's own trims.
@@ -32,5 +33,5 @@ desert in walled terraces of moss and grass fields, pools, little houses and a p
 live on the plaza.
 
 * **No monsters** spawn in the city.
-* The chest in the keep's hall always holds the **brigade trim template**, with lapis, quartz, redstone and coal.
+* The chest in the keep's hall always holds the **brigade trim template**, with lapis, gold, redstone and coal.
 * Each arm's top terrace has a market chest, which may hold another template.

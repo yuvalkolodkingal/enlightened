@@ -53,17 +53,14 @@
       ],
       "palette_key": "minecraft:trims/color_palettes/trim_palette",
       "permutations": {
+        "quartz": "minecraft:trims/color_palettes/quartz",
         "iron": "minecraft:trims/color_palettes/iron",
-        "gold": "minecraft:trims/color_palettes/gold",
         "diamond": "minecraft:trims/color_palettes/diamond",
-        "netherite": "minecraft:trims/color_palettes/netherite",
         "copper": "minecraft:trims/color_palettes/copper",
         "emerald": "minecraft:trims/color_palettes/emerald",
         "amethyst": "minecraft:trims/color_palettes/amethyst",
         "iron_darker": "minecraft:trims/color_palettes/iron_darker",
-        "gold_darker": "minecraft:trims/color_palettes/gold_darker",
-        "diamond_darker": "minecraft:trims/color_palettes/diamond_darker",
-        "netherite_darker": "minecraft:trims/color_palettes/netherite_darker"
+        "diamond_darker": "minecraft:trims/color_palettes/diamond_darker"
       }
     },
     {
@@ -76,11 +73,19 @@
     },
     {
       "type": "single",
-      "resource": "enlightened:trims/models/armor/brigade_quartz"
+      "resource": "enlightened:trims/models/armor/brigade_gold"
     },
     {
       "type": "single",
-      "resource": "enlightened:trims/models/armor/brigade_leggings_quartz"
+      "resource": "enlightened:trims/models/armor/brigade_leggings_gold"
+    },
+    {
+      "type": "single",
+      "resource": "enlightened:trims/models/armor/brigade_gold_darker"
+    },
+    {
+      "type": "single",
+      "resource": "enlightened:trims/models/armor/brigade_leggings_gold_darker"
     },
     {
       "type": "single",
@@ -97,6 +102,22 @@
     {
       "type": "single",
       "resource": "enlightened:trims/models/armor/brigade_leggings_coal"
+    },
+    {
+      "type": "single",
+      "resource": "enlightened:trims/models/armor/brigade_netherite"
+    },
+    {
+      "type": "single",
+      "resource": "enlightened:trims/models/armor/brigade_leggings_netherite"
+    },
+    {
+      "type": "single",
+      "resource": "enlightened:trims/models/armor/brigade_netherite_darker"
+    },
+    {
+      "type": "single",
+      "resource": "enlightened:trims/models/armor/brigade_leggings_netherite_darker"
     }
   ]
 }

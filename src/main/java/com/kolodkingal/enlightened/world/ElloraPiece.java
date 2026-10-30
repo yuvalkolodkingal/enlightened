@@ -33,7 +33,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
  * a sunken path stepping down their middle. Desert villagers live on the plaza.
  *
  * <p>The keep's hall keeps a chest of the Seven Havens brigades: the brigade armor trim's smithing template, always,
- * with lapis, quartz, redstone and coal; the top terrace of each arm has a market chest, which may hold another.
+ * with lapis, gold, redstone and coal; the top terrace of each arm has a market chest, which may hold another.
  * The plan is a pure function of the position ({@link #design}), so each chunk builds its own share.
  */
 public class ElloraPiece extends StructurePiece {

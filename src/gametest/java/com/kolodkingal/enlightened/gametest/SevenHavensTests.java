@@ -44,8 +44,8 @@ public final class SevenHavensTests {
         ServerLevel level = helper.getLevel();
         var access = level.registryAccess();
         ItemStack template = new ItemStack(ModItems.BRIGADE_TRIM_TEMPLATE.get());
-        String[][] brigades = {{"lapis", "lapis"}, {"quartz", "quartz"}, {"redstone", "redstone"}, {"coal", "coal"}};
-        Item[] ingredients = {Items.LAPIS_LAZULI, Items.QUARTZ, Items.REDSTONE, Items.COAL};
+        String[][] brigades = {{"lapis", "lapis"}, {"gold", "gold"}, {"redstone", "redstone"}, {"coal", "coal"}, {"netherite", "netherite"}};
+        Item[] ingredients = {Items.LAPIS_LAZULI, Items.GOLD_INGOT, Items.REDSTONE, Items.COAL, Items.NETHERITE_INGOT};
         for (int i = 0; i < ingredients.length; i++) {
             ItemStack material = new ItemStack(ingredients[i]);
             check(TrimMaterials.getFromIngredient(access, material).isPresent(), brigades[i][0] + " is a trim material");

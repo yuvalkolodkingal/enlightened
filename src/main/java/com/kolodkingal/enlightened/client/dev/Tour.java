@@ -400,6 +400,20 @@ public final class Tour {
             lionTurtle();
             return;
         }
+        if ("back".equals(System.getProperty("enlightened.tour.only", ""))) {
+            cmd("item replace entity @s armor.chest with minecraft:iron_chestplate", 2);
+            server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD)), 15);
+            STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+            camera(CameraType.THIRD_PERSON_BACK, 20);
+            shot("270_back_sword", 5);
+            camera(CameraType.THIRD_PERSON_FRONT, 10);
+            shot("271_back_sword_front", 5);
+            cmd("item replace entity @s armor.chest with minecraft:air", 2);
+            server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BOW)), 10);
+            camera(CameraType.THIRD_PERSON_BACK, 10);
+            shot("272_back_bow", 5);
+            return;
+        }
         if ("glider".equals(System.getProperty("enlightened.tour.only", ""))) {
             gliderLook();
             return;

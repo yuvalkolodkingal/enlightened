@@ -785,12 +785,15 @@ public final class WorldFxRenderer {
         float open = FxGeometry.easeOut(w);
         float flutter = 0.04F * Mth.sin(age * 0.7F);
         VertexConsumer snow = vc(FxGeometry.snow());
-        // The staff from his hands down his back to past his feet; the wing's spar at his shoulders, the tail behind his feet.
-        Vec3 front = grip.add(fwd.scale(0.25));
-        Vec3 tail = grip.subtract(fwd.scale(2.9));
+        // Measured along his body from his neck (the hands reach up and forward from the shoulders to the staff): the
+        // staff a tenth longer than he is, from over his head to past his feet; the wings' spar over his neck; the tail
+        // from over his knees back toward his feet.
+        Vec3 neck = grip.subtract(fwd.scale(0.5));
+        Vec3 front = neck.add(fwd.scale(0.57));
+        Vec3 tail = neck.subtract(fwd.scale(1.49));
         FxGeometry.tube(pose, snow, List.of(front, tail), 0.035F, 0.03F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
-        wing(snow, grip, fwd, side, up, 1.6F, 0.55F, 0.75F, 3, open, flutter, r, g, b, light);
-        wing(snow, grip.subtract(fwd.scale(2.2)), fwd, side, up, 0.8F, 0.45F, 0.45F, 4, open, flutter * 0.5F, r, g, b, light);
+        wing(snow, neck, fwd, side, up, 1.4F, 0.5F, 0.65F, 3, open, flutter, r, g, b, light);
+        wing(snow, neck.subtract(fwd.scale(1.06)), fwd, side, up, 0.65F, 0.33F, 0.33F, 4, open, flutter * 0.5F, r, g, b, light);
     }
 
     /**

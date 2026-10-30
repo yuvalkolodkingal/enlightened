@@ -62,7 +62,7 @@ in and flung out. It swallows the light round it in a **halo of darkness**, and 
 **dark smoke**. Now and then it shudders, as if it were not quite there, and shrieks.
 
 Its **red lightning brings dread**: you are thrown into **darkness**, your sight **flashes red and black**, the edges
-closing in, the world shakes, your heart pounds, and your legs go heavy (a few seconds, renewed by every strike). It drifts round whoever fights it,
+closing in (but the Anomaly itself shines through the dark), the world shakes, your heart pounds, and your legs go heavy (a few seconds, renewed by every strike). It drifts round whoever fights it,
 strikes with **red lightning** and now and then **bursts** outward, throwing back everyone near; below half its life it
 strikes faster and harder. Only one is awake near a place at a time.
 

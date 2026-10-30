@@ -266,6 +266,7 @@ public final class ClientEvents {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             WorldFxRenderer.render(event);
             com.kolodkingal.enlightened.client.cosmic.CosmicRenderer.render(event);
+            com.kolodkingal.enlightened.client.render.AnomalyRenderer.drawAll(event);
         }
     }
 

@@ -1306,7 +1306,11 @@ public final class Tour {
         cmd("tp @s 30.5 -60 -9.5 0 -28", 2);
         camera(CameraType.FIRST_PERSON, 2);
         for (int i = 0; i < 4; i++) {
-            shot("307_anomaly_night_" + i, 8);
+            // Look at it where it drifts, through the darkness it brings.
+            server(p -> p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.AnomalyEntity.class, p.getBoundingBox().inflate(40))
+                    .stream().findFirst().ifPresent(a -> p.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,
+                            a.position().add(0, a.getBbHeight() / 2, 0))), 2);
+            shotWithOverlays("307_anomaly_night_" + i, 6);
         }
         cmd("time set noon", 2);
         camera(CameraType.THIRD_PERSON_BACK, 2);

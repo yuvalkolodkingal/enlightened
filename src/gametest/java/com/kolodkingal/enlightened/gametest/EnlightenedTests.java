@@ -604,6 +604,27 @@ public final class EnlightenedTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void theBackSlotHoldsAnythingAndAGliderThereFlies(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR + 12, 8);
+        BendingData data = f.bender(player, Element.AIR, Ability.AIR_BLAST, 1);
+        net.minecraft.world.inventory.Slot back = player.inventoryMenu.slots.stream()
+                .filter(s -> s instanceof com.kolodkingal.enlightened.item.BackSlot).findFirst().orElse(null);
+        check(back != null, "the inventory has a back slot");
+        check(player.inventoryMenu.slots.indexOf(back) == 46, "after all of the game's own slots");
+        back.set(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_SWORD));
+        check(com.kolodkingal.enlightened.item.BackSlot.get(player).is(net.minecraft.world.item.Items.IRON_SWORD), "a sword is worn on the back");
+        check(back.getMaxStackSize() == 1, "one thing at a time");
+        back.set(new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get()));
+        check(player.getMainHandItem().isEmpty() && com.kolodkingal.enlightened.item.GliderItem.carries(player), "a glider on the back counts as carried");
+        player.setOnGround(false);
+        player.setDeltaMovement(0, -0.6, 0);
+        com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
+        check(data.gliderOpen(), "and opens in a fall with empty hands");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
     public static void airJumpDrivesTheGliderOn(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         ServerPlayer player = f.player(10, FLOOR + 12, 8);

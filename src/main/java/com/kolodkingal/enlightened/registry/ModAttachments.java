@@ -20,6 +20,14 @@ public final class ModAttachments {
                     .sync(BendingData.STREAM_CODEC)
                     .build());
 
+    /** What a player wears on his back (the back slot). Saved, kept on death (dropped there unless keepInventory), synced. */
+    public static final Supplier<AttachmentType<net.minecraft.world.item.ItemStack>> BACK = ATTACHMENTS.register("back",
+            () -> AttachmentType.builder(() -> net.minecraft.world.item.ItemStack.EMPTY)
+                    .serialize(net.minecraft.world.item.ItemStack.OPTIONAL_CODEC)
+                    .copyOnDeath()
+                    .sync(net.minecraft.world.item.ItemStack.OPTIONAL_STREAM_CODEC)
+                    .build());
+
     private ModAttachments() {
     }
 }

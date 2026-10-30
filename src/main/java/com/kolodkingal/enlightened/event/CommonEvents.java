@@ -98,6 +98,19 @@ public final class CommonEvents {
 
     // ---- deaths: experience for a kill with bending; an airbender's pet ----
 
+    /** What he carried on his back falls with the rest of his things, unless the world keeps inventories. */
+    @SubscribeEvent
+    public static void onDrops(net.neoforged.neoforge.event.entity.living.LivingDropsEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer p) || p.serverLevel().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_KEEPINVENTORY)) {
+            return;
+        }
+        net.minecraft.world.item.ItemStack back = com.kolodkingal.enlightened.item.BackSlot.get(p);
+        if (!back.isEmpty()) {
+            event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(p.level(), p.getX(), p.getY() + 1, p.getZ(), back.copy()));
+            com.kolodkingal.enlightened.item.BackSlot.set(p, net.minecraft.world.item.ItemStack.EMPTY);
+        }
+    }
+
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         LivingEntity killed = event.getEntity();

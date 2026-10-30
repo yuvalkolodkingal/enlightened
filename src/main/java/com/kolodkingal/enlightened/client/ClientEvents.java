@@ -65,6 +65,35 @@ public final class ClientEvents {
     }
 
     /** The local player burning blue sees blue flames over the screen instead of orange. */
+    /** The back slot is drawn as a slot (the inventory's own texture has none there). */
+    @SubscribeEvent
+    public static void onContainerBackground(net.neoforged.neoforge.client.event.ContainerScreenEvent.Render.Background event) {
+        var screen = event.getContainerScreen();
+        for (net.minecraft.world.inventory.Slot slot : screen.getMenu().slots) {
+            if (slot.container instanceof com.kolodkingal.enlightened.item.BackSlot.Back && slot.isActive()) {
+                int x = screen.getGuiLeft() + slot.x - 1;
+                int y = screen.getGuiTop() + slot.y - 1;
+                var g = event.getGuiGraphics();
+                g.fill(x, y, x + 18, y + 18, 0xFF8B8B8B);
+                g.fill(x, y, x + 17, y + 1, 0xFF373737);
+                g.fill(x, y, x + 1, y + 17, 0xFF373737);
+                g.fill(x + 1, y + 17, x + 18, y + 18, 0xFFFFFFFF);
+                g.fill(x + 17, y + 1, x + 18, y + 18, 0xFFFFFFFF);
+            }
+        }
+    }
+
+    /** The empty back slot names itself. */
+    @SubscribeEvent
+    public static void onScreenRender(net.neoforged.neoforge.client.event.ScreenEvent.Render.Post event) {
+        if (event.getScreen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen
+                && screen.getSlotUnderMouse() != null && screen.getSlotUnderMouse().container instanceof com.kolodkingal.enlightened.item.BackSlot.Back
+                && !screen.getSlotUnderMouse().hasItem() && screen.getMenu().getCarried().isEmpty()) {
+            event.getGuiGraphics().renderTooltip(net.minecraft.client.Minecraft.getInstance().font,
+                    net.minecraft.network.chat.Component.translatable("slot.enlightened.back"), event.getMouseX(), event.getMouseY());
+        }
+    }
+
     /** The brigade trim's template says which material makes which brigade, and where it is found. */
     @SubscribeEvent
     public static void onTooltip(net.neoforged.neoforge.event.entity.player.ItemTooltipEvent event) {

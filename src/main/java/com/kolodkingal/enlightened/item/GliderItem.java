@@ -26,6 +26,22 @@ public class GliderItem extends Item {
         return DyedItemColor.getOrDefault(stack, DEFAULT_COLOR);
     }
 
+    /** Whether he holds a glider or wears one on his back (the back slot): either may be flown. */
+    public static boolean carries(LivingEntity entity) {
+        return holds(entity) || entity instanceof net.minecraft.world.entity.player.Player p && BackSlot.get(p).getItem() instanceof GliderItem;
+    }
+
+    /** The glider he flies: the one in his hand, else the one on his back. */
+    public static ItemStack flown(LivingEntity entity) {
+        if (entity.getMainHandItem().getItem() instanceof GliderItem) {
+            return entity.getMainHandItem();
+        }
+        if (entity.getOffhandItem().getItem() instanceof GliderItem) {
+            return entity.getOffhandItem();
+        }
+        return entity instanceof net.minecraft.world.entity.player.Player p ? BackSlot.get(p) : ItemStack.EMPTY;
+    }
+
     /** Whether the player holds a glider in either hand. */
     public static boolean holds(LivingEntity entity) {
         return entity.getMainHandItem().getItem() instanceof GliderItem || entity.getOffhandItem().getItem() instanceof GliderItem;

@@ -49,3 +49,11 @@ on any block in `#enlightened:meditation_point`), meditation runs three times as
 
 The four scrolls and a **nether star**, shapeless. Whoever reads it becomes [the Avatar](The-Avatar), a bender of all
 four elements; a bender's old element becomes part of the four.
+
+## The back slot
+
+Your inventory has one more slot, beside your body above the off hand: the **back slot**. Put anything there (your
+glider, a sword, a banner, a block) and you wear it on your back, over your armour, for everyone to see. A **glider on
+your back** flies like one in hand: it opens by itself as you fall, so your hands stay free. What is on your back
+falls with your things when you die, unless the world keeps inventories. In the creative inventory the slot is next to
+the armour.

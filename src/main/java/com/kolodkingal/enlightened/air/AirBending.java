@@ -281,7 +281,7 @@ public final class AirBending {
 
     static boolean mayGlide(ServerPlayer p) {
         boolean needs = !EnlightenedConfig.SPEC.isLoaded() || EnlightenedConfig.GLIDER_NEEDED.get();
-        return !needs || GliderItem.holds(p);
+        return !needs || GliderItem.carries(p);
     }
 
     public static boolean gliding(BendingData data) {
@@ -321,9 +321,6 @@ public final class AirBending {
      * or the ground fold it. Called every tick for benders of air.
      */
     public static void glideTick(ServerPlayer p, BendingData data) {
-        if (p.tickCount % 10 == 0) {
-            data.setGliderCarried(!GliderItem.holds(p) && p.getInventory().contains(s -> s.getItem() instanceof GliderItem));
-        }
         Vec3 v = p.getDeltaMovement();
         boolean airborne = !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.isPassenger() && !p.isFallFlying();
         if (!data.gliderOpen() && airborne && v.y < -0.3 && !p.isShiftKeyDown() && mayOpenGlider(p, data)) {

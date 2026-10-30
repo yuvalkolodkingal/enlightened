@@ -595,5 +595,6 @@
   "enlightened.configuration.avatarStateDamageTaken": "מצב האווטאר: החלק מכל מכה שעובר",
   "look.enlightened.avatar.pavi": "פאווי",
   "look.enlightened.avatar.nisha": "נישה",
-  "enlightened.configuration.skyBisonFlySpeed": "מהירות התעופה של ביזון האוויר (בלוקים לטיק)"
+  "enlightened.configuration.skyBisonFlySpeed": "מהירות התעופה של ביזון האוויר (בלוקים לטיק)",
+  "slot.enlightened.back": "גב: אפשר לשים כאן כל דבר (דאון, חרב...)"
 }

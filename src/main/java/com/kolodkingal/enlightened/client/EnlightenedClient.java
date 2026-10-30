@@ -97,6 +97,7 @@ public final class EnlightenedClient {
                 renderer.addLayer(new ShellLayer(renderer, event.getEntityModels().bakeLayer(slim ? SHELL_SLIM : SHELL_WIDE), slim));
                 renderer.addLayer(new AvatarGlowLayer(renderer));
                 renderer.addLayer(new HandTrackerLayer(renderer));
+                renderer.addLayer(new com.kolodkingal.enlightened.client.render.BackItemLayer(renderer));
                 renderer.addLayer(new com.kolodkingal.enlightened.client.render.LemurShoulderLayer(renderer,
                         new com.kolodkingal.enlightened.client.render.LemurModel(event.getEntityModels().bakeLayer(com.kolodkingal.enlightened.client.render.LemurRenderer.LAYER))));
             }

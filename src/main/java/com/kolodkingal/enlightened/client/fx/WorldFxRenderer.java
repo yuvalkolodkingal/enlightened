@@ -302,7 +302,7 @@ public final class WorldFxRenderer {
         }
         if ((w = stance(st, data, Stance.GLIDE, data.gliderOpen())) > 0.01F) {
             glider(p, w);
-        } else if (data.gliderCarried() && !GliderItem.holds(p) && !(p == net.minecraft.client.Minecraft.getInstance().player
+        } else if (com.kolodkingal.enlightened.item.BackSlot.get(p).getItem() instanceof GliderItem && !(p == net.minecraft.client.Minecraft.getInstance().player
                 && net.minecraft.client.Minecraft.getInstance().options.getCameraType().isFirstPerson())) {
             gliderOnBack(p);
         }
@@ -761,7 +761,7 @@ public final class WorldFxRenderer {
      * size, the staff running on past it. Three blocks across. Coloured as the staff was dyed; the wings spread as it opens and flutter a little.
      */
     private static void glider(AbstractClientPlayer p, float w) {
-        ItemStack stack = p.getMainHandItem().getItem() instanceof GliderItem ? p.getMainHandItem() : p.getOffhandItem();
+        ItemStack stack = GliderItem.flown(p);
         int color = stack.getItem() instanceof GliderItem ? GliderItem.color(stack) : GliderItem.DEFAULT_COLOR;
         float r = ((color >> 16) & 0xFF) / 255F;
         float g = ((color >> 8) & 0xFF) / 255F;
@@ -786,14 +786,14 @@ public final class WorldFxRenderer {
         float flutter = 0.04F * Mth.sin(age * 0.7F);
         VertexConsumer snow = vc(FxGeometry.snow());
         // His arms reach straight up from his shoulders, a little apart, and his hands grip the spar over his neck. From
-        // there along his body: the staff a quarter longer than he is, from over his head to past his feet; the tail from
-        // over his knees back toward his feet.
+        // there along his body: the staff 1.4 times as long as he is tall, from over his head to past his feet; the tail
+        // from over his knees back toward his feet.
         Vec3 neck = grip;
-        Vec3 front = neck.add(fwd.scale(0.68));
-        Vec3 tail = neck.subtract(fwd.scale(1.68));
+        Vec3 front = neck.add(fwd.scale(0.76));
+        Vec3 tail = neck.subtract(fwd.scale(1.86));
         FxGeometry.tube(pose, snow, List.of(front, tail), 0.035F, 0.03F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
-        wing(snow, neck, fwd, side, up, 1.5F, 0.56F, 0.72F, 3, open, flutter, r, g, b, light);
-        wing(snow, neck.subtract(fwd.scale(1.06)), fwd, side, up, 0.72F, 0.42F, 0.42F, 4, open, flutter * 0.5F, r, g, b, light);
+        wing(snow, neck, fwd, side, up, 1.65F, 0.6F, 0.78F, 3, open, flutter, r, g, b, light);
+        wing(snow, neck.subtract(fwd.scale(1.06)), fwd, side, up, 0.8F, 0.46F, 0.46F, 4, open, flutter * 0.5F, r, g, b, light);
     }
 
     /**
@@ -833,7 +833,7 @@ public final class WorldFxRenderer {
         }
     }
 
-    /** The glider staff, closed, carried across the back: from over the right shoulder down to the left hip. */
+    /** The glider staff, closed, worn in the back slot: across the back from over the right shoulder down to the left hip. */
     private static void gliderOnBack(AbstractClientPlayer p) {
         float yaw = Mth.lerp(partial, p.yBodyRotO, p.yBodyRot) * Mth.DEG_TO_RAD;
         Vec3 face = new Vec3(-Mth.sin(yaw), 0, Mth.cos(yaw));

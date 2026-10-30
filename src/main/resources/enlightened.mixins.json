@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "LivingEntityAccessor",
-    "ServerGamePacketListenerImplAccessor"
+    "ServerGamePacketListenerImplAccessor",
+    "AbstractContainerMenuInvoker",
+    "InventoryMenuMixin"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",
@@ -15,7 +17,8 @@
     "client.ItemInHandLayerMixin",
     "client.ItemInHandRendererAccessor",
     "client.PlayerModelMixin",
-    "client.PlayerRendererMixin"
+    "client.PlayerRendererMixin",
+    "client.CreativeModeInventoryScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

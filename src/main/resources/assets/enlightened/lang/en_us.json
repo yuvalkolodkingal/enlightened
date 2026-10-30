@@ -595,5 +595,6 @@
   "enlightened.configuration.avatarStateDamageTaken": "Avatar State: share of each blow taken",
   "look.enlightened.avatar.pavi": "Pavi",
   "look.enlightened.avatar.nisha": "Nisha",
-  "enlightened.configuration.skyBisonFlySpeed": "Sky bison flying speed (blocks a tick)"
+  "enlightened.configuration.skyBisonFlySpeed": "Sky bison flying speed (blocks a tick)",
+  "slot.enlightened.back": "Back: wear anything here (a glider, a sword...)"
 }

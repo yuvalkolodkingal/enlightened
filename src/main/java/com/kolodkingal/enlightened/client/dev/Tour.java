@@ -847,11 +847,23 @@ public final class Tour {
     private static void gliderLook() {
         element("air", "aang", "air_jump");
         cmd("clear @s", 2);
-        cmd("item replace entity @s hotbar.8 with enlightened:air_glider", 15);
+        cmd("item replace entity @s armor.chest with minecraft:iron_chestplate", 2);
+        server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD)), 15);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
         camera(CameraType.THIRD_PERSON_BACK, 20);
+        shot("257_back_slot_sword", 5);
+        server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get())), 15);
         shot("259_glider_closed_on_back", 5);
-        cmd("item replace entity @s weapon.mainhand with enlightened:air_glider", 5);
+        cmd("gamemode survival", 5);
+        STEPS.add(new Step(10, () -> {
+            Minecraft.getInstance().options.hideGui = false;
+            Minecraft.getInstance().setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(Minecraft.getInstance().player));
+        }));
+        shot("256_back_slot_inventory", 5);
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().setScreen(null);
+            Minecraft.getInstance().options.hideGui = true;
+        }));
         cmd("gamemode survival", 5);
         cmd("effect give @s resistance 60 5 true", 2);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));

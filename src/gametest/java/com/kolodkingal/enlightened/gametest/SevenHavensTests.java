@@ -85,7 +85,28 @@ public final class SevenHavensTests {
         check(ElloraPiece.design(0, ElloraPiece.PLAZA + 2, -ElloraPiece.KEEP).isAir(), "the keep has a gate");
         check(ElloraPiece.top(16, 8) > ElloraPiece.top(26, 18) && ElloraPiece.top(26, 18) > ElloraPiece.top(36, 28), "the arms step down outward ("
                 + ElloraPiece.top(16, 8) + ", " + ElloraPiece.top(26, 18) + ", " + ElloraPiece.top(36, 28) + ")");
-        check(ElloraPiece.top(60, 0) < 0, "and the city ends");
+        check(ElloraPiece.top(100, 0) < 0, "and the city ends at its wall");
+        int wy = ElloraPiece.WALL_H - 2;
+        check(ElloraPiece.design(89, 3, 30).getBlock() != Blocks.AIR && ElloraPiece.design(-30, wy, -89) != null && !ElloraPiece.design(-30, wy, -89).isAir(),
+                "a high wall rings the city");
+        check(ElloraPiece.design(89, 2, 0).isAir() && ElloraPiece.design(0, 2, -89).isAir(), "with gates on its four streets");
+        check(ElloraPiece.street(60, 1) && ElloraPiece.street(1, -45), "the streets run from the stairs to the gates");
+        int houses = 0;
+        int domes = 0;
+        for (int x = -88; x <= 88; x++) {
+            for (int z = -88; z <= 88; z++) {
+                BlockState roof = ElloraPiece.design(x, 4, z);
+                if (roof != null && roof.is(Blocks.WHITE_TERRACOTTA) && ElloraPiece.coreTop(x, z) < 0 && ElloraPiece.oct(x, z) < ElloraPiece.WALL_IN) {
+                    houses++;
+                }
+                BlockState dome = ElloraPiece.design(x, 9, z);
+                if (dome != null && dome.is(Blocks.WAXED_OXIDIZED_COPPER)) {
+                    domes++;
+                }
+            }
+        }
+        check(houses > 200, "districts of houses fill the city (" + houses + " frieze blocks)");
+        check(domes > 20, "some under teal domes (" + domes + ")");
         // Every pool is held in on all sides: none spills down a terrace.
         for (int x = -53; x <= 53; x++) {
             for (int z = -53; z <= 53; z++) {

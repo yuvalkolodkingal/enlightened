@@ -34,8 +34,8 @@ L B L
 . S .
 ```
 
-L = leather, B = breeze rod, S = stick. Held in **either hand** by an airbender, it opens as he falls and he glides on
-the wind (see [Airbending](Airbending)); Air Jump first and you fly far. **Dye it**: put it in a crafting table with
+L = leather, B = breeze rod, S = stick. Held in **either hand** by any airbender, it opens as he falls (or at a right-click in
+the air) and he flies on it as on an elytra (see [Airbending](Airbending)); Air Jump pumps the wings for speed. **Dye it**: put it in a crafting table with
 any dye (as leather armour) and its wings take the colour: blue, red, whatever you like. In anyone else's hands it is
 a staff.
 

@@ -10,7 +10,8 @@ import java.util.Optional;
 
 /**
  * Ellora, the golden city of Seven Havens: built in the desert and the badlands (the biome tag
- * {@code has_structure/ellora}) where the ground is level enough for its terraces. One code-built piece
+ * {@code has_structure/ellora}) where the ground is level enough for it: the keep and its terraces inside a walled
+ * city 180 blocks across. One code-built piece
  * ({@link ElloraPiece}).
  */
 public class ElloraStructure extends Structure {
@@ -28,9 +29,10 @@ public class ElloraStructure extends Structure {
         if (y < 58 || y > 130) {
             return Optional.empty();
         }
-        // Level ground: the city's arms reach 50 blocks out and stand on the desert, not over a canyon.
-        for (int[] d : new int[][]{{36, 36}, {-36, 36}, {36, -36}, {-36, -36}, {30, 0}, {-30, 0}, {0, 30}, {0, -30}}) {
-            if (Math.abs(height(context, x + d[0], z + d[1]) - y) > 14) {
+        // Level ground: the city's wall stands 90 blocks out, on the desert, not over a canyon or under a mesa.
+        for (int[] d : new int[][]{{36, 36}, {-36, 36}, {36, -36}, {-36, -36}, {30, 0}, {-30, 0}, {0, 30}, {0, -30},
+                {64, 0}, {-64, 0}, {0, 64}, {0, -64}, {60, 60}, {-60, 60}, {60, -60}, {-60, -60}}) {
+            if (Math.abs(height(context, x + d[0], z + d[1]) - y) > 16) {
                 return Optional.empty();
             }
         }

@@ -751,11 +751,11 @@ public final class WorldFxRenderer {
         FxGeometry.disc(pose, light, center.add(0, -radius + 0.03, 0), radius * 0.6F, radius * 1.5F, 20, 0, 1, 0.85F, 0.8F, 0.7F, 0.16F * w, 0.0F, FULL, false, age * 0.3F);
     }
 
-    /** The glider's wings, open on the staff above the airbender's hands, coloured as the staff was dyed. */
     /**
-     * The glider staff of the show: a wooden staff over the hands from which two fans of orange fabric open on
-     * radial ribs, sweeping out to the sides and forward like a kite, with a small tail fin behind; the bender hangs
-     * under it. Drawn whenever the staff is open, fluttering a little in the wind.
+     * The glider staff of the show: a long wooden staff lying along the airbender's body, from just ahead of his hands
+     * to past his feet; at his hands two great fans of orange fabric open on dark radial ribs, a half disc either side
+     * of the staff; at its tail, by his feet, two small fans. Coloured as the staff was dyed. Drawn whenever the staff
+     * is open, the fans spreading as it opens and fluttering a little in the wind.
      */
     private static void glider(AbstractClientPlayer p, float w) {
         ItemStack stack = p.getMainHandItem().getItem() instanceof GliderItem ? p.getMainHandItem() : p.getOffhandItem();
@@ -767,46 +767,54 @@ public final class WorldFxRenderer {
         Vec3 flat = new Vec3(look.x, 0, look.z);
         flat = flat.lengthSqr() < 1.0E-4 ? new Vec3(0, 0, 1) : flat.normalize();
         Vec3 side = right(flat);
+        // The staff's line: along the body, which lies nearly flat under it, the feet a little lower than the hands.
+        double tilt = Math.toRadians(16);
+        Vec3 fwd = flat.scale(Math.cos(tilt)).add(0, Math.sin(tilt), 0);
+        Vec3 up = side.cross(fwd).normalize();
+        if (up.y < 0) {
+            up = up.scale(-1);
+        }
         Vec3 hr = hand(p, HumanoidArm.RIGHT);
         Vec3 hl = hand(p, HumanoidArm.LEFT);
-        Vec3 grip = rel(hr.add(hl).scale(0.5).add(0, 0.12, 0));
+        Vec3 grip = rel(hr.add(hl).scale(0.5)).add(up.scale(0.1));
         int light = lightAt(hr);
         float open = FxGeometry.easeOut(w);
-        float flutter = 0.05F * Mth.sin(age * 0.7F);
+        float flutter = 0.06F * Mth.sin(age * 0.7F);
         VertexConsumer snow = vc(FxGeometry.snow());
-        // The staff across the hands, and the hinge above it.
-        List<Vec3> staff = List.of(grip.subtract(side.scale(1.0)), grip.add(side.scale(1.0)));
-        FxGeometry.tube(pose, snow, staff, 0.04F, 0.04F, 6, 0, 1, 1, 0, 0.42F, 0.28F, 0.14F, 1.0F, 1.0F, light, true);
-        Vec3 hinge = grip.add(0, 0.05, 0);
-        // Two fans: ribs from the hinge out to an arc from behind the staff round to the front, fabric between them.
-        int ribs = 7;
-        double a0 = Math.toRadians(-55);
-        double a1 = Math.toRadians(80);
-        float span = 1.9F * open;
+        Vec3 front = grip.add(fwd.scale(0.7));
+        Vec3 tail = grip.subtract(fwd.scale(3.1));
+        FxGeometry.tube(pose, snow, List.of(front, tail), 0.045F, 0.04F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
+        // The great fans at the hands, and the small ones at the tail.
+        fan(snow, grip.subtract(fwd.scale(0.15)), fwd, side, up, 2.2F * open, 12, 168, 10, open, flutter, r, g, b, light);
+        fan(snow, tail.add(fwd.scale(0.2)), fwd, side, up, 0.8F * open, 40, 145, 5, open, flutter * 0.6F, r, g, b, light);
+    }
+
+    /**
+     * A pair of fans of the glider, one either side of the staff: ribs from the hub at angles {@code from} to {@code to}
+     * degrees from the staff's front (spreading from the first as it opens), fabric between them, a little dihedral.
+     */
+    private static void fan(VertexConsumer vc, Vec3 hub, Vec3 fwd, Vec3 side, Vec3 up, float radius, float from, float to, int ribs,
+                            float open, float flutter, float r, float g, float b, int light) {
+        double a0 = Math.toRadians(from);
+        double a1 = Math.toRadians(from + (to - from) * open);
         for (int sgn = -1; sgn <= 1; sgn += 2) {
             Vec3 prev = null;
             for (int i = 0; i <= ribs; i++) {
                 double t = (double) i / ribs;
                 double ang = a0 + (a1 - a0) * t;
-                // Each rib leans out to its side and swings from back to front; the tips sag and flutter.
-                double out = Math.cos(ang) * span;
-                double fwd = Math.sin(ang) * span * 0.75;
-                double sag = -0.08 * open * t * (1 - t) * 4 + flutter * t;
-                Vec3 tip = hinge.add(side.scale(sgn * out)).add(flat.scale(fwd)).add(0, sag, 0);
-                FxGeometry.tube(pose, snow, List.of(hinge, tip), 0.025F, 0.012F, 4, 0, 1, 1, 0, 0.35F, 0.22F, 0.1F, 1.0F, 1.0F, light, true);
+                Vec3 dir = fwd.scale(Math.cos(ang)).add(side.scale(sgn * Math.sin(ang)));
+                Vec3 tip = hub.add(dir.scale(radius)).add(up.scale(radius * (0.07 * Math.sin(ang)) + flutter * Math.sin(ang)));
+                FxGeometry.tube(pose, vc, List.of(hub, tip), 0.022F, 0.012F, 4, 0, 1, 1, 0, 0.30F, 0.18F, 0.09F, 1.0F, 1.0F, light, true);
                 if (prev != null) {
-                    quadColored(snow, hinge, prev, tip, hinge.add(0, 0.001, 0), r, g, b, 0.95F, light);
-                    quadColored(snow, hinge.add(0, 0.001, 0), tip, prev, hinge, r * 0.85F, g * 0.85F, b * 0.85F, 0.95F, light);
+                    // The cloth between two ribs, shaded darker toward the trailing edge, a rim along the outside.
+                    float shade = 1.0F - 0.12F * (float) t;
+                    quadColored(vc, hub, prev, tip, hub.add(up.scale(0.001)), r * shade, g * shade, b * shade, 0.97F, light);
+                    quadColored(vc, hub.add(up.scale(0.001)), tip, prev, hub, r * shade * 0.8F, g * shade * 0.8F, b * shade * 0.8F, 0.97F, light);
+                    FxGeometry.tube(pose, vc, List.of(prev, tip), 0.016F, 0.016F, 4, 0, 1, 1, 0, 0.30F, 0.18F, 0.09F, 1.0F, 1.0F, light, true);
                 }
                 prev = tip;
             }
         }
-        // The tail fin behind the hinge.
-        Vec3 tailBase = grip.add(flat.scale(-0.3));
-        Vec3 tailEnd = grip.add(flat.scale(-0.3 - 0.8 * open)).add(0, -0.05, 0);
-        FxGeometry.tube(pose, snow, List.of(tailBase, tailEnd), 0.03F, 0.015F, 4, 0, 1, 1, 0, 0.35F, 0.22F, 0.1F, 1.0F, 1.0F, light, true);
-        quadColored(snow, tailBase, tailEnd, tailEnd.add(0, 0.28 * open, 0), tailBase.add(0, 0.12 * open, 0), r, g, b, 0.95F, light);
-        quadColored(snow, tailBase.add(0, 0.12 * open, 0), tailEnd.add(0, 0.28 * open, 0), tailEnd, tailBase, r * 0.85F, g * 0.85F, b * 0.85F, 0.95F, light);
     }
 
     private static void quadColored(VertexConsumer vc, Vec3 a, Vec3 b, Vec3 c, Vec3 d, float r, float g, float bl, float al, int light) {

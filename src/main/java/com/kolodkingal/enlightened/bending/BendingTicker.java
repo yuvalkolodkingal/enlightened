@@ -41,6 +41,9 @@ public final class BendingTicker {
                 }
             }
         }
+        if (data.element().commands(Element.AIR) || data.gliderOpen()) {
+            com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
+        }
         data.setFlying(player.getAbilities().flying);
         if (carried(data) && player.connection != null) {
             ((com.kolodkingal.enlightened.mixin.ServerGamePacketListenerImplAccessor) player.connection).enlightened$setAboveGroundTickCount(0);

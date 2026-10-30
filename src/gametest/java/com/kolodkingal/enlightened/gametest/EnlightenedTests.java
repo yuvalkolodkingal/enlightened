@@ -576,6 +576,49 @@ public final class EnlightenedTests {
         });
     }
 
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void anyAirbenderGlidesAsOnAnElytra(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR + 12, 8);
+        BendingData data = f.bender(player, Element.AIR, Ability.AIR_BLAST, 1);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get()));
+        player.setOnGround(false);
+        player.setDeltaMovement(0, -0.6, 0);
+        com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
+        check(data.gliderOpen(), "falling, the staff opens for an airbender without Air Jump");
+        // A long dive gains speed...
+        player.setXRot(60.0F);
+        for (int i = 0; i < 25; i++) {
+            player.setOnGround(false);
+            com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
+        }
+        double fast = com.kolodkingal.enlightened.air.AirBending.glideSpeed(player);
+        check(fast > 1.4, "a dive gains speed (" + fast + ")");
+        // ...and pulling up turns it into a climb.
+        player.setXRot(-35.0F);
+        player.setOnGround(false);
+        com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
+        check(player.getDeltaMovement().y > 0.5, "with speed he climbs (" + player.getDeltaMovement().y + ")");
+        check(com.kolodkingal.enlightened.air.AirBending.glideSpeed(player) < fast, "and the climb spends it");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void airJumpDrivesTheGliderOn(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer player = f.player(10, FLOOR + 12, 8);
+        BendingData data = f.bender(player, Element.AIR, Ability.AIR_JUMP, 1);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get()));
+        player.setOnGround(false);
+        com.kolodkingal.enlightened.air.AirBending.setGlider(player, data, true, false);
+        double before = com.kolodkingal.enlightened.air.AirBending.glideSpeed(player);
+        f.press(player, Ability.AIR_JUMP, false);
+        double after = com.kolodkingal.enlightened.air.AirBending.glideSpeed(player);
+        check(after > before + 0.3, "the gust drives him on (" + before + " to " + after + ")");
+        check(player.getDeltaMovement().horizontalDistance() > 0.8, "along his look");
+        helper.succeed();
+    }
+
     @GameTest(template = ARENA, timeoutTicks = 60)
     public static void octopusFormLashesAtTheKey(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);

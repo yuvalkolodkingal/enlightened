@@ -9,6 +9,7 @@ import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.AbilityLogic;
 import com.kolodkingal.enlightened.bending.AreaTargets;
 import com.kolodkingal.enlightened.bending.BendingData;
+import com.kolodkingal.enlightened.bending.Element;
 import com.kolodkingal.enlightened.bending.BendingTicker;
 import com.kolodkingal.enlightened.bending.Cast;
 import com.kolodkingal.enlightened.bending.Shots;
@@ -284,7 +285,7 @@ public final class AirBending {
     }
 
     public static boolean gliding(BendingData data) {
-        return data.active(Ability.AIR_JUMP);
+        return data.gliderOpen();
     }
 
     /** The glider's speed along the glide, by player: a dive gains it, a climb spends it. */
@@ -296,7 +297,9 @@ public final class AirBending {
             return;
         }
         data.setGliderOpen(open);
-        GLIDE_SPEED.put(p.getUUID(), 0.55);
+        // The glide starts as fast as he was going: a fall or a run carries into it.
+        Vec3 v = p.getDeltaMovement();
+        GLIDE_SPEED.put(p.getUUID(), Mth.clamp(v.horizontalDistance() + Math.max(0.0, -v.y) * 0.6, 0.55, 1.6));
         if (tell) {
             p.level().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_JUMP.get(), SoundSource.PLAYERS, 0.8F, open ? 1.3F : 0.8F);
             p.displayClientMessage(Component.translatable(open ? "message.enlightened.air.glider_open" : "message.enlightened.air.glider_closed")
@@ -305,10 +308,62 @@ public final class AirBending {
         Benders.syncIfDirty(p);
     }
 
+    /** Whether an airbender may open the glider: any who command air, with the staff in hand (or none needed). */
+    public static boolean mayOpenGlider(ServerPlayer p, BendingData data) {
+        return data.element().commands(Element.AIR) && mayGlide(p);
+    }
+
     /**
-     * Air Jump, and the glide on the Air Glider, as in the show: the staff opens into its wings (a right-click, or by
-     * itself in a fall), the bender hangs under it and steers with his look (a dive gains speed, a climb spends it),
-     * the Air Jump key pumps a gust under the wings for a lift, Sneak or the ground folds it.
+     * The glide on the Air Glider, as in the show, for every airbender with the staff in hand (Air Jump not needed): the
+     * staff opens into its wings (a right-click in the air, or by itself in a fall); he lies under it and steers with
+     * his look, flying as an elytra flies: a dive gains speed, and speed carries him up again when he pulls up, the
+     * climb spending it; slow, he sinks. The Air Jump key pumps a gust under the wings (see {@link Jump}). Sneak, water
+     * or the ground fold it. Called every tick for benders of air.
+     */
+    public static void glideTick(ServerPlayer p, BendingData data) {
+        Vec3 v = p.getDeltaMovement();
+        boolean airborne = !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.isPassenger() && !p.isFallFlying();
+        if (!data.gliderOpen() && airborne && v.y < -0.3 && !p.isShiftKeyDown() && mayOpenGlider(p, data)) {
+            setGlider(p, data, true, false);
+        }
+        if (!data.gliderOpen()) {
+            return;
+        }
+        if (!airborne || p.isShiftKeyDown() || !mayOpenGlider(p, data)) {
+            setGlider(p, data, false, !p.onGround());
+            return;
+        }
+        int level = data.has(Ability.AIR_JUMP) ? Math.max(1, data.level(Ability.AIR_JUMP)) : 1;
+        Vec3 look = p.getLookAngle();
+        double top = 1.5 + level * 0.2;
+        double speed = GLIDE_SPEED.getOrDefault(p.getUUID(), 0.6);
+        // A dive gains speed, a climb spends it; past his top speed (after a gust) the air slows him back to it.
+        speed += -look.y * 0.07;
+        speed *= 0.994;
+        if (speed > top) {
+            speed -= (speed - top) * 0.03;
+        }
+        speed = Mth.clamp(speed, 0.25, top + 1.0);
+        GLIDE_SPEED.put(p.getUUID(), speed);
+        // He flies where he looks at that speed, a little sinking; too slow, the wings stall and he sinks fast.
+        double vy = look.y * speed - 0.05 - Math.max(0.0, 0.6 - speed) * 0.3;
+        p.setDeltaMovement(look.x * speed, Mth.clamp(vy, -1.6, 1.1), look.z * speed);
+        p.hurtMarked = true;
+        p.fallDistance = 0;
+        if (p.tickCount % 8 == 0) {
+            Vec3 back = new Vec3(look.x, 0, look.z).normalize();
+            p.serverLevel().sendParticles(ParticleTypes.CLOUD, p.getX() - back.x * 3.5, p.getY() + 0.4, p.getZ() - back.z * 3.5, 1, 0.3, 0.1, 0.3, 0.0);
+        }
+    }
+
+    /** The speed of his glide, for the tests. */
+    public static double glideSpeed(ServerPlayer p) {
+        return GLIDE_SPEED.getOrDefault(p.getUUID(), 0.0);
+    }
+
+    /**
+     * Air Jump: a gust under him that throws him up (and those by him). On the glider it is a pump of the wings: a
+     * gust that drives him on along his look, faster than his glide's top speed, and lifts him.
      */
     static final class Jump implements AbilityLogic {
         @Override
@@ -321,12 +376,12 @@ public final class AirBending {
                 return;
             }
             double lift = c.by(0.9, 1.2, 1.5);
-            if (gliding(c.data)) {
-                // A pump of the wings: a gust lifts him and drives him on.
-                Vec3 v = p.getDeltaMovement();
-                p.setDeltaMovement(v.x, Math.max(v.y, 0) + lift * 0.5, v.z);
+            if (gliding(c.data) && !p.onGround()) {
+                // A pump of the wings: a gust drives him on along his look and lifts him.
+                Vec3 look = p.getLookAngle();
+                double speed = GLIDE_SPEED.merge(p.getUUID(), 0.35 + 0.1 * c.level, Double::sum);
+                p.setDeltaMovement(look.x * speed, Math.max(look.y * speed, 0) + lift * 0.35, look.z * speed);
                 p.hurtMarked = true;
-                GLIDE_SPEED.merge(p.getUUID(), 0.18, Double::sum);
                 c.level().sendParticles(ParticleTypes.GUST, p.getX(), p.getY() + 0.5, p.getZ(), 3, 0.6, 0.2, 0.6, 0.0);
                 c.sound(ModSounds.AIR_JUMP.get(), 0.8F, 1.4F);
                 c.exhaust(0.08F);
@@ -346,47 +401,8 @@ public final class AirBending {
         }
 
         @Override
-        public void tick(Cast c) {
-            ServerPlayer p = c.player;
-            BendingData data = c.data;
-            Vec3 v = p.getDeltaMovement();
-            boolean airborne = !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.isPassenger();
-            // The staff opens by itself in a real fall with it in hand, as Aang's does.
-            if (!data.gliderOpen() && airborne && v.y < -0.45 && !p.isShiftKeyDown() && mayGlide(p)) {
-                setGlider(p, data, true, false);
-            }
-            if (data.gliderOpen() && (p.isShiftKeyDown() || p.isInWater() || p.getAbilities().flying || p.isPassenger() || !mayGlide(p)
-                    || (p.onGround() && data.active(Ability.AIR_JUMP)))) {
-                setGlider(p, data, false, true);
-            }
-            if (!data.gliderOpen() || !airborne) {
-                c.setActive(false);
-                return;
-            }
-            Vec3 look = p.getLookAngle();
-            Vec3 flat = new Vec3(look.x, 0, look.z);
-            flat = flat.lengthSqr() < 1.0E-4 ? new Vec3(v.x, 0, v.z).normalize() : flat.normalize();
-            double top = 1.1 + c.level * 0.15;
-            double speed = GLIDE_SPEED.getOrDefault(p.getUUID(), 0.55);
-            // A dive gains speed, a climb spends it; the air always takes a little.
-            speed += -look.y * 0.045;
-            speed = Mth.clamp(speed * 0.992, 0.3, top);
-            GLIDE_SPEED.put(p.getUUID(), speed);
-            double vy = look.y * speed * 0.75 - 0.045 - (look.y > 0.15 ? 0.03 : 0.0);
-            p.setDeltaMovement(flat.x * speed, Mth.clamp(vy, -0.7, 0.5), flat.z * speed);
-            p.hurtMarked = true;
-            p.fallDistance = 0;
-            c.setActive(true);
-            if (p.tickCount % 3 == 0) {
-                c.level().sendParticles(ParticleTypes.CLOUD, p.getX() - flat.x, p.getY() + 0.8, p.getZ() - flat.z, 1, 0.3, 0.1, 0.3, 0.0);
-            }
-        }
-
-        @Override
         public void end(Cast c) {
             c.setActive(false);
-            c.data.setGliderOpen(false);
-            GLIDE_SPEED.remove(c.player.getUUID());
         }
 
         @Override

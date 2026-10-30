@@ -11,8 +11,8 @@ import net.minecraft.world.item.component.DyedItemColor;
 import java.util.List;
 
 /**
- * The airbender's glider staff. Held in either hand by an airbender, it opens as he falls and he glides on the air
- * (Air Jump sends him higher first). Dyed in a crafting table with any dye (it is in {@code minecraft:dyeable}), its
+ * The airbender's glider staff. Held in either hand by an airbender, it opens as he falls (or at a right-click in the
+ * air) and he glides on the air as on an elytra; Air Jump pumps the wings for speed. Dyed in a crafting table with any dye (it is in {@code minecraft:dyeable}), its
  * wings take the colour. In anyone else's hands it is a staff.
  */
 public class GliderItem extends Item {
@@ -31,14 +31,14 @@ public class GliderItem extends Item {
         return entity.getMainHandItem().getItem() instanceof GliderItem || entity.getOffhandItem().getItem() instanceof GliderItem;
     }
 
-    /** Right-click: an airbender who learned Air Jump opens the staff into its wings, or folds it. */
+    /** Right-click: an airbender in the air opens the staff into its wings, or folds it. */
     @Override
     public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
                                                                         net.minecraft.world.InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player instanceof net.minecraft.server.level.ServerPlayer p) {
             com.kolodkingal.enlightened.bending.BendingData data = com.kolodkingal.enlightened.bending.Benders.get(p);
-            if (!data.element().commands(com.kolodkingal.enlightened.bending.Element.AIR) || !data.has(com.kolodkingal.enlightened.bending.Ability.AIR_JUMP)) {
+            if (!data.element().commands(com.kolodkingal.enlightened.bending.Element.AIR) || player.onGround() && !data.gliderOpen()) {
                 return net.minecraft.world.InteractionResultHolder.pass(stack);
             }
             com.kolodkingal.enlightened.air.AirBending.setGlider(p, data, !data.gliderOpen(), true);

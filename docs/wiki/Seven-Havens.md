@@ -26,7 +26,12 @@ sandstone make two.
 
 ## Ellora
 
-A city of red sandstone that stands on level ground in **deserts and badlands**. At its heart is a tall keep with rows
+A walled city of red sandstone, some 180 blocks across, that stands on level ground in **deserts and badlands**.
+A high **wall** rings it, an octagon with a zigzag frieze, a walk behind its crenels, and round towers under teal domes
+with golden tips at its eight corners. Four **gates**, each between two towers, open on four main streets that run in
+to the centre, crossed by a ring road. Between them are **districts** of houses: sandstone, red sandstone and
+terracotta, with a zigzag frieze under the roof, flat roofs behind parapets or teal domes, some with a chest inside, and
+gardens with date palms. Lanterns line the streets; townsfolk walk them, and iron golems guard the gates. At its heart is a tall keep with rows
 of arched windows and a golden rim, crowned by three great golden crystals leaning round a golden spire. Around the
 keep is a plaza, reached by grand stairs on all four sides. From the plaza's corners, four long arms step down to the
 desert in walled terraces of moss and grass fields, pools, little houses and a path down the middle. Desert villagers

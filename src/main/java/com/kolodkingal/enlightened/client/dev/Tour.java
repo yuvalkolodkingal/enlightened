@@ -400,6 +400,10 @@ public final class Tour {
             lionTurtle();
             return;
         }
+        if ("glider".equals(System.getProperty("enlightened.tour.only", ""))) {
+            gliderLook();
+            return;
+        }
         if ("havens".equals(System.getProperty("enlightened.tour.only", ""))) {
             sevenHavens();
             return;
@@ -839,6 +843,28 @@ public final class Tour {
         cmd("gamemode creative", 5);
     }
 
+    /** The glider of the show, open in a glide (alone: -Denlightened.tour.only=glider). */
+    private static void gliderLook() {
+        element("air", "aang", "air_jump");
+        cmd("give @s enlightened:air_glider", 5);
+        cmd("gamemode survival", 5);
+        cmd("effect give @s resistance 60 5 true", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        cmd("tp @s 0 20 0 0 25", 25);
+        shot("260_glider_back", 2);
+        camera(CameraType.THIRD_PERSON_FRONT, 4);
+        shot("261_glider_front", 2);
+        cmd("tp @s 0 20 0 90 -5", 6);
+        camera(CameraType.THIRD_PERSON_BACK, 4);
+        shot("262_glider_side", 2);
+        cmd("tp @s 0 20 0 0 80", 6);
+        camera(CameraType.THIRD_PERSON_FRONT, 5);
+        shot("263_glider_below", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        cmd("gamemode creative", 5);
+    }
+
     /** The four brigades' uniforms (the brigade trim on iron armor) and the city of Ellora (alone: -Denlightened.tour.only=havens). */
     private static void sevenHavens() {
         cmd("kill @e[type=armor_stand]", 2);
@@ -863,7 +889,7 @@ public final class Tour {
         shot("242_brigade_close", 10);
         // Ellora, built round 0, 120 on the flat world.
         STEPS.add(new Step(5, () -> {
-            Minecraft.getInstance().options.renderDistance().set(12);
+            Minecraft.getInstance().options.renderDistance().set(16);
             Minecraft.getInstance().options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
         }));
         server(p -> {
@@ -879,16 +905,20 @@ public final class Tour {
                             new net.minecraft.world.level.ChunkPos(cx, cz), origin);
                 }
             }
-            p.teleportTo(level, 0.5, -10, 200.5, 180.0F, 18.0F);
+            p.teleportTo(level, 0.5, -10, 230.5, 180.0F, 18.0F);
         }, 60);
         shot("251_ellora_front", 30);
+        cmd("tp @s 60.5 -40 140.5 120 10", 60);
+        shot("255_ellora_streets", 30);
+        cmd("tp @s 0.5 -38 225.5 180 10", 60);
+        shot("256_ellora_gate", 30);
         cmd("tp @s 40.5 -20 160.5 135 15", 60);
         shot("252_ellora_terraces", 30);
         cmd("tp @s 0.5 -1 152.5 180 -10", 40);
         shot("253_ellora_crown", 30);
         cmd("tp @s 0.5 -51 115.5 180 10", 40);
         shot("254_ellora_hall", 30);
-        cmd("tp @s 70.5 10 190.5 135 22", 120);
+        cmd("tp @s 110.5 40 230.5 135 25", 160);
         shot("250_ellora_far", 30);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
         cmd("gamemode creative", 5);

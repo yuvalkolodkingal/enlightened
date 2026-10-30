@@ -16,7 +16,7 @@ import java.util.List;
  * wings take the colour. In anyone else's hands it is a staff.
  */
 public class GliderItem extends Item {
-    public static final int DEFAULT_COLOR = 0xD9772A;
+    public static final int DEFAULT_COLOR = 0xE2643C;
 
     public GliderItem(Properties properties) {
         super(properties);

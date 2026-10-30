@@ -302,6 +302,9 @@ public final class WorldFxRenderer {
         }
         if ((w = stance(st, data, Stance.GLIDE, data.gliderOpen())) > 0.01F) {
             glider(p, w);
+        } else if (data.gliderCarried() && !GliderItem.holds(p) && !(p == net.minecraft.client.Minecraft.getInstance().player
+                && net.minecraft.client.Minecraft.getInstance().options.getCameraType().isFirstPerson())) {
+            gliderOnBack(p);
         }
         if (st != null && st.wAir > 0.2F && st.sH > 0.5F && !calm) {
             wind(p, st);
@@ -752,10 +755,10 @@ public final class WorldFxRenderer {
     }
 
     /**
-     * The glider staff of the show: a long wooden staff lying along the airbender's body, from just ahead of his hands
-     * to past his feet; at his hands two great fans of orange fabric open on dark radial ribs, a half disc either side
-     * of the staff; at its tail, by his feet, two small fans. Coloured as the staff was dyed. Drawn whenever the staff
-     * is open, the fans spreading as it opens and fluttering a little in the wind.
+     * The glider staff, open: a wooden staff along the airbender's body, from just ahead of his hands to past his feet;
+     * at his shoulders a straight spar across it with a wing of orange fabric trailing behind either side, darker ribs
+     * fanning from the staff to the spar and a jagged trailing edge; behind his feet a tail of the same make, half the
+     * size, the staff running on past it. Three blocks across. Coloured as the staff was dyed; the wings spread as it opens and flutter a little.
      */
     private static void glider(AbstractClientPlayer p, float w) {
         ItemStack stack = p.getMainHandItem().getItem() instanceof GliderItem ? p.getMainHandItem() : p.getOffhandItem();
@@ -768,7 +771,7 @@ public final class WorldFxRenderer {
         flat = flat.lengthSqr() < 1.0E-4 ? new Vec3(0, 0, 1) : flat.normalize();
         Vec3 side = right(flat);
         // The staff's line: along the body, which lies nearly flat under it, the feet a little lower than the hands.
-        double tilt = Math.toRadians(16);
+        double tilt = Math.toRadians(12);
         Vec3 fwd = flat.scale(Math.cos(tilt)).add(0, Math.sin(tilt), 0);
         Vec3 up = side.cross(fwd).normalize();
         if (up.y < 0) {
@@ -776,17 +779,67 @@ public final class WorldFxRenderer {
         }
         Vec3 hr = hand(p, HumanoidArm.RIGHT);
         Vec3 hl = hand(p, HumanoidArm.LEFT);
-        Vec3 grip = rel(hr.add(hl).scale(0.5)).add(up.scale(0.1));
+        Vec3 grip = rel(hr.add(hl).scale(0.5)).add(up.scale(0.08));
         int light = lightAt(hr);
         float open = FxGeometry.easeOut(w);
-        float flutter = 0.06F * Mth.sin(age * 0.7F);
+        float flutter = 0.04F * Mth.sin(age * 0.7F);
         VertexConsumer snow = vc(FxGeometry.snow());
-        Vec3 front = grip.add(fwd.scale(0.7));
-        Vec3 tail = grip.subtract(fwd.scale(3.1));
-        FxGeometry.tube(pose, snow, List.of(front, tail), 0.045F, 0.04F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
-        // The great fans at the hands, and the small ones at the tail.
-        fan(snow, grip.subtract(fwd.scale(0.15)), fwd, side, up, 2.2F * open, 12, 168, 10, open, flutter, r, g, b, light);
-        fan(snow, tail.add(fwd.scale(0.2)), fwd, side, up, 0.8F * open, 40, 145, 5, open, flutter * 0.6F, r, g, b, light);
+        // The staff from his hands down his back to past his feet; the wing's spar at his shoulders, the tail behind his feet.
+        Vec3 front = grip.add(fwd.scale(0.1));
+        Vec3 tail = grip.subtract(fwd.scale(2.45));
+        FxGeometry.tube(pose, snow, List.of(front, tail), 0.035F, 0.03F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
+        wing(snow, grip.subtract(fwd.scale(0.4)), fwd, side, up, 1.5F * open, 0.62F, 0.7F, 3, open, flutter, r, g, b, light);
+        wing(snow, grip.subtract(fwd.scale(1.95)), fwd, side, up, 0.75F * open, 0.45F, 0.4F, 4, open, flutter * 0.5F, r, g, b, light);
+    }
+
+    /**
+     * A pair of wings across the staff: a straight spar out {@code span} either side of {@code root}, the fabric trailing
+     * behind it ({@code chord} at the root to {@code tipChord} at the tip) with a jagged edge, ribs fanning to the spar
+     * from a point on the staff behind.
+     */
+    private static void wing(VertexConsumer vc, Vec3 root, Vec3 fwd, Vec3 side, Vec3 up, float span, float chord, float tipChord,
+                             int ribs, float open, float flutter, float r, float g, float b, int light) {
+        int n = 12;
+        Vec3 hub = root.subtract(fwd.scale(chord));
+        for (int sgn = -1; sgn <= 1; sgn += 2) {
+            Vec3 out = side.scale(sgn);
+            Vec3[] lead = new Vec3[n + 1];
+            Vec3[] trail = new Vec3[n + 1];
+            for (int i = 0; i <= n; i++) {
+                double s = (double) i / n;
+                lead[i] = root.add(out.scale(span * s)).add(up.scale((0.05 + flutter) * s));
+                double c = chord + (tipChord - chord) * s;
+                // The trailing edge in teeth, as cloth cut between its ribs.
+                c += (i % 2 == 0 ? 0.0 : -0.07) * open;
+                trail[i] = lead[i].subtract(fwd.scale(c));
+            }
+            for (int i = 0; i < n; i++) {
+                float shade = 1.0F - 0.1F * i / n;
+                quadColored(vc, lead[i], lead[i + 1], trail[i + 1], trail[i], r * shade, g * shade, b * shade, 0.97F, light);
+                quadColored(vc, trail[i], trail[i + 1], lead[i + 1], lead[i], r * shade * 0.8F, g * shade * 0.8F, b * shade * 0.8F, 0.97F, light);
+            }
+            FxGeometry.tube(pose, vc, java.util.Arrays.asList(lead), 0.032F, 0.028F, 5, 0, 1, 1, 0, 0.36F, 0.22F, 0.11F, 1.0F, 1.0F, light, true);
+            for (int k = 1; k <= ribs; k++) {
+                // The ribs: darker strips of the cloth itself, fanning from the staff behind out to the spar.
+                FxGeometry.tube(pose, vc, List.of(hub, lead[n * k / ribs]), 0.02F, 0.016F, 4, 0, 1, 1, 0, r * 0.62F, g * 0.5F, b * 0.45F, 1.0F, 1.0F, light, true);
+            }
+        }
+    }
+
+    /** The glider staff, closed, carried across the back: from over the right shoulder down to the left hip. */
+    private static void gliderOnBack(AbstractClientPlayer p) {
+        float yaw = Mth.lerp(partial, p.yBodyRotO, p.yBodyRot) * Mth.DEG_TO_RAD;
+        Vec3 face = new Vec3(-Mth.sin(yaw), 0, Mth.cos(yaw));
+        Vec3 right = right(face);
+        Vec3 center = rel(p.getPosition(partial).add(0, p.isCrouching() ? 0.95 : 1.2, 0).subtract(face.scale(0.2)));
+        Vec3 dir = right.scale(0.6).add(0, 0.8, 0).normalize();
+        int light = lightAt(p.getPosition(partial).add(0, 1, 0));
+        VertexConsumer snow = vc(FxGeometry.snow());
+        FxGeometry.tube(pose, snow, List.of(center.subtract(dir.scale(1.05)), center.add(dir.scale(1.05))), 0.035F, 0.035F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
+        for (int s = -1; s <= 1; s += 2) {
+            Vec3 k = center.add(dir.scale(0.68 * s));
+            FxGeometry.tube(pose, snow, List.of(k.subtract(dir.scale(0.05)), k.add(dir.scale(0.05))), 0.055F, 0.055F, 6, 0, 1, 1, 0, 0.22F, 0.13F, 0.07F, 1.0F, 1.0F, light, true);
+        }
     }
 
     /**

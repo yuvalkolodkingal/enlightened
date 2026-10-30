@@ -12,6 +12,7 @@
     "client.EntityMixin",
     "client.EntityRenderDispatcherMixin",
     "client.HumanoidArmorLayerMixin",
+    "client.ItemInHandLayerMixin",
     "client.ItemInHandRendererAccessor",
     "client.PlayerModelMixin",
     "client.PlayerRendererMixin"

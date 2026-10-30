@@ -321,6 +321,9 @@ public final class AirBending {
      * or the ground fold it. Called every tick for benders of air.
      */
     public static void glideTick(ServerPlayer p, BendingData data) {
+        if (p.tickCount % 10 == 0) {
+            data.setGliderCarried(!GliderItem.holds(p) && p.getInventory().contains(s -> s.getItem() instanceof GliderItem));
+        }
         Vec3 v = p.getDeltaMovement();
         boolean airborne = !p.onGround() && !p.isInWater() && !p.getAbilities().flying && !p.isPassenger() && !p.isFallFlying();
         if (!data.gliderOpen() && airborne && v.y < -0.3 && !p.isShiftKeyDown() && mayOpenGlider(p, data)) {
@@ -350,10 +353,6 @@ public final class AirBending {
         p.setDeltaMovement(look.x * speed, Mth.clamp(vy, -1.6, 1.1), look.z * speed);
         p.hurtMarked = true;
         p.fallDistance = 0;
-        if (p.tickCount % 8 == 0) {
-            Vec3 back = new Vec3(look.x, 0, look.z).normalize();
-            p.serverLevel().sendParticles(ParticleTypes.CLOUD, p.getX() - back.x * 3.5, p.getY() + 0.4, p.getZ() - back.z * 3.5, 1, 0.3, 0.1, 0.3, 0.0);
-        }
     }
 
     /** The speed of his glide, for the tests. */

@@ -846,7 +846,12 @@ public final class Tour {
     /** The glider of the show, open in a glide (alone: -Denlightened.tour.only=glider). */
     private static void gliderLook() {
         element("air", "aang", "air_jump");
-        cmd("give @s enlightened:air_glider", 5);
+        cmd("clear @s", 2);
+        cmd("item replace entity @s hotbar.8 with enlightened:air_glider", 15);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        camera(CameraType.THIRD_PERSON_BACK, 20);
+        shot("259_glider_closed_on_back", 5);
+        cmd("item replace entity @s weapon.mainhand with enlightened:air_glider", 5);
         cmd("gamemode survival", 5);
         cmd("effect give @s resistance 60 5 true", 2);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));

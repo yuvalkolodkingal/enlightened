@@ -59,6 +59,7 @@ public final class BendingData {
     private boolean meditating;
     /** Whether the airbender's glider staff is open (runtime, synced). */
     private boolean gliderOpen;
+    private boolean gliderCarried;
     private long meditateSince;
     private long avatarUntil;
 
@@ -166,6 +167,7 @@ public final class BendingData {
         ByteBufCodecs.VAR_LONG.encode(buf, meditateSince);
         ByteBufCodecs.VAR_LONG.encode(buf, avatarUntil);
         ByteBufCodecs.BOOL.encode(buf, gliderOpen);
+        ByteBufCodecs.BOOL.encode(buf, gliderCarried);
         ByteBufCodecs.BOOL.encode(buf, octopusArms);
         ByteBufCodecs.BOOL.encode(buf, guruTaught);
     }
@@ -205,6 +207,7 @@ public final class BendingData {
         d.meditateSince = ByteBufCodecs.VAR_LONG.decode(buf);
         d.avatarUntil = ByteBufCodecs.VAR_LONG.decode(buf);
         d.gliderOpen = ByteBufCodecs.BOOL.decode(buf);
+        d.gliderCarried = ByteBufCodecs.BOOL.decode(buf);
         d.octopusArms = ByteBufCodecs.BOOL.decode(buf);
         d.guruTaught = ByteBufCodecs.BOOL.decode(buf);
         return d;
@@ -556,6 +559,18 @@ public final class BendingData {
     public void setGliderOpen(boolean v) {
         if (v != gliderOpen) {
             gliderOpen = v;
+            dirty = true;
+        }
+    }
+
+    /** Whether he carries a glider staff he is not holding (it is drawn on his back). Synced, not saved. */
+    public boolean gliderCarried() {
+        return gliderCarried;
+    }
+
+    public void setGliderCarried(boolean v) {
+        if (v != gliderCarried) {
+            gliderCarried = v;
             dirty = true;
         }
     }

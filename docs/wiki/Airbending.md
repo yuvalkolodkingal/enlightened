@@ -63,8 +63,8 @@ over gaps, drawn as real swirling air.
 
 - **Any airbender** with the [Air Glider](Items-and-Crafting) in hand can glide; Air Jump is not needed. It opens by
   itself as you fall, or **right-click** it in the air.
-- It is the show's glider: a long staff along your body, a great orange fan either side of it at your hands, and small
-  tail fans at your feet.
+- Open, it is a staff along your body with a straight spar at your shoulders, orange wings about three blocks across
+  trailing behind it, and a tail half the size behind your feet. Closed, you carry it across your back.
 - It flies like an **elytra**: you go where you look. A dive gains speed, and with that speed, **pull up to climb**.
   The climb spends the speed; too slow, you sink.
 - **Air Jump on the glider** pumps the wings: a gust that drives you on along your look, faster than the glide's own

@@ -14,8 +14,8 @@ public final class StancePoses {
     public static final float[] AIR_SHIELD_O = {-58, 0, -62};
     public static final float[] SCOOTER_M = {-24, -12, 42};
     public static final float[] SCOOTER_O = {-46, 8, -64};
-    public static final float[] GLIDE_M = {-165, 0, -18};
-    public static final float[] GLIDE_O = {-165, 0, 18};
+    public static final float[] GLIDE_M = {-225, 0, 0};
+    public static final float[] GLIDE_O = {-225, 0, 0};
     public static final float[] FLIGHT_HOVER_M = {-18, 0, 58};
     public static final float[] FLIGHT_HOVER_O = {-18, 0, -58};
     public static final float[] FLIGHT_CRUISE_M = {38, 0, 24};

@@ -65,6 +65,8 @@ over gaps, drawn as real swirling air.
   itself as you fall, or **right-click** it in the air.
 - Open, it is a staff along your body with a straight spar at your shoulders, orange wings about three blocks across
   trailing behind it, and a tail half the size behind your feet. Closed, you carry it across your back.
+  You hang under it, arms up to the spar, legs trailing; the wings swing out from the staff as it opens and fold back
+  as it closes.
 - It flies like an **elytra**: you go where you look. A dive gains speed, and with that speed, **pull up to climb**.
   The climb spends the speed; too slow, you sink.
 - **Air Jump on the glider** pumps the wings: a gust that drives you on along your look, faster than the glide's own

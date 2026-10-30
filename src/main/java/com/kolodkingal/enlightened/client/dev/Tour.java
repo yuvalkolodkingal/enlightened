@@ -856,7 +856,8 @@ public final class Tour {
         cmd("effect give @s resistance 60 5 true", 2);
         STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
         camera(CameraType.THIRD_PERSON_BACK, 2);
-        cmd("tp @s 0 20 0 0 25", 25);
+        cmd("tp @s 0 20 0 0 25", 5);
+        shot("258_glider_opening", 20);
         shot("260_glider_back", 2);
         camera(CameraType.THIRD_PERSON_FRONT, 4);
         shot("261_glider_front", 2);

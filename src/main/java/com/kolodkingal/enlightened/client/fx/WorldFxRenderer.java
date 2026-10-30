@@ -771,7 +771,7 @@ public final class WorldFxRenderer {
         flat = flat.lengthSqr() < 1.0E-4 ? new Vec3(0, 0, 1) : flat.normalize();
         Vec3 side = right(flat);
         // The staff's line: along the body, which lies nearly flat under it, the feet a little lower than the hands.
-        double tilt = Math.toRadians(12);
+        double tilt = Math.toRadians(4);
         Vec3 fwd = flat.scale(Math.cos(tilt)).add(0, Math.sin(tilt), 0);
         Vec3 up = side.cross(fwd).normalize();
         if (up.y < 0) {
@@ -779,17 +779,18 @@ public final class WorldFxRenderer {
         }
         Vec3 hr = hand(p, HumanoidArm.RIGHT);
         Vec3 hl = hand(p, HumanoidArm.LEFT);
-        Vec3 grip = rel(hr.add(hl).scale(0.5)).add(up.scale(0.08));
+        // He hangs under it, his arms up to the spar: the spar is at his hands, above his shoulders.
+        Vec3 grip = rel(hr.add(hl).scale(0.5)).add(up.scale(0.04));
         int light = lightAt(hr);
         float open = FxGeometry.easeOut(w);
         float flutter = 0.04F * Mth.sin(age * 0.7F);
         VertexConsumer snow = vc(FxGeometry.snow());
         // The staff from his hands down his back to past his feet; the wing's spar at his shoulders, the tail behind his feet.
-        Vec3 front = grip.add(fwd.scale(0.1));
-        Vec3 tail = grip.subtract(fwd.scale(2.45));
+        Vec3 front = grip.add(fwd.scale(0.25));
+        Vec3 tail = grip.subtract(fwd.scale(2.9));
         FxGeometry.tube(pose, snow, List.of(front, tail), 0.035F, 0.03F, 6, 0, 1, 1, 0, 0.40F, 0.26F, 0.13F, 1.0F, 1.0F, light, true);
-        wing(snow, grip.subtract(fwd.scale(0.4)), fwd, side, up, 1.5F * open, 0.62F, 0.7F, 3, open, flutter, r, g, b, light);
-        wing(snow, grip.subtract(fwd.scale(1.95)), fwd, side, up, 0.75F * open, 0.45F, 0.4F, 4, open, flutter * 0.5F, r, g, b, light);
+        wing(snow, grip, fwd, side, up, 1.6F, 0.55F, 0.75F, 3, open, flutter, r, g, b, light);
+        wing(snow, grip.subtract(fwd.scale(2.2)), fwd, side, up, 0.8F, 0.45F, 0.45F, 4, open, flutter * 0.5F, r, g, b, light);
     }
 
     /**
@@ -801,14 +802,17 @@ public final class WorldFxRenderer {
                              int ribs, float open, float flutter, float r, float g, float b, int light) {
         int n = 12;
         Vec3 hub = root.subtract(fwd.scale(chord));
+        // Opening, each wing swings out from lying folded back along the staff, its cloth unfurling as it goes.
+        double swing = Math.toRadians(90.0 * open);
+        float furl = 0.25F + 0.75F * open;
         for (int sgn = -1; sgn <= 1; sgn += 2) {
-            Vec3 out = side.scale(sgn);
+            Vec3 out = side.scale(sgn * Math.sin(swing)).subtract(fwd.scale(Math.cos(swing)));
             Vec3[] lead = new Vec3[n + 1];
             Vec3[] trail = new Vec3[n + 1];
             for (int i = 0; i <= n; i++) {
                 double s = (double) i / n;
                 lead[i] = root.add(out.scale(span * s)).add(up.scale((0.05 + flutter) * s));
-                double c = chord + (tipChord - chord) * s;
+                double c = (chord + (tipChord - chord) * s) * furl;
                 // The trailing edge in teeth, as cloth cut between its ribs.
                 c += (i % 2 == 0 ? 0.0 : -0.07) * open;
                 trail[i] = lead[i].subtract(fwd.scale(c));

@@ -509,7 +509,7 @@ public final class Animator {
         boolean inWater = player.isInWater();
         boolean sprint = s.sprinting && s.onGround && !s.crouching && !inWater && !s.scooter;
         s.wAir = snap ? (air ? 1.0F : 0.0F) : AnimMath.ease(s.wAir, air ? 1.0F : 0.0F, dt, 2.0F, s.onGround ? 1.5F : 3.0F);
-        s.wGlide = snap ? (glide ? 1.0F : 0.0F) : AnimMath.ease(s.wGlide, glide ? 1.0F : 0.0F, dt, 2.0F, 2.5F);
+        s.wGlide = snap ? (glide ? 1.0F : 0.0F) : AnimMath.ease(s.wGlide, glide ? 1.0F : 0.0F, dt, 6.0F, 4.0F);
         s.wScooter = snap ? (s.scooter ? 1.0F : 0.0F) : AnimMath.ease(s.wScooter, s.scooter ? 1.0F : 0.0F, dt, 2.0F, 3.0F);
         s.wSprint = snap ? (sprint ? 1.0F : 0.0F) : AnimMath.ease(s.wSprint, sprint ? 1.0F : 0.0F, dt, 3.0F, 4.0F);
         for (Stance stance : Stance.VALUES) {
@@ -526,7 +526,7 @@ public final class Animator {
         RunCharacter ch = RunCharacter.of(s.element);
         float groundPitch = ch.lean * s.wSprint * ss(0.05F, 0.30F, s.speed) + 14.0F * s.wScooter * ss(0.04F, 0.30F, s.speed);
         float flightPitch = 50.0F * ss(0.15F, 1.0F, s.s) + 22.0F * ss(1.0F, 2.0F, s.s) - 20.0F * s.u * ss(0.2F, 0.8F, s.sH);
-        float glidePitch = 80.0F - 26.0F * Math.max(0.0F, s.u) + 8.0F * Math.max(0.0F, -s.u);
+        float glidePitch = 86.0F - 20.0F * Math.max(0.0F, s.u) + 4.0F * Math.max(0.0F, -s.u);
         float pitchTarget = AnimMath.lerp(s.wAir, AnimMath.lerp(s.wGlide, groundPitch, glidePitch), flightPitch);
         if (snap) {
             s.pitch.snap(pitchTarget);

@@ -65,7 +65,11 @@ final class Locomotion {
         c.head(-10.0F * cruise - 8.0F * sprint, 0, 0, w);
     }
 
-    /** The glider: both hands up gripping the frame, the legs together trailing, a bank into each turn. */
+    /**
+     * The glider: he lies flat under it, both hands up gripping the spar over his shoulders, the head up looking ahead,
+     * the legs together trailing straight, never a running stride: they only drift a little in the wind, part a touch
+     * in a slow glide, lift in a dive and drop in a climb; the arms lean into each turn.
+     */
     private static void glide(PoseContext c) {
         AnimState st = c.st;
         float w = st.wGlide;
@@ -80,10 +84,14 @@ final class Locomotion {
         float grip = Math.max(w, st.stance(Stance.GLIDE));
         c.arm(true, StancePoses.GLIDE_M[0] + wind, StancePoses.GLIDE_M[1] - bank, StancePoses.GLIDE_M[2], grip);
         c.arm(false, StancePoses.GLIDE_O[0] - wind, StancePoses.GLIDE_O[1] - bank, StancePoses.GLIDE_O[2], grip);
-        float flutter = 4.0F * calm * Mth.sin(0.5F * age);
-        c.leg(true, 8.0F + flutter, 2.0F, w);
-        c.leg(false, 8.0F - flutter, -2.0F, w);
-        c.head(-30.0F, 0, 0, w);
+        float flutter = 2.0F * calm * Mth.sin(0.35F * age);
+        float slow = 1.0F - ss(0.3F, 1.0F, st.s);
+        float pitch = 6.0F * Mth.clamp(-st.u, -1.0F, 1.0F);
+        // Full weight on the legs as soon as the glide starts, so the walk's swing never shows under it.
+        float legs = Math.max(w, ss(0.0F, 0.3F, grip) * (st.onGround ? 0.0F : 1.0F));
+        c.leg(true, 4.0F + pitch + flutter, 1.0F + 4.0F * slow, legs);
+        c.leg(false, 4.0F + pitch - flutter, -1.0F - 4.0F * slow, legs);
+        c.head(-58.0F, 0, 0, w);
         c.occupy(true, grip);
         c.occupy(false, grip);
     }

@@ -16,7 +16,7 @@ public enum Stance {
     /** The air scooter: seated on the ball, one hand down. */
     SCOOTER(2, 3, false),
     /** The glider: hands up on the frame, legs trailing. */
-    GLIDE(2, 4, false),
+    GLIDE(7, 6, false),
     /** Tetherless flight. */
     FLIGHT(3, 4, false),
     /** The octopus form: arms wide, tentacles swaying. */

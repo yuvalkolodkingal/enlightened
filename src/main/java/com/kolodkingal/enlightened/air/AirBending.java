@@ -308,7 +308,7 @@ public final class AirBending {
         Benders.syncIfDirty(p);
     }
 
-    /** How far he must have fallen (blocks) before the staff opens into its wings, by itself or at a right-click. */
+    /** How far he must have fallen (blocks) before the staff opens into its wings by itself (a right-click opens it any time). */
     public static final float GLIDER_FALL = 3.0F;
 
     /** Whether he has fallen far enough for the glider to open. */
@@ -323,8 +323,8 @@ public final class AirBending {
 
     /**
      * The glide on the Air Glider, as in the show, for every airbender with the staff in hand (Air Jump not needed): the
-     * staff opens into its wings (a right-click in the air, or by itself in a fall), once he has fallen at least
-     * {@link #GLIDER_FALL} blocks; he lies under it and steers with
+     * staff opens into its wings (a right-click in the air, whenever he likes, or by itself once he has fallen at least
+     * {@link #GLIDER_FALL} blocks); he lies under it and steers with
      * his look, flying as an elytra flies: a dive gains speed, and speed carries him up again when he pulls up, the
      * climb spending it; slow, he sinks. The Air Jump key pumps a gust under the wings (see {@link Jump}). Sneak, water
      * or the ground fold it. Called every tick for benders of air.

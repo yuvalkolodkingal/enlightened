@@ -192,9 +192,7 @@ public final class Chakras {
         }
         boolean point = onMeditationPoint(p);
         boolean guru = Guru.near(p);
-        // The Avatar, meditating on a Meditation Point, crosses into the Spirit World (or back out of it); but before
-        // the guru he sits for his chakras, not to cross (the guru's room has its Meditation Points too).
-        boolean crossing = point && !guru && data.element() == Element.AVATAR;
+        boolean crossing = crossesHere(p, data);
         if (crossing && now - data.meditateSince() >= com.kolodkingal.enlightened.world.SpiritWorld.AVATAR_CROSSING) {
             data.setMeditating(false);
             com.kolodkingal.enlightened.world.SpiritWorld.cross(p, null);
@@ -307,6 +305,14 @@ public final class Chakras {
 
     /** When each master Avatar entered the State at will (for his rest when he leaves it). */
     private static final java.util.Map<java.util.UUID, Long> ENTERED = new java.util.HashMap<>();
+
+    /**
+     * Whether his meditation here takes him across to the Spirit World: the Avatar on a Meditation Point, but not before
+     * the guru (the guru's room has its Meditation Points too, and there he sits for his chakras).
+     */
+    public static boolean crossesHere(ServerPlayer p, BendingData data) {
+        return data.element() == Element.AVATAR && onMeditationPoint(p) && !Guru.near(p);
+    }
 
     public static boolean onMeditationPoint(ServerPlayer p) {
         return p.serverLevel().getBlockState(p.blockPosition()).is(ModTags.MEDITATION_POINT)

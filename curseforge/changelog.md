@@ -1,6 +1,7 @@
 # Enlightened 1.0.12
 
-* **The glider opens after a 3-block fall** (4 in 1.0.11).
+* **The glider opens by itself after a 3-block fall** (4 in 1.0.11), and **a right-click opens it whenever you like**
+  in the air, as before 1.0.11.
 
 # Enlightened 1.0.11
 

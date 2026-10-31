@@ -78,27 +78,21 @@ public final class AnomalyTests {
         });
     }
 
-    @GameTest(template = ARENA, timeoutTicks = 300)
+    @GameTest(template = ARENA, timeoutTicks = 20)
     public static void beforeTheGuruTheAvatarMeditatesAndDoesNotCross(GameTestHelper helper) {
         TestKit.Fixture f = TestKit.fixture(helper);
         helper.setBlock(new BlockPos(10, 1, 8), com.kolodkingal.enlightened.registry.ModBlocks.MEDITATION_POINT.get());
         ServerPlayer player = f.player(10.5, FLOOR, 8.5);
         BendingData data = f.bender(player, Element.AVATAR, Ability.AVATAR_STATE, 1);
-        data.setGuruTaught(true);
+        check(Chakras.onMeditationPoint(player), "he sits on a Meditation Point");
+        check(Chakras.crossesHere(player, data), "alone, meditation there takes the Avatar across");
         var guru = com.kolodkingal.enlightened.registry.ModEntities.GURU_PATHIK.get().create(helper.getLevel());
         BlockPos at = helper.absolutePos(new BlockPos(12, 2, 8));
         guru.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
         helper.getLevel().addFreshEntity(guru);
-        helper.runAtTickTime(5, () -> {
-            check(Chakras.onMeditationPoint(player), "he sits on a Meditation Point");
-            Chakras.meditate(player, true);
-        });
-        helper.runAtTickTime(5 + com.kolodkingal.enlightened.world.SpiritWorld.AVATAR_CROSSING + 20, () -> {
-            check(player.level().dimension().equals(net.minecraft.world.level.Level.OVERWORLD), "before the guru he does not cross to the Spirit World");
-            check(data.meditating() || data.chakras() > 0, "he meditates on, for his chakras (" + data.chakras() + " open)");
-            guru.discard();
-            helper.succeed();
-        });
+        check(!Chakras.crossesHere(player, data), "before the guru it does not: there he meditates for his chakras");
+        guru.discard();
+        helper.succeed();
     }
 
     @GameTest(template = ARENA, timeoutTicks = 20)

@@ -47,7 +47,7 @@ public class GliderItem extends Item {
         return entity.getMainHandItem().getItem() instanceof GliderItem || entity.getOffhandItem().getItem() instanceof GliderItem;
     }
 
-    /** Right-click: an airbender falling (at least three blocks) opens the staff into its wings; in the air, folds it. */
+    /** Right-click: an airbender in the air opens the staff into its wings whenever he likes, or folds it. */
     @Override
     public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
                                                                         net.minecraft.world.InteractionHand hand) {
@@ -55,12 +55,6 @@ public class GliderItem extends Item {
         if (player instanceof net.minecraft.server.level.ServerPlayer p) {
             com.kolodkingal.enlightened.bending.BendingData data = com.kolodkingal.enlightened.bending.Benders.get(p);
             if (!data.element().commands(com.kolodkingal.enlightened.bending.Element.AIR) || player.onGround() && !data.gliderOpen()) {
-                return net.minecraft.world.InteractionResultHolder.pass(stack);
-            }
-            if (!data.gliderOpen() && !com.kolodkingal.enlightened.air.AirBending.fallenFarEnough(p)) {
-                // It opens only in a real fall: a hop is not enough.
-                p.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.air.glider_fall",
-                        (int) com.kolodkingal.enlightened.air.AirBending.GLIDER_FALL).withStyle(ChatFormatting.GRAY), true);
                 return net.minecraft.world.InteractionResultHolder.pass(stack);
             }
             com.kolodkingal.enlightened.air.AirBending.setGlider(p, data, !data.gliderOpen(), true);

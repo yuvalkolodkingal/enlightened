@@ -47,7 +47,7 @@ public class GliderItem extends Item {
         return entity.getMainHandItem().getItem() instanceof GliderItem || entity.getOffhandItem().getItem() instanceof GliderItem;
     }
 
-    /** Right-click: an airbender falling (at least four blocks) opens the staff into its wings; in the air, folds it. */
+    /** Right-click: an airbender falling (at least three blocks) opens the staff into its wings; in the air, folds it. */
     @Override
     public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
                                                                         net.minecraft.world.InteractionHand hand) {

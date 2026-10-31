@@ -1,3 +1,7 @@
+# Enlightened 1.0.12
+
+* **The glider opens after a 3-block fall** (4 in 1.0.11).
+
 # Enlightened 1.0.11
 
 * **The glider opens only in a real fall**: at least 4 blocks down, by itself or at a right-click (a hop or a short

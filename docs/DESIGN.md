@@ -532,5 +532,5 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 
 | | |
 |---|---|
-| The glider | `AirBending.GLIDER_FALL` (4): the staff opens (by itself in `glideTick`, or at a right-click in `GliderItem.use`) only when `fallDistance` has reached it; a right-click before says so (`glider_fall`). Folding is as before. |
+| The glider | `AirBending.GLIDER_FALL` (3): the staff opens (by itself in `glideTick`, or at a right-click in `GliderItem.use`) only when `fallDistance` has reached it; a right-click before says so (`glider_fall`). Folding is as before. |
 

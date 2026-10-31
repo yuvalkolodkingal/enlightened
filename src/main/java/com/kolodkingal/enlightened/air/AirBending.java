@@ -309,7 +309,7 @@ public final class AirBending {
     }
 
     /** How far he must have fallen (blocks) before the staff opens into its wings, by itself or at a right-click. */
-    public static final float GLIDER_FALL = 4.0F;
+    public static final float GLIDER_FALL = 3.0F;
 
     /** Whether he has fallen far enough for the glider to open. */
     public static boolean fallenFarEnough(ServerPlayer p) {

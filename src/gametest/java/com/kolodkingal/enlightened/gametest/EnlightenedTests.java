@@ -584,12 +584,12 @@ public final class EnlightenedTests {
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get()));
         player.setOnGround(false);
         player.setDeltaMovement(0, -0.6, 0);
-        player.fallDistance = 2.0F;
+        player.fallDistance = 1.5F;
         com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
-        check(!data.gliderOpen(), "a two-block drop is not enough to open it");
+        check(!data.gliderOpen(), "a drop of a block and a half is not enough to open it");
         player.fallDistance = com.kolodkingal.enlightened.air.AirBending.GLIDER_FALL;
         com.kolodkingal.enlightened.air.AirBending.glideTick(player, data);
-        check(data.gliderOpen(), "falling four blocks, the staff opens for an airbender without Air Jump");
+        check(data.gliderOpen(), "falling three blocks, the staff opens for an airbender without Air Jump");
         // A long dive gains speed...
         player.setXRot(60.0F);
         for (int i = 0; i < 25; i++) {

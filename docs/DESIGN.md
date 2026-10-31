@@ -521,3 +521,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | The art | The Avatar State art asks only for one open chakra, however it was opened (no guru check); `masters` is all seven open, taught or not; the sphere asks for seven. |
 | Near death | `Chakras.dire` enters as deep as the chakras reach: none open, the whole (`POWER_WHOLE`); one to six, that part; seven, the master's. |
 
+## 33. 1.0.10: fixes
+
+| | |
+|---|---|
+| Meditating before the guru | `Chakras.tick` crosses the Avatar to the Spirit World from a Meditation Point only away from Guru Pathik (`Guru.near`): his room's points are for the chakras. |
+| The Avatar's own skin | `look.enlightened.avatar.own` ("Your own skin") in both languages; a test checks every look of every element has a name in both. |
+

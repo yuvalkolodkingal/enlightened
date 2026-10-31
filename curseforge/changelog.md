@@ -1,3 +1,9 @@
+# Enlightened 1.0.10
+
+* **Meditating before Guru Pathik** no longer sends the Avatar to the Spirit World: beside the guru, meditation is for
+  the chakras (elsewhere, a Meditation Point still takes the Avatar across).
+* **Your own skin as the Avatar** now shows its name ("Your own skin") instead of a raw text key.
+
 # Enlightened 1.0.9
 
 * **The partial Avatar State works from the Avatar State key**, however your chakras were opened (no guru needed).

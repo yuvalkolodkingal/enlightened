@@ -673,5 +673,6 @@
   "message.enlightened.avatar.no_chakra": "Open at least one chakra first: the Avatar State flows through them.",
   "message.enlightened.avatar.enter_part": "%s draws on the Avatar State, as far as the %s chakra (%s of %s)!",
   "message.enlightened.avatar.enter_master": "%s has entered the Avatar State, master of all seven chakras!",
-  "effect.enlightened.dread": "Dread"
+  "effect.enlightened.dread": "Dread",
+  "look.enlightened.avatar.own": "Your own skin"
 }

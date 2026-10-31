@@ -20,5 +20,5 @@ lights in its wood, a hollow at its foot, and a crown of blossom lit gold from w
   rainbow light between their pillars. Walk into the light and you cross into the Spirit World, at the same place.
   A gate stands where you arrive (it is built if there is none near), so the way back is always at hand: walk into
   it to return to where you left from.
-* **As the Avatar.** The Avatar crosses by meditating (the Meditate key) on a **Meditation Point** for ten seconds;
+* **As the Avatar.** The Avatar crosses by meditating (the Meditate key) on a **Meditation Point** for ten seconds (not before Guru Pathik: there he meditates for his chakras);
   meditating on one in the Spirit World brings him back.

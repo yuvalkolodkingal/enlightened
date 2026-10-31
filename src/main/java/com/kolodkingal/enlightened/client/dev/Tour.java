@@ -1062,6 +1062,12 @@ public final class Tour {
         cmd("tp @s 0 20 0 90 -5", 6);
         camera(CameraType.THIRD_PERSON_BACK, 4);
         shot("262_glider_side", 2);
+        // Air Jump on the glider: a gust under the wings, and he stays hanging beneath them.
+        cmd("enlightened loadout @s 1 air_jump", 2);
+        press(1, 2);
+        shot("262b_glider_air_jump_0", 2);
+        shot("262b_glider_air_jump_1", 3);
+        shot("262b_glider_air_jump_2", 3);
         cmd("tp @s 0 20 0 0 80", 6);
         camera(CameraType.THIRD_PERSON_FRONT, 5);
         shot("263_glider_below", 2);

@@ -1,12 +1,8 @@
-# Enlightened 1.0.12
-
-* **The glider opens by itself after a 3-block fall** (4 in 1.0.11), and **a right-click opens it whenever you like**
-  in the air, as before 1.0.11.
-
 # Enlightened 1.0.11
 
-* **The glider opens only in a real fall**: at least 4 blocks down, by itself or at a right-click (a hop or a short
-  drop no longer opens it).
+* **The glider opens by itself only in a real fall** of at least 3 blocks (a hop or a short drop no longer opens it);
+  **a right-click opens it whenever you like** in the air.
+* **Air Jump on the glider** keeps you hanging under the wings (it no longer lifts you up over them).
 
 # Enlightened 1.0.10
 

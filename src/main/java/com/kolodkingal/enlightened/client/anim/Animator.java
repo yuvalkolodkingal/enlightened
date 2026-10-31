@@ -403,6 +403,10 @@ public final class Animator {
         if (def == null) {
             return;
         }
+        if (id == Gesture.AIR_JUMP && Benders.get(p).gliderOpen()) {
+            // On the glider, Air Jump is a gust under the wings: he keeps hanging beneath them, not leaping up over them.
+            return;
+        }
         for (AnimState.Slot slot : s.slots) {
             if (slot.active && slot.id == id && slot.predicted && age - slot.start <= PREDICT_WINDOW) {
                 slot.predicted = predicted;

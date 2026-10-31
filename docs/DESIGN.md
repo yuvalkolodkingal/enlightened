@@ -528,9 +528,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | Meditating before the guru | `Chakras.tick` crosses the Avatar to the Spirit World from a Meditation Point only away from Guru Pathik (`Guru.near`): his room's points are for the chakras. |
 | The Avatar's own skin | `look.enlightened.avatar.own` ("Your own skin") in both languages; a test checks every look of every element has a name in both. |
 
-## 34. 1.0.11: the glider opens in a real fall
+## 34. 1.0.11: the glider opens in a real fall, Air Jump beneath it
 
 | | |
 |---|---|
-| The glider | `AirBending.GLIDER_FALL` (3): the staff opens by itself (`glideTick`) only when `fallDistance` has reached it; a right-click in the air (`GliderItem.use`) opens it any time. Folding is as before. **(1.0.12: 3 blocks, the right-click free)** |
+| The glider | `AirBending.GLIDER_FALL` (3): the staff opens by itself (`glideTick`) only when `fallDistance` has reached it; a right-click in the air (`GliderItem.use`) opens it any time. Folding is as before. |
+| Air Jump on the glider | `Animator.start` plays no `AIR_JUMP` gesture while the glider is open: the gust pumps the glide and the body keeps the glide pose, hanging under the wings. |
 

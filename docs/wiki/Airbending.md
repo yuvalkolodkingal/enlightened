@@ -76,7 +76,8 @@ over gaps, drawn as real swirling air.
 ## The glider, as an elytra
 
 - **Any airbender** with the [Air Glider](Items-and-Crafting) in hand can glide; Air Jump is not needed. It opens by
-  itself as you fall, or **right-click** it in the air.
+  itself as you fall, or **right-click** it in the air, but only once you have fallen **at least 4 blocks** (a hop or a
+  short drop is not enough).
 - Open, it is a staff along your body with a straight spar at your shoulders, orange wings about three blocks across
   trailing behind it, and a tail half the size behind your feet. Closed, you carry it across your back.
   You hang under it, arms up to the spar, legs trailing; the wings swing out from the staff as it opens and fold back

@@ -1,3 +1,8 @@
+# Enlightened 1.0.11
+
+* **The glider opens only in a real fall**: at least 4 blocks down, by itself or at a right-click (a hop or a short
+  drop no longer opens it).
+
 # Enlightened 1.0.10
 
 * **Meditating before Guru Pathik** no longer sends the Avatar to the Spirit World: beside the guru, meditation is for

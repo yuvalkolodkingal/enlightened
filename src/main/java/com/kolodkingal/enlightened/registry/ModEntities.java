@@ -69,7 +69,19 @@ public final class ModEntities {
             () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.AnomalyEntity::new, MobCategory.MONSTER)
                     .sized(2.6F, 2.6F).clientTrackingRange(12).fireImmune().build("anomaly"));
 
+    /** A Sun Warrior of the ancient city: a warrior, a dancer at the ceremony, or the chief who offers the test. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.SunWarriorEntity>> SUN_WARRIOR = ENTITIES.register("sun_warrior",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.SunWarriorEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.95F).clientTrackingRange(10).build("sun_warrior"));
+
+    /** A dragon: Ran or Shaw, the masters, or one hatched from a golden egg. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.DragonEntity>> DRAGON = ENTITIES.register("dragon",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.DragonEntity::new, MobCategory.CREATURE)
+                    .sized(2.6F, 2.0F).eyeHeight(1.4F).clientTrackingRange(16).updateInterval(1).fireImmune().build("dragon"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
+        event.put(SUN_WARRIOR.get(), com.kolodkingal.enlightened.entity.SunWarriorEntity.createAttributes().build());
+        event.put(DRAGON.get(), com.kolodkingal.enlightened.entity.DragonEntity.createAttributes().build());
         event.put(ANOMALY.get(), com.kolodkingal.enlightened.entity.AnomalyEntity.createAttributes().build());
         event.put(CITY_GUARD.get(), com.kolodkingal.enlightened.entity.CityGuardEntity.createAttributes().build());
         event.put(KING_BUMI.get(), com.kolodkingal.enlightened.entity.KingBumiEntity.createAttributes().build());

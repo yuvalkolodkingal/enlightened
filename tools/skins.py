@@ -1182,6 +1182,184 @@ def paint_items():
     wings.save(os.path.join(ITEM, 'air_glider_wings.png'))
 
 
+# The Sun Warriors: cream tunics without sleeves, a red sash across the chest, a golden apron over brown trousers,
+# sandals, black hair in a topknot under a golden band with the red flame at the front; the chief's headdress is a
+# tall golden flame.
+SUN_FACES = [
+    dict(skin=(176, 118, 80), eyes=(50, 36, 28), hair=(24, 20, 20)),
+    dict(skin=(150, 98, 64), eyes=(46, 34, 26), hair=(30, 24, 22)),
+    dict(skin=(196, 140, 98), eyes=(60, 44, 30), hair=(20, 18, 18), mustache=True),
+]
+
+
+def paint_sun_warrior(p, s, chief=False):
+    gold = (222, 176, 58)
+    red = (172, 52, 36)
+    s = dict(s)
+    s.update(garment='robe', shirt=(232, 218, 184), pants=(122, 76, 46), boots=(90, 60, 38), trim=(200, 184, 150), belt=red, bare=True)
+    paint_head(p, s['skin'], s['eyes'], brows=s['hair'])
+    paint_hair(p, s['hair'], 'topknot')
+    if s.get('mustache'):
+        paint_mustache(p, s['hair'])
+    paint_body(p, s, False)
+    # The sash from the right shoulder to the left hip, front and back.
+    fx, fy = BODY['front'][0], BODY['front'][1]
+    bx, by = BODY['back'][0], BODY['back'][1]
+    for j in range(0, 8):
+        i = min(7, j)
+        p.dot(fx + i, fy + j, red)
+        p.dot(fx + min(7, i + 1), fy + j, red, 0.85)
+        p.dot(bx + 7 - i, by + j, red, 0.9)
+    # The golden apron hanging in front of the legs, edged in red.
+    for leg in (R_LEG, L_LEG):
+        x, y, w, h = leg['front']
+        p.fill((x, y, w, 6), gold, 0.05, vgrad=0.15)
+        p.fill((x, y + 6, w, 1), red, 0.04)
+    # Golden armbands.
+    for a in (arm(40, 16, False), arm(32, 48, False)):
+        p.rows(a, gold, (1,))
+        p.rows(a, gold, (9,))
+    # The headband on the hat layer: gold all round, the red flame at the front.
+    for name in ('front', 'left', 'right', 'back'):
+        x, y, w, h = HAT[name]
+        p.fill((x, y + 1, w, 1), gold, 0.05)
+    hx, hy = HAT['front'][0], HAT['front'][1]
+    p.dot(hx + 3, hy + 1, red)
+    p.dot(hx + 4, hy + 1, red)
+    p.dot(hx + 3, hy, (240, 120, 40))
+    p.dot(hx + 4, hy, red)
+    if chief:
+        # The chief's headdress: a tall golden flame over the brow and round the crown, red within; a red cloak behind.
+        for name in ('front', 'left', 'right', 'back'):
+            x, y, w, h = HAT[name]
+            p.fill((x, y, w, 2), gold, 0.05)
+        tx, ty, tw, th = HAT['top']
+        p.fill((tx + 1, ty + 1, tw - 2, th - 2), gold, 0.06)
+        p.fill((tx + 3, ty + 3, 2, 2), red, 0.04)
+        p.dot(hx + 2, hy, (250, 210, 90))
+        p.dot(hx + 5, hy, (250, 210, 90))
+        p.dot(hx + 3, hy + 1, (250, 120, 40))
+        p.dot(hx + 4, hy + 1, (250, 120, 40))
+        jx, jy, jw, jh = JACKET['back']
+        p.fill((jx, jy, jw, jh), red, 0.05, vgrad=0.2)
+        p.fill((jx, jy, jw, 1), gold, 0.05)
+
+
+def paint_sun_warriors():
+    out = os.path.join(ENTITY, 'sun_warrior')
+    for i, face in enumerate(SUN_FACES):
+        p = Painter('sun_warrior' + str(i))
+        paint_sun_warrior(p, face)
+        p.save(os.path.join(out, 'warrior_%d.png' % i))
+    p = Painter('sun_chief')
+    paint_sun_warrior(p, dict(skin=(160, 106, 70), eyes=(44, 32, 26), hair=(200, 196, 190), mustache=True), chief=True)
+    p.save(os.path.join(out, 'chief.png'))
+
+
+# The dragons (entity/dragon/<colour>.png, 128x64 over DragonRenderer.createBodyLayer): scales of the dragon's colour
+# with a darker rim to each, a pale belly, white spines, mane and whiskers, cream horns, golden eyes.
+DRAGONS = {
+    'red': dict(body=(186, 40, 30), belly=(236, 200, 140), dark=(120, 22, 18)),
+    'blue': dict(body=(40, 88, 186), belly=(200, 226, 240), dark=(22, 50, 120)),
+    'white': dict(body=(236, 234, 228), belly=(250, 236, 196), dark=(186, 182, 176)),
+}
+
+
+def paint_scales(p, rect, body, dark):
+    x, y, w, h = rect
+    p.fill(rect, body, 0.06)
+    for j in range(y, y + h):
+        for i in range(x, x + w):
+            # Overlapping half-moon scales, a darker rim along the bottom of each.
+            row = (j - y) // 3
+            col = ((i - x) + (2 if row % 2 else 0)) % 4
+            if (j - y) % 3 == 2 and col in (0, 1, 2):
+                p.dot(i, j, dark, 1.0)
+            elif (j - y) % 3 == 0 and col == 1:
+                p.dot(i, j, body, 1.18)
+
+
+def paint_dragons():
+    out = os.path.join(ENTITY, 'dragon')
+    white = (246, 244, 238)
+    for name, c in DRAGONS.items():
+        p = Painter('dragon_' + name, (128, 64))
+        body, belly, dark = c['body'], c['belly'], c['dark']
+        seg = cube(0, 0, 16, 16, 16)
+        for face, rect in seg.items():
+            if face == 'bottom':
+                p.fill(rect, belly, 0.05)
+                for j in range(rect[1], rect[1] + rect[3], 3):
+                    p.fill((rect[0], j, rect[2], 1), shade(belly, 0.85), 0.03)
+            else:
+                paint_scales(p, rect, body, dark)
+        # The sides fade to the belly at their lower edge.
+        for face in ('front', 'back', 'left', 'right'):
+            x, y, w, h = seg[face]
+            p.fill((x, y + h - 3, w, 3), mixc(body, belly, 0.6), 0.05)
+        for c2, col in ((cube(64, 0, 2, 5, 10), white), (cube(88, 12, 8, 1, 1), white), (cube(82, 32, 16, 14, 4), white)):
+            for face, rect in c2.items():
+                p.fill(rect, col, 0.05)
+                p.speckle(rect, (220, 218, 212), 0.15)
+        for face, rect in cube(88, 0, 2, 2, 10).items():
+            p.fill(rect, (232, 220, 186), 0.06)
+        for face, rect in cube(64, 16, 4, 9, 4).items():
+            paint_scales(p, rect, body, dark)
+        x, y, w, h = cube(64, 16, 4, 9, 4)['front']
+        p.fill((x, y + h - 2, w, 2), (60, 50, 40), 0.05)
+        skull = cube(0, 32, 12, 10, 12)
+        snout = cube(48, 32, 8, 6, 9)
+        jaw = cube(48, 48, 7, 2, 10)
+        for c2 in (skull, snout):
+            for face, rect in c2.items():
+                paint_scales(p, rect, body, dark)
+            p.fill(c2['bottom'], belly, 0.05)
+        for face, rect in jaw.items():
+            p.fill(rect, belly, 0.05)
+        p.fill(jaw['top'], (150, 40, 40), 0.05)
+        # Nostrils at the snout's tip, a row of teeth along its lower edge.
+        x, y, w, h = snout['front']
+        p.dot(x + 1, y + 1, (30, 20, 20))
+        p.dot(x + w - 2, y + 1, (30, 20, 20))
+        p.fill((x, y + h - 1, w, 1), white, 0.03)
+        # The eyes: gold with a slit.
+        eyes = cube(82, 50, 12, 2, 2)
+        for face, rect in eyes.items():
+            p.fill(rect, (250, 200, 40), 0.05)
+        for face in ('left', 'right'):
+            x, y, w, h = eyes[face]
+            p.dot(x + 1, y, (20, 16, 10))
+            p.dot(x + 1, y + 1, (20, 16, 10))
+        x, y, w, h = eyes['front']
+        p.fill((x + 2, y, 8, h), body, 0.04)
+        p.save(os.path.join(out, name + '.png'))
+
+
+def paint_sun_items():
+    os.makedirs(ITEM, exist_ok=True)
+    img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    # The Eternal Flame in its stone bowl.
+    d.polygon([(7, 1), (10, 5), (11, 9), (8, 11), (5, 10), (4, 7), (6, 4)], fill=(240, 110, 30, 255))
+    d.polygon([(7, 4), (9, 7), (9, 10), (7, 11), (6, 9), (6, 6)], fill=(255, 200, 60, 255))
+    d.polygon([(7, 7), (8, 9), (7, 10), (6, 9)], fill=(255, 245, 190, 255))
+    d.rectangle((2, 11, 13, 12), fill=(150, 146, 140, 255))
+    d.rectangle((3, 13, 12, 13), fill=(120, 116, 110, 255))
+    d.rectangle((5, 14, 10, 14), fill=(96, 92, 88, 255))
+    d.line((2, 11, 13, 11), fill=(176, 172, 164, 255))
+    img.save(os.path.join(ITEM, 'eternal_flame.png'))
+    # The golden dragon egg's block texture: gold scales, lighter at the top.
+    blk = os.path.join(ROOT, 'block')
+    p = Painter('golden_dragon_egg', (16, 16))
+    paint_scales(p, (0, 0, 16, 16), (226, 178, 52), (160, 112, 30))
+    for j in range(0, 5):
+        for i in range(16):
+            r, g, b, a = p.px[i, j]
+            p.px[i, j] = (min(255, r + 18), min(255, g + 18), min(255, b + 10), a)
+    p.speckle((0, 0, 16, 16), (255, 236, 150), 0.05)
+    p.save(os.path.join(blk, 'golden_dragon_egg.png'))
+
+
 def main():
     for name, (slim, spec) in LOOKS.items():
         paint_look(name, slim, spec)
@@ -1202,6 +1380,9 @@ def main():
     paint_bison()
     paint_lion_turtle()
     paint_items()
+    paint_sun_warriors()
+    paint_dragons()
+    paint_sun_items()
     print('wrote', len(LOOKS), 'skins, 2 shells, the lemur, 7 item icons')
 
 

@@ -83,6 +83,10 @@ public final class Shots {
         if (data.element() == Element.AVATAR && data.avatarBase() != Element.NONE && Avatar.elementOf(type) == data.avatarBase()) {
             amount *= Avatar.BORN_DAMAGE;
         }
+        // Fire blessed by Ran and Shaw burns harder.
+        if (data.dragonBlessed() && Avatar.elementOf(type) == Element.FIRE) {
+            amount *= Variants.BLESSED_FIRE;
+        }
         if (amount <= 0) {
             return false;
         }

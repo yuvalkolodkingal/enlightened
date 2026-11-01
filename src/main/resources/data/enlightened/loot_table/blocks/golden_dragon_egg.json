@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "enlightened:golden_dragon_egg" }
+      ],
+      "conditions": [
+        { "condition": "minecraft:survives_explosion" }
+      ]
+    }
+  ]
+}

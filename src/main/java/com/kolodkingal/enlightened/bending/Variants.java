@@ -128,6 +128,14 @@ public final class Variants {
         return c & 0xFFFFFF;
     }
 
+    /** How many fire colours this bender may choose among: normal and blue, and the rainbow once blessed by the dragons. */
+    public static int fireColours(BendingData data) {
+        return data.dragonBlessed() ? 3 : 2;
+    }
+
+    /** The extra force of a blessed firebender's fire. */
+    public static final float BLESSED_FIRE = 1.25F;
+
     /** The names of the fire colours, for the command and the messages. */
     public static final String[] FIRE_COLOURS = {"normal", "blue", "rainbow"};
 
@@ -138,7 +146,8 @@ public final class Variants {
     public static int fireColour(BendingData data) {
         int chosen = data.fireChoice();
         if (chosen > 0) {
-            return chosen - 1;
+            // The rainbow is the dragons' gift: until Ran and Shaw bless him, it burns as ordinary fire.
+            return chosen - 1 == FIRE_RAINBOW && !data.dragonBlessed() ? FIRE_NORMAL : chosen - 1;
         }
         return data.element() == Element.FIRE && "azula".equals(data.variant()) ? FIRE_BLUE : FIRE_NORMAL;
     }

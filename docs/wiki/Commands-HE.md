@@ -20,7 +20,7 @@
 | `/enlightened avatars` / `/enlightened avatars max <count>` | מציג את האווטארים (והיסוד שכל אחד נולד אליו, ושל הבא); קובע כמה אווטארים יכולים להיות בעולם בבת אחת (ברירת מחדל 1). |
 | `/enlightened guru <players> <taught\|untaught>` | מסמן שחקנים כתלמידים (או לא) של גורו פאתיק. |
 | `/enlightened lionturtle [pos [size]]` | מעלה [צב אריה](Lion-Turtle-HE) ואת האי שלו (הוא עולה תוך כמה שניות): בגובה פני הים היכן שאתה עומד, או עם פני הים במיקום הנתון; הוא פונה לאן שאתה פונה. גודל 1 עד 10 (ברירת מחדל `lionTurtleSize`). |
-| `/enlightened firecolor <players> <normal\|blue\|rainbow\|look>` | קובע את צבע האש של השחקנים (`look`: לפי הנראות שלהם). |
+| `/enlightened firecolor <players> <normal\|blue\|rainbow\|look>` | קובע את צבע האש של השחקנים (`look`: לפי הנראות שלהם; `rainbow` נותן גם את הברכה של ראן ושו). |
 | `/enlightened temple [pos]` | בונה את [מקדש האוויר הדרומי](Southern-Air-Temple-HE) עם רצפת הטרסה במיקום (ברירת מחדל: היכן שאתה עומד). |
 | `/enlightened chakras <players> <0-7>` | קובע כמה [צ'אקרות](Chakras-and-the-Avatar-State-HE) פתוחות. |
 | `/enlightened info [player]` | יסוד, נקודות, ניסיון, נקודות שהושקעו, הריגות, וכל יכולת שנלמדה עם הרמה והמשבצת שלה. |

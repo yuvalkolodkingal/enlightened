@@ -176,6 +176,10 @@ public final class EnlightenedCommand {
         int n = 0;
         for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
             Benders.get(player).setFireChoice(choice);
+            if (choice - 1 == com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW) {
+                // An operator who gives the rainbow gives the dragons' blessing with it.
+                Benders.get(player).setDragonBlessed(true);
+            }
             Benders.syncIfDirty(player);
             n++;
         }

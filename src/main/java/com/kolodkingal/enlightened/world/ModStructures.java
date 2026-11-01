@@ -37,6 +37,9 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> TREE_OF_TIME_PIECE = PIECES.register("tree_of_time",
             () -> (StructurePieceType.ContextlessType) TreeOfTimePiece::new);
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> SUN_WARRIORS_PIECE = PIECES.register("sun_warriors",
+            () -> (StructurePieceType.ContextlessType) SunWarriorPiece::new);
+
     private ModStructures() {
     }
 }

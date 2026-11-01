@@ -1,3 +1,19 @@
+# Enlightened 1.0.12
+
+* **The city of the Sun Warriors**, in the jungle: ruined houses and step pyramids with **traps** (pressure plates over
+  dispensers of arrows and fire), dragon statues, and a stairway up **the mountain of the masters**.
+* **The Sun Warriors**: talk to them. **The chief** at the foot of the stairway offers you the test of Ran and Shaw and
+  gives you **the Eternal Flame**, which goes out after **seven minutes**. Climb fast. Before the summit, **the dancers
+  perform their fire ceremony**.
+* **Ran and Shaw**, the red and blue dragons, come out of their caves on the summit and judge you. **Bring the flame
+  (or be a Hero of the Village)** and they wrap you in **fire of every colour**: your fire becomes **25% stronger**,
+  **rainbow fire** is yours to choose (Sneak + Change Look), and you get a **golden dragon egg**. Come without it and
+  they burn you.
+* **The golden dragon egg**: place it anywhere, and **in ten minutes a dragon pup hatches**, red, blue or white. It
+  grows into a **huge dragon with 200 health** that you **ride and fly**. **Left-click breathes fire** (a blue dragon
+  breathes blue fire); unridden, it follows you and burns your enemies.
+* **Rainbow fire is now Ran and Shaw's gift**: until they bless you, the fire colours are normal and blue.
+
 # Enlightened 1.0.11
 
 * **The glider opens by itself only in a real fall** of at least 3 blocks (a hop or a short drop no longer opens it);

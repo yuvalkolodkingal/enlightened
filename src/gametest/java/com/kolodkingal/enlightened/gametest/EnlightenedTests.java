@@ -895,11 +895,16 @@ public final class EnlightenedTests {
         Benders.setVariant(azula, com.kolodkingal.enlightened.bending.Variants.get(Element.FIRE, "azula"));
         check(com.kolodkingal.enlightened.bending.Variants.fireColour(data) == com.kolodkingal.enlightened.bending.Variants.FIRE_BLUE, "Azula's look burns blue");
         data.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW);
-        check(com.kolodkingal.enlightened.bending.Variants.fireColour(data) == com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW, "she chose the rainbow");
+        check(com.kolodkingal.enlightened.bending.Variants.fireColour(data) == com.kolodkingal.enlightened.bending.Variants.FIRE_NORMAL
+                && com.kolodkingal.enlightened.bending.Variants.fireColours(data) == 2, "the rainbow is not hers until Ran and Shaw bless her");
+        data.setDragonBlessed(true);
+        check(com.kolodkingal.enlightened.bending.Variants.fireColour(data) == com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW
+                && com.kolodkingal.enlightened.bending.Variants.fireColours(data) == 3, "blessed, she chose the rainbow");
         data.setOn(Ability.FIRE_JET, true);
         check(data.on(Ability.FIRE_JET), "a toggle beside the choice still works");
         data.clearToggles();
-        check(!data.on(Ability.FIRE_JET) && data.fireChoice() == 1 + com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW, "clearing the toggles keeps the choice");
+        check(!data.on(Ability.FIRE_JET) && data.fireChoice() == 1 + com.kolodkingal.enlightened.bending.Variants.FIRE_RAINBOW && data.dragonBlessed(),
+                "clearing the toggles keeps the choice and the blessing");
         check(new com.kolodkingal.enlightened.bending.Cast(azula, data, Ability.FIRE_BALL).color() == com.kolodkingal.enlightened.bending.Variants.RAINBOW_MARK,
                 "her fire balls carry the rainbow");
         data.setFireChoice(1 + com.kolodkingal.enlightened.bending.Variants.FIRE_NORMAL);

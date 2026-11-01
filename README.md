@@ -83,6 +83,9 @@ panel in the top-left corner, items that awaken the power, a server config, oper
     Point) into a world of its own, where the Tree of Time grows.
 16. **The back slot.** One more inventory slot, for whatever you wear on your back: your glider (which flies from
     there), a sword, anything.
+17. **The Sun Warriors and the dragons.** A jungle city of ruins and traps under the mountain of the masters. Carry the
+    chief's Eternal Flame up the stairway before it goes out, and Ran and Shaw wrap you in fire of every colour:
+    stronger fire, rainbow fire, and a golden egg that hatches a dragon of your own to ride.
 
 Every effect is drawn after the series itself (see `docs/SHOW-REFERENCE.md`), and bending hits every creature in
 its way, pets and villagers included (`general.hurtEverything`).

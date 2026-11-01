@@ -55,6 +55,18 @@ public final class ClientEvents {
         }
     }
 
+    /** Attacking while riding one's dragon: it breathes fire instead of the rider swinging. */
+    @SubscribeEvent
+    public static void onInteractionKey(InputEvent.InteractionKeyMappingTriggered event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (event.isAttack() && mc.player != null && mc.player.getVehicle() instanceof com.kolodkingal.enlightened.entity.DragonEntity dragon
+                && dragon.getControllingPassenger() == mc.player) {
+            net.neoforged.neoforge.network.PacketDistributor.sendToServer(com.kolodkingal.enlightened.network.DragonBreathPayload.INSTANCE);
+            event.setSwingHand(false);
+            event.setCanceled(true);
+        }
+    }
+
     private static void remember(InputConstants.Key input) {
         Minecraft mc = Minecraft.getInstance();
         for (int i = 1; i <= BendingData.KEYS; i++) {

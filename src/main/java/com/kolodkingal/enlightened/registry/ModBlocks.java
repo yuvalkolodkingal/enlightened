@@ -43,6 +43,19 @@ public final class ModBlocks {
             BLOCK_ENTITIES.register("anomaly_cube", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
                     .of(com.kolodkingal.enlightened.block.AnomalyCubeBlockEntity::new, ANOMALY_BLOCK.get()).build(null));
 
+    /** The golden dragon egg of Ran and Shaw: set down, a dragon pup hatches from it in ten minutes. */
+    public static final DeferredBlock<com.kolodkingal.enlightened.block.GoldenDragonEggBlock> GOLDEN_DRAGON_EGG = BLOCKS.register("golden_dragon_egg",
+            () -> new com.kolodkingal.enlightened.block.GoldenDragonEggBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.GOLD)
+                    .strength(1.5F, 1200.0F).lightLevel(s -> 7).noOcclusion().sound(net.minecraft.world.level.block.SoundType.METAL)));
+
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<com.kolodkingal.enlightened.block.GoldenDragonEggBlockEntity>> GOLDEN_DRAGON_EGG_ENTITY =
+            BLOCK_ENTITIES.register("golden_dragon_egg", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(com.kolodkingal.enlightened.block.GoldenDragonEggBlockEntity::new, GOLDEN_DRAGON_EGG.get()).build(null));
+
+    public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> GOLDEN_DRAGON_EGG_ITEM = ModItems.ITEMS.register("golden_dragon_egg",
+            () -> new BlockItem(GOLDEN_DRAGON_EGG.get(), new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC).fireResistant()));
+
     public static void registerItems() {
         ModItems.ITEMS.register("meditation_point", () -> new BlockItem(MEDITATION_POINT.get(), new Item.Properties()));
         ModItems.ITEMS.register("anomaly_block", () -> new BlockItem(ANOMALY_BLOCK.get(), new Item.Properties()));

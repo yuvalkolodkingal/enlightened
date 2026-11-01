@@ -46,6 +46,17 @@ public final class ModItems {
     public static final DeferredItem<net.minecraft.world.item.SmithingTemplateItem> BRIGADE_TRIM_TEMPLATE = ITEMS.register("brigade_armor_trim_smithing_template",
             () -> net.minecraft.world.item.SmithingTemplateItem.createArmorTrimTemplate(BRIGADE_TRIM));
 
+    /** The Eternal Flame of the Sun Warriors, carried up to Ran and Shaw: it goes out after seven minutes. */
+    public static final DeferredItem<com.kolodkingal.enlightened.item.EternalFlameItem> ETERNAL_FLAME = ITEMS.register("eternal_flame",
+            () -> new com.kolodkingal.enlightened.item.EternalFlameItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> SUN_WARRIOR_SPAWN_EGG = ITEMS.register("sun_warrior_spawn_egg",
+            () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.SUN_WARRIOR, 0xE8DCC0, 0xB0402A, new Item.Properties()));
+
+    /** A dragon's spawn egg: a pup, wild, of any colour. */
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> DRAGON_SPAWN_EGG = ITEMS.register("dragon_spawn_egg",
+            () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.DRAGON, 0xB82A22, 0xF0E6D0, new Item.Properties()));
+
     private static DeferredItem<BendingScrollItem> scroll(String name, Element element) {
         return ITEMS.register(name, () -> new BendingScrollItem(element, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     }

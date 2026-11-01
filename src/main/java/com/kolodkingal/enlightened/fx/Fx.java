@@ -87,7 +87,11 @@ public enum Fx {
      */
     LION_GIFT(120),
     /** The Anomaly's red lightning, from it to whom it strikes. */
-    ANOMALY_BOLT(14);
+    ANOMALY_BOLT(14),
+    /** A dragon's breath of fire, from its mouth to the end of its reach (colour: the fire's; data: its width). */
+    DRAGON_FIRE(14),
+    /** Ran and Shaw's whirl of rainbow fire round the one they bless (from: his feet; to: its top; data: radius). */
+    DRAGON_VORTEX(40);
 
     public final int life;
 

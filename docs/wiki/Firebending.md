@@ -39,7 +39,8 @@ Numbers are *novice / adept / master*. Names in `code` are [server options](Serv
 ## The colour of your fire: normal, blue or rainbow
 
 **Sneak + Change Look (H)** changes the colour of your fire: the colour of fire, **blue** (Azula's), or **rainbow**
-(bands of every hue running through the flames, and sparks of every colour). Every flame of yours takes it: the fire
+(bands of every hue running through the flames, and sparks of every colour); rainbow fire is yours only once
+[Ran and Shaw](Sun-Warriors) have blessed you, and their blessing also makes all your fire 25% stronger. Every flame of yours takes it: the fire
 ball, the fist, the whip, the ring, the shield, the jet, the wall. The numbers are the same. Until you choose, your
 look decides (the look **Azula** burns blue). An operator can set it with `/enlightened firecolor <players> <normal|blue|rainbow|look>`.
 

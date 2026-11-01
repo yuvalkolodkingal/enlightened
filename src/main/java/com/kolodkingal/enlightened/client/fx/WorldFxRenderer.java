@@ -1578,6 +1578,46 @@ public final class WorldFxRenderer {
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), ring, 1.2F, 1.0F, 0.95F, 0.85F, 0.7F * (1.0F - f), a);
             }
             case LION_GIFT -> lionGift(e, f, a, from, to, entity);
+            case DRAGON_FIRE -> {
+                int colour = e.color();
+                float w = e.data();
+                float[] fr = fireFrame(0.9F);
+                float[] core = fireCore(colour);
+                Vec3 d = to.subtract(from);
+                double full = d.length();
+                if (full > 1.0E-3) {
+                    Vec3 dir = d.scale(1.0 / full);
+                    float len = (float) full * Math.min(1.0F, 0.25F + f * 3.0F);
+                    float fade = f < 0.6F ? 1.0F : (1.0F - f) / 0.4F;
+                    VertexConsumer fire = vc(FxGeometry.fire(colour));
+                    FxGeometry.cone(pose, fire, from, dir, len, 0.25F * w, 1.6F * w, 12, 10, fr[0], fr[1], len / 2.0F, a * 0.2F,
+                            1.0F, 1.0F, 1.0F, 0.95F * fade, 0.0F, FULL, true, 0.35F, a * 0.5F + e.entity());
+                    FxGeometry.conePuffs(pose, fire, from, dir, len, 0.3F * w, 1.8F * w, 10, fr[0], fr[1], 1.0F, 1.0F, 1.0F, 0.85F * fade, 0.0F,
+                            FULL, true, 0.35F, a * 0.5F, 1.4F * w, a * 0.2F);
+                    FxGeometry.cone(pose, vc(FxGeometry.light()), from, dir, len * 0.8F, 0.1F * w, 0.6F * w, 8, 6, 0, 1, 1, 0,
+                            core[0], core[1], core[2], 0.6F * fade, 0.0F, FULL, false, 0.2F, a * 0.5F + 1);
+                }
+            }
+            case DRAGON_VORTEX -> {
+                int colour = e.color();
+                float r = e.data();
+                float height = (float) (to.y - from.y);
+                float fade = f < 0.75F ? 1.0F : (1.0F - f) / 0.25F;
+                float[] fr = fireFrame(1.0F);
+                float[] core = fireCore(colour);
+                VertexConsumer fire = vc(FxGeometry.fire(colour));
+                for (int i = 0; i < 4; i++) {
+                    List<Vec3> pts = new ArrayList<>();
+                    for (int k = 0; k <= 24; k++) {
+                        float t = k / 24.0F;
+                        double ang = i * Math.PI / 2 + a * 0.35 + t * 5.0;
+                        double rr = r * (0.75 + 0.35 * t) * (0.7 + 0.3 * easeOut(Math.min(1.0F, f * 4.0F)));
+                        pts.add(from.add(Math.cos(ang) * rr, t * height * Math.min(1.0F, f * 3.0F), Math.sin(ang) * rr));
+                    }
+                    FxGeometry.ribbon(pose, fire, pts, 0.7F, 0.25F, fr[0], fr[1], 3.0F, a * 0.2F, 1.0F, 1.0F, 1.0F, 0.75F * fade, 0.3F * fade, FULL, true);
+                    FxGeometry.ribbon(pose, vc(FxGeometry.light()), pts, 0.2F, 0.06F, 0, 1, 1, 0, core[0], core[1], core[2], 0.45F * fade, 0.15F * fade, FULL, false);
+                }
+            }
             case EARTH_RISE -> {
                 float r = e.data() * easeOut(f);
                 FxGeometry.ringBand(pose, vc(FxGeometry.snow()), from.add(0, 0.05, 0), r, 0.9F * (1.0F - f), 20, 0, 1, EARTH[0] * 0.7F, EARTH[1] * 0.65F, EARTH[2] * 0.6F, 0.6F * (1.0F - f), lit, true, a * 0.3F, 0.4F);

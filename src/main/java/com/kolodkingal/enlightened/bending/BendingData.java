@@ -443,8 +443,24 @@ public final class BendingData {
         }
     }
 
+    /**
+     * Whether Ran and Shaw, the masters of the Sun Warriors, have blessed him (bit 54 of the second toggle word): his
+     * fire may burn in every colour, and burns harder.
+     */
+    public boolean dragonBlessed() {
+        return (toggles[1] & (1L << 54)) != 0;
+    }
+
+    public void setDragonBlessed(boolean blessed) {
+        long bits = blessed ? toggles[1] | (1L << 54) : toggles[1] & ~(1L << 54);
+        if (bits != toggles[1]) {
+            toggles[1] = bits;
+            dirty = true;
+        }
+    }
+
     public void clearToggles() {
-        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55));
+        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55) | (1L << 54));
         if (toggles[0] != 0 || toggles[1] != keep) {
             toggles[0] = 0L;
             toggles[1] = keep;

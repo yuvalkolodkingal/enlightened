@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/dragon_egg",
+  "textures": {
+    "particle": "enlightened:block/golden_dragon_egg",
+    "all": "enlightened:block/golden_dragon_egg"
+  }
+}

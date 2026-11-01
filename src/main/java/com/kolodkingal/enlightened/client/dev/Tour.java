@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("sun".equals(System.getProperty("enlightened.tour.only", ""))) {
+            sunWarriors();
+            return;
+        }
         if ("spirit".equals(System.getProperty("enlightened.tour.only", ""))) {
             spirit();
             return;
@@ -998,6 +1002,65 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /**
+     * The Sun Warriors' city, the ceremony, Ran and Shaw's judgment, the egg and the dragons (alone:
+     * -Denlightened.tour.only=sun).
+     */
+    private static void sunWarriors() {
+        cmd("gamemode spectator", 5);
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        STEPS.add(new Step(5, () -> {
+            Minecraft.getInstance().options.renderDistance().set(16);
+            Minecraft.getInstance().options.cloudStatus().set(net.minecraft.client.CloudStatus.OFF);
+            Minecraft.getInstance().options.hideGui = true;
+        }));
+        int x = 600;
+        int y = -61;
+        server(p -> build(p.serverLevel(), new com.kolodkingal.enlightened.world.SunWarriorPiece(new net.minecraft.core.BlockPos(x, y, 0))), 300);
+        cmd("tp @s 640.5 -38 60.5 125 22", 80);
+        shot("301_sun_ruins", 400);
+        cmd("tp @s 612.5 -50 48.5 160 8", 40);
+        shot("302_sun_statues_chief", 60);
+        cmd("tp @s 611.5 -24 9.5 150 30", 40);
+        shot("303_sun_ceremony", 60);
+        cmd("tp @s 630.5 2 -20.5 130 26", 40);
+        shot("304_sun_summit_caves", 60);
+        // The judgment: one who brings the flame stands on the sun; the masters wake, circle, and wrap him in rainbow fire.
+        cmd("gamemode creative", 5);
+        cmd("give @s enlightened:eternal_flame", 2);
+        cmd("tp @s 600.5 -12 -38.5 180 -30", 120);
+        shot("305_ran_and_shaw_wake", 60);
+        shot("306_ran_and_shaw_circle", 80);
+        shot("307_rainbow_fire", 70);
+        shot("307b_rainbow_fire", 40);
+        cmd("gamemode spectator", 200);
+        // The egg, and the dragons of one's own: red, blue, white, a pup.
+        cmd("setblock 560 -60 100 enlightened:golden_dragon_egg", 2);
+        cmd("tp @s 561.5 -58.8 102.3 160 30", 40);
+        shot("308_golden_dragon_egg", 40);
+        cmd("summon enlightened:dragon 540.5 -58 120.5 {Colour:0,NoAI:1b,Rotation:[90f,0f]}", 2);
+        cmd("summon enlightened:dragon 540.5 -58 130.5 {Colour:1,NoAI:1b,Rotation:[90f,0f]}", 2);
+        cmd("summon enlightened:dragon 540.5 -58 140.5 {Colour:2,NoAI:1b,Rotation:[90f,0f]}", 2);
+        cmd("summon enlightened:dragon 534.5 -60 112.5 {Colour:2,NoAI:1b,Age:-24000,Rotation:[90f,0f]}", 2);
+        cmd("tp @s 528.5 -50 106.5 -35 30", 60);
+        shot("309_dragons", 60);
+        server(p -> {
+            for (com.kolodkingal.enlightened.entity.DragonEntity d : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.DragonEntity.class,
+                    new net.minecraft.world.phys.AABB(520, -64, 100, 560, -40, 150), d -> !d.isBaby())) {
+                d.breathe(new net.minecraft.world.phys.Vec3(-1, -0.1, 0));
+            }
+        }, 8);
+        shot("309b_dragon_fire", 2);
+        // The Sun Warriors: the chief and three warriors.
+        cmd("summon enlightened:sun_warrior 700.5 -60 0.5 {Role:1,Face:0,NoAI:1b,Rotation:[0f,0f]}", 2);
+        cmd("summon enlightened:sun_warrior 701.5 -60 0.5 {Role:0,Face:0,NoAI:1b,Rotation:[0f,0f]}", 2);
+        cmd("summon enlightened:sun_warrior 702.5 -60 0.5 {Role:0,Face:1,NoAI:1b,Rotation:[0f,0f]}", 2);
+        cmd("summon enlightened:sun_warrior 703.5 -60 0.5 {Role:0,Face:2,NoAI:1b,Rotation:[0f,0f]}", 2);
+        cmd("tp @s 702.0 -58.4 4.6 180 8", 40);
+        shot("310_sun_warriors", 40);
     }
 
     /** A spirit gate, the crossing, the Spirit World and the Tree of Time (alone: -Denlightened.tour.only=spirit). */

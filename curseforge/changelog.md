@@ -1,3 +1,9 @@
+# Enlightened 1.0.15
+
+* **The Great Lift** (earthbending, for one who has opened **all seven chakras**): tear a whole stretch of land
+  (up to **11 by 6**) out of the ground with everything standing on it, hold it in the air, then **hurl it** at your
+  enemies for huge damage or **set it down whole** somewhere else (sneak).
+
 # Enlightened 1.0.14
 
 * **Mudbending**, for earthbenders and waterbenders alike, wherever there is soil, mud or clay: earthbenders send a

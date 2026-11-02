@@ -17,7 +17,7 @@ public final class Loadout {
                     Ability.EARTH_PILLAR, Ability.SEISMIC_SENSE, Ability.EARTH_WALL, Ability.SAND_WALL,
                     Ability.QUICKSAND, Ability.LAVA_SHURIKEN, Ability.LAVA_PATH, Ability.METAL_BLADES,
                     Ability.METAL_WALL, Ability.SAND_LIFT, Ability.METAL_PULL, Ability.WRECK, Ability.SHOCKWAVE, Ability.CATAPULT,
-                    Ability.EARTH_GRAB, Ability.EARTH_TUNNEL, Ability.EXTRACTION, Ability.MUD_WAVE);
+                    Ability.EARTH_GRAB, Ability.EARTH_TUNNEL, Ability.EXTRACTION, Ability.MUD_WAVE, Ability.GREAT_LIFT);
             case AIR -> List.of(Ability.AIR_BLAST, Ability.AIR_BLADES, Ability.AIR_SHIELD, Ability.SUFFOCATE,
                     Ability.AIR_JUMP, Ability.FLIGHT, Ability.AIR_SCOOTER, Ability.SPIRIT_PROJECTION,
                     Ability.TORNADO, Ability.AIR_SUCTION, Ability.AIR_BURST, Ability.AIR_SPOUT);

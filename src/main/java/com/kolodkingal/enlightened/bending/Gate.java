@@ -19,7 +19,9 @@ public enum Gate {
     BLOOD,
     LIGHTNING,
     COMBUSTION,
-    TETHERLESS;
+    TETHERLESS,
+    /** All seven chakras open. */
+    CHAKRAS;
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);

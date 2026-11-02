@@ -76,6 +76,7 @@ Arts in the spirit of ProjectKorra and *Avatar: Legend Reforged*; see also [Comb
 | **Earth Step** | passive | A double tap of a direction dashes you through a burst of dust; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
 | **Extraction** | press, metal | The raw metal is torn out of the ore you aim at: **1 / 2 / 3** pieces, the ore left as stone. Cooldown **4 / 3 / 2 s**. |
 | **Mud Wave** | press | The ground ahead turns to mud and rolls forward **10 / 14 / 18** blocks in a hard straight line, knocking up and hurting (**5 / 6 / 7**) everything in its way, and **slowing it for 7 s**. Needs soil, mud or clay within 6 blocks. Cooldown **5 / 4 / 3 s**. |
+| **Great Lift** | press, **all seven chakras** | A whole stretch of the land in front of you (**7x4 / 9x5 / 11x6** blocks, two deep) tears free with everything that stands on it (grass, flowers, trees up to five blocks) and hangs before you. **Press again to hurl it** where you look: it crushes what it strikes (**20 / 24 / 28**, and three quarters of that round where it lands) and falls apart into the land there. **Sneak and press to set it down whole** where you look. It leaves a pit where it was. Cooldown **30 / 25 / 20 s**. Learned only once all seven chakras are open. |
 
 Every earthbender's first chakra, and his heavy footing, also show in the **steps**: see
 [Chakras and the Avatar State](Chakras-and-the-Avatar-State).

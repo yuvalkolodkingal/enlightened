@@ -2,6 +2,7 @@ package com.kolodkingal.enlightened.gametest;
 
 import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.bending.Ability;
+import com.kolodkingal.enlightened.bending.Benders;
 import com.kolodkingal.enlightened.bending.Element;
 import com.kolodkingal.enlightened.bending.TempBlocks;
 import com.kolodkingal.enlightened.earth.EarthBending;
@@ -125,5 +126,68 @@ public final class NewArtsTests {
         }
         check(!com.kolodkingal.enlightened.water.PlantGiant.wearing(data) && p.getScale() < scale * 1.1F, "burnt through, the plants fall away");
         helper.succeed();
+    }
+
+    private static void dirtFloor(GameTestHelper helper) {
+        for (int x = 1; x <= 19; x++) {
+            for (int z = 1; z <= 19; z++) {
+                helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT);
+            }
+        }
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 120)
+    public static void theGreatLiftHurlsTheLand(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        dirtFloor(helper);
+        ServerPlayer p = f.player(10.5, TestKit.FLOOR, 2.5);
+        var data = f.bender(p, Element.EARTH, Ability.ROCK_THROW, 1);
+        check(!com.kolodkingal.enlightened.bending.Mastery.canLearn(data, Ability.GREAT_LIFT), "not without all seven chakras");
+        data.setChakras(7);
+        data.setPoints(10);
+        check(com.kolodkingal.enlightened.bending.Mastery.canLearn(data, Ability.GREAT_LIFT), "with them, it can be learned");
+        f.bender(p, Element.EARTH, Ability.GREAT_LIFT, 3);
+        Benders.get(p).setChakras(7);
+        helper.setBlock(new BlockPos(10, 2, 5), Blocks.POPPY);
+        f.press(p, Ability.GREAT_LIFT, false);
+        var slabs = helper.getLevel().getEntitiesOfClass(FlyingSlabEntity.class, new AABB(p.blockPosition()).inflate(16));
+        check(slabs.size() == 1 && slabs.get(0).mode() == FlyingSlabEntity.Mode.HELD, "the land is lifted and held");
+        check(slabs.get(0).pieces().size() >= 66, "eleven by six of it (" + slabs.get(0).pieces().size() + ")");
+        check(slabs.get(0).pieces().stream().anyMatch(pc -> pc.state().is(Blocks.POPPY)), "with what grew on it");
+        check(helper.getBlockState(new BlockPos(10, 1, 6)).isAir(), "a pit where it was");
+        Husk husk = helper.spawn(EntityType.HUSK, new BlockPos(10, 2, 17));
+        husk.setNoAi(true);
+        helper.runAfterDelay(15, () -> {
+            f.lookAt(p, husk);
+            f.press(p, Ability.GREAT_LIFT, false);
+            check(slabs.get(0).mode() == FlyingSlabEntity.Mode.THROWN, "hurled");
+        });
+        helper.succeedWhen(() -> check(husk.getHealth() < husk.getMaxHealth() - 10.0F || !husk.isAlive(), "it crushes what it strikes (" + husk.getHealth() + ")"));
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 60)
+    public static void theGreatLiftSetsTheLandDownElsewhere(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        dirtFloor(helper);
+        ServerPlayer p = f.player(10.5, TestKit.FLOOR, 2.5);
+        f.bender(p, Element.EARTH, Ability.GREAT_LIFT, 1);
+        Benders.get(p).setChakras(7);
+        f.press(p, Ability.GREAT_LIFT, false);
+        var slab = helper.getLevel().getEntitiesOfClass(FlyingSlabEntity.class, new AABB(p.blockPosition()).inflate(16)).get(0);
+        int n = slab.pieces().size();
+        helper.runAfterDelay(10, () -> {
+            p.setShiftKeyDown(true);
+            f.press(p, Ability.GREAT_LIFT, false);
+            p.setShiftKeyDown(false);
+            check(!slab.isAlive(), "set down");
+            int dirt = 0;
+            for (BlockPos at : BlockPos.betweenClosed(helper.absolutePos(new BlockPos(0, 2, 0)), helper.absolutePos(new BlockPos(20, 6, 20)))) {
+                if (helper.getLevel().getBlockState(at).is(Blocks.DIRT)) {
+                    dirt++;
+                }
+            }
+            check(dirt >= n / 2, "the land stands whole somewhere else (" + dirt + " of " + n + ")");
+            helper.succeed();
+        });
     }
 }

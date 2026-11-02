@@ -728,5 +728,10 @@
   "message.enlightened.mud.none": "No soil, mud or clay near to bend",
   "message.enlightened.plant_giant.few": "Too few plants here (%s of %s)",
   "message.enlightened.plant_giant.on": "The plants wrap round you: you are a giant",
-  "message.enlightened.plant_giant.torn": "The plants are torn away"
+  "message.enlightened.plant_giant.torn": "The plants are torn away",
+  "ability.enlightened.great_lift": "Great Lift",
+  "ability.enlightened.great_lift.desc": "A whole stretch of land in front of you (7x4 / 9x5 / 11x6) tears free with all that stands on it and hangs before you. Press again to hurl it where you look, crushing what it strikes; sneak and press to set it down whole where you look. Only with all seven chakras open.",
+  "gate.enlightened.chakras": "All seven chakras",
+  "message.enlightened.learn.chakras": "%s needs all seven chakras open",
+  "screen.enlightened.scroll.chakras": "all seven chakras"
 }

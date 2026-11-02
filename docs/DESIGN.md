@@ -564,3 +564,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 |---|---|
 | Mud | `earth/Mud`: a source is any soil, mud or clay within 6 (`muddy`, `near`); `bog` slows 7 s (Slowness II). `MUD_WAVE` (earth): a wave per bender, one block a tick along the facing for 10 / 14 / 18, each step the top earth block `TempBlocks.replace`d with mud for 5 s, hurting (5 / 6 / 7, earth) and shoving each creature within 1.6 once. `MUD_THROW` (water): 1 / 2 / 3 `ROCK` shots of mud (3 / 4 / 5), which `BendingShotEntity.hit` bogs down. |
 | The plant giant | `water/PlantGiant` (`PLANT_GIANT`, water toggle): rises among `needed` plants (40 / 32 / 24 within 8; `plant`); `apply` gives scale ×(1.75 / 2 / 2.25), attack, armour, reach, knockback resistance, −10 % speed (also from `BendingTicker.applyPassives`). `absorb` (from `CommonEvents`' damage hook): the plants take 50 / 45 / 40 % less of a blow off it and spend their vigour (`maxVigor` 45 / 60 / 75); fire does ×1.5 and spends ×3; at none it falls (`fall`). Vigour grows back 1 a second among 12 plants. `ShellLayer` draws `plant_giant.png` (leaves, vines, a wooden mask) over the body. |
+
+## 38. 1.0.15: the Great Lift
+
+| | |
+|---|---|
+| The gate | `Gate.CHAKRAS`: open when `chakras()` is 7 (`Mastery.gateOpen`; refused with `learn.chakras`; the scroll says "all seven chakras"). |
+| The lift | `earth/GreatLift` (`GREAT_LIFT`): `tear` takes, in each column of `width` × `depth` (7 / 9 / 11 by 4 / 5 / 6) ahead, the top two earth blocks and up to five blocks standing on them (no containers, nothing unbreakable, only where the bender may break), quietly from the top down; they become a `FlyingSlabEntity` held 4 + depth before him. Pressed again: thrown along the look at 1.3 (sneaking: `setDown` where he looks). A thrown slab hurts what it passes (`damage` 20 / 24 / 28), and where it lands crushes everything within 2 of it for three quarters of that, then sets itself into the land. Cooldown 30 / 25 / 20 s. Ended (death, leaving), a held slab is set down where it hangs. |

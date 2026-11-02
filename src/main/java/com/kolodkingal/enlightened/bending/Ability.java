@@ -111,7 +111,8 @@ public enum Ability {
     ENERGY_RESTORE(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
     MUD_WAVE(Element.EARTH, Gate.NONE, Kind.PRESS, false),
     MUD_THROW(Element.WATER, Gate.NONE, Kind.PRESS, false),
-    PLANT_GIANT(Element.WATER, Gate.NONE, Kind.TOGGLE, false);
+    PLANT_GIANT(Element.WATER, Gate.NONE, Kind.TOGGLE, false),
+    GREAT_LIFT(Element.EARTH, Gate.CHAKRAS, Kind.PRESS, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }

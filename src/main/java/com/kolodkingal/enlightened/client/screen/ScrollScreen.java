@@ -144,6 +144,7 @@ public class ScrollScreen extends Screen {
             if (!open) {
                 line.append(Component.literal(" ")).append(a.gate == Gate.TETHERLESS
                         ? Component.translatable("screen.enlightened.scroll.tethered").withStyle(ChatFormatting.DARK_PURPLE)
+                        : a.gate == Gate.CHAKRAS ? Component.translatable("screen.enlightened.scroll.chakras").withStyle(ChatFormatting.DARK_PURPLE)
                         : Component.translatable("screen.enlightened.scroll.gate", a.gate.displayName(), Mastery.gateCost(a.gate)).withStyle(ChatFormatting.RED));
             } else if (a.gate != Gate.NONE && level == 0) {
                 line.append(Component.literal(" ")).append(a.gate.displayName().copy().withStyle(ChatFormatting.DARK_AQUA));

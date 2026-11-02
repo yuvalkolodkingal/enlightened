@@ -211,6 +211,17 @@ public class FlyingSlabEntity extends Entity implements IEntityWithComplexSpawn 
             discard();
             return;
         }
+        // Everything round where it lands is crushed under it.
+        ServerPlayer bender = owner == null ? null : (ServerPlayer) level.getPlayerByUUID(owner);
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, space().inflate(2.0), e -> e.isAlive() && !ownedBy(e))) {
+            if (struck.add(e.getId())) {
+                if (bender != null ? AreaTargets.mayHurt(bender, e) && Shots.hurt(bender, e, damage * 0.75F, ModDamageTypes.EARTH)
+                        : e.hurt(damageSources().generic(), damage * 0.75F)) {
+                    Shots.push(e, position(), 1.0, 0.5);
+                }
+            }
+        }
+        dust(level, Math.min(80, pieces.size()));
         // Back off the step that took it into the block, and settle there.
         setPos(getX() - getDeltaMovement().x, getY() - getDeltaMovement().y, getZ() - getDeltaMovement().z);
         setDown(level, null);

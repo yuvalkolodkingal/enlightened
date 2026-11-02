@@ -728,5 +728,10 @@
   "message.enlightened.mud.none": "אין אדמה, בוץ או חימר בסביבה",
   "message.enlightened.plant_giant.few": "מעט מדי צמחים כאן (%s מתוך %s)",
   "message.enlightened.plant_giant.on": "הצמחים נכרכים סביבכם: אתם ענק",
-  "message.enlightened.plant_giant.torn": "הצמחים נקרעו מכם"
+  "message.enlightened.plant_giant.torn": "הצמחים נקרעו מכם",
+  "ability.enlightened.great_lift": "ההרמה הגדולה",
+  "ability.enlightened.great_lift.desc": "שטח אדמה שלם לפניכם (7x4 / 9x5 / 11x6) נתלש עם כל מה שעומד עליו ומרחף מולכם. לחצו שוב כדי להעיף אותו לאן שאתם מסתכלים, והוא מועך את מה שהוא פוגע בו; התכופפו ולחצו כדי להניח אותו שלם במקום שאתם מסתכלים עליו. רק כשכל שבע הצ'אקרות פתוחות.",
+  "gate.enlightened.chakras": "כל שבע הצ'אקרות",
+  "message.enlightened.learn.chakras": "%s דורשת שכל שבע הצ'אקרות יהיו פתוחות",
+  "screen.enlightened.scroll.chakras": "כל שבע הצ'אקרות"
 }

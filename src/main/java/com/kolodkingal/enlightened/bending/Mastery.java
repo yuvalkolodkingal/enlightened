@@ -66,7 +66,7 @@ public final class Mastery {
             case BLOOD -> loaded ? EnlightenedConfig.BLOOD_GATE.get() : 9;
             case LIGHTNING -> loaded ? EnlightenedConfig.LIGHTNING_GATE.get() : 6;
             case COMBUSTION -> loaded ? EnlightenedConfig.COMBUSTION_GATE.get() : 9;
-            case TETHERLESS -> -1;
+            case TETHERLESS, CHAKRAS -> -1;
         };
     }
 
@@ -74,6 +74,9 @@ public final class Mastery {
     public static boolean gateOpen(BendingData data, Ability a) {
         if (a.gate == Gate.TETHERLESS) {
             return data.tetherless();
+        }
+        if (a.gate == Gate.CHAKRAS) {
+            return data.chakras() >= 7;
         }
         return data.spent(a.element) >= gateCost(a.gate);
     }
@@ -96,7 +99,8 @@ public final class Mastery {
             return "message.enlightened.learn.mastered";
         }
         if (!gateOpen(data, a)) {
-            return a.gate == Gate.TETHERLESS ? "message.enlightened.learn.tethered" : "message.enlightened.learn.gate";
+            return a.gate == Gate.TETHERLESS ? "message.enlightened.learn.tethered"
+                    : a.gate == Gate.CHAKRAS ? "message.enlightened.learn.chakras" : "message.enlightened.learn.gate";
         }
         if (data.points() < Ability.cost(data.level(a) + 1)) {
             return "message.enlightened.learn.points";

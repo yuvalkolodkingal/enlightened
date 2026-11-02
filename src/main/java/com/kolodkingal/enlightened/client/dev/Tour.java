@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v115".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v115();
+            return;
+        }
         if ("v114".equals(System.getProperty("enlightened.tour.only", ""))) {
             v114();
             return;
@@ -1010,6 +1014,26 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /** 1.0.15: the Great Lift, held and hurled (alone: -Denlightened.tour.only=v115). */
+    private static void v115() {
+        cmd("time set noon", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        element("earth", "toph", "great_lift");
+        cmd("enlightened chakras @s 7", 4);
+        cmd("fill -8 -61 0 8 -61 14 minecraft:grass_block", 4);
+        cmd("fill -8 -60 2 8 -60 10 minecraft:poppy replace minecraft:air", 4);
+        cmd("tp @s 0 -60 -2 0 10", 6);
+        cmd("enlightened loadout @s 1 great_lift", 6);
+        press(1, 2);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        shot("340_great_lift_held", 40);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().player.setXRot(-15)));
+        shot("341_great_lift_held_up", 20);
+        press(1, 2);
+        shot("342_great_lift_hurled", 8);
+        wait(40);
     }
 
     /** 1.0.14: the plant giant among the trees, a mud wave, mud thrown (alone: -Denlightened.tour.only=v114). */

@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v113".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v113();
+            return;
+        }
         if ("sun".equals(System.getProperty("enlightened.tour.only", ""))) {
             sunWarriors();
             return;
@@ -1002,6 +1006,36 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /** 1.0.13: brighter fire and lightning, light-blue air, a struck metal wall in flight (alone: -Denlightened.tour.only=v113). */
+    private static void v113() {
+        cmd("time set noon", 2);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        element("fire", "zuko", "fire_fist", "lightning");
+        held("fire_fist", "320_bright_fire_fist", 18, 40);
+        cmd("summon minecraft:zombie 0 -60 9 {NoAI:1b}", 4);
+        cmd("enlightened loadout @s 1 lightning", 6);
+        press(1, 2);
+        shot("321_bright_lightning_charge", 12);
+        shot("322_bright_lightning", 6);
+        wait(30);
+        element("air", "tenzin", "air_blast");
+        cast("air_blast", "323_light_blue_air", 4);
+        element("earth", "toph", "earth_wall", "metal_wall");
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            for (int x = -2; x <= 2; x++) {
+                for (int y = 0; y < 3; y++) {
+                    com.kolodkingal.enlightened.bending.TempBlocks.place(p, level, new net.minecraft.core.BlockPos(x, -60 + y, 4),
+                            net.minecraft.world.level.block.Blocks.IRON_BLOCK.defaultBlockState(), 400);
+                }
+            }
+        }, 10);
+        shot("324_metal_wall", 10);
+        server(p -> com.kolodkingal.enlightened.earth.EarthBending.strikeWall(p, new net.minecraft.core.BlockPos(0, -59, 4)), 2);
+        shot("325_metal_wall_flies", 5);
+        wait(40);
     }
 
     /**

@@ -52,11 +52,11 @@ public final class WorldFxRenderer {
     private static final float[] WATER_TINT = {0.44F, 0.70F, 0.92F};
     private static final float[] WATER_GLOW = {0.90F, 0.97F, 1.0F};
     private static final float[] HEAL_GLOW = {0.80F, 0.92F, 1.0F};
-    private static final float[] AIR = {0.82F, 0.92F, 1.0F};
+    private static final float[] AIR = {0.62F, 0.86F, 1.0F};
     /** The show's fire: a yellow core in an orange body; Azula's a white core in cyan; lightning blue-white. */
-    private static final float[] FIRE_CORE = {1.0F, 0.88F, 0.45F};
+    private static final float[] FIRE_CORE = {1.0F, 0.94F, 0.62F};
     private static final float[] BLUE_CORE = {0.88F, 0.96F, 1.0F};
-    private static final float[] BOLT = {0.72F, 0.86F, 1.0F};
+    private static final float[] BOLT = {0.62F, 0.86F, 1.0F};
     private static final float[] BOLT_CORE = {0.96F, 0.98F, 1.0F};
     /** The seven chakras' colours, as the visions of "The Guru": red, orange, yellow, green, blue, indigo, violet. */
     private static final float[][] CHAKRA_RGB = {{0.95F, 0.25F, 0.2F}, {1.0F, 0.6F, 0.15F}, {1.0F, 0.9F, 0.25F}, {0.3F, 0.9F, 0.4F}, {0.3F, 0.55F, 1.0F}, {0.35F, 0.25F, 0.85F}, {0.75F, 0.4F, 1.0F}};
@@ -119,6 +119,9 @@ public final class WorldFxRenderer {
 
     private static VertexConsumer vc(net.minecraft.client.renderer.RenderType type) {
         VertexConsumer base = buffer.getBuffer(type);
+        if (FxGeometry.isFire(type)) {
+            base = FxGeometry.brighter(base, FxGeometry.FIRE_BRIGHT);
+        }
         return FxGeometry.rainbow(type) ? FxGeometry.rainbow(base, cam.x, cam.y, cam.z, age) : base;
     }
 

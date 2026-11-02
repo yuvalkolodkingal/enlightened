@@ -27,8 +27,8 @@ public final class Variants {
                 look("zaheer", Element.AIR, "zaheer", false, 0xB08C4A, 0xE6E6E6),
                 look("jinora", Element.AIR, "jinora", true, 0xF2CC72, 0xE8F6FF),
                 look("gyatso", Element.AIR, "gyatso", false, 0xE2B85A, 0xF5F5F5),
-                look("jae", Element.AIR, "jae", false, 0xD9A84A, 0xDDF3FF),
-                look("kartik", Element.AIR, "kartik", false, 0xC99A3F, 0xDDF3FF),
+                look("jae", Element.AIR, "jae", false, 0xD9A84A, 0xB4E2FF),
+                look("kartik", Element.AIR, "kartik", false, 0xC99A3F, 0xB4E2FF),
                 own(Element.AIR));
         // Waterbenders: Katara, Amon (Noatak), Ming-Hua and Master Pakku in the robes of the White Lotus.
         add(Element.WATER,

@@ -149,6 +149,54 @@ public final class FxGeometry {
         };
     }
 
+    public static boolean isFire(RenderType type) {
+        return type == FIRE_TYPE || type == SOUL_FIRE_TYPE || type == RAINBOW_FIRE_TYPE;
+    }
+
+    /** How much more opaque fire is drawn than its tint asks: it burns bright. */
+    public static final float FIRE_BRIGHT = 1.3F;
+
+    /** A consumer that draws everything given it more opaque by {@code factor} (capped): fire, bright. */
+    public static VertexConsumer brighter(VertexConsumer base, float factor) {
+        return new VertexConsumer() {
+            @Override
+            public VertexConsumer addVertex(float x, float y, float z) {
+                base.addVertex(x, y, z);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setColor(int r, int g, int b, int a) {
+                base.setColor(r, g, b, Math.min(255, Math.round(a * factor)));
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setUv(float u, float v) {
+                base.setUv(u, v);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setUv1(int u, int v) {
+                base.setUv1(u, v);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setUv2(int u, int v) {
+                base.setUv2(u, v);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setNormal(float x, float y, float z) {
+                base.setNormal(x, y, z);
+                return this;
+            }
+        };
+    }
+
     public static RenderType lava() {
         return LAVA_TYPE;
     }

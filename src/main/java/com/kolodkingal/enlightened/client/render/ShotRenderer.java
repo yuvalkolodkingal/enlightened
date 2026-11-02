@@ -152,7 +152,7 @@ public class ShotRenderer extends EntityRenderer<BendingShotEntity> {
 
     /** The fire of the shot's colour (the rainbow's tinted round the ball as it flies). */
     private static VertexConsumer fire(MultiBufferSource buffer, int colour, BendingShotEntity entity, float t) {
-        VertexConsumer vc = buffer.getBuffer(FxGeometry.fire(colour));
+        VertexConsumer vc = FxGeometry.brighter(buffer.getBuffer(FxGeometry.fire(colour)), FxGeometry.FIRE_BRIGHT);
         return colour == FxGeometry.FIRE_RAINBOW ? FxGeometry.rainbow(vc, entity.getX(), entity.getY(), entity.getZ(), t) : vc;
     }
 

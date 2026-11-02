@@ -20,7 +20,7 @@ Numbers are *novice / adept / master*. Names in `code` are [server options](Serv
 | **Rock Lift** | press | Look at a block of earth up to `rockRange` (24) away and press: it is torn out and floats in front of you, orbiting with the others you hold: **1 / 2 / 3** at once. Press while looking at no earth (or holding the most you can) to throw them all at what you look at: 6 + level damage. A block torn out drops its item when it shatters or is set down (`rockLiftTakesBlocks` false conjures the rock and leaves the ground). The hold ends if you die, log out or lose the element. |
 | **Earth Armor** | toggle | A shell of rock over your whole body with only the eyes open: **+6 / +10 / +14 armour**, **+2 / +4 / +6 toughness**, 30% knockback resistance; but **`earthArmorSlow` (30%) slower**, 5% less per level. Needs earth under your feet to put on. |
 | **Earth Pillar** | press | The ground rises under your feet as a pillar **3 / 5 / 8** blocks high and carries you up to high places; it stands `general.raisedBlockSeconds` (10 s) and crumbles. Cooldown 6 s. |
-| **Earth Wall** | press | A wall of the ground's block rises 2.5 blocks ahead of you, **3 / 5 / 7 wide** and 3 high, for `wallSeconds` (10 s): rocks, arrows, blasts and whips stop at it. Cooldown `wallCooldown` (10 s). |
+| **Earth Wall** | press | A wall of the ground's block rises 2.5 blocks ahead of you, **3 / 5 / 7 wide** and 3 high, for `wallSeconds` (10 s): rocks, arrows, blasts and whips stop at it. Cooldown `wallCooldown` (10 s). **At the third level, strike your own wall** (left-click it) and the whole wall flies the way you struck, hurting what it hits (8) and breaking. |
 | **Seismic Sense** | toggle | Standing on the ground (not flying), every creature within **12 / 20 / 32** blocks that touches the ground or the water is outlined for you through walls. |
 
 ## Sand (3 points spent)
@@ -47,7 +47,7 @@ tools and armour, a bucket, rails...).
 
 | Ability | Kind | What it does |
 |---|---|---|
-| **Metal Wall** | press | As the earth wall, of iron blocks. |
+| **Metal Wall** | press | As the earth wall, of iron blocks. At the third level a struck metal wall flies too, and hits harder (14). |
 | **Metal Blades** | press | **1 / 2 / 3** blades of metal fly at what you look at: `metalBladeDamage` (6) + level damage each. Cooldown 1.5 s. |
 | **Metal Armor** | toggle | Full armour of metal over the whole body but the eyes: **+16 / +20 / +24 armour**, **+6 / +8 / +10 toughness**, 60% knockback resistance, but **40% slower**, 5% less per level. It replaces the earth armour. |
 | **Metal Pull** | press | The metal in the ground round you comes out of the rock into your pack: every iron, gold and copper ore and ancient debris within `metalPullRadius` (6) + 3 per level turns to stone and gives its metal (raw iron, raw gold, 2-5 raw copper, 2-5 gold nuggets, netherite scrap), and loose metal items on the ground come too; **8 / 16 / 32** things at most, only where you may break. Cooldown 8 s. |

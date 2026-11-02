@@ -79,6 +79,11 @@ public final class ModEntities {
             () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.DragonEntity::new, MobCategory.CREATURE)
                     .sized(2.6F, 2.0F).eyeHeight(1.4F).clientTrackingRange(16).updateInterval(1).fireImmune().build("dragon"));
 
+    /** A wall or a slab of land an earthbender has set flying. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.FlyingSlabEntity>> FLYING_SLAB = ENTITIES.register("flying_slab",
+            () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.FlyingSlabEntity>of(com.kolodkingal.enlightened.entity.FlyingSlabEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F).clientTrackingRange(10).updateInterval(1).noSummon().build("flying_slab"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
         event.put(SUN_WARRIOR.get(), com.kolodkingal.enlightened.entity.SunWarriorEntity.createAttributes().build());
         event.put(DRAGON.get(), com.kolodkingal.enlightened.entity.DragonEntity.createAttributes().build());

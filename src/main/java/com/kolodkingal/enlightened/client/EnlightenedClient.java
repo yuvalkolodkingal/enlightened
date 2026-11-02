@@ -83,6 +83,7 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.ANOMALY.get(), com.kolodkingal.enlightened.client.render.AnomalyRenderer::new);
         event.registerEntityRenderer(ModEntities.SUN_WARRIOR.get(), com.kolodkingal.enlightened.client.render.SunWarriorRenderer::new);
         event.registerEntityRenderer(ModEntities.DRAGON.get(), com.kolodkingal.enlightened.client.render.DragonRenderer::new);
+        event.registerEntityRenderer(ModEntities.FLYING_SLAB.get(), com.kolodkingal.enlightened.client.render.FlyingSlabRenderer::new);
         event.registerBlockEntityRenderer(com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_CUBE.get(),
                 com.kolodkingal.enlightened.client.render.AnomalyCubeRenderer::new);
     }

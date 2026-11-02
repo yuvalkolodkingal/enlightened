@@ -17,7 +17,7 @@ import java.util.List;
  */
 final class ThorBolt {
     static final float[] CORE = {1.0F, 1.0F, 1.0F};
-    static final float[] BLUE = {0x4D / 255.0F, 0xB8 / 255.0F, 1.0F};
+    static final float[] BLUE = {0x6E / 255.0F, 0xCC / 255.0F, 1.0F};
     static final float[] HALO = {0x1E / 255.0F, 0x6B / 255.0F, 1.0F};
     /** How long one shape of the bolt lasts before it has flowed into the next (ticks). */
     private static final float SHAPE_TICKS = 1.5F;
@@ -39,9 +39,9 @@ final class ThorBolt {
         // A soft glow all along the line.
         FxGeometry.ribbon(pose, vc, List.of(a, b), 0.12F * scale, 0.16F * scale, 0, 1, 1, 0, halo[0], halo[1], halo[2], 0.10F * flicker * alpha, 0.14F * flicker * alpha, light, false);
         List<Vec3> path = flowingPath(a, b, jitter, seed, phase);
-        tapered(pose, vc, path, 0.30F * scale, halo, 0.30F * flicker * alpha, light);
-        tapered(pose, vc, path, 0.15F * scale, colour, 0.75F * flicker * alpha, light);
-        tapered(pose, vc, path, 0.055F * scale, CORE, 0.97F * alpha, light);
+        tapered(pose, vc, path, 0.34F * scale, halo, 0.40F * flicker * alpha, light);
+        tapered(pose, vc, path, 0.17F * scale, colour, 0.92F * flicker * alpha, light);
+        tapered(pose, vc, path, 0.075F * scale, CORE, 1.0F * alpha, light);
         Vec3 dir = b.subtract(a).scale(1.0 / length);
         long step = Mth.floor(phase);
         float f = flow(phase);

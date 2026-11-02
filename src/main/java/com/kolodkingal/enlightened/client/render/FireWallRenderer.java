@@ -31,7 +31,7 @@ public class FireWallRenderer extends EntityRenderer<FireWallEntity> {
         float half = wall.width() * 0.5F;
         Vec3 along = wall.along();
         float[] fr = FxGeometry.frame(t, FxGeometry.FIRE_FRAMES, 1.0F);
-        VertexConsumer fire = buffer.getBuffer(FxGeometry.fire(wall.colour()));
+        VertexConsumer fire = FxGeometry.brighter(buffer.getBuffer(FxGeometry.fire(wall.colour())), FxGeometry.FIRE_BRIGHT);
         if (wall.colour() == FxGeometry.FIRE_RAINBOW) {
             fire = FxGeometry.rainbow(fire, wall.getX(), wall.getY(), wall.getZ(), t);
         }

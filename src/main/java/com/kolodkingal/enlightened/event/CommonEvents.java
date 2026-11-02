@@ -126,8 +126,15 @@ public final class CommonEvents {
     /** Whoever tries to break a red cube of the Anomaly wakes it (one at a time near a place). */
     @SubscribeEvent
     public static void onLeftClickBlock(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || event.getAction() != net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.START
-                || !level.getBlockState(event.getPos()).is(com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_BLOCK.get())) {
+        if (!(event.getLevel() instanceof ServerLevel level) || event.getAction() != net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.START) {
+            return;
+        }
+        // An earthbender master strikes his own wall: it flies.
+        if (event.getEntity() instanceof ServerPlayer sp && com.kolodkingal.enlightened.earth.EarthBending.strikeWall(sp, event.getPos())) {
+            event.setCanceled(true);
+            return;
+        }
+        if (!level.getBlockState(event.getPos()).is(com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_BLOCK.get())) {
             return;
         }
         wakeAnomaly(level, event.getPos());

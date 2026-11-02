@@ -1,3 +1,9 @@
+# Enlightened 1.0.13
+
+* **Strike your wall and it flies**: at the third level of Earth Wall or Metal Wall, left-click your own wall and the
+  whole of it flies the way you struck, smashing into whatever it meets. A metal wall hits harder than an earth one.
+* **Brighter fire and lightning**, and **air with more light blue** in it.
+
 # Enlightened 1.0.12
 
 * **The city of the Sun Warriors**, in the jungle: ruined houses and step pyramids with **traps** (pressure plates over

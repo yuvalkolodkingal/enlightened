@@ -178,6 +178,56 @@ public final class TempBlocks {
         }
     }
 
+    /**
+     * Takes away the raised blocks joined to {@code start} (face to face) that this bender raised, at most {@code max},
+     * putting back what was under each, quietly: returns what each held (empty if {@code start} is not his).
+     */
+    public static Map<BlockPos, BlockState> takeConnected(ServerLevel level, BlockPos start, UUID owner, int max) {
+        Map<BlockPos, Placed> mine = new HashMap<>();
+        for (Placed p : PLACED) {
+            if (p.dimension == level.dimension() && p.owner.equals(owner)) {
+                mine.put(p.pos, p);
+            }
+        }
+        Map<BlockPos, BlockState> taken = new java.util.LinkedHashMap<>();
+        if (!mine.containsKey(start)) {
+            return taken;
+        }
+        java.util.ArrayDeque<BlockPos> queue = new java.util.ArrayDeque<>();
+        queue.add(start);
+        java.util.Set<BlockPos> seen = new java.util.HashSet<>();
+        seen.add(start);
+        while (!queue.isEmpty() && taken.size() < max) {
+            BlockPos at = queue.poll();
+            Placed p = mine.get(at);
+            BlockState now = level.getBlockState(at);
+            if (now != p.placed && !now.is(p.placed.getBlock())) {
+                continue;
+            }
+            taken.put(at, now);
+            PLACED.remove(p);
+            level.setBlock(at, p.before.isAir() ? Blocks.AIR.defaultBlockState() : p.before, p.flags);
+            for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values()) {
+                BlockPos n = at.relative(d);
+                if (mine.containsKey(n) && seen.add(n)) {
+                    queue.add(n);
+                }
+            }
+        }
+        return taken;
+    }
+
+    /** The state a bender raised at a cell, if he raised one there. */
+    @javax.annotation.Nullable
+    public static UUID ownerAt(ServerLevel level, BlockPos pos) {
+        for (Placed p : PLACED) {
+            if (p.dimension == level.dimension() && p.pos.equals(pos)) {
+                return p.owner;
+            }
+        }
+        return null;
+    }
+
     public static int count() {
         return PLACED.size();
     }

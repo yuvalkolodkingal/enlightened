@@ -15,7 +15,7 @@ public enum Element implements StringRepresentable {
     /** The Earth Kingdom's green and the brown of rock. */
     EARTH(0x6B8E23, 0xC9A96E),
     /** The Air Nomads' saffron and the pale blue-white of a gust. */
-    AIR(0xE8C36A, 0xDDF3FF),
+    AIR(0xE8C36A, 0xB4E2FF),
     /** The Water Tribes' blue, with the white of ice at its heart. */
     WATER(0x2E86DE, 0xBFE8FF),
     /** The Fire Nation's red, with gold at its heart. */

@@ -536,6 +536,40 @@ public final class EarthBending {
         }
     }
 
+    /** What a struck wall does: earth, and metal (harder). */
+    public static final float STRUCK_EARTH = 8.0F;
+    public static final float STRUCK_METAL = 14.0F;
+
+    /**
+     * At Earth Wall's or Metal Wall's third level, a bender who strikes his own wall sends the whole of it flying the
+     * way he struck, to break on whatever it meets (earth hurts, metal hurts more). Returns whether it flew.
+     */
+    public static boolean strikeWall(ServerPlayer p, BlockPos at) {
+        ServerLevel level = p.serverLevel();
+        if (!p.getUUID().equals(TempBlocks.ownerAt(level, at))) {
+            return false;
+        }
+        BendingData data = com.kolodkingal.enlightened.bending.Benders.get(p);
+        boolean metal = level.getBlockState(at).is(Blocks.IRON_BLOCK);
+        Ability art = metal ? Ability.METAL_WALL : Ability.EARTH_WALL;
+        if (!data.element().commands(com.kolodkingal.enlightened.bending.Element.EARTH) || data.level(art) < 3 || data.suppressed(level.getGameTime())) {
+            return false;
+        }
+        java.util.Map<BlockPos, BlockState> wall = TempBlocks.takeConnected(level, at, p.getUUID(), 48);
+        if (wall.isEmpty()) {
+            return false;
+        }
+        com.kolodkingal.enlightened.entity.FlyingSlabEntity slab = com.kolodkingal.enlightened.entity.FlyingSlabEntity.of(level, wall, p);
+        slab.setDamage(metal ? STRUCK_METAL : STRUCK_EARTH);
+        slab.setShatters(true);
+        Vec3 look = p.getLookAngle();
+        slab.throwAlong(new Vec3(look.x, Math.max(0.05, look.y * 0.5), look.z), 1.3);
+        level.addFreshEntity(slab);
+        level.playSound(null, at, metal ? ModSounds.METAL_CLANG.get() : ModSounds.EARTH_RISE.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 0.7F);
+        p.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);
+        return true;
+    }
+
     // ---- Seismic Sense: on the ground, every step tells him where everyone stands ----
 
     static final class Seismic implements AbilityLogic {

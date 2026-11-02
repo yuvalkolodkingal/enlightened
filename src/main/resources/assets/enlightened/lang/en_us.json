@@ -718,5 +718,15 @@
   "message.enlightened.dragons.unworthy.sub": "You came without the Eternal Flame",
   "message.enlightened.dragons.blessed": "Ran and Shaw have blessed you: your fire burns stronger, and rainbow fire is yours to choose (Sneak + Change Look).",
   "message.enlightened.dragons.again": "Ran and Shaw welcome you again.",
-  "message.enlightened.dragons.egg": "Ran gives you a golden dragon egg. Set it down anywhere: in ten minutes a dragon will hatch."
+  "message.enlightened.dragons.egg": "Ran gives you a golden dragon egg. Set it down anywhere: in ten minutes a dragon will hatch.",
+  "ability.enlightened.mud_wave": "Mud Wave",
+  "ability.enlightened.mud_wave.desc": "The ground ahead turns to mud and rolls forward in a hard straight line, knocking up, hurting and bogging down everything in its way (slowed 7 s). Needs soil, mud or clay near.",
+  "ability.enlightened.mud_throw": "Mud Throw",
+  "ability.enlightened.mud_throw.desc": "Balls of mud drawn up from the ground and hurled at what you look at (1 / 2 / 3); whoever they hit is slowed for 7 s. Needs soil, mud or clay near.",
+  "ability.enlightened.plant_giant": "Plant Giant",
+  "ability.enlightened.plant_giant.desc": "Wrap yourself in the plants round you and become a giant of vines and leaves: bigger, stronger, harder to hurt. Needs many plants near; fire hurts the giant more and tears it apart fast.",
+  "message.enlightened.mud.none": "No soil, mud or clay near to bend",
+  "message.enlightened.plant_giant.few": "Too few plants here (%s of %s)",
+  "message.enlightened.plant_giant.on": "The plants wrap round you: you are a giant",
+  "message.enlightened.plant_giant.torn": "The plants are torn away"
 }

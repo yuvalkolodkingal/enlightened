@@ -75,6 +75,7 @@ Arts in the spirit of ProjectKorra and *Avatar: Legend Reforged*; see also [Comb
 | **Earth Tunnel** | hold | The earth and sand ahead are dug away as you look at them (wider for a master): a tunnel at walking pace. Only where you may break. |
 | **Earth Step** | passive | A double tap of a direction dashes you through a burst of dust; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
 | **Extraction** | press, metal | The raw metal is torn out of the ore you aim at: **1 / 2 / 3** pieces, the ore left as stone. Cooldown **4 / 3 / 2 s**. |
+| **Mud Wave** | press | The ground ahead turns to mud and rolls forward **10 / 14 / 18** blocks in a hard straight line, knocking up and hurting (**5 / 6 / 7**) everything in its way, and **slowing it for 7 s**. Needs soil, mud or clay within 6 blocks. Cooldown **5 / 4 / 3 s**. |
 
 Every earthbender's first chakra, and his heavy footing, also show in the **steps**: see
 [Chakras and the Avatar State](Chakras-and-the-Avatar-State).

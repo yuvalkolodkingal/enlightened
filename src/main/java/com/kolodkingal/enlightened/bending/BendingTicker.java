@@ -85,6 +85,7 @@ public final class BendingTicker {
         }
         EarthBending.applyBody(player, data);
         WaterBending.applyBody(player, data);
+        com.kolodkingal.enlightened.water.PlantGiant.apply(player, data);
         AirBending.applyBody(player, data);
         Chakras.applyBody(player, data);
     }

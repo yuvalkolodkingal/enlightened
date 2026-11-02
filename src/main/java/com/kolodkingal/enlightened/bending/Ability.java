@@ -108,7 +108,10 @@ public enum Ability {
     ELEMENTAL_SPHERE(Element.AVATAR, Gate.NONE, Kind.TOGGLE, false),
     // Added last, so the arts before it keep their places in saved data.
     FROST_WALK(Element.WATER, Gate.NONE, Kind.TOGGLE, false),
-    ENERGY_RESTORE(Element.AVATAR, Gate.NONE, Kind.PRESS, false);
+    ENERGY_RESTORE(Element.AVATAR, Gate.NONE, Kind.PRESS, false),
+    MUD_WAVE(Element.EARTH, Gate.NONE, Kind.PRESS, false),
+    MUD_THROW(Element.WATER, Gate.NONE, Kind.PRESS, false),
+    PLANT_GIANT(Element.WATER, Gate.NONE, Kind.TOGGLE, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }

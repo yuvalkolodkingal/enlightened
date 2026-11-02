@@ -718,5 +718,15 @@
   "message.enlightened.dragons.unworthy.sub": "באת בלי הלהבה הנצחית",
   "message.enlightened.dragons.blessed": "ראן ושו בירכו אותך: האש שלך חזקה יותר, ואש צבעונית זמינה לבחירה (התגנבות + שינוי מראה).",
   "message.enlightened.dragons.again": "ראן ושו מקבלים אותך שוב בברכה.",
-  "message.enlightened.dragons.egg": "ראן נותן לך ביצת דרקון זהובה. הנח אותה בכל מקום: בעוד עשר דקות ייבקע ממנה דרקון."
+  "message.enlightened.dragons.egg": "ראן נותן לך ביצת דרקון זהובה. הנח אותה בכל מקום: בעוד עשר דקות ייבקע ממנה דרקון.",
+  "ability.enlightened.mud_wave": "גל בוץ",
+  "ability.enlightened.mud_wave.desc": "האדמה שלפניכם הופכת לבוץ ומתגלגלת קדימה בקו ישר וחזק, מעיפה, פוגעת ומאטה את כל מי שבדרך (האטה ל-7 שנ'). צריך אדמה, בוץ או חימר בסביבה.",
+  "ability.enlightened.mud_throw": "זריקת בוץ",
+  "ability.enlightened.mud_throw.desc": "כדורי בוץ נמשכים מהאדמה ונזרקים אל מה שאתם מסתכלים עליו (1 / 2 / 3); מי שנפגע מואט ל-7 שנ'. צריך אדמה, בוץ או חימר בסביבה.",
+  "ability.enlightened.plant_giant": "ענק הצמחים",
+  "ability.enlightened.plant_giant.desc": "עטפו את עצמכם בצמחים שסביבכם והפכו לענק של גפנים ועלים: גדול יותר, חזק יותר, קשה יותר לפגוע בו. צריך הרבה צמחים בסביבה; אש פוגעת בענק יותר ומפרקת אותו מהר.",
+  "message.enlightened.mud.none": "אין אדמה, בוץ או חימר בסביבה",
+  "message.enlightened.plant_giant.few": "מעט מדי צמחים כאן (%s מתוך %s)",
+  "message.enlightened.plant_giant.on": "הצמחים נכרכים סביבכם: אתם ענק",
+  "message.enlightened.plant_giant.torn": "הצמחים נקרעו מכם"
 }

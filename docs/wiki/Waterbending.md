@@ -82,6 +82,8 @@ Katara (default), Amon (Noatak), Ming-Hua, Master Pakku in the White Lotus robes
 | **Phase Change** | press, ice | The water you aim at freezes into a sheet of ice **2 / 3 / 5** blocks across for **30 / 60 / 120 s**; ice and snow you aim at melt. Cooldown **6 / 5 / 4 s**. |
 | **Frost Breath** | hold, ice | A cone of frost from your mouth, **5 / 7 / 9** blocks, that slows and, held long enough, freezes solid for **2 / 3 / 4 s**. |
 | **Plant Tether** | press | A vine from the plants within **5 / 7 / 9** blocks lashes the creature you aim at, slows it and drags it to them; aimed at nothing, it pulls you to the plant. Cooldown **8 / 6 / 5 s**. |
+| **Mud Throw** | press | Balls of mud drawn up from soil, mud or clay within 6 blocks and hurled at what you look at: **1 / 2 / 3**, **3 / 4 / 5** damage each; whoever they hit is **slowed for 7 s**. Cooldown **2 / 1.6 / 1.2 s**. |
+| **Plant Giant** | toggle | Wrap yourself in the plants round you (needs **40 / 32 / 24** plants within 8 blocks: leaves, grass, vines, flowers, crops, kelp...) and become a giant of vines and leaves with a wooden mask: **bigger** (×1.75 / ×2 / ×2.25), **+4 / +6 / +8 attack**, **+6 / +8 / +10 armour**, longer reach, hard to knock back, a little slower. The plants take about half of every blow until their strength (**45 / 60 / 75**) is spent; among plants it grows back. **Fire hurts the giant half again as much and tears it apart three times as fast.** Cooldown after it falls **15 / 12 / 10 s**. |
 | **Fast Swim** | passive | The water carries you swiftly; an adept breathes longer under it, a master as long as he likes. |
 | **Water Step** | passive | A double tap of a direction dashes you in a sheet of water; a double tap of Jump hops. Cooldown **2 / 1.5 / 1 s**. |
 

@@ -262,6 +262,12 @@ public final class CommonEvents {
             }
             amount *= 1.0F - guard;
         }
+        if (data.element().commands(Element.WATER) && victim instanceof ServerPlayer giant
+                && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && !source.is(DamageTypeTags.IS_FALL)) {
+            // The plant giant takes the blow; fire tears it apart.
+            amount = com.kolodkingal.enlightened.water.PlantGiant.absorb(giant, data, amount,
+                    source.is(DamageTypeTags.IS_FIRE) || source.is(ModTags.FIRE_BENDING));
+        }
         if (data.element().commands(Element.WATER)) {
             amount *= 1.0F - WaterBending.octopusGuard(data);
             if (!source.is(DamageTypeTags.IS_FALL) && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {

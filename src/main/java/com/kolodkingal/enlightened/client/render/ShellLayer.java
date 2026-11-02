@@ -24,6 +24,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ShellLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
     private static final ResourceLocation EARTH = Enlightened.id("textures/entity/earth_armor.png");
     private static final ResourceLocation METAL = Enlightened.id("textures/entity/metal_armor.png");
+    private static final ResourceLocation PLANTS = Enlightened.id("textures/entity/plant_giant.png");
 
     private final PlayerModel<AbstractClientPlayer> shell;
 
@@ -45,13 +46,14 @@ public class ShellLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
             return;
         }
         BendingData data = Benders.get(player);
-        if (!EarthBending.armored(data)) {
+        boolean plants = com.kolodkingal.enlightened.water.PlantGiant.wearing(data);
+        if (!EarthBending.armored(data) && !plants) {
             return;
         }
         boolean metal = data.has(Ability.METAL_ARMOR) && data.on(Ability.METAL_ARMOR);
         getParentModel().copyPropertiesTo(shell);
         shell.setupAnim(player, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-        VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(metal ? METAL : EARTH));
+        VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(plants ? PLANTS : metal ? METAL : EARTH));
         shell.renderToBuffer(poseStack, consumer, packedLight, OverlayTexture.NO_OVERLAY);
     }
 }

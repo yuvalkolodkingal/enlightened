@@ -77,6 +77,8 @@ public final class WaterBending {
         logic.put(Ability.ICE_WALL, new IceWall());
         logic.put(Ability.BLOODBENDING, new Blood());
         logic.put(Ability.BLOOD_SUPPRESS, new Suppress());
+        logic.put(Ability.MUD_THROW, com.kolodkingal.enlightened.earth.Mud.throwing());
+        logic.put(Ability.PLANT_GIANT, new PlantGiant());
         WaterMore.register(logic);
     }
 

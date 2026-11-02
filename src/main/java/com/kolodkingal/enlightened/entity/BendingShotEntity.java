@@ -338,6 +338,10 @@ public class BendingShotEntity extends Entity {
                 case AIR_BLADE, METAL_BLADE, ROCK -> {
                 }
             }
+            if (kind() == Kind.ROCK && blockState().is(Blocks.MUD)) {
+                // Mud bogs down whom it hits.
+                com.kolodkingal.enlightened.earth.Mud.bog(living);
+            }
             if (kind() == Kind.ROCK || kind() == Kind.SAND) {
                 Vec3 push = getDeltaMovement().normalize().scale(0.6);
                 living.push(push.x, 0.2, push.z);

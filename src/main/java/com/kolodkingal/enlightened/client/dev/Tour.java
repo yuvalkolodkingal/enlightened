@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v114".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v114();
+            return;
+        }
         if ("v113".equals(System.getProperty("enlightened.tour.only", ""))) {
             v113();
             return;
@@ -1006,6 +1010,28 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /** 1.0.14: the plant giant among the trees, a mud wave, mud thrown (alone: -Denlightened.tour.only=v114). */
+    private static void v114() {
+        cmd("time set noon", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        element("water", "katara", "plant_giant", "mud_throw");
+        cmd("fill -8 -60 -8 8 -58 8 minecraft:oak_leaves replace minecraft:air", 4);
+        cmd("fill -3 -60 -3 3 -58 3 minecraft:air", 4);
+        cmd("enlightened loadout @s 1 plant_giant", 6);
+        press(1, 2);
+        camera(CameraType.THIRD_PERSON_FRONT, 4);
+        shot("330_plant_giant", 30);
+        camera(CameraType.THIRD_PERSON_BACK, 2);
+        shot("331_plant_giant_back", 10);
+        press(1, 2);
+        cmd("fill -8 -60 -8 8 -58 8 minecraft:air", 10);
+        cmd("summon minecraft:husk 0 -60 8 {NoAI:1b}", 4);
+        cast("mud_throw", "332_mud_throw", 4);
+        element("earth", "toph", "mud_wave");
+        cmd("summon minecraft:husk 0 -60 10 {NoAI:1b}", 4);
+        cast("mud_wave", "333_mud_wave", 8);
     }
 
     /** 1.0.13: brighter fire and lightning, light-blue air, a struck metal wall in flight (alone: -Denlightened.tour.only=v113). */

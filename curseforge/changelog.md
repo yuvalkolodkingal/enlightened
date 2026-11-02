@@ -1,3 +1,12 @@
+# Enlightened 1.0.14
+
+* **Mudbending**, for earthbenders and waterbenders alike, wherever there is soil, mud or clay: earthbenders send a
+  **Mud Wave** rolling in a hard straight line; waterbenders **throw balls of mud** at their enemies. Whoever the mud
+  hits is **slowed for seven seconds**.
+* **The Plant Giant** (waterbending): wrap yourself in the plants around you and become a giant of vines and leaves:
+  bigger, stronger, better armoured. You need plenty of plants near you, and **fire** hurts the giant more and tears
+  it apart three times as fast.
+
 # Enlightened 1.0.13
 
 * **Strike your wall and it flies**: at the third level of Earth Wall or Metal Wall, left-click your own wall and the

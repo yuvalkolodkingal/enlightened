@@ -531,6 +531,43 @@ def paint_shell(name, base, crack):
     p.save(os.path.join(ENTITY, name + '.png'))
 
 
+def paint_plant_giant():
+    """The plant giant's shell (entity/plant_giant.png): leaves and vines of many greens over the whole body, a mask of
+    pale wood on the face with dark eye holes, as the swamp's waterbender wore."""
+    p = Painter('plant_giant')
+    greens = [(52, 96, 40), (70, 120, 46), (40, 78, 34), (88, 132, 56)]
+    for c in (HEAD, BODY, R_LEG, L_LEG, arm(40, 16, False), arm(32, 48, False)):
+        p.faces(c, greens[0], grain=0.15, vgrad=0.0)
+        for face, (x, y, w, h) in c.items():
+            for i in range(x, x + w):
+                for j in range(y, y + h):
+                    r = p.rnd.random()
+                    if r < 0.3:
+                        p.px[i, j] = shade(greens[p.rnd.randrange(4)], 1.0 + p.rnd.uniform(-0.12, 0.12))
+                    elif r < 0.36:
+                        p.px[i, j] = shade((98, 72, 44), 1.0)
+            # Vines hanging down the sides.
+            if h >= 8:
+                for i in range(x + 1, x + w, 3):
+                    for j in range(y, y + h):
+                        if p.rnd.random() < 0.7:
+                            p.px[i, j] = shade((34, 64, 28), 1.0)
+    fx, fy = HEAD['front'][0], HEAD['front'][1]
+    wood = (196, 168, 120)
+    for i in range(1, 7):
+        for j in range(1, 8):
+            p.px[fx + i, fy + j] = shade(wood, 1.0 + p.rnd.uniform(-0.06, 0.06))
+    for i in (2, 5):
+        for j in range(1, 8):
+            p.px[fx + i, fy + j] = shade(wood, 0.82)
+    for ex in (2, 5):
+        p.px[fx + ex, fy + 3] = (0, 0, 0, 0)
+        p.px[fx + ex, fy + 4] = (0, 0, 0, 0)
+    p.px[fx + 3, fy + 6] = shade((60, 40, 30), 1.0)
+    p.px[fx + 4, fy + 6] = shade((60, 40, 30), 1.0)
+    p.save(os.path.join(ENTITY, 'plant_giant.png'))
+
+
 def paint_lemur():
     """Momo, the flying lemur: his 64x32 texture over his model's layout (LemurModel.createBodyLayer). White fur, huge
     bat ears brown outside with a cream band inside and dark tips, big green eyes ringed in black, tan wing membranes,
@@ -1369,6 +1406,7 @@ def main():
             provided(f[:-4])
     paint_shell('earth_armor', (120, 105, 85), (80, 70, 55))
     paint_shell('metal_armor', (170, 175, 180), (110, 115, 120))
+    paint_plant_giant()
     paint_lemur()
     paint_pathik()
     paint_guards()

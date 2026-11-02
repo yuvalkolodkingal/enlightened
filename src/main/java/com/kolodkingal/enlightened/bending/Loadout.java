@@ -17,14 +17,15 @@ public final class Loadout {
                     Ability.EARTH_PILLAR, Ability.SEISMIC_SENSE, Ability.EARTH_WALL, Ability.SAND_WALL,
                     Ability.QUICKSAND, Ability.LAVA_SHURIKEN, Ability.LAVA_PATH, Ability.METAL_BLADES,
                     Ability.METAL_WALL, Ability.SAND_LIFT, Ability.METAL_PULL, Ability.WRECK, Ability.SHOCKWAVE, Ability.CATAPULT,
-                    Ability.EARTH_GRAB, Ability.EARTH_TUNNEL, Ability.EXTRACTION);
+                    Ability.EARTH_GRAB, Ability.EARTH_TUNNEL, Ability.EXTRACTION, Ability.MUD_WAVE);
             case AIR -> List.of(Ability.AIR_BLAST, Ability.AIR_BLADES, Ability.AIR_SHIELD, Ability.SUFFOCATE,
                     Ability.AIR_JUMP, Ability.FLIGHT, Ability.AIR_SCOOTER, Ability.SPIRIT_PROJECTION,
                     Ability.TORNADO, Ability.AIR_SUCTION, Ability.AIR_BURST, Ability.AIR_SPOUT);
             case WATER -> List.of(Ability.WATER_WHIP, Ability.ICE_KNIVES, Ability.WATER_HEALING, Ability.FREEZE,
                     Ability.OCTOPUS_FORM, Ability.WATER_ARMS, Ability.WATER_SPOUT, Ability.ICE_WALL,
                     Ability.BLOODBENDING, Ability.BLOOD_SUPPRESS, Ability.SNOW_THROW, Ability.WATER_SHIELD, Ability.WATER_BUBBLE,
-                    Ability.PHASE_CHANGE, Ability.FROST_BREATH, Ability.PLANT_TETHER, Ability.WATER_VORTEX, Ability.FROST_WALK);
+                    Ability.PHASE_CHANGE, Ability.FROST_BREATH, Ability.PLANT_TETHER, Ability.WATER_VORTEX, Ability.FROST_WALK,
+                    Ability.MUD_THROW, Ability.PLANT_GIANT);
             case FIRE -> List.of(Ability.FIRE_BALL, Ability.FIRE_FIST, Ability.FIRE_WHIP, Ability.FIRE_RING,
                     Ability.LIGHTNING, Ability.LIGHTNING_REDIRECT, Ability.FIRE_HEALING, Ability.FIRE_JET, Ability.FIRE_SHIELD,
                     Ability.WALL_OF_FIRE, Ability.BLAZE, Ability.COMBUSTION, Ability.HEAT_CONTROL, Ability.ILLUMINATION, Ability.PALM_FORGE);

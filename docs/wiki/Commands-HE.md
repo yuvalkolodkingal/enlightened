@@ -18,6 +18,7 @@
 | `/enlightened reset <players>` | לוקח בחזרה כל רמה מלבד של יכולת הפתיחה ומחזיר את הנקודות. |
 | `/enlightened avatar <players> <enter\|leave\|rest>` | נכנס או יוצא מ[מצב האווטאר](Chakras-and-the-Avatar-State-HE) (בלי קשר לצ'אקרות), או מסיים את המנוחה שלו. אווטארים בלבד. |
 | `/enlightened avatars` / `/enlightened avatars max <count>` | מציג את האווטארים (והיסוד שכל אחד נולד אליו, ושל הבא); קובע כמה אווטארים יכולים להיות בעולם בבת אחת (ברירת מחדל 1). |
+| `/avatarquest` / `/avatarquest light` / `/avatarquest dark` | (כל אחד.) איפה אתם במסע של [ראווה וואטו](Raava-and-Vaatu-HE); התשובה שלכם להצעה של ואטו (מה ששתי התשובות בצ'אט מריצות). |
 | `/enlightened guru <players> <taught\|untaught>` | מסמן שחקנים כתלמידים (או לא) של גורו פאתיק. |
 | `/enlightened lionturtle [pos [size]]` | מעלה [צב אריה](Lion-Turtle-HE) ואת האי שלו (הוא עולה תוך כמה שניות): בגובה פני הים היכן שאתה עומד, או עם פני הים במיקום הנתון; הוא פונה לאן שאתה פונה. גודל 1 עד 10 (ברירת מחדל `lionTurtleSize`). |
 | `/enlightened firecolor <players> <normal\|blue\|rainbow\|look>` | קובע את צבע האש של השחקנים (`look`: לפי הנראות שלהם; `rainbow` נותן גם את הברכה של ראן ושו). |

@@ -22,7 +22,8 @@ public class SiteStructure extends Structure {
         OMASHU("omashu", 60, 14, 58, 130, OmashuPiece::new),
         SPIRIT_PORTAL("spirit_portal", 8, 4, 50, 200, SpiritPortalPiece::new),
         TREE_OF_TIME("tree_of_time", 12, 8, 40, 200, TreeOfTimePiece::new),
-        SUN_WARRIORS("sun_warriors", 50, 20, 58, 140, SunWarriorPiece::new);
+        SUN_WARRIORS("sun_warriors", 50, 20, 58, 140, SunWarriorPiece::new),
+        RAAVA_GLADE("raava_glade", 8, 4, 58, 180, RaavaGladePiece::new);
 
         public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
         final String name;

@@ -53,6 +53,9 @@ public final class ModItems {
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> SUN_WARRIOR_SPAWN_EGG = ITEMS.register("sun_warrior_spawn_egg",
             () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.SUN_WARRIOR, 0xE8DCC0, 0xB0402A, new Item.Properties()));
 
+    public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> DARK_SPIRIT_SPAWN_EGG = ITEMS.register("dark_spirit_spawn_egg",
+            () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.DARK_SPIRIT, 0x2A1838, 0xF0D040, new Item.Properties()));
+
     /** A dragon's spawn egg: a pup, wild, of any colour. */
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> DRAGON_SPAWN_EGG = ITEMS.register("dragon_spawn_egg",
             () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.DRAGON, 0xB82A22, 0xF0E6D0, new Item.Properties()));

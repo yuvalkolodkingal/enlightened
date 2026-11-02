@@ -3,8 +3,13 @@
 [עברית](Becoming-a-Bender-HE)
 
 A player bends one element, forever (only an [operator command](Commands) changes it). It is chosen **at birth**:
-the first time you join a world, your fate is cast: one chance in six you are born **without bending**; otherwise
-you are a **firebender**, an **airbender**, a **waterbender**, an **earthbender** or **the Avatar**, alike.
+the first time you join a world, your fate is cast: one chance in five you are born **without bending**; otherwise
+you are a **firebender**, an **airbender**, a **waterbender** or an **earthbender**, alike. **Nobody is born the
+Avatar: Raava chooses the Avatar.** Find her in her glade and help her against Vaatu ([Raava and Vaatu](Raava-and-Vaatu)).
+
+A server can choose the old way instead (`general.avatarPath` = `FATE`): then one in seven each is born without
+bending, to one of the four, **the Avatar** or **the Dark Avatar** (while the world has room for each), and Raava and
+Vaatu are never found.
 
 ## The Avatar Cycle
 

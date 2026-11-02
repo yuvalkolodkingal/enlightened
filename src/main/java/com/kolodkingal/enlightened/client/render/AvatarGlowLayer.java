@@ -43,12 +43,14 @@ public class AvatarGlowLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
             return;
         }
         float pulse = 0.85F + 0.15F * Mth.sin(ageInTicks * 0.35F);
-        int white = FastColor.ARGB32.colorFromFloat(1.0F, pulse, pulse, 1.0F);
+        boolean dark = data.darkAvatar();
+        // The Dark Avatar's eyes burn yellow, his marks dark red.
+        int white = dark ? FastColor.ARGB32.colorFromFloat(1.0F, 1.0F, 0.82F * pulse, 0.2F) : FastColor.ARGB32.colorFromFloat(1.0F, pulse, pulse, 1.0F);
         VertexConsumer eyes = buffer.getBuffer(RenderType.eyes(EYES));
         getParentModel().renderToBuffer(poseStack, eyes, 0xF000F0, OverlayTexture.NO_OVERLAY, white);
         boolean arrows = data.element() == Element.AIR && !"zaheer".equals(data.variant()) || data.element() == Element.AVATAR && "aang".equals(data.variant());
         if (arrows) {
-            int blue = FastColor.ARGB32.colorFromFloat(1.0F, 0.75F * pulse, 0.9F * pulse, 1.0F);
+            int blue = dark ? FastColor.ARGB32.colorFromFloat(1.0F, 0.6F * pulse, 0.04F, 0.06F) : FastColor.ARGB32.colorFromFloat(1.0F, 0.75F * pulse, 0.9F * pulse, 1.0F);
             VertexConsumer tattoos = buffer.getBuffer(RenderType.eyes(ARROWS));
             getParentModel().renderToBuffer(poseStack, tattoos, 0xF000F0, OverlayTexture.NO_OVERLAY, blue);
         }

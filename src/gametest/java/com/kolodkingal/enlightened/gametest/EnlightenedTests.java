@@ -630,24 +630,36 @@ public final class EnlightenedTests {
     }
 
     @GameTest(template = ARENA, timeoutTicks = 20)
-    public static void everyoneIsBornToOneInSix(GameTestHelper helper) {
+    public static void everyoneIsBornByTheWorldsPath(GameTestHelper helper) {
         net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(42L);
         java.util.Map<Element, Integer> counts = new java.util.EnumMap<>(Element.class);
-        for (int i = 0; i < 6000; i++) {
-            counts.merge(Benders.birth(random, false), 1, Integer::sum);
+        for (int i = 0; i < 5000; i++) {
+            counts.merge(Benders.birth(random, true, false, false).element(), 1, Integer::sum);
         }
         for (Element e : Benders.BIRTHS) {
             int n = counts.getOrDefault(e, 0);
-            check(n > 850 && n < 1150, e + " is one in six (" + n + " of 6000)");
+            check(n > 850 && n < 1150, e + " is one in five on the quest path (" + n + " of 5000)");
         }
-        check(counts.size() == 6, "and nothing else");
+        check(!counts.containsKey(Element.AVATAR), "on the quest path nobody is born the Avatar: Raava chooses");
         counts.clear();
-        for (int i = 0; i < 6000; i++) {
-            counts.merge(Benders.birth(random, true), 1, Integer::sum);
+        int dark = 0;
+        for (int i = 0; i < 7000; i++) {
+            Benders.Birth b = Benders.birth(random, false, false, false);
+            counts.merge(b.element(), 1, Integer::sum);
+            dark += b.dark() ? 1 : 0;
         }
-        check(!counts.containsKey(Element.AVATAR), "no Avatar is born while the world has all it may");
+        int avatars = counts.getOrDefault(Element.AVATAR, 0);
+        check(dark > 850 && dark < 1150 && avatars - dark > 850 && avatars - dark < 1150, "on the fate path the Avatar and the Dark Avatar are one in seven each ("
+                + (avatars - dark) + ", " + dark + ")");
+        counts.clear();
+        dark = 0;
+        for (int i = 0; i < 7000; i++) {
+            Benders.Birth b = Benders.birth(random, false, true, true);
+            counts.merge(b.element(), 1, Integer::sum);
+        }
+        check(!counts.containsKey(Element.AVATAR), "no Avatar of either kind is born while the world has all it may");
         int none = counts.getOrDefault(Element.NONE, 0);
-        check(none > 850 && none < 1150, "still one in six is born without bending (" + none + ")");
+        check(none > 850 && none < 1150, "still one in seven is born without bending (" + none + ")");
         check(helper.getLevel().getServer().getRecipeManager().byKey(Enlightened.id("fire_scroll")).isEmpty(), "the scrolls are not crafted");
         helper.succeed();
     }

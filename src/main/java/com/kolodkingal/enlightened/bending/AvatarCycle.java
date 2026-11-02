@@ -37,6 +37,10 @@ public final class AvatarCycle extends SavedData {
     private final Map<UUID, String> names = new LinkedHashMap<>();
     /** Former Avatars who lost the Avatar while away (banned, or the cycle moved on), and the element to give them back. */
     private final Map<UUID, Element> revoked = new LinkedHashMap<>();
+    /** Who the last rebirth chose (not saved). */
+    private UUID lastReborn;
+    /** Which of the Avatars are Dark Avatars. */
+    private final java.util.Set<UUID> dark = new java.util.LinkedHashSet<>();
     /** The element the next Avatar is born to; null before the first. */
     private Element next;
     /** Avatars owed to the world: lost while nobody else was online, given to the next player who comes. */
@@ -55,8 +59,24 @@ public final class AvatarCycle extends SavedData {
         setDirty();
     }
 
+    /** Whether the world has all the Avatars of the light it may have (a Dark Avatar is counted apart). */
     public boolean full() {
-        return avatars.size() >= max;
+        return avatars.size() - dark.size() >= max;
+    }
+
+    /** Whether the world has its Dark Avatar (one at most). */
+    public boolean hasDark() {
+        return !dark.isEmpty();
+    }
+
+    public boolean isDark(UUID id) {
+        return dark.contains(id);
+    }
+
+    public void markDark(UUID id, boolean isDark) {
+        if (isDark ? dark.add(id) : dark.remove(id)) {
+            setDirty();
+        }
     }
 
     public Map<UUID, Element> avatars() {
@@ -103,6 +123,7 @@ public final class AvatarCycle extends SavedData {
     }
 
     public void unregister(UUID id) {
+        dark.remove(id);
         if (avatars.remove(id) != null) {
             names.remove(id);
             setDirty();
@@ -117,6 +138,7 @@ public final class AvatarCycle extends SavedData {
         if (base == null) {
             return;
         }
+        boolean wasDark = dark.contains(former);
         unregister(former);
         if (revoke) {
             revoked.put(former, base);
@@ -128,6 +150,12 @@ public final class AvatarCycle extends SavedData {
         }
         if (!rebirth(server, former)) {
             owed++;
+        } else if (wasDark && lastReborn != null) {
+            // The darkness passes on as the light does.
+            ServerPlayer heir = server.getPlayerList().getPlayer(lastReborn);
+            if (heir != null) {
+                com.kolodkingal.enlightened.quest.AvatarQuest.becomeDark(heir);
+            }
         }
         setDirty();
     }
@@ -145,6 +173,7 @@ public final class AvatarCycle extends SavedData {
             return false;
         }
         ServerPlayer chosen = candidates.get(server.overworld().getRandom().nextInt(candidates.size()));
+        lastReborn = chosen.getUUID();
         becomeAvatar(server, chosen);
         return true;
     }
@@ -201,6 +230,9 @@ public final class AvatarCycle extends SavedData {
         c.max = tag.contains("Max") ? tag.getInt("Max") : 1;
         c.owed = tag.getInt("Owed");
         c.next = tag.contains("Next") ? Element.byName(tag.getString("Next")) : null;
+        for (Tag t : tag.getList("Dark", Tag.TAG_INT_ARRAY)) {
+            c.dark.add(net.minecraft.nbt.NbtUtils.loadUUID(t));
+        }
         for (Tag t : tag.getList("Avatars", Tag.TAG_COMPOUND)) {
             CompoundTag a = (CompoundTag) t;
             UUID id = a.getUUID("Id");
@@ -218,6 +250,11 @@ public final class AvatarCycle extends SavedData {
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         tag.putInt("Max", max);
         tag.putInt("Owed", owed);
+        ListTag darkList = new ListTag();
+        for (UUID id : dark) {
+            darkList.add(net.minecraft.nbt.NbtUtils.createUUID(id));
+        }
+        tag.put("Dark", darkList);
         if (next != null) {
             tag.putString("Next", next.getSerializedName());
         }

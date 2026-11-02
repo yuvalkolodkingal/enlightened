@@ -459,8 +459,24 @@ public final class BendingData {
         }
     }
 
+    /**
+     * Whether he is the Dark Avatar (bit 53 of the second toggle word): he betrayed Raava for Vaatu. Bloodbending and
+     * flight come to him; energybending and the chakras are weaker in him; his Avatar State burns dark red.
+     */
+    public boolean darkAvatar() {
+        return element() == Element.AVATAR && (toggles[1] & (1L << 53)) != 0;
+    }
+
+    public void setDarkAvatar(boolean dark) {
+        long bits = dark ? toggles[1] | (1L << 53) : toggles[1] & ~(1L << 53);
+        if (bits != toggles[1]) {
+            toggles[1] = bits;
+            dirty = true;
+        }
+    }
+
     public void clearToggles() {
-        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55) | (1L << 54));
+        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55) | (1L << 54) | (1L << 53));
         if (toggles[0] != 0 || toggles[1] != keep) {
             toggles[0] = 0L;
             toggles[1] = keep;

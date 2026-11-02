@@ -46,7 +46,8 @@ public final class Mastery {
         BendingData d = Benders.get(player);
         int s = d.spent() + 2 * d.chakras();
         if (d.element() == Element.AVATAR) {
-            s += 10;
+            // Energy is the light's art: it is weaker in the Dark Avatar.
+            s += d.darkAvatar() ? 2 : 10;
         }
         if (!d.element().bends() && d.has(Ability.ENERGYBENDING)) {
             s += 6;
@@ -77,6 +78,10 @@ public final class Mastery {
         }
         if (a.gate == Gate.CHAKRAS) {
             return data.chakras() >= 7;
+        }
+        if (a.gate == Gate.BLOOD && data.darkAvatar()) {
+            // The darkness opens bloodbending to the Dark Avatar at once.
+            return true;
         }
         return data.spent(a.element) >= gateCost(a.gate);
     }

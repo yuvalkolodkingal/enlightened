@@ -59,6 +59,10 @@ public final class Chakras {
     // ---- what the open chakras give ----
 
     /** The depth of the whole Avatar State (as it takes him near death), and the master's, twice as strong. */
+    /** How much of the chakras' strength the Dark Avatar keeps. */
+    public static final float DARK_CHAKRAS = 0.7F;
+    /** The colour of the Dark Avatar's State: dark red (black and yellow with it). */
+    public static final int DARK_STATE = 0x8B0A12;
     public static final int POWER_WHOLE = 7;
     public static final int POWER_MASTER = 8;
 
@@ -91,7 +95,8 @@ public final class Chakras {
         if (!data.avatar(now)) {
             return f;
         }
-        f *= 1.0F + 1.5F * stateShare(data, now);
+        // The chakras are the light's: in the Dark Avatar their part in the State is weaker.
+        f *= 1.0F + 1.5F * stateShare(data, now) * (data.darkAvatar() ? DARK_CHAKRAS : 1.0F);
         return power(data, now) == POWER_MASTER ? f * 2.0F : f;
     }
 
@@ -353,7 +358,7 @@ public final class Chakras {
         ServerLevel level = p.serverLevel();
         level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AWAKEN.get(), SoundSource.PLAYERS, 1.5F, 0.5F);
         level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_SHIELD_BREAK.get(), SoundSource.PLAYERS, 1.0F, 0.6F);
-        Fx.at(level, Fx.AVATAR_RISE, p.position(), part ? colour(power) : Benders.color(p), part ? 1.0F + power * 0.4F : 4.0F);
+        Fx.at(level, Fx.AVATAR_RISE, p.position(), part ? colour(power) : data.darkAvatar() ? DARK_STATE : Benders.color(p), part ? 1.0F + power * 0.4F : 4.0F);
         for (net.minecraft.world.entity.LivingEntity e : Shots.area(p, p.position(), part ? 1.0 + power * 0.4 : 4.0)) {
             Shots.push(e, p.position(), part ? 0.3 + power * 0.15 : 1.5, 0.6);
         }

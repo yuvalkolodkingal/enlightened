@@ -40,6 +40,9 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> SUN_WARRIORS_PIECE = PIECES.register("sun_warriors",
             () -> (StructurePieceType.ContextlessType) SunWarriorPiece::new);
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> RAAVA_GLADE_PIECE = PIECES.register("raava_glade",
+            () -> (StructurePieceType.ContextlessType) RaavaGladePiece::new);
+
     private ModStructures() {
     }
 }

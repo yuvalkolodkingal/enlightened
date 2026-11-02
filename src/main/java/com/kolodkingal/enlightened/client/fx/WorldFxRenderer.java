@@ -628,27 +628,33 @@ public final class WorldFxRenderer {
         // A part of the State (some chakras open) shines in the colour of the highest, and does not light the eyes.
         long now = p.level().getGameTime();
         boolean part = com.kolodkingal.enlightened.bending.Chakras.partial(data, now);
-        int tint = part ? com.kolodkingal.enlightened.bending.Chakras.colour(com.kolodkingal.enlightened.bending.Chakras.power(data, now)) : 0xFFFFFF;
+        boolean dark = data.darkAvatar() && !part;
+        int tint = part ? com.kolodkingal.enlightened.bending.Chakras.colour(com.kolodkingal.enlightened.bending.Chakras.power(data, now))
+                : dark ? com.kolodkingal.enlightened.bending.Chakras.DARK_STATE : 0xFFFFFF;
         float tr = (tint >> 16 & 255) / 255.0F, tg = (tint >> 8 & 255) / 255.0F, tb = (tint & 255) / 255.0F;
         // Seen from inside (his own eyes), the spheres of light and the glow of his eyes would fill the whole screen:
         // he sees only the streams of light climbing round him.
         boolean ownView = p == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson();
         if (!ownView) {
             Quaternionf rot = new Quaternionf().rotationY(age * 0.12F).mul(new Quaternionf().rotationX(0.3F * Mth.sin(age * 0.07F)));
-            FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, part ? tr : 0.75F, part ? tg : 0.9F, part ? tb : 1.0F, 0.08F * w, 1.5F, age * 0.3F, FULL, false, rot);
+            FxGeometry.sphere(pose, light, c, 1.6F, 10, 20, 0, 1, part || dark ? tr : 0.75F, part || dark ? tg : 0.9F, part || dark ? tb : 1.0F, 0.08F * w, 1.5F, age * 0.3F, FULL, false, rot);
             FxGeometry.sphere(pose, light, c, 1.2F, 8, 16, 0, 1, tr, tg, tb, 0.05F * w, 2.2F, -age * 0.4F, FULL, false, new Quaternionf().rotationZ(1.0F).mul(new Quaternionf().rotationY(-age * 0.2F)));
             Vec3 eyes = rel(p.getEyePosition(partial).add(look(p).scale(0.15)));
-            if (!part) {
+            if (dark) {
+                // Black smoke round him, the eyes burning yellow.
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), c, 2.2F * w, 0.03F, 0.0F, 0.02F, 0.45F * w, age * 0.2F);
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.6F * w, 1.0F, 0.82F, 0.2F, 0.85F * w, age * 0.3F);
+            } else if (!part) {
                 FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), eyes, 0.6F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, age * 0.3F);
             }
             Vec3 forehead = HandTracker.forehead(p, partial);
             if (forehead != null && !part) {
-                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(forehead), 0.5F * w, 0.85F, 0.95F, 1.0F, 0.8F * w, -age * 0.3F);
+                FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(forehead), 0.5F * w, dark ? 1.0F : 0.85F, dark ? 0.82F : 0.95F, dark ? 0.2F : 1.0F, 0.8F * w, -age * 0.3F);
             }
         }
         // The light at his hands (in his own eyes the hands are drawn apart, and a glow at their place in the world would hang before them).
         for (HumanoidArm arm : ownView ? new HumanoidArm[0] : HumanoidArm.values()) {
-            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(hand(p, arm)), 0.5F * w, part ? tr : 0.85F, part ? tg : 0.95F, part ? tb : 1.0F, 0.8F * w, age * 0.4F);
+            FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), rel(hand(p, arm)), 0.5F * w, part || dark ? tr : 0.85F, part || dark ? tg : 0.95F, part || dark ? tb : 1.0F, 0.8F * w, age * 0.4F);
         }
         // Streams of light climbing round the body (in his own eyes, only as high as his chest: above it they cross his sight).
         for (int i = 0; i < 5; i++) {
@@ -1563,6 +1569,15 @@ public final class WorldFxRenderer {
                 // The burst as he rises: the one who rises sees it go out from him, not a white wall in his eyes.
                 boolean near = from.lengthSqr() < 9.0;
                 float r = e.data() * easeOut(f);
+                if (e.color() == com.kolodkingal.enlightened.bending.Chakras.DARK_STATE) {
+                    // The Dark Avatar rises in dark red, black smoke and yellow sparks.
+                    FxGeometry.ringBand(pose, vc(FxGeometry.light()), from.add(0, 0.05, 0), r * 1.3F, (near ? 0.5F : 2.0F) * (1.0F - f), 32, 0, 1, 0.75F, 0.05F, 0.08F, 0.6F * (1.0F - f), FULL, false, a, 0.3F);
+                    if (!near) {
+                        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 1.4, 0), 3.5F * (1.0F - f * 0.5F), 0.04F, 0.0F, 0.02F, 0.7F * (1.0F - f), a);
+                        FxGeometry.glowBlob(pose, vc(FxGeometry.glowTexture()), from.add(0, 1.6, 0), 1.6F * (1.0F - f * 0.5F), 1.0F, 0.82F, 0.2F, 0.8F * (1.0F - f), -a);
+                    }
+                    break;
+                }
                 // From inside, the sphere and a tall band would be a wall of white round him: he sees a low ring go out.
                 if (!near) {
                     FxGeometry.sphere(pose, vc(FxGeometry.light()), from.add(0, 1.0, 0), r, 10, 20, 0, 1, 0.8F, 0.92F, 1.0F, 0.4F * (1.0F - f), 1.5F, a * 0.5F, FULL, false, new Quaternionf().rotationY(a * 0.3F));

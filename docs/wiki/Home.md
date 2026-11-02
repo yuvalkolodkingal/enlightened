@@ -38,6 +38,7 @@ same authors, and plays the same way.
 * [The Flying Lemur](Flying-Lemur): a tameable winged lemur, like Momo
 * [The Southern Air Temple](Southern-Air-Temple): the temple on the mountains, its sky bison, Guru Pathik and Momo
 * [The Lion Turtle](Lion-Turtle): an island that swims, energybending for a Hero of the Village, and a home on its shell
+* [Raava and Vaatu](Raava-and-Vaatu): how the Avatar is chosen: Raava's glade, the dark spirits, Vaatu's offer in the Spirit World, the Dark Avatar
 * [The Sun Warriors and the Dragons](Sun-Warriors): the jungle city of ruins and traps, the Eternal Flame, Ran and Shaw's test, rainbow fire, and a dragon of your own to ride
 * [Ba Sing Se and Omashu](Earth-Kingdom-Cities): the walled capital that keeps all monsters out, the mountain city over its chasm with King Bumi on his throne, and the city guards you can talk to
 * [The Spirit World](Spirit-World): a world of its own through the spirit portals, and the Tree of Time

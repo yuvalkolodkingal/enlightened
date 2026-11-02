@@ -56,6 +56,7 @@ public final class CommonEvents {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             BendingTicker.tick(player);
+            com.kolodkingal.enlightened.quest.AvatarQuest.tick(player);
         }
     }
 
@@ -69,6 +70,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onCommands(RegisterCommandsEvent event) {
         EnlightenedCommand.register(event.getDispatcher(), event.getBuildContext());
+        com.kolodkingal.enlightened.quest.QuestCommand.register(event.getDispatcher());
     }
 
     // ---- the lion turtle's shell: only a Hero of the Village builds on it ----

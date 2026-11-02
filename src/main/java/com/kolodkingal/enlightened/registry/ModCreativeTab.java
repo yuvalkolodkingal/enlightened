@@ -28,6 +28,7 @@ public final class ModCreativeTab {
                 output.accept(ModItems.CITY_GUARD_SPAWN_EGG.get());
                 output.accept(ModItems.SUN_WARRIOR_SPAWN_EGG.get());
                 output.accept(ModItems.DRAGON_SPAWN_EGG.get());
+                output.accept(ModItems.DARK_SPIRIT_SPAWN_EGG.get());
                 output.accept(ModItems.ETERNAL_FLAME.get());
                 output.accept(ModBlocks.GOLDEN_DRAGON_EGG_ITEM.get());
                 output.accept(ModBlocks.ANOMALY_BLOCK.get());

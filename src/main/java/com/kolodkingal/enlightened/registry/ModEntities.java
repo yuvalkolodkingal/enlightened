@@ -84,7 +84,19 @@ public final class ModEntities {
             () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.FlyingSlabEntity>of(com.kolodkingal.enlightened.entity.FlyingSlabEntity::new, MobCategory.MISC)
                     .sized(1.0F, 1.0F).clientTrackingRange(10).updateInterval(1).noSummon().build("flying_slab"));
 
+    /** Raava or Vaatu, the great spirits of light and darkness. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.GreatSpiritEntity>> GREAT_SPIRIT = ENTITIES.register("great_spirit",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.GreatSpiritEntity::new, MobCategory.MISC)
+                    .sized(2.4F, 4.0F).clientTrackingRange(16).updateInterval(1).fireImmune().build("great_spirit"));
+
+    /** A dark spirit, turned by Vaatu. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.DarkSpiritEntity>> DARK_SPIRIT = ENTITIES.register("dark_spirit",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.DarkSpiritEntity::new, MobCategory.MONSTER)
+                    .sized(1.0F, 1.3F).clientTrackingRange(10).build("dark_spirit"));
+
     public static void createAttributes(EntityAttributeCreationEvent event) {
+        event.put(GREAT_SPIRIT.get(), com.kolodkingal.enlightened.entity.GreatSpiritEntity.createAttributes().build());
+        event.put(DARK_SPIRIT.get(), com.kolodkingal.enlightened.entity.DarkSpiritEntity.createAttributes().build());
         event.put(SUN_WARRIOR.get(), com.kolodkingal.enlightened.entity.SunWarriorEntity.createAttributes().build());
         event.put(DRAGON.get(), com.kolodkingal.enlightened.entity.DragonEntity.createAttributes().build());
         event.put(ANOMALY.get(), com.kolodkingal.enlightened.entity.AnomalyEntity.createAttributes().build());

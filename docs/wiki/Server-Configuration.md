@@ -15,6 +15,7 @@ here; the defaults are what the [element pages](Home) describe.
 | `bossXp` | 10 | Experience the Wither, the Ender Dragon, the Warden and an Elder Guardian give. |
 | `playerXp` | 2 | Experience another player gives (with PvP on). |
 | `hurtEverything` | true | Whether bending hurts every creature in its way: the bender's own pets, teammates, villagers, golems, everything alive but himself (players still by the server's PvP rule). On, `hurtPassives` does not matter. |
+| `avatarPath` | QUEST | How one becomes the Avatar. `QUEST`: nobody is born the Avatar; Raava chooses one who helps her (see [Raava and Vaatu](Raava-and-Vaatu)). `FATE`: a newborn is the Avatar one time in seven and the Dark Avatar one time in seven, while the world has room for each; Raava and Vaatu are never found. |
 | `hurtPassives` | true | Whether bending (a rock, a whip, a flame, an area attack) hurts villagers, animals and golems as well as monsters. Turn it off to keep your farms safe. |
 | `scrollsInChests` | true | Whether the scrolls are found in chests. |
 | `raisedBlockSeconds` | 10 | How long a pillar stands. |

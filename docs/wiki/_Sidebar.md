@@ -22,6 +22,7 @@
 * [Seven Havens](Seven-Havens)
 * [Ba Sing Se and Omashu](Earth-Kingdom-Cities)
 * [The Sun Warriors and the Dragons](Sun-Warriors)
+* [Raava and Vaatu](Raava-and-Vaatu)
 * [The Spirit World](Spirit-World)
 * [The Flying Lemur](Flying-Lemur)
 * [Commands](Commands)

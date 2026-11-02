@@ -31,6 +31,9 @@ public final class Shots {
     public record Aim(@Nullable LivingEntity target, Vec3 end) {
     }
 
+    /** How much harder the Dark Avatar bloodbends. */
+    public static final float DARK_BLOOD = 1.5F;
+
     public static Aim aim(ServerPlayer player, double range) {
         HitResult hit = Raycasts.any(player, range, e -> e != player && e instanceof LivingEntity && e.isAlive()
                 && !e.isSpectator() && !player.isPassengerOfSameVehicle(e), 1.0F);
@@ -82,6 +85,10 @@ public final class Shots {
         // The Avatar strikes harder with the element he was born to.
         if (data.element() == Element.AVATAR && data.avatarBase() != Element.NONE && Avatar.elementOf(type) == data.avatarBase()) {
             amount *= Avatar.BORN_DAMAGE;
+        }
+        // The Dark Avatar's bloodbending is his strongest art.
+        if (data.darkAvatar() && type == ModDamageTypes.BLOOD) {
+            amount *= DARK_BLOOD;
         }
         // Fire blessed by Ran and Shaw burns harder.
         if (data.dragonBlessed() && Avatar.elementOf(type) == Element.FIRE) {

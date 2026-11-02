@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v116".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v116();
+            return;
+        }
         if ("v115".equals(System.getProperty("enlightened.tour.only", ""))) {
             v115();
             return;
@@ -1014,6 +1018,52 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /** 1.0.16: Raava's glade, Raava and Vaatu, the dark spirits, the Dark Avatar's State (alone: -Denlightened.tour.only=v116). */
+    private static void v116() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("gamemode spectator", 4);
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            build(level, new com.kolodkingal.enlightened.world.RaavaGladePiece(new net.minecraft.core.BlockPos(300, -61, 0)));
+            level.addFreshEntity(com.kolodkingal.enlightened.entity.GreatSpiritEntity.raavaAt(level, new net.minecraft.world.phys.Vec3(300.5, -58, 0.5)));
+        }, 40);
+        cmd("tp @s 300.5 -55 12.5 180 15", 40);
+        shot("350_raava_glade", 60);
+        // Vaatu, as in the Spirit World, and the dark spirits.
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            var v = com.kolodkingal.enlightened.registry.ModEntities.GREAT_SPIRIT.get().create(level);
+            v.moveTo(340.5, -57, 0.5, 0, 0);
+            v.setup(com.kolodkingal.enlightened.entity.GreatSpiritEntity.Kind.VAATU, p, false);
+            v.setNoAi(true);
+            level.addFreshEntity(v);
+            for (int i = 0; i < 3; i++) {
+                var s = com.kolodkingal.enlightened.registry.ModEntities.DARK_SPIRIT.get().create(level);
+                s.moveTo(336.5 + i * 3, -60, 6.5, 180, 0);
+                s.setShape(i == 1 ? com.kolodkingal.enlightened.entity.DarkSpiritEntity.Shape.FLYER : com.kolodkingal.enlightened.entity.DarkSpiritEntity.Shape.CRAWLER);
+                s.setNoAi(true);
+                level.addFreshEntity(s);
+            }
+        }, 10);
+        cmd("tp @s 339.5 -56 16.5 180 10", 20);
+        shot("351_vaatu_and_dark_spirits", 40);
+        // The Dark Avatar in his State.
+        cmd("gamemode creative", 4);
+        element("avatar", "aang", "avatar_state");
+        server(p -> {
+            com.kolodkingal.enlightened.bending.Benders.get(p).setDarkAvatar(true);
+            com.kolodkingal.enlightened.bending.Benders.syncIfDirty(p);
+        }, 4);
+        camera(CameraType.THIRD_PERSON_FRONT, 4);
+        cmd("enlightened loadout @s 1 avatar_state", 6);
+        press(1, 2);
+        shot("352_dark_avatar_state", 40);
+        press(1, 2);
+        camera(CameraType.THIRD_PERSON_BACK, 4);
     }
 
     /** 1.0.15: the Great Lift, held and hurled (alone: -Denlightened.tour.only=v115). */

@@ -37,19 +37,31 @@ public final class Benders {
         }
     }
 
-    /** What a player may be born to: no bending at all (one in six), or one of the four elements or the Avatar. */
-    public static final Element[] BIRTHS = {Element.NONE, Element.FIRE, Element.AIR, Element.WATER, Element.EARTH, Element.AVATAR};
+    /** What a player may be born to on the quest path: no bending, or one of the four (one in five each). */
+    public static final Element[] BIRTHS = {Element.NONE, Element.FIRE, Element.AIR, Element.WATER, Element.EARTH};
+
+    /** What a newborn is: an element, and (for the Avatar) whether the Dark Avatar. */
+    public record Birth(Element element, boolean dark) {
+    }
 
     /**
-     * The element a newborn player is given: one in six no bending; the rest the four elements and the Avatar alike,
-     * unless the world has all the Avatars it may ({@code avatarsFull}), when it is one of the four.
+     * The fate of a newborn player. On the quest path one in five each: no bending, or one of the four (the Avatar is
+     * Raava's to choose). On the fate path one in seven each: no bending, one of the four, the Avatar or the Dark
+     * Avatar; an Avatar the world has no room for ({@code avatarsFull}, {@code darkFull}) is one of the four instead.
      */
-    public static Element birth(net.minecraft.util.RandomSource random, boolean avatarsFull) {
-        Element born = BIRTHS[random.nextInt(BIRTHS.length)];
-        if (born == Element.AVATAR && avatarsFull) {
-            born = AvatarCycle.CYCLE.get(random.nextInt(AvatarCycle.CYCLE.size()));
+    public static Birth birth(net.minecraft.util.RandomSource random, boolean quest, boolean avatarsFull, boolean darkFull) {
+        if (quest) {
+            return new Birth(BIRTHS[random.nextInt(BIRTHS.length)], false);
         }
-        return born;
+        int roll = random.nextInt(7);
+        if (roll < 5) {
+            return new Birth(BIRTHS[roll], false);
+        }
+        boolean dark = roll == 6;
+        if (dark ? darkFull : avatarsFull) {
+            return new Birth(AvatarCycle.CYCLE.get(random.nextInt(AvatarCycle.CYCLE.size())), false);
+        }
+        return new Birth(Element.AVATAR, dark);
     }
 
     /**
@@ -72,8 +84,11 @@ public final class Benders {
             return;
         }
         AvatarCycle cycle = AvatarCycle.get(player.getServer());
-        Element born = birth(player.getRandom(), cycle.full());
-        if (born == Element.NONE) {
+        Birth birth = birth(player.getRandom(), com.kolodkingal.enlightened.quest.AvatarQuest.questPath(), cycle.full(), cycle.hasDark());
+        Element born = birth.element();
+        if (born == Element.AVATAR && birth.dark()) {
+            com.kolodkingal.enlightened.quest.AvatarQuest.becomeDark(player);
+        } else if (born == Element.NONE) {
             player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("message.enlightened.born_none")
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
         } else if (born == Element.AVATAR) {
@@ -102,6 +117,7 @@ public final class Benders {
                 Avatar.bear(data, cycle.register(player));
             } else if (old == Element.AVATAR) {
                 cycle.unregister(player.getUUID());
+                data.setDarkAvatar(false);
             }
         }
         if (element.bends()) {

@@ -1,3 +1,16 @@
+# Enlightened 1.0.16
+
+* **Raava chooses the Avatar.** Nobody is born the Avatar any more: find **Raava** in her glade (white pillars round a
+  pool), and agree to help her against **Vaatu**: she enters you and you become the Avatar.
+* Then **dark spirits** come for you (crawlers and flyers with burning eyes). Beat ten, and Raava sends you to the
+  **Spirit World**, where **Vaatu** offers you to betray her. **Refuse** and fight Vaatu; **join him** and become the
+  **Dark Avatar**, and fight Raava.
+* **The Dark Avatar**: stronger bloodbending (opened at once), flight, but weaker energybending and chakras; his Avatar
+  State burns dark red with black smoke and yellow eyes.
+* **A new server option, `avatarPath`**: `QUEST` (the default, Raava's quest) or `FATE` (the Avatar and the Dark Avatar
+  are born one in seven each, and Raava and Vaatu are never found). On the quest path the rest are born one in five:
+  no bending or one of the four.
+
 # Enlightened 1.0.15
 
 * **The Great Lift** (earthbending, for one who has opened **all seven chakras**): tear a whole stretch of land

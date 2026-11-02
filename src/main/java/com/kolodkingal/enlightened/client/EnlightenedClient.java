@@ -84,6 +84,8 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.SUN_WARRIOR.get(), com.kolodkingal.enlightened.client.render.SunWarriorRenderer::new);
         event.registerEntityRenderer(ModEntities.DRAGON.get(), com.kolodkingal.enlightened.client.render.DragonRenderer::new);
         event.registerEntityRenderer(ModEntities.FLYING_SLAB.get(), com.kolodkingal.enlightened.client.render.FlyingSlabRenderer::new);
+        event.registerEntityRenderer(ModEntities.GREAT_SPIRIT.get(), com.kolodkingal.enlightened.client.render.GreatSpiritRenderer::new);
+        event.registerEntityRenderer(ModEntities.DARK_SPIRIT.get(), com.kolodkingal.enlightened.client.render.DarkSpiritRenderer::new);
         event.registerBlockEntityRenderer(com.kolodkingal.enlightened.registry.ModBlocks.ANOMALY_CUBE.get(),
                 com.kolodkingal.enlightened.client.render.AnomalyCubeRenderer::new);
     }
@@ -95,6 +97,8 @@ public final class EnlightenedClient {
                 com.kolodkingal.enlightened.client.render.SkyBisonModel::createBodyLayer);
         event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.LionTurtleRenderer.LAYER,
                 com.kolodkingal.enlightened.client.render.LionTurtleModel::createBodyLayer);
+        event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.DarkSpiritRenderer.LAYER,
+                com.kolodkingal.enlightened.client.render.DarkSpiritRenderer::createBodyLayer);
         event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.DragonRenderer.LAYER,
                 com.kolodkingal.enlightened.client.render.DragonRenderer::createBodyLayer);
         event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.CityGuardRenderer.HELMET,

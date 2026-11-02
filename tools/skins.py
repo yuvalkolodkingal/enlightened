@@ -568,6 +568,74 @@ def paint_plant_giant():
     p.save(os.path.join(ENTITY, 'plant_giant.png'))
 
 
+def paint_great_spirit(name, body, pattern, edge, gem, horns):
+    """Raava or Vaatu (entity/<name>.png, 128x256): the kite of the spirit in the top three quarters (a round head with
+    spirals and a gem at its heart, a body tapering to a point with chevrons down it, an edge of light), and at the
+    bottom the strip its ribbons are drawn from."""
+    W, H = 128, 256
+    img = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    cx = W // 2
+    top = 8
+    bot = 190
+    # The kite: a round head over a body that tapers to a point.
+    head_r = 38
+    hy = top + head_r + 4
+    outline = [(cx, top), (cx + 44, hy - 6), (cx + 54, hy + 6), (cx + 30, hy + 60), (cx + 14, bot - 30), (cx, bot),
+               (cx - 14, bot - 30), (cx - 30, hy + 60), (cx - 54, hy + 6), (cx - 44, hy - 6)]
+    d.polygon(outline, fill=edge)
+    inner = [(x if x == cx else cx + (x - cx) * 0.86, y if y in (top, bot) else y) for x, y in outline]
+    inner = [(cx, top + 6)] + inner[1:5] + [(cx, bot - 8)] + inner[6:]
+    d.polygon(inner, fill=body)
+    if horns:
+        d.polygon([(cx - 20, top + 12), (cx - 62, top - 2), (cx - 56, top + 14), (cx - 26, top + 26)], fill=edge)
+        d.polygon([(cx + 20, top + 12), (cx + 62, top - 2), (cx + 56, top + 14), (cx + 26, top + 26)], fill=edge)
+    # The head's spirals and the gem at its heart.
+    for side in (-1, 1):
+        sx = cx + side * 20
+        for k in range(4):
+            r = 14 - k * 3
+            d.arc((sx - r, hy - 4 - r, sx + r, hy - 4 + r), 0 if side > 0 else 180, 270 if side > 0 else 450, fill=pattern, width=3)
+    d.polygon([(cx, hy - 16), (cx + 8, hy - 2), (cx, hy + 12), (cx - 8, hy - 2)], fill=gem)
+    d.polygon([(cx, hy - 10), (cx + 4, hy - 2), (cx, hy + 6), (cx - 4, hy - 2)], fill=(255, 255, 255, 230) if not horns else (255, 210, 140, 255))
+    # Chevrons down the body, and two curls at its waist.
+    for i in range(7):
+        y = hy + 34 + i * 16
+        w = max(4, 30 - i * 4)
+        d.line([(cx - w, y), (cx, y + 8), (cx + w, y)], fill=pattern, width=4)
+    for side in (-1, 1):
+        d.arc((cx + side * 26 - 10, hy + 24, cx + side * 26 + 10, hy + 44), 0, 300, fill=pattern, width=3)
+    # The ribbons' strip (rows 200 to 248): bright in the middle, fading to the edges.
+    for y in range(200, 249):
+        t = abs(y - 224) / 24.0
+        r, g, b, a = edge
+        for x in range(W):
+            img.putpixel((x, y), (r, g, b, int(a * (1.0 - t * t))))
+        for x in range(W):
+            if abs(y - 224) <= 3:
+                pr, pg, pb, pa = pattern
+                img.putpixel((x, y), (pr, pg, pb, 255))
+    img.save(os.path.join(ENTITY, name + '.png'))
+
+
+def paint_dark_spirit():
+    """A dark spirit (entity/dark_spirit.png, 64x32) and its glowing eyes (dark_spirit_eyes.png): purple-black, shaded,
+    with streaks of violet; the eyes two burning yellow slits on the head's front."""
+    p = Painter('dark_spirit', (64, 32))
+    base = (36, 20, 52)
+    for c in (cube(0, 0, 8, 6, 10), cube(0, 16, 7, 6, 6), cube(36, 0, 2, 16, 2), cube(44, 0, 2, 18, 2), cube(26, 16, 2, 2, 14)):
+        p.faces(c, base, grain=0.18, vgrad=0.2)
+        for face, rect in c.items():
+            p.speckle(rect, (90, 50, 130), 0.12)
+            p.speckle(rect, (12, 6, 18), 0.15)
+    p.save(os.path.join(ENTITY, 'dark_spirit.png'))
+    e = Image.new('RGBA', (64, 32), (0, 0, 0, 0))
+    hx, hy = cube(0, 16, 7, 6, 6)['front'][:2]
+    for x, y in ((hx + 1, hy + 2), (hx + 2, hy + 2), (hx + 4, hy + 2), (hx + 5, hy + 2), (hx + 2, hy + 3), (hx + 4, hy + 3)):
+        e.putpixel((x, y), (255, 222, 60, 255))
+    e.save(os.path.join(ENTITY, 'dark_spirit_eyes.png'))
+
+
 def paint_lemur():
     """Momo, the flying lemur: his 64x32 texture over his model's layout (LemurModel.createBodyLayer). White fur, huge
     bat ears brown outside with a cream band inside and dark tips, big green eyes ringed in black, tan wing membranes,
@@ -1407,6 +1475,9 @@ def main():
     paint_shell('earth_armor', (120, 105, 85), (80, 70, 55))
     paint_shell('metal_armor', (170, 175, 180), (110, 115, 120))
     paint_plant_giant()
+    paint_great_spirit('raava', (236, 252, 255, 225), (110, 222, 236, 255), (200, 246, 255, 170), (60, 200, 220, 255), False)
+    paint_great_spirit('vaatu', (24, 10, 12, 240), (150, 40, 34, 255), (200, 24, 24, 220), (230, 130, 60, 255), True)
+    paint_dark_spirit()
     paint_lemur()
     paint_pathik()
     paint_guards()

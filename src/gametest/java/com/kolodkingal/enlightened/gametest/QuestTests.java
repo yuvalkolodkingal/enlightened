@@ -172,4 +172,23 @@ public final class QuestTests {
         check(learned >= 3, "he begins with a set of fire arts (" + learned + ")");
         helper.succeed();
     }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void aPresetLearnsItsAbilities(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer p = f.player(5.5, TestKit.FLOOR, 5.5);
+        BendingData data = f.bender(p, Element.EARTH, Ability.ROCK_THROW, 1, Ability.EARTH_WALL, 2, Ability.SHOCKWAVE, 1);
+        data.setSlot(0, Ability.EARTH_WALL);
+        data.setSlot(1, Ability.SHOCKWAVE);
+        com.kolodkingal.enlightened.command.PresetCommand.save(p, "wall");
+        com.kolodkingal.enlightened.bending.Benders.setElement(p, Element.NONE);
+        f.bender(p, Element.EARTH, Ability.ROCK_THROW, 1);
+        BendingData fresh = Benders.get(p);
+        fresh.setPoints(10);
+        com.kolodkingal.enlightened.command.PresetCommand.load(p, "wall");
+        check(fresh.level(Ability.EARTH_WALL) == 2 && fresh.level(Ability.SHOCKWAVE) == 1, "it learns them again, to their levels");
+        check(fresh.points() == 10 - 1 - 2 - 1, "with his points (" + fresh.points() + ")");
+        check(fresh.slot(0) == Ability.EARTH_WALL && fresh.slot(1) == Ability.SHOCKWAVE, "and puts them on his keys");
+        helper.succeed();
+    }
 }

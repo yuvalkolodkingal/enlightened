@@ -1,3 +1,9 @@
+# Enlightened 1.0.19
+
+* **Presets learn their abilities**: `/bendpreset save` keeps each ability's level too, and `/bendpreset load` learns
+  the preset's abilities up to those levels with your points (what you can't learn yet is listed), then puts them on
+  your keys.
+
 # Enlightened 1.0.18
 
 * **Starter kits**: a newborn bender now also gets one of four premade sets of three abilities of his element,

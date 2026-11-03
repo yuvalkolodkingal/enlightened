@@ -778,11 +778,12 @@
   "command.enlightened.avatar.dark": "%s שחקנים הפכו לאווטאר האפל",
   "command.enlightened.avatar.light": "%s אווטארים אפלים חזרו לאור",
   "command.enlightened.preset.saved": "הפריסט \"%s\" נשמר",
-  "command.enlightened.preset.loaded": "הפריסט \"%s\" נטען (%s יכולות על המקשים)",
+  "command.enlightened.preset.loaded": "הפריסט \"%s\" נטען: %s יכולות על המקשים, %s רמות נלמדו",
   "command.enlightened.preset.none": "אין פריסט בשם \"%s\"",
   "command.enlightened.preset.deleted": "הפריסט \"%s\" נמחק",
   "command.enlightened.preset.full": "כבר יש לך %s פריסטים: מחק אחד קודם",
   "command.enlightened.preset.empty": "אין לך עדיין פריסטים: /bendpreset save <שם>",
   "command.enlightened.preset.list": "הפריסטים שלך: %s",
-  "message.enlightened.starter_kit": "אתם מתחילים עם: %s"
+  "message.enlightened.starter_kit": "אתם מתחילים עם: %s",
+  "command.enlightened.preset.missing": "עוד לא נלמדו (צריך עוד נקודות, או שער שנפתח): %s"
 }

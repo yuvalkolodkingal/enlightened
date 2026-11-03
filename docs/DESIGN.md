@@ -596,3 +596,9 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | | |
 |---|---|
 | Starter kits | `StarterKits` (`general.starterKits`): four premade sets of three ungated arts per element; `Benders.castFate` gives a newborn bender one at random at level 1 (the Avatar one of each of the four), then lays out his keys. |
+
+## 42. 1.0.19: presets that learn
+
+| | |
+|---|---|
+| Presets | A preset is `{Slots, Levels}` (1.0.17's bare list still loads); `load` calls `Mastery.learn` for each slot's ability until its saved level (or the first refusal: points, gate), then places what is learned. |

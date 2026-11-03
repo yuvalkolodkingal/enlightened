@@ -590,3 +590,9 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 |---|---|
 | Dark by command | `/enlightened avatar <players> dark` (`AvatarQuest.becomeDark`) / `light` (clears the bit, `markDark` false). |
 | Presets | `PresetCommand` (`/bendpreset save|load|delete|list`, permission 0): the ten slots as ability ids in `PlayerPersisted.enlightened_presets.<name>` (20 at most); loading places only learned, bindable abilities. |
+
+## 41. 1.0.18: starter kits
+
+| | |
+|---|---|
+| Starter kits | `StarterKits` (`general.starterKits`): four premade sets of three ungated arts per element; `Benders.castFate` gives a newborn bender one at random at level 1 (the Avatar one of each of the four), then lays out his keys. |

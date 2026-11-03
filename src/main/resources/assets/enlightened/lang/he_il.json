@@ -783,5 +783,6 @@
   "command.enlightened.preset.deleted": "הפריסט \"%s\" נמחק",
   "command.enlightened.preset.full": "כבר יש לך %s פריסטים: מחק אחד קודם",
   "command.enlightened.preset.empty": "אין לך עדיין פריסטים: /bendpreset save <שם>",
-  "command.enlightened.preset.list": "הפריסטים שלך: %s"
+  "command.enlightened.preset.list": "הפריסטים שלך: %s",
+  "message.enlightened.starter_kit": "אתם מתחילים עם: %s"
 }

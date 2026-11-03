@@ -154,4 +154,22 @@ public final class QuestTests {
         check(com.kolodkingal.enlightened.command.PresetCommand.load(p, "nothing") < 0, "no such preset");
         helper.succeed();
     }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void aNewbornBenderGetsAStarterKit(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer p = f.player(5.5, TestKit.FLOOR, 5.5);
+        BendingData data = f.bender(p, Element.FIRE);
+        for (Element e : Element.FOUR) {
+            for (var kit : com.kolodkingal.enlightened.bending.StarterKits.kits(e)) {
+                for (Ability a : kit) {
+                    check(a.element == e && a.gate == com.kolodkingal.enlightened.bending.Gate.NONE, a + " is open to every " + e + " bender");
+                }
+            }
+        }
+        com.kolodkingal.enlightened.bending.StarterKits.give(p);
+        long learned = Ability.of(Element.FIRE).stream().filter(a -> data.level(a) > 0).count();
+        check(learned >= 3, "he begins with a set of fire arts (" + learned + ")");
+        helper.succeed();
+    }
 }

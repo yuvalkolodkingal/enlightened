@@ -96,6 +96,9 @@ public final class Benders {
         } else {
             awaken(player, born);
         }
+        if (born != Element.NONE) {
+            StarterKits.give(player);
+        }
     }
 
     /**

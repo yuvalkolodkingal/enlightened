@@ -22,6 +22,7 @@ public final class EnlightenedConfig {
     public enum AvatarPath { QUEST, FATE }
 
     public static final ModConfigSpec.EnumValue<AvatarPath> AVATAR_PATH;
+    public static final ModConfigSpec.BooleanValue STARTER_KITS;
     public static final ModConfigSpec.IntValue RAISED_BLOCK_SECONDS;
 
     // ---- earth ----
@@ -117,6 +118,8 @@ public final class EnlightenedConfig {
                 .define("bornBending", true);
         AVATAR_PATH = B.comment("How one becomes the Avatar. QUEST: nobody is born the Avatar; find Raava in her glades, help her against Vaatu, and choose in the Spirit World between Raava and Vaatu (the Dark Avatar). FATE: a newborn is the Avatar one time in seven and the Dark Avatar one time in seven, while the world has room for each; Raava and Vaatu are never found.")
                 .defineEnum("avatarPath", AvatarPath.QUEST);
+        STARTER_KITS = B.comment("Whether a newborn bender is given, besides his element's first art, one of a few premade sets of abilities (three arts at the first level), chosen by chance; the Avatar one of each element's.")
+                .define("starterKits", true);
         RAISED_BLOCK_SECONDS = B.comment("How long a wall or pillar bending raised stands before it goes back.")
                 .defineInRange("raisedBlockSeconds", 10, 1, 600);
         B.pop();

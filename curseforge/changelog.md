@@ -1,3 +1,8 @@
+# Enlightened 1.0.18
+
+* **Starter kits**: a newborn bender now also gets one of four premade sets of three abilities of his element,
+  chosen at random (the Avatar one of each element's). Server option `starterKits`.
+
 # Enlightened 1.0.17
 
 * **`/enlightened avatar <players> dark`** makes players the Dark Avatar (and `light` brings them back).

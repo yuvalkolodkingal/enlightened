@@ -38,6 +38,7 @@ his own element's scroll opens the Bending Scroll screen; he cannot read another
 
 * Your element's **starter ability** at level 1: Rock Throw, Air Blast, Water Whip, or the Firebender's Skin (the
   Avatar gets the first art of each of the four).
+* **A starter set** of three more abilities of your element at level 1, one of four premade sets chosen at random (a fighter's, a defender's, a traveller's...); the Avatar gets one set of each of the four (`general.starterKits`).
 * **Ability points** to spend (1 by default: `general.startingPoints`).
 * The default **look** of your element (press **H** for the others: see [Looks](Looks)).
 * A hint to press **K**: the [Bending Scroll](Points-and-the-Bending-Scroll), where you learn and arrange your abilities.

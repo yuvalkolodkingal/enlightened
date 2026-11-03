@@ -783,5 +783,6 @@
   "command.enlightened.preset.deleted": "Preset \"%s\" deleted",
   "command.enlightened.preset.full": "You already have %s presets: delete one first",
   "command.enlightened.preset.empty": "You have no presets yet: /bendpreset save <name>",
-  "command.enlightened.preset.list": "Your presets: %s"
+  "command.enlightened.preset.list": "Your presets: %s",
+  "message.enlightened.starter_kit": "You begin with: %s"
 }

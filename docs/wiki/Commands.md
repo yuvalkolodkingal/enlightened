@@ -16,6 +16,8 @@ All need operator rights (permission level 2).
 | `/enlightened reset <players>` | Takes back every level but the starter's and refunds the points. |
 | `/enlightened avatar <players> <enter\|leave\|rest>` | Enters or leaves the [Avatar State](Chakras-and-the-Avatar-State) (whatever the chakras), or ends its rest. Avatars only. |
 | `/enlightened avatars` / `/enlightened avatars max <count>` | List the Avatars (and the element each was born to, and the next one's); set how many Avatars a world may have at a time (default 1). |
+| `/enlightened avatar <players> dark` / `light` | Make the players the Dark Avatar (making them the Avatar first if they are not), or bring a Dark Avatar back to the light. |
+| `/bendpreset save <name>` / `load <name>` / `delete <name>` / `list` | (Anyone.) Save which ability sits on each of your keys as a named preset (up to 20), lay a preset out on your keys again (abilities you no longer have leave their key empty), delete one, list yours. |
 | `/avatarquest` / `/avatarquest light` / `/avatarquest dark` | (Anyone.) Where you stand in [Raava and Vaatu](Raava-and-Vaatu)'s quest; your answer to Vaatu's offer (what its two answers in the chat run). |
 | `/enlightened guru <players> <taught\|untaught>` | Marks players as taught (or not) by Guru Pathik. |
 | `/enlightened lionturtle [pos [size]]` | Raises a [lion turtle](Lion-Turtle) and its island (it rises over a few seconds): at sea level where you stand, or with the sea's surface at the given position; it faces as you face. Size 1 to 10 (default `lionTurtleSize`). |

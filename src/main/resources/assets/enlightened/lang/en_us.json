@@ -774,5 +774,14 @@
   "message.enlightened.quest.stage.fight_vaatu": "Defeat Vaatu in the Spirit World.",
   "message.enlightened.quest.stage.fight_raava": "Defeat Raava in the Spirit World.",
   "message.enlightened.quest.stage.done_light": "You defeated Vaatu.",
-  "message.enlightened.quest.stage.done_dark": "You defeated Raava. You are the Dark Avatar."
+  "message.enlightened.quest.stage.done_dark": "You defeated Raava. You are the Dark Avatar.",
+  "command.enlightened.avatar.dark": "%s player(s) made the Dark Avatar",
+  "command.enlightened.avatar.light": "%s Dark Avatar(s) brought back to the light",
+  "command.enlightened.preset.saved": "Preset \"%s\" saved",
+  "command.enlightened.preset.loaded": "Preset \"%s\" loaded (%s abilities on your keys)",
+  "command.enlightened.preset.none": "No preset called \"%s\"",
+  "command.enlightened.preset.deleted": "Preset \"%s\" deleted",
+  "command.enlightened.preset.full": "You already have %s presets: delete one first",
+  "command.enlightened.preset.empty": "You have no presets yet: /bendpreset save <name>",
+  "command.enlightened.preset.list": "Your presets: %s"
 }

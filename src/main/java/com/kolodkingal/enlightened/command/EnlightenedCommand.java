@@ -103,7 +103,9 @@ public final class EnlightenedCommand {
                         .then(Commands.argument("players", EntityArgument.players())
                                 .then(Commands.literal("enter").executes(ctx -> avatar(ctx, "enter")))
                                 .then(Commands.literal("leave").executes(ctx -> avatar(ctx, "leave")))
-                                .then(Commands.literal("rest").executes(ctx -> avatar(ctx, "rest")))))
+                                .then(Commands.literal("rest").executes(ctx -> avatar(ctx, "rest")))
+                                .then(Commands.literal("dark").executes(ctx -> darkAvatar(ctx, true)))
+                                .then(Commands.literal("light").executes(ctx -> darkAvatar(ctx, false)))))
                 .then(Commands.literal("avatars")
                         .executes(EnlightenedCommand::avatars)
                         .then(Commands.literal("max")
@@ -245,6 +247,27 @@ public final class EnlightenedCommand {
         cycle.avatars().forEach((id, base) -> ctx.getSource().sendSuccess(() -> Component.translatable("commands.enlightened.avatars.line",
                 cycle.name(id), base.displayName()), false));
         return cycle.avatars().size();
+    }
+
+    /** Makes the players the Dark Avatar (Avatars first, if they are not), or brings a Dark Avatar back to the light. */
+    private static int darkAvatar(CommandContext<CommandSourceStack> ctx, boolean dark) throws CommandSyntaxException {
+        int n = 0;
+        for (ServerPlayer player : EntityArgument.getPlayers(ctx, "players")) {
+            BendingData data = Benders.get(player);
+            if (dark) {
+                com.kolodkingal.enlightened.quest.AvatarQuest.becomeDark(player);
+            } else if (data.darkAvatar()) {
+                data.setDarkAvatar(false);
+                com.kolodkingal.enlightened.bending.AvatarCycle.get(player.getServer()).markDark(player.getUUID(), false);
+                Benders.syncIfDirty(player);
+            } else {
+                continue;
+            }
+            n++;
+        }
+        int count = n;
+        ctx.getSource().sendSuccess(() -> Component.translatable(dark ? "command.enlightened.avatar.dark" : "command.enlightened.avatar.light", count), true);
+        return n;
     }
 
     private static int avatar(CommandContext<CommandSourceStack> ctx, String what) throws CommandSyntaxException {

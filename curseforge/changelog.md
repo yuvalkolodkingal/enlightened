@@ -1,3 +1,9 @@
+# Enlightened 1.0.17
+
+* **`/enlightened avatar <players> dark`** makes players the Dark Avatar (and `light` brings them back).
+* **Ability presets**: `/bendpreset save <name>` keeps which ability is on each key, `/bendpreset load <name>` puts
+  them back (`list`, `delete` too). Anyone can use it.
+
 # Enlightened 1.0.16
 
 * **Raava chooses the Avatar.** Nobody is born the Avatar any more: find **Raava** in her glade (white pillars round a

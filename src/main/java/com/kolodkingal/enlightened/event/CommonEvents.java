@@ -71,6 +71,7 @@ public final class CommonEvents {
     public static void onCommands(RegisterCommandsEvent event) {
         EnlightenedCommand.register(event.getDispatcher(), event.getBuildContext());
         com.kolodkingal.enlightened.quest.QuestCommand.register(event.getDispatcher());
+        com.kolodkingal.enlightened.command.PresetCommand.register(event.getDispatcher());
     }
 
     // ---- the lion turtle's shell: only a Hero of the Village builds on it ----

@@ -1,0 +1,136 @@
+package com.kolodkingal.enlightened.command;
+
+import com.kolodkingal.enlightened.bending.Ability;
+import com.kolodkingal.enlightened.bending.BendingData;
+import com.kolodkingal.enlightened.bending.Benders;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+
+/**
+ * Presets of abilities on the keys, for anyone: {@code /bendpreset save <name>} keeps which ability sits on each of
+ * the ten slots, {@code /bendpreset load <name>} lays them out again (an ability no longer learned leaves its slot
+ * empty), {@code /bendpreset list}, {@code /bendpreset delete <name>}. Kept on the player, through deaths.
+ */
+public final class PresetCommand {
+    private static final String KEY = "enlightened_presets";
+    public static final int MAX = 20;
+
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("bendpreset")
+                .then(Commands.literal("save").then(Commands.argument("name", StringArgumentType.word()).executes(PresetCommand::save)))
+                .then(Commands.literal("load").then(Commands.argument("name", StringArgumentType.word())
+                        .suggests((c, b) -> SharedSuggestionProvider.suggest(presets(c.getSource().getPlayerOrException()).getAllKeys(), b))
+                        .executes(PresetCommand::load)))
+                .then(Commands.literal("delete").then(Commands.argument("name", StringArgumentType.word())
+                        .suggests((c, b) -> SharedSuggestionProvider.suggest(presets(c.getSource().getPlayerOrException()).getAllKeys(), b))
+                        .executes(PresetCommand::delete)))
+                .then(Commands.literal("list").executes(PresetCommand::list)));
+    }
+
+    static CompoundTag presets(Player p) {
+        return p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getCompound(KEY);
+    }
+
+    static void store(Player p, CompoundTag presets) {
+        CompoundTag kept = p.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG);
+        kept.put(KEY, presets);
+        p.getPersistentData().put(Player.PERSISTED_NBT_TAG, kept);
+    }
+
+    /** Saves the player's slots as a preset; false if he has too many already. */
+    public static boolean save(ServerPlayer p, String name) {
+        CompoundTag all = presets(p);
+        if (!all.contains(name) && all.size() >= MAX) {
+            return false;
+        }
+        BendingData data = Benders.get(p);
+        ListTag slots = new ListTag();
+        for (int s = 0; s < BendingData.SLOTS; s++) {
+            Ability a = data.slot(s);
+            slots.add(StringTag.valueOf(a == null ? "" : a.id()));
+        }
+        all.put(name, slots);
+        store(p, all);
+        return true;
+    }
+
+    /** Lays a preset out on the slots; returns how many abilities were placed, or -1 if there is no such preset. */
+    public static int load(ServerPlayer p, String name) {
+        CompoundTag all = presets(p);
+        if (!all.contains(name)) {
+            return -1;
+        }
+        ListTag slots = all.getList(name, Tag.TAG_STRING);
+        BendingData data = Benders.get(p);
+        int placed = 0;
+        for (int s = 0; s < BendingData.SLOTS; s++) {
+            Ability a = s < slots.size() ? Ability.byId(slots.getString(s)) : null;
+            boolean ok = a != null && data.has(a) && a.bindable();
+            data.setSlot(s, ok ? a : null);
+            placed += ok ? 1 : 0;
+        }
+        Benders.syncIfDirty(p);
+        return placed;
+    }
+
+    private static int save(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer p = c.getSource().getPlayerOrException();
+        String name = StringArgumentType.getString(c, "name");
+        if (!save(p, name)) {
+            c.getSource().sendFailure(Component.translatable("command.enlightened.preset.full", MAX));
+            return 0;
+        }
+        c.getSource().sendSuccess(() -> Component.translatable("command.enlightened.preset.saved", name).withStyle(ChatFormatting.GREEN), false);
+        return 1;
+    }
+
+    private static int load(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer p = c.getSource().getPlayerOrException();
+        String name = StringArgumentType.getString(c, "name");
+        int n = load(p, name);
+        if (n < 0) {
+            c.getSource().sendFailure(Component.translatable("command.enlightened.preset.none", name));
+            return 0;
+        }
+        c.getSource().sendSuccess(() -> Component.translatable("command.enlightened.preset.loaded", name, n).withStyle(ChatFormatting.GREEN), false);
+        return n;
+    }
+
+    private static int delete(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer p = c.getSource().getPlayerOrException();
+        String name = StringArgumentType.getString(c, "name");
+        CompoundTag all = presets(p);
+        if (!all.contains(name)) {
+            c.getSource().sendFailure(Component.translatable("command.enlightened.preset.none", name));
+            return 0;
+        }
+        all.remove(name);
+        store(p, all);
+        c.getSource().sendSuccess(() -> Component.translatable("command.enlightened.preset.deleted", name), false);
+        return 1;
+    }
+
+    private static int list(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer p = c.getSource().getPlayerOrException();
+        var names = presets(p).getAllKeys();
+        c.getSource().sendSuccess(() -> names.isEmpty() ? Component.translatable("command.enlightened.preset.empty")
+                : Component.translatable("command.enlightened.preset.list", String.join(", ", new java.util.TreeSet<>(names))), false);
+        return names.size();
+    }
+
+    private PresetCommand() {
+    }
+}

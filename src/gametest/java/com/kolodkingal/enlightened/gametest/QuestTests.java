@@ -121,4 +121,37 @@ public final class QuestTests {
         AvatarCycle.get(helper.getLevel().getServer()).setMax(max);
         helper.succeed();
     }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void anOperatorMakesTheDarkAvatar(GameTestHelper helper) throws Exception {
+        int max = roomy(helper);
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer p = f.player(5.5, TestKit.FLOOR, 5.5);
+        f.bender(p, Element.FIRE);
+        var server = helper.getLevel().getServer();
+        var source = server.createCommandSourceStack().withPermission(4).withSuppressedOutput();
+        server.getCommands().getDispatcher().execute("enlightened avatar " + p.getGameProfile().getName() + " dark", source);
+        BendingData data = Benders.get(p);
+        check(data.element() == Element.AVATAR && data.darkAvatar() && data.tetherless(), "the command makes him the Dark Avatar");
+        server.getCommands().getDispatcher().execute("enlightened avatar " + p.getGameProfile().getName() + " light", source);
+        check(data.element() == Element.AVATAR && !data.darkAvatar(), "and brings him back to the light");
+        AvatarCycle.get(server).setMax(max);
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void presetsKeepTheKeys(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer p = f.player(5.5, TestKit.FLOOR, 5.5);
+        BendingData data = f.bender(p, Element.EARTH, Ability.ROCK_THROW, 1, Ability.EARTH_WALL, 1, Ability.EARTH_PILLAR, 1);
+        data.setSlot(0, Ability.EARTH_WALL);
+        data.setSlot(1, Ability.ROCK_THROW);
+        check(com.kolodkingal.enlightened.command.PresetCommand.save(p, "walls"), "saved");
+        data.setSlot(0, Ability.EARTH_PILLAR);
+        data.setSlot(1, null);
+        check(com.kolodkingal.enlightened.command.PresetCommand.load(p, "walls") >= 2, "loaded");
+        check(data.slot(0) == Ability.EARTH_WALL && data.slot(1) == Ability.ROCK_THROW, "the keys are as they were saved");
+        check(com.kolodkingal.enlightened.command.PresetCommand.load(p, "nothing") < 0, "no such preset");
+        helper.succeed();
+    }
 }

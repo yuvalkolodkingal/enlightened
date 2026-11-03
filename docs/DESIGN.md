@@ -583,3 +583,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | The dark spirits | `DarkSpiritEntity` (monster, `CRAWLER` / `FLYER`, 22 health, 4 attack; `hunter`; vanishes when its hunter is gone; counted when beaten near him). `DarkSpiritRenderer`: a hunched body and head, four splayed legs or two hanging arms and a tail, glowing eyes (`EyesLayer`). |
 | Raava's glade | `RaavaGladePiece` (`SiteStructure.Kind.RAAVA_GLADE`, spacing 48, plains, meadows, forests, cherry groves, taiga): eight quartz pillars with soul lanterns round a pool; Raava over it (only on the quest path). |
 | The Dark Avatar | `Shots.hurt` ×`DARK_BLOOD` (1.5) for blood; `Mastery.gateOpen` opens `BLOOD` to him; `energyStrength` +2 instead of +10; `Chakras.damageFactor` gives the State's share ×`DARK_CHAKRAS` (0.7). Drawn: `AVATAR_RISE` in `DARK_STATE` (dark red ring, black and yellow glows), `avatarAura` dark red with black smoke and yellow eyes and hands, `AvatarGlowLayer` yellow eyes and dark red marks. |
+
+## 40. 1.0.17: the Dark Avatar by command, ability presets
+
+| | |
+|---|---|
+| Dark by command | `/enlightened avatar <players> dark` (`AvatarQuest.becomeDark`) / `light` (clears the bit, `markDark` false). |
+| Presets | `PresetCommand` (`/bendpreset save|load|delete|list`, permission 0): the ten slots as ability ids in `PlayerPersisted.enlightened_presets.<name>` (20 at most); loading places only learned, bindable abilities. |

@@ -4,14 +4,10 @@ import com.kolodkingal.enlightened.entity.NationNpcEntity;
 import com.kolodkingal.enlightened.entity.OzaiEntity;
 import com.kolodkingal.enlightened.registry.ModEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
@@ -19,21 +15,12 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
  * Wulong Forest (1.0.27), where Fire Lord Ozai waits for Sozin's Comet: a field of bare earth ringed by a forest of
  * tall rock spires; three Fire Nation airships hang over it (red hulls ribbed in black, the Fire Nation emblem on
  * their flanks, a gondola under each), Ozai on the deck of the flagship in the middle; the Fire Nation herald on the
- * field; and on the north side a small Fire Palace, red walls and a tiered dark roof, a throne before a wall of
- * flame, and beneath it, down a ladder, the prison: a corridor and four barred cells, one of them waiting for Ozai.
+ * field. (Since 1.0.28 the Fire Palace and its prison are a structure of their own, far away: {@link FirePalacePiece}.)
  */
 public class WulongForestPiece extends DesignPiece {
     private static final int CLEAR = 72;
     /** The open field in the middle, where the fight is. */
     public static final int FIELD = 24;
-    /** The palace's footprint (north of the field). */
-    public static final int PAL_X = 14;
-    public static final int PAL_Z0 = -64;
-    public static final int PAL_Z1 = -46;
-    /** The prison under it: floor, rooms, ceiling. */
-    public static final int PRISON_FLOOR = -6;
-    /** Ozai's cell (the centre of its floor, relative to the origin). */
-    public static final BlockPos OZAI_CELL = new BlockPos(3, PRISON_FLOOR + 1, -55);
     /** The flagship: centre of its hull, length and radius. */
     public static final int SHIP_X = 0;
     public static final int SHIP_Y = 50;
@@ -63,10 +50,6 @@ public class WulongForestPiece extends DesignPiece {
         return Math.sqrt(dx * dx + dz * dz);
     }
 
-    private static boolean palace(int dx, int dz) {
-        return Math.abs(dx) <= PAL_X && dz >= PAL_Z0 && dz <= PAL_Z1;
-    }
-
     @Override
     protected boolean footprint(int dx, int dz) {
         return r(dx, dz) <= CLEAR;
@@ -79,7 +62,7 @@ public class WulongForestPiece extends DesignPiece {
 
     @Override
     protected int down(int dx, int dz) {
-        return palace(dx, dz) ? 8 : 0;
+        return 0;
     }
 
     // ---- the spires ----
@@ -99,7 +82,7 @@ public class WulongForestPiece extends DesignPiece {
                 int sx = i * CELL + (int) ((h >> 3) % 7) - 3;
                 int sz = j * CELL + (int) ((h >> 7) % 7) - 3;
                 double rr = r(sx, sz);
-                if (rr < FIELD + 4 || rr > CLEAR - 5 || palace(sx, sz) || Math.abs(sx) <= PAL_X + 4 && sz >= PAL_Z0 - 4 && sz <= PAL_Z1 + 6) {
+                if (rr < FIELD + 4 || rr > CLEAR - 5) {
                     continue;
                 }
                 int base = 2 + (int) ((h >> 11) % 3);
@@ -185,110 +168,9 @@ public class WulongForestPiece extends DesignPiece {
         return null;
     }
 
-    // ---- the palace and its prison ----
-
-    private static BlockState palaceBlock(int dx, int dy, int dz) {
-        int ax = Math.abs(dx);
-        boolean edge = ax == PAL_X || dz == PAL_Z0 || dz == PAL_Z1;
-        if (dy < PRISON_FLOOR || dy > 13) {
-            return dy < PRISON_FLOOR ? Blocks.STONE_BRICKS.defaultBlockState() : Blocks.AIR.defaultBlockState();
-        }
-        if (dy < 0) {
-            return prison(dx, dy, dz);
-        }
-        // The shaft down to the prison, with its ladder.
-        if (dx == 13 && dz == -49 && dy <= 1) {
-            return Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
-        }
-        if (dy == 0) {
-            return Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
-        }
-        if (dy >= 9) {
-            int inset = (dy - 9) * 2;
-            if (dy == 13) {
-                return dz == (PAL_Z0 + PAL_Z1) / 2 && ax <= 6 ? Blocks.YELLOW_TERRACOTTA.defaultBlockState() : Blocks.AIR.defaultBlockState();
-            }
-            return ax <= PAL_X - inset && dz >= PAL_Z0 + inset && dz <= PAL_Z1 - inset ? Blocks.NETHER_BRICKS.defaultBlockState() : Blocks.AIR.defaultBlockState();
-        }
-        if (edge) {
-            if (dz == PAL_Z1 && ax <= 2 && dy <= 4) {
-                return Blocks.AIR.defaultBlockState();
-            }
-            if (dy == 8) {
-                return Blocks.YELLOW_TERRACOTTA.defaultBlockState();
-            }
-            boolean pillar = (ax == PAL_X && (dz - PAL_Z0) % 4 == 0) || ((dz == PAL_Z0 || dz == PAL_Z1) && ax % 4 == 2);
-            if (pillar) {
-                return Blocks.NETHER_BRICKS.defaultBlockState();
-            }
-            return dy >= 3 && dy <= 5 && ax % 4 == 0 && dz != PAL_Z0 ? Blocks.RED_STAINED_GLASS.defaultBlockState() : Blocks.RED_TERRACOTTA.defaultBlockState();
-        }
-        // The hall: the throne before a wall of fire, red carpet to the door, lanterns.
-        if (dy == 1) {
-            if (ax <= 3 && dz >= PAL_Z0 + 1 && dz <= PAL_Z0 + 3) {
-                return dz == PAL_Z0 + 1 ? Blocks.CAMPFIRE.defaultBlockState() : Blocks.POLISHED_BLACKSTONE.defaultBlockState();
-            }
-            if (ax <= 1 && dz > PAL_Z0 + 3) {
-                return Blocks.RED_CARPET.defaultBlockState();
-            }
-        }
-        if (dy == 2 && dx == 0 && dz == PAL_Z0 + 2) {
-            return Blocks.RED_NETHER_BRICK_STAIRS.defaultBlockState().setValue(StairBlock.FACING, Direction.NORTH);
-        }
-        if (dy == 7 && (ax == 7 || ax == 0) && (dz - PAL_Z0) % 6 == 3) {
-            return Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true);
-        }
-        if (dx == 13 && dz == -49 && dy <= 1) {
-            return Blocks.AIR.defaultBlockState();
-        }
-        return Blocks.AIR.defaultBlockState();
-    }
-
-    /** Under the palace: a corridor along x, four barred cells to its north, the ladder's foot in the east. */
-    private static BlockState prison(int dx, int dy, int dz) {
-        int ax = Math.abs(dx);
-        if (dy == PRISON_FLOOR) {
-            return Blocks.STONE_BRICKS.defaultBlockState();
-        }
-        if (dy == -1) {
-            return dx == 13 && dz == -49 ? Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST) : Blocks.STONE_BRICKS.defaultBlockState();
-        }
-        if (dy == -2) {
-            if (dx == 13 && dz == -49) {
-                return Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
-            }
-            return (ax == 6 || ax == 0) && dz == -49 ? Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true) : Blocks.STONE_BRICKS.defaultBlockState();
-        }
-        // dy -5..-3: rooms.
-        if (dx == 13 && dz == -49) {
-            return Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
-        }
-        if (dz >= -50 && dz <= -48 && ax <= 13) {
-            return Blocks.AIR.defaultBlockState();
-        }
-        if (dz == -51 && ax <= 12) {
-            boolean wall = ax == 0 || ax == 6 || ax == 12;
-            return wall ? Blocks.STONE_BRICKS.defaultBlockState() : Blocks.IRON_BARS.defaultBlockState();
-        }
-        if (dz >= -57 && dz <= -52 && ax <= 12) {
-            boolean wall = ax == 0 || ax == 6 || ax == 12;
-            if (wall) {
-                return Blocks.STONE_BRICKS.defaultBlockState();
-            }
-            if (dy == PRISON_FLOOR + 1 && dz == -57 && (dx == 2 || dx == -4 || dx == 8 || dx == -10)) {
-                return Blocks.CHAIN.defaultBlockState();
-            }
-            return Blocks.AIR.defaultBlockState();
-        }
-        return Blocks.STONE_BRICKS.defaultBlockState();
-    }
-
     @Override
     protected BlockState design(int dx, int dy, int dz) {
         double r = r(dx, dz);
-        if (palace(dx, dz)) {
-            return palaceBlock(dx, dy, dz);
-        }
         if (dy < 0) {
             return null;
         }
@@ -321,7 +203,7 @@ public class WulongForestPiece extends DesignPiece {
         if (box.isInside(deck)) {
             OzaiEntity ozai = ModEntities.OZAI.get().create(level.getLevel());
             if (ozai != null) {
-                ozai.place(deck, origin.above(), origin.offset(OZAI_CELL));
+                ozai.place(deck, origin.above(), null);
                 ozai.moveTo(deck.getX() + 0.5, deck.getY(), deck.getZ() + 0.5, 180.0F, 0.0F);
                 level.addFreshEntityWithPassengers(ozai);
             }

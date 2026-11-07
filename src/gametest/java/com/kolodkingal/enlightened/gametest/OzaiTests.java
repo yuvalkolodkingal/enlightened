@@ -4,6 +4,7 @@ import com.kolodkingal.enlightened.Enlightened;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.Element;
 import com.kolodkingal.enlightened.bending.Shots;
+import com.kolodkingal.enlightened.entity.IrohEntity;
 import com.kolodkingal.enlightened.entity.NationNpcEntity;
 import com.kolodkingal.enlightened.entity.OzaiEntity;
 import com.kolodkingal.enlightened.registry.ModDamageTypes;
@@ -155,10 +156,34 @@ public class OzaiTests {
         BlockPos deck = WulongForestPiece.ozaiDeck();
         check(at(w, deck.getX(), deck.getY() - 1, deck.getZ()).is(Blocks.DARK_OAK_PLANKS), "the flagship's deck under Ozai");
         check(at(w, deck.getX(), WulongForestPiece.SHIP_Y + WulongForestPiece.SHIP_R, deck.getZ()) != null, "its hull above");
-        BlockPos cell = WulongForestPiece.OZAI_CELL;
-        check(at(w, cell.getX(), cell.getY(), cell.getZ()).isAir() && at(w, cell.getX(), cell.getY() + 1, cell.getZ()).isAir(), "room in his cell");
-        check(at(w, cell.getX(), cell.getY(), -51).is(Blocks.IRON_BARS), "behind bars");
-        check(at(w, 0, 4, WulongForestPiece.PAL_Z0).is(Blocks.RED_TERRACOTTA) || at(w, 0, 4, WulongForestPiece.PAL_Z0).is(Blocks.NETHER_BRICKS), "the palace's red walls");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void theFirePalaceHasItsHallThroneAndPrison(GameTestHelper helper) {
+        com.kolodkingal.enlightened.world.FirePalacePiece p = new com.kolodkingal.enlightened.world.FirePalacePiece(BlockPos.ZERO);
+        BlockPos cell = com.kolodkingal.enlightened.world.FirePalacePiece.OZAI_CELL;
+        check(at(p, cell.getX(), cell.getY(), cell.getZ()).isAir() && at(p, cell.getX(), cell.getY() + 1, cell.getZ()).isAir(), "room in Ozai's cell");
+        check(at(p, cell.getX(), cell.getY(), -9).is(Blocks.IRON_BARS), "behind bars");
+        BlockPos throne = com.kolodkingal.enlightened.world.FirePalacePiece.THRONE;
+        check(at(p, throne.getX(), throne.getY(), throne.getZ()).is(Blocks.RED_NETHER_BRICK_STAIRS), "the throne");
+        check(at(p, 3, throne.getY() - 1, com.kolodkingal.enlightened.world.FirePalacePiece.FIRE_Z).is(Blocks.SOUL_CAMPFIRE), "blue fire behind it");
+        check(at(p, 8, 9, com.kolodkingal.enlightened.world.FirePalacePiece.HALL_Z0).is(Blocks.RED_TERRACOTTA)
+                || at(p, 8, 9, com.kolodkingal.enlightened.world.FirePalacePiece.HALL_Z0).is(Blocks.NETHER_BRICKS), "red walls");
+        check(at(p, 0, 3, 30).isAir(), "an open gate");
+        check(at(p, 15, 0, -7).is(Blocks.LADDER), "a ladder down to the prison");
+        helper.succeed();
+    }
+
+    @GameTest(template = ARENA, timeoutTicks = 20, batch = "herald")
+    public static void zukoTakesTheThroneOnce(GameTestHelper helper) {
+        BlockPos origin = helper.absolutePos(new BlockPos(4, 2 - com.kolodkingal.enlightened.world.FirePalacePiece.THRONE.getY(), 8));
+        com.kolodkingal.enlightened.world.FirePalacePiece.crown(helper.getLevel(), origin);
+        com.kolodkingal.enlightened.world.FirePalacePiece.crown(helper.getLevel(), origin);
+        var all = helper.getLevel().getEntitiesOfClass(NationNpcEntity.class, new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(40));
+        long zukos = all.stream().filter(n -> n.kind() == NationNpcEntity.Kind.ZUKO).count();
+        long guards = all.stream().filter(n -> n.kind() == NationNpcEntity.Kind.GUARD).count();
+        check(zukos == 1 && guards == 4, "Zuko on the throne, four guards behind him (" + zukos + ", " + guards + ")");
         helper.succeed();
     }
 
@@ -171,10 +196,15 @@ public class OzaiTests {
         zuko.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0, 0);
         zuko.kind(NationNpcEntity.Kind.ZUKO);
         helper.getLevel().addFreshEntity(zuko);
-        check(Talk.begin(p, zuko, Speaker.ZUKO) && Talk.offered(p).contains("ask_father"), "Zuko talks of his father");
-        check(Talk.tryChoose(p, zuko.getId(), "ask_father") && "father".equals(Talk.currentNode(p)), "where Ozai waits");
-        check(Talk.tryChoose(p, zuko.getId(), "ask_map"), "the map");
-        check("map".equals(Talk.currentNode(p)) || "no_map".equals(Talk.currentNode(p)), "a map, or none near: " + Talk.currentNode(p));
+        check(Talk.begin(p, zuko, Speaker.ZUKO) && "throne".equals(Talk.currentNode(p)), "Fire Lord Zuko greets him");
+        check(Talk.tryChoose(p, zuko.getId(), "what_now") && "peace".equals(Talk.currentNode(p)), "and speaks of peace");
+        Talk.end(p);
+        IrohEntity iroh = ModEntities.IROH.get().create(helper.getLevel());
+        iroh.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 2.5, 0, 0);
+        helper.getLevel().addFreshEntity(iroh);
+        check(Talk.begin(p, iroh, Speaker.IROH) && Talk.offered(p).contains("ask_ozai"), "Iroh knows where his brother is");
+        check(Talk.tryChoose(p, iroh.getId(), "ask_ozai") && Talk.tryChoose(p, iroh.getId(), "ask_map"), "and marks it");
+        check("ozai_map".equals(Talk.currentNode(p)) || "ozai_no_map".equals(Talk.currentNode(p)), "a map, or none near: " + Talk.currentNode(p));
         Talk.end(p);
         NationNpcEntity herald = ModEntities.NATION_NPC.get().create(helper.getLevel());
         herald.moveTo(at.getX() + 2.5, at.getY(), at.getZ() + 0.5, 0, 0);

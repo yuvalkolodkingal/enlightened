@@ -1,3 +1,12 @@
+# Enlightened 1.0.28
+
+* **The Fire Palace is its own structure now, far from Wulong Forest**: the Fire Nation's Royal Palace, a walled
+  courtyard, grand stairs, a great hall with a two-tier roof, the throne before a wall of blue fire, guards, and the
+  prison beneath. Beaten, Ozai is brought to its prison; the blue fire goes out, guards stand where it burned, and
+  **Fire Lord Zuko** sits on the throne.
+* **New skins** for Ozai (the Phoenix King), Fire Lord Zuko, and the herald and palace guards.
+* **Iroh**, not Zuko, now tells you where Ozai waits and marks Wulong Forest on a map.
+
 # Enlightened 1.0.27
 
 * **Fire Lord Ozai and Sozin's Comet.** Zuko, at the Jasmine Dragon, marks **Wulong Forest** on a map: a field among

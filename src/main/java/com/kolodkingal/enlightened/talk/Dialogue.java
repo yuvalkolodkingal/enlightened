@@ -32,7 +32,7 @@ import java.util.function.Predicate;
  */
 public final class Dialogue {
     /** The most answers a node offers (the talk screen's buttons). */
-    public static final int MAX_OPTIONS = 4;
+    public static final int MAX_OPTIONS = 5;
     public static final Predicate<Ctx> NEVER = ctx -> false;
     public static final Predicate<Ctx> ALWAYS = ctx -> true;
 

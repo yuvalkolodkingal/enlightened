@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "enlightened:fire_palace",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 90,
+    "separation": 40,
+    "salt": 771940213
+  }
+}

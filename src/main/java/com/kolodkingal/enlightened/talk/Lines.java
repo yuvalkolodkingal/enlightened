@@ -44,20 +44,21 @@ final class Lines {
     // ---- Zuko, the herald, Ozai (1.0.27) ----
 
     private static void zuko() {
+        // Fire Lord Zuko, on the palace's throne once his father is beaten (1.0.28).
         Speaker z = Speaker.ZUKO;
-        node(z, "greet").when(ALWAYS).variants(3)
+        node(z, "throne").when(ALWAYS).variants(3)
                 .option(Option.to("ask_father", "father"))
+                .option(Option.to("what_now", "peace"))
                 .option(Option.to("ask_uncle", "uncle"))
                 .option(Option.close("farewell")).register();
-        node(z, "father").option("ask_map", ALWAYS, ctx -> Talk.show(ctx, giveMap(ctx) ? "map" : "no_map"))
-                .option(Option.to("ask_comet", "comet")).register();
-        node(z, "comet").option("ask_map", ALWAYS, ctx -> Talk.show(ctx, giveMap(ctx) ? "map" : "no_map")).option(Option.close("farewell")).register();
-        node(z, "map").option(Option.close("thank_you")).register();
-        node(z, "no_map").option(Option.close("farewell")).register();
-        node(z, "uncle").option(Option.to("ask_father", "father")).option(Option.close("farewell")).register();
+        node(z, "father").option(Option.to("what_now", "peace")).option(Option.close("farewell")).register();
+        node(z, "peace").option(Option.close("thank_you")).register();
+        node(z, "uncle").option(Option.close("farewell")).register();
+        Speaker g = Speaker.FIRE_GUARD;
+        node(g, "greet").when(ALWAYS).variants(3).option(Option.close("carry_on")).register();
     }
 
-    /** Zuko marks Wulong Forest on a map: an explorer's map with a red cross (false if there is none near). */
+    /** Wulong Forest marked on a map: an explorer's map with a red cross (false if there is none near). */
     private static boolean giveMap(Dialogue.Ctx ctx) {
         net.minecraft.server.level.ServerLevel level = ctx.player().serverLevel();
         net.minecraft.tags.TagKey<net.minecraft.world.level.levelgen.structure.Structure> tag = net.minecraft.tags.TagKey.create(
@@ -92,7 +93,7 @@ final class Lines {
             net.minecraft.core.BlockPos origin = ctx.speaker().blockPosition().subtract(com.kolodkingal.enlightened.world.WulongForestPiece.heraldSpot());
             net.minecraft.core.BlockPos deck = origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.ozaiDeck());
             best = com.kolodkingal.enlightened.registry.ModEntities.OZAI.get().create(level);
-            best.place(deck, origin.above(), origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.OZAI_CELL));
+            best.place(deck, origin.above(), null);
             best.moveTo(deck.getX() + 0.5, deck.getY(), deck.getZ() + 0.5, 180.0F, 0.0F);
             level.addFreshEntity(best);
         }
@@ -326,6 +327,7 @@ final class Lines {
                     }
                 }),
                 Option.to("ask_dragons", "dragons"),
+                Option.to("ask_ozai", "ozai"),
                 Option.to("ask_home", ctx -> !atHome(ctx), "home_offer"),
                 Option.to("ask_advice", "advice"));
         node(i, "greet").when(ctx -> !atHome(ctx)).variants(3).options(menu).register();
@@ -343,6 +345,11 @@ final class Lines {
         node(i, "come_back").args(ctx -> List.of(String.valueOf(IrohEntity.HORN_PRICE))).option(Option.to("buy_tea_after", "menu")).register();
         node(i, "advice").variants(6).option(Option.to("more_advice", "advice")).option(Option.to("buy_tea_after", "menu")).register();
         node(i, "menu").options(menu).register();
+        // Iroh knows where his brother waits (1.0.28).
+        node(i, "ozai").option("ask_map", ALWAYS, ctx -> Talk.show(ctx, giveMap(ctx) ? "ozai_map" : "ozai_no_map"))
+                .option(Option.to("buy_tea_after", "menu")).register();
+        node(i, "ozai_map").option(Option.close("thank_you")).register();
+        node(i, "ozai_no_map").option(Option.to("buy_tea_after", "menu")).register();
     }
 
     private static boolean atHome(Dialogue.Ctx ctx) {

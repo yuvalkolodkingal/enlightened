@@ -519,7 +519,16 @@ public class OzaiEntity extends Monster {
         clearFire();
         removeAllEffects();
         getNavigation().stop();
+        if (cell == null) {
+            // The nearest Fire Palace: its prison, and Zuko on its throne.
+            BlockPos palace = com.kolodkingal.enlightened.world.FirePalacePiece.find(level, field != null ? field : blockPosition());
+            if (palace != null) {
+                cell = com.kolodkingal.enlightened.world.FirePalacePiece.cell(palace);
+                com.kolodkingal.enlightened.world.FirePalacePiece.crown(level, palace);
+            }
+        }
         if (cell != null) {
+            level.getChunk(cell);
             moveTo(cell.getX() + 0.5, cell.getY(), cell.getZ() + 0.5, 180.0F, 0);
         }
         bar.removeAllPlayers();

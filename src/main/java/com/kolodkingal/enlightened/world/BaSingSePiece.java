@@ -540,17 +540,6 @@ public class BaSingSePiece extends DesignPiece {
                 level.addFreshEntityWithPassengers(iroh);
             }
         }
-        // Zuko, who served tea here with his uncle, behind the counter at the end.
-        BlockPos zukoAt = origin.offset(TEA_X0 + 7, 1, TEA_Z0 + 7);
-        if (box.isInside(zukoAt)) {
-            var zuko = com.kolodkingal.enlightened.registry.ModEntities.NATION_NPC.get().create(level.getLevel());
-            if (zuko != null) {
-                zuko.kind(com.kolodkingal.enlightened.entity.NationNpcEntity.Kind.ZUKO);
-                zuko.moveTo(zukoAt.getX() + 0.5, zukoAt.getY(), zukoAt.getZ() + 0.5, 180.0F, 0.0F);
-                zuko.setYHeadRot(180.0F);
-                level.addFreshEntityWithPassengers(zuko);
-            }
-        }
         int ox = origin.getX();
         int oz = origin.getZ();
         for (int lx = Math.floorDiv(box.minX() - ox + LOT / 2, LOT); lx <= Math.floorDiv(box.maxX() - ox + LOT / 2, LOT); lx++) {

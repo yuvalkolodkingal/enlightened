@@ -54,7 +54,7 @@ and azaleas; two tables with **stools** fill the room, lanterns hang overhead.
   * **"Could you serve tea at my home?"**: for **50 gold** (ingots; a gold block counts nine, with change) he gives you
     his **tsungi horn**.
   * **"Any advice, Uncle?"**: a piece of his wisdom.
-* **Zuko** serves tea there too: ask him where his father is, and he marks [Wulong Forest](Wulong-Forest) on a map.
+* **"Do you know where Ozai is?"**: he tells of his brother at [Wulong Forest](Wulong-Forest), and marks it on a map.
 * **Sit and eat**: right-click a **tea stool** to sit on it (sneak or jump to stand up); eat and drink sitting there.
   Stools can be crafted too (green wool over two sticks makes two).
 * **The tsungi horn**: blow it (right-click) where you live, and **Iroh comes flying down on jets of fire** from his

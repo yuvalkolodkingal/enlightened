@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v128".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v128();
+            return;
+        }
         if ("v127".equals(System.getProperty("enlightened.tour.only", ""))) {
             v127();
             return;
@@ -1045,6 +1049,86 @@ public final class Tour {
     }
 
     /** 1.0.21: the dragons' new faces, horns, legs and wings; the sky bison's gust (alone: -Denlightened.tour.only=v121). */
+    /** Builds a design piece's blocks in the world (the tours' structures). */
+    private static void build(net.minecraft.server.level.ServerLevel level, Object piece, net.minecraft.core.BlockPos origin, int clear, int down, int up) {
+        try {
+            java.lang.reflect.Method design = piece.getClass().getDeclaredMethod("design", int.class, int.class, int.class);
+            design.setAccessible(true);
+            for (int dx = -clear; dx <= clear; dx++) {
+                for (int dz = -clear; dz <= clear; dz++) {
+                    for (int dy = -down; dy <= up; dy++) {
+                        var b = (net.minecraft.world.level.block.state.BlockState) design.invoke(piece, dx, dy, dz);
+                        if (b == null && dy < 0) {
+                            b = net.minecraft.world.level.block.Blocks.STONE.defaultBlockState();
+                        }
+                        if (b != null && !(b.isAir() && level.getBlockState(origin.offset(dx, dy, dz)).isAir())) {
+                            level.setBlock(origin.offset(dx, dy, dz), b, 2);
+                        }
+                    }
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** 1.0.28: the Fire Palace apart, Ozai's new skin, Zuko on the throne (alone: -Denlightened.tour.only=v128). */
+    private static void v128() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        cmd("gamerule doDaylightCycle false", 2);
+        element("water", "katara", "water_whip");
+        camera(CameraType.FIRST_PERSON, 2);
+        net.minecraft.core.BlockPos palace = new net.minecraft.core.BlockPos(1500, -55, -150);
+        server(p -> {
+            build(p.serverLevel(), new com.kolodkingal.enlightened.world.FirePalacePiece(palace), palace, 32, 8, 30);
+            net.minecraft.core.BlockPos o = new net.minecraft.core.BlockPos(1500, -55, 0);
+            build(p.serverLevel(), new com.kolodkingal.enlightened.world.WulongForestPiece(o), o, 72, 0, 64);
+        }, 60);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("gamemode spectator", 2);
+        cmd("tp @s 1530.5 -22 -100.5 150 22", 60);
+        shot("420_fire_palace", 10);
+        cmd("gamemode creative", 2);
+        cmd("tp @s 1500.5 -50 -133.5 180 0", 30);
+        shot("421_palace_hall", 10);
+        // The Ozai of the new skin, on the field.
+        server(p -> {
+            var ozai = com.kolodkingal.enlightened.registry.ModEntities.OZAI.get().create(p.serverLevel());
+            ozai.place(new net.minecraft.core.BlockPos(1500, -54, 4), new net.minecraft.core.BlockPos(1500, -55, 4), palace.offset(com.kolodkingal.enlightened.world.FirePalacePiece.OZAI_CELL));
+            ozai.moveTo(1500.5, -54, 4.5, 180.0F, 0.0F);
+            ozai.setYHeadRot(180.0F);
+            p.serverLevel().addFreshEntity(ozai);
+        }, 10);
+        cmd("tp @s 1500.5 -54 0.5 0 0", 30);
+        shot("422_ozai_skin", 10);
+        // Beaten: to his cell, and Zuko takes the throne.
+        server(p -> {
+            for (var o : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.OzaiEntity.class, p.getBoundingBox().inflate(40))) {
+                o.challenge(p);
+            }
+        }, 10);
+        server(p -> {
+            for (var o : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.OzaiEntity.class, p.getBoundingBox().inflate(40))) {
+                o.takeBending(p);
+            }
+            com.kolodkingal.enlightened.world.FirePalacePiece.crown(p.serverLevel(), palace);
+        }, 30);
+        cmd("tp @s 1500.5 -50 -158.5 180 8", 40);
+        shot("423_zuko_throne", 10);
+        cmd("tp @s 1503.5 -60 -157.4 180 10", 30);
+        shot("424_ozai_cell", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        cmd("tp @s 1500.5 -50 -168.5 180 8", 10);
+        server(p -> {
+            for (var n : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.NationNpcEntity.class, p.getBoundingBox().inflate(8),
+                    n -> n.kind() == com.kolodkingal.enlightened.entity.NationNpcEntity.Kind.ZUKO)) {
+                com.kolodkingal.enlightened.talk.Talk.begin(p, n, n.speaker());
+            }
+        }, 90);
+        shot("425_talk_zuko", 4);
+    }
+
     /** 1.0.27: Wulong Forest, Sozin's Comet and Ozai (alone: -Denlightened.tour.only=v127). */
     private static void v127() {
         cmd("time set noon", 2);
@@ -1081,7 +1165,7 @@ public final class Tour {
             }
             net.minecraft.core.BlockPos deck = origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.ozaiDeck());
             var ozai = com.kolodkingal.enlightened.registry.ModEntities.OZAI.get().create(level);
-            ozai.place(deck, origin.above(), origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.OZAI_CELL));
+            ozai.place(deck, origin.above(), new net.minecraft.core.BlockPos(1500, -55, -150).offset(com.kolodkingal.enlightened.world.FirePalacePiece.OZAI_CELL));
             ozai.moveTo(deck.getX() + 0.5, deck.getY(), deck.getZ() + 0.5, 180.0F, 0.0F);
             level.addFreshEntity(ozai);
             net.minecraft.core.BlockPos h = origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.heraldSpot());

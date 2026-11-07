@@ -1329,6 +1329,15 @@ def paint_fire_herald():
     p.save(os.path.join(ENTITY, 'fire_herald.png'))
 
 
+def copy_npc_skins():
+    """The skins Eilon sent for the Fire Nation (1.0.28): Ozai as the Phoenix King, Fire Lord Zuko, and the guards and
+    herald (slim arms): tools/skins_npc/*.png, copied as they are to entity/."""
+    folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'skins_npc')
+    for f in sorted(os.listdir(folder)):
+        if f.endswith('.png'):
+            Image.open(os.path.join(folder, f)).convert('RGBA').save(os.path.join(ENTITY, f))
+
+
 def paint_tea_items():
     """Iroh's teas (cups of three colours) and his tsungi horn (1.0.23)."""
     os.makedirs(ITEM, exist_ok=True)
@@ -1618,7 +1627,7 @@ def main():
     paint_king_bumi()
     paint_iroh_tea()
     paint_tea_items()
-    paint_fire_herald()
+    copy_npc_skins()
     paint_aura()
     paint_anomaly_block()
     paint_anomaly()

@@ -21,12 +21,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 /**
- * A person of the Fire Nation story who talks (1.0.27): {@link Kind#ZUKO}, at the Jasmine Dragon with his uncle, who
- * tells where his father waits and marks it on a map; and {@link Kind#HERALD}, the Fire Nation herald at Wulong Forest,
- * who asks whether you will face the Fire Lord. They keep their place; nothing harms them.
+ * A person of the Fire Nation story who talks: {@link Kind#ZUKO}, Fire Lord on the palace's throne once his father is
+ * beaten (1.0.28); {@link Kind#HERALD}, the Fire Nation herald at Wulong Forest, who asks whether you will face the
+ * Fire Lord; {@link Kind#GUARD}, the guards of the Fire Palace. They keep their place; nothing harms them.
  */
 public class NationNpcEntity extends PathfinderMob {
-    public enum Kind { ZUKO, HERALD }
+    public enum Kind { ZUKO, HERALD, GUARD }
 
     private static final EntityDataAccessor<Integer> KIND = SynchedEntityData.defineId(NationNpcEntity.class, EntityDataSerializers.INT);
 
@@ -64,7 +64,11 @@ public class NationNpcEntity extends PathfinderMob {
     }
 
     public Speaker speaker() {
-        return kind() == Kind.ZUKO ? Speaker.ZUKO : Speaker.FIRE_HERALD;
+        return switch (kind()) {
+            case ZUKO -> Speaker.ZUKO;
+            case HERALD -> Speaker.FIRE_HERALD;
+            case GUARD -> Speaker.FIRE_GUARD;
+        };
     }
 
     @Override

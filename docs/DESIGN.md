@@ -688,3 +688,17 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
   near, moved to his cell, invulnerable, talks as `Speaker.OZAI`). Energybending within 5 blocks calls `takeBending`.
   He saves a fight as RETURNING. `NationNpcEntity` (kinds ZUKO, HERALD) talks; `NationRenderer` draws all three.
 
+## 49. 1.0.28: the Fire Palace apart, Fire Lord Zuko
+
+* `FirePalacePiece` (site kind `fire_palace`, badlands/savanna/desert/plains, spacing 90, its own salt): outer wall
+  ring 30 with a gate and towers, courtyard, platform |x| <= 20, z -26..6, 4 high, grand stairs, hall |x| <= 16, z
+  -24..4 (walls 8 high, gold band, glass), roof stepped in two tiers (golden corners, ridge, spire), dais, throne
+  (`THRONE`), soul campfires on `FIRE_Z`, prison under the platform (`OZAI_CELL`), ladder at x 15, z -7; guards spawned
+  in `decorate`. Wulong Forest lost its palace.
+* `FirePalacePiece.find` locates the nearest palace (`findNearestMapStructure` on tag `enlightened:fire_palace`, then the
+  start's piece origin from the chunk at STRUCTURE_STARTS); Ozai's `defeat` (with no cell set) moves him to its cell
+  and calls `crown`: the soul campfires go, four guards stand there, Zuko (kind ZUKO, seated model) on the throne; once.
+* `NationNpcEntity.Kind` gains GUARD; `NationRenderer.Npc` swaps between a seated wide model (Zuko) and the slim model
+  (guards, herald). Skins from tools/skins_npc/ (Eilon's): ozai.png, zuko_fire_lord.png, fire_guard.png. Iroh gains
+  "Do you know where Ozai is?" with the map (talks offer up to 5 answers now).
+

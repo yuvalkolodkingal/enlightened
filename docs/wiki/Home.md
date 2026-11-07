@@ -43,7 +43,7 @@ same authors, and plays the same way.
 * [Ba Sing Se and Omashu](Earth-Kingdom-Cities): the walled capital that keeps all monsters out, the mountain city over its chasm with King Bumi on his throne, and the city guards you can talk to
 * [The Spirit World](Spirit-World): a world of its own through the spirit portals, and the Tree of Time
 * [Seven Havens](Seven-Havens): the brigade armor trim for any armor, Ellora, the golden city where it is found, and the Anomaly
-* [Wulong Forest](Wulong-Forest): Sozin's Comet and the battle with Fire Lord Ozai, the Fire Palace and its prison
+* [Wulong Forest](Wulong-Forest): Sozin's Comet and the battle with Fire Lord Ozai; the Fire Nation's Royal Palace and its prison
 * [Commands](Commands)
 * [Server Configuration](Server-Configuration)
 * [Building from Source](Building-from-Source)

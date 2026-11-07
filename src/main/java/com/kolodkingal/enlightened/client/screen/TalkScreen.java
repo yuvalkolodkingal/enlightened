@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * The talk screen (1.0.23, after Enhanced's Asgardian talk): a panel at the bottom of the screen, the speaker's face cut
  * from his own skin (or, for the lion turtle and Raava, a symbol) in a frame of his colour, his name, his line typed out
- * at 40 letters a second (a click, Space or Enter finishes it), and up to four answers above the panel (keys 1-4 choose
+ * at 40 letters a second (a click, Space or Enter finishes it), and up to five answers above the panel (keys 1-5 choose
  * them); "Farewell" or Esc closes it. In a right-to-left language the face moves to the right and the text aligns right.
  */
 public class TalkScreen extends Screen {

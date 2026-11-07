@@ -7,18 +7,32 @@
 
 ## Finding it
 
-At the Jasmine Dragon in Ba Sing Se (see [Ba Sing Se and Omashu](Earth-Kingdom-Cities)), **Zuko** serves tea beside
-his uncle. Ask him **where his father is**, and he tells of Wulong Forest and Sozin's Comet; ask him **to show you the
-way**, and he gives you a **map to Wulong Forest** with a red cross on it (the nearest one).
+At the Jasmine Dragon in Ba Sing Se (see [Ba Sing Se and Omashu](Earth-Kingdom-Cities)), ask **Iroh** whether he
+knows **where Ozai is**: he tells of his brother at Wulong Forest and Sozin's Comet, and, if you ask him to show you
+the way, gives you a **map to Wulong Forest** with a red cross on it (the nearest one).
+
+![Fire Lord Ozai, the Phoenix King](images/ozai.jpg)
+*Fire Lord Ozai, the Phoenix King*
 
 **Wulong Forest** stands in plains, savannas, meadows and windswept hills: a field of bare earth ringed by a forest of
 tall **rock spires** capped with moss. **Three Fire Nation airships** hang over it (red hulls ribbed in black, the Fire
 Nation emblem on their flanks, a gondola under each); on the deck of the flagship in the middle stands **Fire Lord
-Ozai**. On the north side is a small **Fire Palace**: red walls, dark pillars, a gold band, a tiered dark roof, a throne
-before a wall of flame, and beneath it, down a ladder, **the prison**.
+Ozai**.
 
-![The Fire Palace](images/fire-palace.jpg)
-*The Fire Palace*
+## The Fire Palace
+
+![The Fire Nation's Royal Palace](images/fire-palace.jpg)
+*The Fire Nation's Royal Palace*
+
+![The grand stairs to the hall](images/fire-palace-stairs.jpg)
+*The grand stairs to the hall*
+
+**The Fire Palace is a structure of its own, far from Wulong Forest** (in badlands, savannas, deserts and plains): a
+walled courtyard entered by a gate between two golden-topped towers, a red path and lamps to a raised platform and its
+grand stairs, and the great hall on it, red walls between dark pillars, a gold band, a stepped dark roof in two tiers
+with golden corners and ridge. Inside: a red carpet to the throne on its dais, a **wall of blue flame** behind it.
+Guards keep the gate, the stairs and the hall. Beneath the platform, down a **ladder by the hall's east wall**, is
+**the prison**: a corridor and four barred cells.
 
 ## The challenge
 
@@ -57,12 +71,18 @@ his jets, with **fire blasts**, **streams of flame**, **rings of fire** that thr
 
 ## After
 
-![The prison under the Fire Palace](images/fire-palace-prison.jpg)
-*The prison under the Fire Palace*
-
 ![Ozai in his cell](images/ozai-imprisoned.jpg)
 *Ozai in his cell*
 
-Beaten (or his bending taken), Ozai is **not killed**: he is taken to **the prison under the Fire Palace**, powerless,
-and **stays in his cell forever**. Everyone who fought him gets 5 ability points. Go down the ladder in the palace hall
-and you can talk to him through the bars (he is not sorry). The herald says the Fire Lord is in chains.
+Beaten (or his bending taken), Ozai is **not killed**: he is taken to **the prison under the nearest Fire Palace**,
+powerless, and **stays in his cell forever**. Everyone who fought him gets 5 ability points. Go down the ladder in the
+palace hall and you can talk to him through the bars (he is not sorry). The herald says the Fire Lord is in chains.
+
+![Fire Lord Zuko on the throne, guards where the blue fire burned](images/zuko-throne.jpg)
+*Fire Lord Zuko on the throne, guards where the blue fire burned*
+
+![Talking to Fire Lord Zuko](images/talk-zuko.jpg)
+*Talking to Fire Lord Zuko*
+
+And at the palace, **the blue fire behind the throne goes out, guards stand where it burned, and Fire Lord Zuko sits on
+the throne**. Talk to him: he thanks you, and speaks of his father, of his uncle and of peace.

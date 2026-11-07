@@ -1,3 +1,12 @@
+# Enlightened 1.0.22
+
+* **A new Bending Scroll**, after Enhanced's Hero Creator: your picture on the left, tabs for Abilities and Keys, a
+  points bar, chips that sort the arts (basic, each sub-art, each element for the Avatar, learned), a search box, big
+  cards, and a panel with the chosen art in full: a big Learn button and the ten keys to put it on.
+* **Every ability has its own symbol**, in its element's colours, on its card, its key and its panel.
+* **Your picture acts out the chosen art**: the whip, the punch, the fire ball, the spout... with the mod's own
+  animations.
+
 # Enlightened 1.0.21
 
 * **Sky bison blow wind at enemies**: riding a bison, left-click and it blows a great gust where you look, flinging

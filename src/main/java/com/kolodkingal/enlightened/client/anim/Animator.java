@@ -21,8 +21,10 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -259,6 +261,99 @@ public final class Animator {
         on[Stance.PALM_FORGE.ordinal()] = data.active(Ability.PALM_FORGE);
     }
 
+    // ---- the Bending Scroll's preview ----
+
+    /** While the Bending Scroll draws its picture of the bender: the frame's partial tick (else -1). */
+    public static float previewPartial = -1.0F;
+    /** A gesture played for the scroll's picture: no light, sound or particles in the world. */
+    private static boolean quiet;
+
+    /** Plays a gesture on the local player for the scroll's picture, without its effects in the world. */
+    public static void playPreview(LocalPlayer player, Gesture id) {
+        quiet = true;
+        try {
+            playLocal(player, id);
+        } finally {
+            quiet = false;
+        }
+    }
+
+    /**
+     * The gestures that show an ability in the scroll, in order: what its key plays (a press, a hold that begins and
+     * ends, a toggle on and off), and for the arts that play none (the passives, the newer arts) the gesture nearest to
+     * what they do. Never empty.
+     */
+    public static List<Gesture> preview(Ability a) {
+        List<Gesture> out = new ArrayList<>();
+        switch (a) {
+            case ROCK_LIFT, GREAT_LIFT -> {
+                out.add(Gesture.EARTH_ROCK_GRAB);
+                out.add(Gesture.EARTH_ROCK_FLING);
+            }
+            case BLOODBENDING -> {
+                out.add(Gesture.WATER_BLOOD_GRAB);
+                out.add(Gesture.WATER_BLOOD_RELEASE);
+            }
+            case FIRE_BALL -> {
+                out.add(Gesture.FIRE_BALL);
+                out.add(Gesture.FIRE_BALL_BIG);
+            }
+            case LIGHTNING -> {
+                out.add(Gesture.FIRE_LIGHTNING);
+                out.add(Gesture.FIRE_LIGHTNING_BOTH);
+            }
+            case LAVA_SKIN, FIRE_SKIN -> out.add(a == Ability.LAVA_SKIN ? Gesture.EARTH_ARMOR_ON : Gesture.FIRE_HEAT_ON);
+            case DENSITY_SHIFT -> out.add(Gesture.EARTH_SEISMIC);
+            case EARTH_STEP, AIR_STEP, WATER_STEP, FIRE_STEP -> {
+                out.add(Gesture.STEP);
+                out.add(Gesture.STEP);
+            }
+            case AIR_BUBBLE -> out.add(Gesture.AIR_SHIELD_ON);
+            case AIR_AGILITY -> out.add(Gesture.AIR_JUMP);
+            case PLANT_WATER -> out.add(Gesture.WATER_TETHER);
+            case WATER_VORTEX -> {
+                out.add(Gesture.WATER_SPOUT_ON);
+                out.add(Gesture.WATER_SPOUT_OFF);
+            }
+            case FAST_SWIM -> out.add(Gesture.WATER_WHIP);
+            case PALM_FORGE -> out.add(Gesture.FIRE_LIGHT_ON);
+            case ENERGY_RESTORE -> out.add(Gesture.WATER_HEAL);
+            case FROST_WALK -> out.add(Gesture.WATER_FREEZE);
+            case MUD_WAVE -> out.add(Gesture.EARTH_SAND_WAVE);
+            case MUD_THROW -> out.add(Gesture.EARTH_ROCK_THROW);
+            case PLANT_GIANT -> {
+                out.add(Gesture.WATER_OCTOPUS_ON);
+                out.add(Gesture.WATER_OCTOPUS_OFF);
+            }
+            default -> {
+                Gesture g = cast(a);
+                if (g != null) {
+                    out.add(g);
+                }
+                Gesture on = toggle(a, true);
+                if (on != null) {
+                    out.add(on);
+                    Gesture off = toggle(a, false);
+                    if (off != null) {
+                        out.add(off);
+                    }
+                }
+                Gesture start = activeStart(a);
+                if (start != null && g == null) {
+                    out.add(start);
+                    Gesture end = activeEnd(a, 20, false);
+                    if (end != null) {
+                        out.add(end);
+                    }
+                }
+            }
+        }
+        if (out.isEmpty()) {
+            out.add(Gesture.COMBO);
+        }
+        return out;
+    }
+
     // ---- the routes from the data to the gestures ----
 
     /** The gesture of a press (a cooldown that starts). */
@@ -444,7 +539,9 @@ public final class Animator {
         target.t = 0.0F;
         target.predicted = predicted;
         target.active = true;
-        GestureEffects.started(p, s, id);
+        if (!quiet) {
+            GestureEffects.started(p, s, id);
+        }
     }
 
     /** Lets a playing gesture go early: it fades out over 3 ticks instead of running to its end. */
@@ -465,8 +562,12 @@ public final class Animator {
     @Nullable
     public static AnimState frame(AbstractClientPlayer player, float yBodyRot, float pt) {
         AnimState s = STATES.get(player.getUUID());
-        if (s == null || pt >= 1.0F || !EnlightenedClientConfig.animations()) {
+        if (s == null || pt >= 1.0F && previewPartial < 0.0F || !EnlightenedClientConfig.animations()) {
             return null;
+        }
+        if (pt >= 1.0F) {
+            // The Bending Scroll's live picture: drawn at a whole tick, it moves on with the real frame.
+            pt = previewPartial;
         }
         double time = player.tickCount + pt;
         boolean first = s.fresh || time < s.time - 1.5;

@@ -53,6 +53,11 @@ public final class BenderPoses {
             st.posed = false;
         }
         float pt = ageInTicks - player.tickCount;
+        if (pt >= 1.0F && Animator.previewPartial >= 0.0F) {
+            // The Bending Scroll's picture is drawn at a whole tick: pose it at the real frame.
+            pt = Animator.previewPartial;
+            ageInTicks = player.tickCount + pt;
+        }
         if (st == null || pt >= 1.0F || st.wVanilla > 0.0F || Math.abs(st.time - ageInTicks) > 1.5 || !EnlightenedClientConfig.animations()) {
             return;
         }

@@ -617,3 +617,20 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 |---|---|
 | The gust | `SkyBisonEntity.gust(dir)`: from its mouth, a 30° cone of `GUST_REACH` 14: `GUST_DAMAGE` 4 and a fling along the gust (spares riders, owner, the owner's pets, creative players); `Fx.AIR_BLAST`, gust particles, a wind charge's burst; rests `GUST_REST` 40. Ridden: the attack key (`DragonBreathPayload`, now for bison too). Unridden: `GustGoal` at its target (owner's attacker and mark, its own attacker). |
 | The dragons | `DragonRenderer` (texture 128x128): brows and a nose pad on the head, two fangs, horns of 11 with a tip curving up, longer whiskers; legs (thigh, shin, clawed foot) both sides at the 4th and 11th segments, striding with its walk, tucked in flight; wings (bone and membrane, 20 by 15) at the 3rd segment, beating in flight, folded on the ground. Limbs are drawn at the segment's girth, not stretched along it. |
+
+## 45. 1.0.22: the Bending Scroll after the Hero Creator, symbols, the acting picture
+
+* `ScrollScreen` is rebuilt in the look of Enhanced's `HeroEditorScreen`/`PowersTab`: `ScrollUi.BigButton` (a copy of
+  `CreatorUi.BigButton` with a symbol and a right-click action), tabs at y 16, the points bar at 38, content from 54; a
+  live preview on the left (`InventoryScreen.renderEntityInInventoryFollowsMouse`) from 420 GUI px wide. The tab, chip,
+  query and choice are static, so the scroll reopens where it was left. Widgets are rebuilt on a tab, chip, search or
+  scroll change; their faces (stars, keys, Learn) are refreshed from the synced data every frame.
+* Symbols: `tools/symbols.py` draws 86 badges (128 px, shrunk to 32) into `textures/gui/ability/<id>.png` from a motif
+  per ability and an element palette (metal grey, lava orange, blood red as accents). A game test checks every ability
+  has one.
+* The acting picture: `Animator.preview(Ability)` lists the gestures that show an art (its press, toggle on/off, hold
+  start/end, or the nearest gesture for passives and newer arts). The screen's `tick` plays them in turn on the local
+  player with `Animator.playPreview` (no `GestureEffects`). The inventory picture is drawn at partial tick 1, which the
+  animator ignores; while the scroll draws it, `Animator.previewPartial` carries the real partial tick into
+  `Animator.frame` and `BenderPoses.apply`.
+

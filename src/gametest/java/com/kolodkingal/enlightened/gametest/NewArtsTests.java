@@ -209,4 +209,17 @@ public final class NewArtsTests {
         check(!bison.gust(new net.minecraft.world.phys.Vec3(0, 0, 1)), "and it rests before the next");
         helper.succeed();
     }
+
+    /** Every ability has its symbol in the Bending Scroll (textures/gui/ability/<id>.png). */
+    @GameTest(template = ARENA)
+    public static void everyAbilityHasASymbol(GameTestHelper helper) {
+        for (com.kolodkingal.enlightened.bending.Ability a : com.kolodkingal.enlightened.bending.Ability.values()) {
+            String path = "/assets/enlightened/textures/gui/ability/" + a.id() + ".png";
+            if (NewArtsTests.class.getResource(path) == null) {
+                helper.fail("no symbol for " + a.id() + " (" + path + ")");
+                return;
+            }
+        }
+        helper.succeed();
+    }
 }

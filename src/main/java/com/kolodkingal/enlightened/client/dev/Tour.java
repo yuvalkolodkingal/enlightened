@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v122".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v122();
+            return;
+        }
         if ("v121".equals(System.getProperty("enlightened.tour.only", ""))) {
             v121();
             return;
@@ -1029,6 +1033,23 @@ public final class Tour {
     }
 
     /** 1.0.21: the dragons' new faces, horns, legs and wings; the sky bison's gust (alone: -Denlightened.tour.only=v121). */
+    /** 1.0.22: the Bending Scroll after the Hero Creator (alone: -Denlightened.tour.only=v122). */
+    private static void v122() {
+        cmd("time set noon", 2);
+        element("water", "katara", "water_whip", "water_healing", "octopus_form", "ice_knives");
+        cmd("enlightened learn @s water_spout 1", 2);
+        STEPS.add(new Step(10, () -> Minecraft.getInstance().setScreen(com.kolodkingal.enlightened.client.screen.ScrollScreen.tour(false))));
+        shot("380_scroll_abilities", 10);
+        shot("383_scroll_animating", 4);
+        STEPS.add(new Step(4, () -> Minecraft.getInstance().setScreen(com.kolodkingal.enlightened.client.screen.ScrollScreen.tour(true))));
+        shot("381_scroll_keys", 20);
+        STEPS.add(new Step(4, () -> Minecraft.getInstance().setScreen(null)));
+        element("avatar", "aang", "avatar_state", "water_whip", "fire_ball");
+        STEPS.add(new Step(10, () -> Minecraft.getInstance().setScreen(com.kolodkingal.enlightened.client.screen.ScrollScreen.tour(false))));
+        shot("382_scroll_avatar", 9);
+        STEPS.add(new Step(4, () -> Minecraft.getInstance().setScreen(null)));
+    }
+
     private static void v121() {
         cmd("time set noon", 2);
         cmd("gamerule doMobSpawning false", 2);

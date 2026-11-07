@@ -36,18 +36,33 @@ earthbender, and bloodbending never holds a stronger or equal waterbender.
 
 ## The Bending Scroll (K)
 
-Press **K** (or right-click with your element's scroll) to open it.
+![The Bending Scroll](images/bending-scroll.jpg)
+*The Bending Scroll: your picture, the cards, the chosen art*
 
-* **Left: your abilities.** Every ability of your element, with its stars, the cost of the next level, its gate (in
-  red while closed, with the points it asks for) and a **+** button that learns the next level (greyed out when it
-  cannot: not enough points, the gate closed, mastered already). *(passive)* marks the abilities that sit on no key.
-  Scroll the mouse wheel for more. Click an ability to **select** it: its description appears under the keys.
-* **Right: your keys.** Ten slots: each key plain and with Sneak (⇧). Select an ability on the left, then click a
-  slot to put it there (an ability sits on one slot at a time; it leaves its old slot). **Right-click** a slot to
-  empty it. **Default keys** lays your learned abilities out in the element's default order.
+Press **K** (or right-click with your element's scroll) to open it. It is laid out like Enhanced's Hero Creator: big
+buttons framed in your element's colour, two **tabs** on top (Abilities and Keys), and the **points bar** under them
+(your points to spend in gold, the share already spent, and a thin green line: the experience toward the next point).
 
-Every ability you learn takes its default slot if that is free, else the first free slot. The panel in the corner
-always shows the keys as they are now.
+**Your picture** stands on the left, and it **acts out the art you chose**: the whip's lash, the rock's punch, the
+fire ball, the wall, the spout... over and over (only you see it, and nothing happens in the world). Under it: your
+name, how many arts you know and how many you have mastered.
+
+**Every ability has its own symbol**: a round badge in its element's colours (a whip, a drop with a cross, a bolt, a
+flame, a wall, a spiral...), on its card, on its key and big beside its name.
+
+* **Abilities.** **Chips** sort the arts: *All*, *Basic*, each sub-art (Sandbending, Icebending, Lightning...; the
+  Avatar has a chip per element) and *Learned*. A **search box** finds an art by its name or by what it does. The
+  **cards** show each art: its symbol, its stars, the cost of the next level, *locked* while its gate is closed, and the
+  key it sits on. Click a card to choose it: the **panel beside** shows it in full: its symbol, its level, how it is
+  used (press, hold, on/off, always on), its gate (✔ open, ✖ closed with the points it asks for), what it does, a big
+  **Learn** button (with the cost and your points, or why it can't be learned yet), and the **ten keys**: click one to
+  put the art there, click it again to take it off.
+* **Keys.** The ten keys as big buttons, each plain and with Sneak (⇧), with the art on it. **Pick a key, then an art**
+  on the right to put it there (the next key is picked for you, to lay out several in a row). **Right-click** a key to
+  empty it. **Default keys** lays your learned arts out in the element's default order.
+
+The mouse wheel scrolls the cards. Every ability you learn takes its default slot if that is free, else the first free
+slot. The panel in the corner always shows the keys as they are now.
 
 Operators can do all of it with [commands](Commands): `/enlightened points add`, `/enlightened learn`,
 `/enlightened loadout`, `/enlightened reset` (every level back, the points refunded).

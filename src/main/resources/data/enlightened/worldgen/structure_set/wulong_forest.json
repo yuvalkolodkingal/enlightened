@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "enlightened:wulong_forest",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 70,
+    "separation": 28,
+    "salt": 528113907
+  }
+}

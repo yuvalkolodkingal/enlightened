@@ -17,7 +17,10 @@ public enum Speaker {
     SUN_WARRIOR("entity.enlightened.sun_warrior.warrior", 0xFF9A3C, null),
     LION_TURTLE("entity.enlightened.lion_turtle", 0x9CD67A, "energybending"),
     RAAVA("entity.enlightened.great_spirit.raava", 0x9FE8FF, "spiritbending"),
-    IROH("entity.enlightened.iroh", 0xE0A030, null);
+    IROH("entity.enlightened.iroh", 0xE0A030, null),
+    ZUKO("entity.enlightened.zuko", 0xD94A2A, null),
+    FIRE_HERALD("entity.enlightened.fire_herald", 0xC23B22, null),
+    OZAI("entity.enlightened.ozai", 0xB01E10, null);
 
     public final String nameKey;
     public final int color;

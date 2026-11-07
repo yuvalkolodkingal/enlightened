@@ -1295,6 +1295,40 @@ def paint_iroh_tea():
     p.save(os.path.join(ENTITY, 'iroh_tea.png'))
 
 
+def paint_fire_herald():
+    """The Fire Nation herald at Wulong Forest (1.0.27): dark red plate over a black undersuit, gold trim, the helmet
+    with its skull-like faceguard (entity/fire_herald.png)."""
+    p = Painter('fire_herald')
+    skin = (222, 186, 150)
+    s = dict(garment='robe', skin=skin, shirt=(120, 22, 18), sleeves=(40, 30, 30), pants=(36, 28, 28), boots=(28, 22, 22),
+             trim=(204, 162, 60), belt=(30, 24, 24))
+    paint_head(p, skin, (60, 40, 30), brows=(40, 30, 30))
+    paint_hair(p, (36, 30, 30), 'short')
+    paint_body(p, s, False)
+    # The helmet: dark red with a gold crest, the pale faceguard over the mouth.
+    for name in ('front', 'left', 'right', 'back', 'top'):
+        x, y, w, h = HAT[name]
+        if name == 'top':
+            p.fill((x, y, w, h), (110, 20, 16), 0.05)
+            p.fill((x + 3, y, 2, h), (204, 162, 60), 0.0)
+        else:
+            p.fill((x, y, w, 3), (110, 20, 16), 0.05)
+            p.fill((x, y + 3, 1, 4), (110, 20, 16), 0.05)
+            p.fill((x + w - 1, y + 3, 1, 4), (110, 20, 16), 0.05)
+    fx, fy = HAT['front'][0], HAT['front'][1]
+    p.fill((fx + 1, fy + 5, 6, 3), (226, 220, 206), 0.03)
+    for i in range(2, 6):
+        p.dot(fx + i, fy + 6, (60, 50, 46))
+    # Shoulder plates and the gold-edged chest plate.
+    bx, by = BODY['front'][0], BODY['front'][1]
+    p.fill((bx + 1, by + 1, 6, 5), (140, 28, 22), 0.05)
+    p.rows(BODY, (204, 162, 60), (0, 6), names=('front', 'back'))
+    for a in (arm(40, 16, False), arm(32, 48, False)):
+        p.rows(a, (140, 28, 22), (0, 1, 2))
+        p.rows(a, (204, 162, 60), (3,))
+    p.save(os.path.join(ENTITY, 'fire_herald.png'))
+
+
 def paint_tea_items():
     """Iroh's teas (cups of three colours) and his tsungi horn (1.0.23)."""
     os.makedirs(ITEM, exist_ok=True)
@@ -1584,6 +1618,7 @@ def main():
     paint_king_bumi()
     paint_iroh_tea()
     paint_tea_items()
+    paint_fire_herald()
     paint_aura()
     paint_anomaly_block()
     paint_anomaly()

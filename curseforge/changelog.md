@@ -1,3 +1,12 @@
+# Enlightened 1.0.27
+
+* **Fire Lord Ozai and Sozin's Comet.** Zuko, at the Jasmine Dragon, marks **Wulong Forest** on a map: a field among
+  towering rock spires, three Fire Nation airships over it, a Fire Palace with a prison beneath. Tell the herald you
+  will face the Fire Lord, and **Sozin's Comet** turns the sky red and **doubles every firebender's power**; Ozai comes
+  down from his flagship on jets of fire, with fire, rings of flame and lightning. Water hurts him; fire hardly does,
+  unless you have mastered every art of fire under the comet; and **energybending takes his bending away**. Beaten, he
+  is locked in the prison under the Fire Palace forever.
+
 # Enlightened 1.0.26
 
 * Iroh's tea-house skin is back to exactly the one Eilon sent.

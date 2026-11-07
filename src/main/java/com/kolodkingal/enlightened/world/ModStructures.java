@@ -43,6 +43,9 @@ public final class ModStructures {
     public static final DeferredHolder<StructurePieceType, StructurePieceType> RAAVA_GLADE_PIECE = PIECES.register("raava_glade",
             () -> (StructurePieceType.ContextlessType) RaavaGladePiece::new);
 
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> WULONG_FOREST_PIECE = PIECES.register("wulong_forest",
+            () -> (StructurePieceType.ContextlessType) WulongForestPiece::new);
+
     private ModStructures() {
     }
 }

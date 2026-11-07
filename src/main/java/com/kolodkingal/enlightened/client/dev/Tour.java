@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v127".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v127();
+            return;
+        }
         if ("v125".equals(System.getProperty("enlightened.tour.only", ""))) {
             v125();
             return;
@@ -1041,6 +1045,93 @@ public final class Tour {
     }
 
     /** 1.0.21: the dragons' new faces, horns, legs and wings; the sky bison's gust (alone: -Denlightened.tour.only=v121). */
+    /** 1.0.27: Wulong Forest, Sozin's Comet and Ozai (alone: -Denlightened.tour.only=v127). */
+    private static void v127() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        cmd("gamerule doDaylightCycle false", 2);
+        element("water", "katara", "water_whip", "octopus_form");
+        camera(CameraType.FIRST_PERSON, 2);
+        // The arena, built from its own design at 1500 0.
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            net.minecraft.core.BlockPos origin = new net.minecraft.core.BlockPos(1500, -55, 0);
+            var w = new com.kolodkingal.enlightened.world.WulongForestPiece(origin);
+            try {
+                java.lang.reflect.Method design = com.kolodkingal.enlightened.world.WulongForestPiece.class.getDeclaredMethod("design", int.class, int.class, int.class);
+                design.setAccessible(true);
+                for (int dx = -72; dx <= 72; dx++) {
+                    for (int dz = -72; dz <= 72; dz++) {
+                        if (dx * dx + dz * dz > 72 * 72) {
+                            continue;
+                        }
+                        for (int dy = -8; dy <= 64; dy++) {
+                            var b = (net.minecraft.world.level.block.state.BlockState) design.invoke(w, dx, dy, dz);
+                            if (b == null && dy < 0) {
+                                b = net.minecraft.world.level.block.Blocks.STONE.defaultBlockState();
+                            }
+                            if (b != null && !(b.isAir() && level.getBlockState(origin.offset(dx, dy, dz)).isAir())) {
+                                level.setBlock(origin.offset(dx, dy, dz), b, 2);
+                            }
+                        }
+                    }
+                }
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+            net.minecraft.core.BlockPos deck = origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.ozaiDeck());
+            var ozai = com.kolodkingal.enlightened.registry.ModEntities.OZAI.get().create(level);
+            ozai.place(deck, origin.above(), origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.OZAI_CELL));
+            ozai.moveTo(deck.getX() + 0.5, deck.getY(), deck.getZ() + 0.5, 180.0F, 0.0F);
+            level.addFreshEntity(ozai);
+            net.minecraft.core.BlockPos h = origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.heraldSpot());
+            var herald = com.kolodkingal.enlightened.registry.ModEntities.NATION_NPC.get().create(level);
+            herald.kind(com.kolodkingal.enlightened.entity.NationNpcEntity.Kind.HERALD);
+            herald.moveTo(h.getX() + 0.5, h.getY(), h.getZ() + 0.5, 180.0F, 0.0F);
+            herald.setYHeadRot(180.0F);
+            level.addFreshEntity(herald);
+        }, 40);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("tp @s 1500.5 -32 75.5 180 12", 60);
+        shot("410_wulong_forest", 10);
+        cmd("tp @s 1500.5 -44 -24.5 180 14", 30);
+        shot("411_fire_palace", 10);
+        cmd("tp @s 1508.5 -60 -48.5 120 12", 30);
+        shot("412_prison", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        cmd("tp @s 1500.5 -54 21.6 180 5", 20);
+        server(p -> {
+            for (var n : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.NationNpcEntity.class, p.getBoundingBox().inflate(8))) {
+                com.kolodkingal.enlightened.talk.Talk.begin(p, n, n.speaker());
+            }
+        }, 90);
+        shot("413_talk_herald", 4);
+        cmd("gamemode survival", 2);
+        cmd("effect give @s minecraft:resistance 600 2 true", 2);
+        cmd("effect give @s minecraft:regeneration 600 4 true", 2);
+        server(p -> {
+            for (var n : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.NationNpcEntity.class, p.getBoundingBox().inflate(8))) {
+                com.kolodkingal.enlightened.talk.Talk.tryChoose(p, n.getId(), "yes_fight");
+            }
+        }, 4);
+        STEPS.add(new Step(30, () -> Minecraft.getInstance().setScreen(null)));
+        cmd("tp @s 1500.5 -54 21.6 180 -35", 20);
+        shot("414_comet_ozai_descends", 30);
+        cmd("tp @s 1506.5 -54 12.5 135 0", 60);
+        for (int i = 0; i < 6; i++) {
+            shot("415_ozai_fight_" + i, 14);
+        }
+        server(p -> {
+            for (var o : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.OzaiEntity.class, p.getBoundingBox().inflate(80))) {
+                o.takeBending(p);
+            }
+        }, 60);
+        cmd("tp @s 1503.5 -60 -48.6 180 12", 30);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        shot("417_ozai_imprisoned", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+    }
+
     /** 1.0.25: the new combos, found in a fight (alone: -Denlightened.tour.only=v125). */
     private static void v125() {
         cmd("time set noon", 2);

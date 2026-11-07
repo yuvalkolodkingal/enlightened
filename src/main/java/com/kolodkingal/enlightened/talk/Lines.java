@@ -36,6 +36,99 @@ final class Lines {
         lionTurtle();
         raava();
         iroh();
+        zuko();
+        herald();
+        ozai();
+    }
+
+    // ---- Zuko, the herald, Ozai (1.0.27) ----
+
+    private static void zuko() {
+        Speaker z = Speaker.ZUKO;
+        node(z, "greet").when(ALWAYS).variants(3)
+                .option(Option.to("ask_father", "father"))
+                .option(Option.to("ask_uncle", "uncle"))
+                .option(Option.close("farewell")).register();
+        node(z, "father").option("ask_map", ALWAYS, ctx -> Talk.show(ctx, giveMap(ctx) ? "map" : "no_map"))
+                .option(Option.to("ask_comet", "comet")).register();
+        node(z, "comet").option("ask_map", ALWAYS, ctx -> Talk.show(ctx, giveMap(ctx) ? "map" : "no_map")).option(Option.close("farewell")).register();
+        node(z, "map").option(Option.close("thank_you")).register();
+        node(z, "no_map").option(Option.close("farewell")).register();
+        node(z, "uncle").option(Option.to("ask_father", "father")).option(Option.close("farewell")).register();
+    }
+
+    /** Zuko marks Wulong Forest on a map: an explorer's map with a red cross (false if there is none near). */
+    private static boolean giveMap(Dialogue.Ctx ctx) {
+        net.minecraft.server.level.ServerLevel level = ctx.player().serverLevel();
+        net.minecraft.tags.TagKey<net.minecraft.world.level.levelgen.structure.Structure> tag = net.minecraft.tags.TagKey.create(
+                net.minecraft.core.registries.Registries.STRUCTURE, com.kolodkingal.enlightened.Enlightened.id("wulong_forest"));
+        net.minecraft.core.BlockPos found = level.findNearestMapStructure(tag, ctx.player().blockPosition(), 100, false);
+        if (found == null) {
+            return false;
+        }
+        net.minecraft.world.item.ItemStack map = net.minecraft.world.item.MapItem.create(level, found.getX(), found.getZ(), (byte) 2, true, true);
+        net.minecraft.world.item.MapItem.renderBiomePreviewMap(level, map);
+        net.minecraft.world.level.saveddata.maps.MapItemSavedData.addTargetDecoration(map, found, "+",
+                net.minecraft.world.level.saveddata.maps.MapDecorationTypes.RED_X);
+        map.set(net.minecraft.core.component.DataComponents.ITEM_NAME, net.minecraft.network.chat.Component.translatable("item.enlightened.wulong_map"));
+        if (!ctx.player().getInventory().add(map)) {
+            ctx.player().drop(map, false);
+        }
+        return true;
+    }
+
+    /** The Ozai of the herald's arena: the nearest, or a new one if he is gone. */
+    private static com.kolodkingal.enlightened.entity.OzaiEntity arenaOzai(Dialogue.Ctx ctx, boolean make) {
+        net.minecraft.server.level.ServerLevel level = ctx.player().serverLevel();
+        List<com.kolodkingal.enlightened.entity.OzaiEntity> all = level.getEntitiesOfClass(com.kolodkingal.enlightened.entity.OzaiEntity.class,
+                ctx.speaker().getBoundingBox().inflate(128));
+        com.kolodkingal.enlightened.entity.OzaiEntity best = null;
+        for (com.kolodkingal.enlightened.entity.OzaiEntity o : all) {
+            if (best == null || o.distanceToSqr(ctx.speaker()) < best.distanceToSqr(ctx.speaker())) {
+                best = o;
+            }
+        }
+        if (best == null && make) {
+            net.minecraft.core.BlockPos origin = ctx.speaker().blockPosition().subtract(com.kolodkingal.enlightened.world.WulongForestPiece.heraldSpot());
+            net.minecraft.core.BlockPos deck = origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.ozaiDeck());
+            best = com.kolodkingal.enlightened.registry.ModEntities.OZAI.get().create(level);
+            best.place(deck, origin.above(), origin.offset(com.kolodkingal.enlightened.world.WulongForestPiece.OZAI_CELL));
+            best.moveTo(deck.getX() + 0.5, deck.getY(), deck.getZ() + 0.5, 180.0F, 0.0F);
+            level.addFreshEntity(best);
+        }
+        return best;
+    }
+
+    private static void herald() {
+        Speaker h = Speaker.FIRE_HERALD;
+        node(h, "fighting").when(ctx -> {
+            var o = arenaOzai(ctx, false);
+            return o != null && o.fighting();
+        }).priority(30).register();
+        node(h, "imprisoned").when(ctx -> {
+            var o = arenaOzai(ctx, false);
+            return o != null && o.prisoner();
+        }).priority(20).option(Option.close("farewell")).register();
+        node(h, "ask").when(ALWAYS)
+                .option("yes_fight", ALWAYS, ctx -> {
+                    var o = arenaOzai(ctx, true);
+                    Talk.show(ctx, o != null && o.challenge(ctx.player()) ? "begin" : "not_now");
+                })
+                .option(Option.to("who_is_ozai", "lore"))
+                .option(Option.close("not_yet")).register();
+        node(h, "lore").option(Option.to("ready_now", "ask")).option(Option.close("not_yet")).register();
+        node(h, "begin").register();
+        node(h, "not_now").option(Option.close("farewell")).register();
+    }
+
+    private static void ozai() {
+        Speaker o = Speaker.OZAI;
+        node(o, "chained").when(ALWAYS).variants(3)
+                .option(Option.to("why_war", "war"))
+                .option(Option.to("any_regrets", "regrets"))
+                .option(Option.close("farewell")).register();
+        node(o, "war").option(Option.to("any_regrets", "regrets")).option(Option.close("farewell")).register();
+        node(o, "regrets").option(Option.close("farewell")).register();
     }
 
     // ---- Guru Pathik ----

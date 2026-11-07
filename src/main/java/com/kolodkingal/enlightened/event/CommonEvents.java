@@ -67,6 +67,7 @@ public final class CommonEvents {
         com.kolodkingal.enlightened.bending.AvatarCycle.tick(event.getServer());
         com.kolodkingal.enlightened.talk.Talk.tick(event.getServer());
         com.kolodkingal.enlightened.bending.Combos.tick(event.getServer());
+        com.kolodkingal.enlightened.world.Comet.tick(event.getServer());
     }
 
     @SubscribeEvent
@@ -233,6 +234,13 @@ public final class CommonEvents {
 
     @SubscribeEvent
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
+        // Sozin's Comet: every firebender's fire and lightning strike twice as hard.
+        if (event.getSource().getEntity() instanceof ServerPlayer attacker && com.kolodkingal.enlightened.world.Comet.active(attacker.level())
+                && Benders.get(attacker).element().commands(com.kolodkingal.enlightened.bending.Element.FIRE)
+                && (event.getSource().is(com.kolodkingal.enlightened.registry.ModDamageTypes.FIRE) || event.getSource().is(com.kolodkingal.enlightened.registry.ModDamageTypes.FLAME)
+                || event.getSource().is(com.kolodkingal.enlightened.registry.ModDamageTypes.LIGHTNING))) {
+            event.setAmount(event.getAmount() * com.kolodkingal.enlightened.world.Comet.POWER);
+        }
         if (!(event.getEntity() instanceof ServerPlayer victim)) {
             return;
         }
@@ -370,6 +378,7 @@ public final class CommonEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             Benders.castFate(player);
             com.kolodkingal.enlightened.network.ModNetwork.sendTo(player, com.kolodkingal.enlightened.bending.Combos.listing(player));
+            com.kolodkingal.enlightened.world.Comet.join(player);
             if (player.getClass() == ServerPlayer.class) {
                 com.kolodkingal.enlightened.bending.AvatarCycle cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(player.getServer());
                 // An Avatar from before the cycle was kept is counted now.
@@ -418,6 +427,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            com.kolodkingal.enlightened.world.Comet.join(player);
             BendingData data = Benders.get(player);
             if (data.element().bends()) {
                 if (Projection.isProjecting(player)) {
@@ -439,6 +449,7 @@ public final class CommonEvents {
     public static void onServerStopped(ServerStoppedEvent event) {
         SoftLanding.clear();
         com.kolodkingal.enlightened.talk.Talk.clear();
+        com.kolodkingal.enlightened.world.Comet.clear();
         Abilities.clearAll();
         Projection.clear();
         TempBlocks.clear();

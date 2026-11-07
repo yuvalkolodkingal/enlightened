@@ -79,6 +79,8 @@ public final class EnlightenedClient {
         event.registerEntityRenderer(ModEntities.SKY_BISON.get(), com.kolodkingal.enlightened.client.render.SkyBisonRenderer::new);
         event.registerEntityRenderer(ModEntities.LION_TURTLE.get(), com.kolodkingal.enlightened.client.render.LionTurtleRenderer::new);
         event.registerEntityRenderer(ModEntities.CITY_GUARD.get(), com.kolodkingal.enlightened.client.render.CityGuardRenderer::new);
+        event.registerEntityRenderer(ModEntities.OZAI.get(), com.kolodkingal.enlightened.client.render.NationRenderer::ozai);
+        event.registerEntityRenderer(ModEntities.NATION_NPC.get(), com.kolodkingal.enlightened.client.render.NationRenderer::npc);
         event.registerEntityRenderer(ModEntities.IROH.get(), com.kolodkingal.enlightened.client.render.IrohRenderer::new);
         event.registerEntityRenderer(ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.KING_BUMI.get(), com.kolodkingal.enlightened.client.render.KingBumiRenderer::new);

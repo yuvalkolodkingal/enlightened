@@ -668,3 +668,23 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 * The scroll's fourth tab, Combos: cards (found first; others "? ? ?" with the first art's symbol) and a panel with the
   steps' symbols and arrows, hidden after the first step until found.
 
+## 48. 1.0.27: Wulong Forest, Sozin's Comet, Ozai
+
+* `WulongForestPiece` (site kind `wulong_forest`, plains/savanna/meadow/windswept hills, spacing 70): a field r 24,
+  rock spires on a 12-block hash grid (radius 2-4 tapering, 12-33 high, moss caps) to r 67, three airships (hull
+  ellipsoid shell, ribs every 5, emblem disc, nose, fin fences, gondola deck), the palace north at |x| <= 14,
+  z -64..-46 with a prison down to y -6 (corridor, four barred cells; Ozai's cell `OZAI_CELL`). Ozai waits on the
+  flagship's deck; the herald stands on the field. A structure tag `enlightened:wulong_forest` serves Zuko's explorer
+  map (`findNearestMapStructure`, red X).
+* `Comet`: per-dimension "until" time kept alive by Ozai each tick of his fight (passes 2 s after); `CometPayload` on
+  change, login and dimension change. `CometSky` (client): fog leans red; after the sky, a red veil box round the eye
+  and the comet (head billboard, 14-segment fading tail) crossing slowly; eases in and out. `CommonEvents
+  .onIncomingDamage` doubles FIRE/FLAME/LIGHTNING damage from a player who commands fire while the comet is up.
+* `OzaiEntity`: states WAITING / DESCENDING / FIGHTING / RETURNING / PRISONER (synced, plus JETS for the pose and
+  flames). Fight AI in `aiStep`: nearest valid player within 48 of the field; ground or hover modes; attacks: three
+  small fireballs, a flame cone (Fx DRAGON_FIRE), a fire ring (FIRE_SPIN), lightning after a 20-tick spark charge, a
+  jet dash; damage x2 under the comet. `share(source)`: water/ice/blood 1, fire 0.2 (1 for a player with every fire art
+  at ★★★ under the comet), else 0.4. A blow that would end him calls `defeat` instead (titles, +5 points to benders
+  near, moved to his cell, invulnerable, talks as `Speaker.OZAI`). Energybending within 5 blocks calls `takeBending`.
+  He saves a fight as RETURNING. `NationNpcEntity` (kinds ZUKO, HERALD) talks; `NationRenderer` draws all three.
+

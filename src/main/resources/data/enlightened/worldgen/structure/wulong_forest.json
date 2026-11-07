@@ -1,0 +1,13 @@
+{
+  "type": "enlightened:site",
+  "kind": "wulong_forest",
+  "biomes": "#enlightened:has_structure/wulong_forest",
+  "step": "surface_structures",
+  "terrain_adaptation": "none",
+  "spawn_overrides": {
+    "monster": {
+      "bounding_box": "full",
+      "spawns": []
+    }
+  }
+}

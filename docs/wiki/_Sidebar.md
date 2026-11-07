@@ -20,6 +20,7 @@
 * [Southern Air Temple](Southern-Air-Temple)
 * [The Lion Turtle](Lion-Turtle)
 * [Seven Havens](Seven-Havens)
+* [Wulong Forest](Wulong-Forest)
 * [Ba Sing Se and Omashu](Earth-Kingdom-Cities)
 * [The Sun Warriors and the Dragons](Sun-Warriors)
 * [Raava and Vaatu](Raava-and-Vaatu)

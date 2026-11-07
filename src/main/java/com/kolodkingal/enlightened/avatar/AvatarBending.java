@@ -122,6 +122,14 @@ public final class AvatarBending {
             ServerPlayer p = c.player;
             BendingData mine = c.data;
             long now = c.now();
+            // Fire Lord Ozai, from close: his firebending is taken from him, as Aang took it.
+            if (aimed(p, 5.0) instanceof com.kolodkingal.enlightened.entity.OzaiEntity ozai && ozai.fighting()) {
+                if (ozai.takeBending(p)) {
+                    c.exhaust(0.8F);
+                    c.cooldownSeconds(10);
+                }
+                return;
+            }
             // The Anomaly: energy against energy, from as far as it can be seen clearly; its life is drawn out.
             if (aimed(p, 12.0) instanceof com.kolodkingal.enlightened.entity.AnomalyEntity anomaly) {
                 if (anomaly.drain(p)) {

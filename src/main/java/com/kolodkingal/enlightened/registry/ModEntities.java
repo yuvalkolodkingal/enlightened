@@ -69,6 +69,16 @@ public final class ModEntities {
             () -> EntityType.Builder.<com.kolodkingal.enlightened.entity.SeatEntity>of(com.kolodkingal.enlightened.entity.SeatEntity::new, MobCategory.MISC)
                     .sized(0.4F, 0.3F).clientTrackingRange(8).noSummon().build("seat"));
 
+    /** Fire Lord Ozai, at Wulong Forest. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.OzaiEntity>> OZAI = ENTITIES.register("ozai",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.OzaiEntity::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F).clientTrackingRange(16).fireImmune().build("ozai"));
+
+    /** Zuko at the Jasmine Dragon, and the Fire Nation herald at Wulong Forest. */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.NationNpcEntity>> NATION_NPC = ENTITIES.register("nation_npc",
+            () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.NationNpcEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.95F).clientTrackingRange(10).build("nation_npc"));
+
     /** King Bumi, on his throne under the summit of Omashu. */
     public static final DeferredHolder<EntityType<?>, EntityType<com.kolodkingal.enlightened.entity.KingBumiEntity>> KING_BUMI = ENTITIES.register("king_bumi",
             () -> EntityType.Builder.of(com.kolodkingal.enlightened.entity.KingBumiEntity::new, MobCategory.MISC)
@@ -111,6 +121,8 @@ public final class ModEntities {
         event.put(DRAGON.get(), com.kolodkingal.enlightened.entity.DragonEntity.createAttributes().build());
         event.put(ANOMALY.get(), com.kolodkingal.enlightened.entity.AnomalyEntity.createAttributes().build());
         event.put(CITY_GUARD.get(), com.kolodkingal.enlightened.entity.CityGuardEntity.createAttributes().build());
+        event.put(OZAI.get(), com.kolodkingal.enlightened.entity.OzaiEntity.createAttributes().build());
+        event.put(NATION_NPC.get(), com.kolodkingal.enlightened.entity.NationNpcEntity.createAttributes().build());
         event.put(IROH.get(), com.kolodkingal.enlightened.entity.IrohEntity.createAttributes().build());
         event.put(KING_BUMI.get(), com.kolodkingal.enlightened.entity.KingBumiEntity.createAttributes().build());
         event.put(SKY_BISON.get(), com.kolodkingal.enlightened.entity.SkyBisonEntity.createAttributes().build());

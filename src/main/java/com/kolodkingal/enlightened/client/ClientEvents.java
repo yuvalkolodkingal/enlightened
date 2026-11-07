@@ -141,6 +141,7 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
+        com.kolodkingal.enlightened.client.sky.CometSky.tick();
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
         if (player == null || mc.level == null) {
@@ -276,6 +277,7 @@ public final class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {
+        com.kolodkingal.enlightened.client.sky.CometSky.render(event);
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             WorldFxRenderer.render(event);
             com.kolodkingal.enlightened.client.cosmic.CosmicRenderer.render(event);
@@ -284,7 +286,13 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
+    public static void onFogColor(net.neoforged.neoforge.client.event.ViewportEvent.ComputeFogColor event) {
+        com.kolodkingal.enlightened.client.sky.CometSky.fog(event);
+    }
+
+    @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+        com.kolodkingal.enlightened.client.sky.CometSky.set(false);
         SeismicGlow.clear();
         BodyLean.clear();
         WorldFx.clear();

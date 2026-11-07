@@ -475,8 +475,21 @@ public final class BendingData {
         }
     }
 
+    /** Whether the armour he wears is not drawn (bit 52 of the second toggle word): his own choice, seen by everyone. */
+    public boolean armorHidden() {
+        return (toggles[1] & (1L << 52)) != 0;
+    }
+
+    public void setArmorHidden(boolean hidden) {
+        long bits = hidden ? toggles[1] | (1L << 52) : toggles[1] & ~(1L << 52);
+        if (bits != toggles[1]) {
+            toggles[1] = bits;
+            dirty = true;
+        }
+    }
+
     public void clearToggles() {
-        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55) | (1L << 54) | (1L << 53));
+        long keep = toggles[1] & ((3L << 62) | (7L << 59) | (15L << 55) | (1L << 54) | (1L << 53) | (1L << 52));
         if (toggles[0] != 0 || toggles[1] != keep) {
             toggles[0] = 0L;
             toggles[1] = keep;

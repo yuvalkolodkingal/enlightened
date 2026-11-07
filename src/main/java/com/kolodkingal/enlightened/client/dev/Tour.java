@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v120".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v120();
+            return;
+        }
         if ("v116".equals(System.getProperty("enlightened.tour.only", ""))) {
             v116();
             return;
@@ -1018,6 +1022,33 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /** 1.0.20: the brigades' uniforms drawn on the skin, armour hidden, Nisha (alone: -Denlightened.tour.only=v120). */
+    private static void v120() {
+        cmd("time set noon", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        element("avatar", "aang");
+        camera(CameraType.THIRD_PERSON_FRONT, 4);
+        String[][] brigades = {{"minecraft:lapis", "water"}, {"minecraft:redstone", "fire"}, {"minecraft:gold", "air"}, {"enlightened:coal", "earth"}, {"minecraft:netherite", "avatar"}};
+        for (String[] b : brigades) {
+            String trim = "[minecraft:trim={pattern:\"enlightened:brigade\",material:\"" + b[0] + "\"}]";
+            cmd("item replace entity @s armor.head with minecraft:iron_helmet" + trim, 2);
+            cmd("item replace entity @s armor.chest with minecraft:iron_chestplate" + trim, 2);
+            cmd("item replace entity @s armor.legs with minecraft:iron_leggings" + trim, 2);
+            cmd("item replace entity @s armor.feet with minecraft:iron_boots" + trim, 2);
+            shot("360_brigade_" + b[1], 20);
+        }
+        cmd("armor hide", 2);
+        shot("361_armor_hidden", 20);
+        cmd("armor show", 2);
+        cmd("item replace entity @s armor.head with air", 2);
+        cmd("item replace entity @s armor.chest with air", 2);
+        cmd("item replace entity @s armor.legs with air", 2);
+        cmd("item replace entity @s armor.feet with air", 2);
+        cmd("enlightened element set @s avatar nisha", 6);
+        shot("362_nisha", 30);
+        camera(CameraType.THIRD_PERSON_BACK, 4);
     }
 
     /** 1.0.16: Raava's glade, Raava and Vaatu, the dark spirits, the Dark Avatar's State (alone: -Denlightened.tour.only=v116). */

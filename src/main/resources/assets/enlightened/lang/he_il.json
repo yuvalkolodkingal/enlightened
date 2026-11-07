@@ -785,5 +785,7 @@
   "command.enlightened.preset.empty": "אין לך עדיין פריסטים: /bendpreset save <שם>",
   "command.enlightened.preset.list": "הפריסטים שלך: %s",
   "message.enlightened.starter_kit": "אתם מתחילים עם: %s",
-  "command.enlightened.preset.missing": "עוד לא נלמדו (צריך עוד נקודות, או שער שנפתח): %s"
+  "command.enlightened.preset.missing": "עוד לא נלמדו (צריך עוד נקודות, או שער שנפתח): %s",
+  "command.enlightened.armor.hidden": "השריון שלכם מוסתר (הוא עדיין מגן עליכם)",
+  "command.enlightened.armor.shown": "השריון שלכם מוצג"
 }

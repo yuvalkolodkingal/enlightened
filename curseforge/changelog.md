@@ -1,3 +1,11 @@
+# Enlightened 1.0.20
+
+* **The brigade uniforms are drawn on the skin**: Seven Havens' brigade armor no longer makes its wearer look bulky; the
+  uniform sits on the body like a skin's outer layer, in **new designs** for the water, fire, air and earth brigades
+  (and the Avatar's in charcoal and gold).
+* **`/armor hide` / `/armor show`**: choose whether the armor you wear is seen (it still protects you).
+* **Nisha has a new skin.**
+
 # Enlightened 1.0.19
 
 * **Presets learn their abilities**: `/bendpreset save` keeps each ability's level too, and `/bendpreset load` learns

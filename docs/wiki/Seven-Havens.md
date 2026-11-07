@@ -18,12 +18,15 @@ which brigade:
 | Gold ingot | Air | gold-orange, a red collar and forearms, the blue triangle |
 | Redstone | Fire | red-orange and deep red, the diamond |
 | Coal | Earth | green and dark green, the golden trapezoid |
-| Netherite ingot | The Avatar | all four in one: the chest plate quartered in the four colours with their symbols, shoulder pads banded in the four colours, a four-coloured headband and apron |
+| Netherite ingot | The Avatar | charcoal and gold |
 
-Each piece of the uniform is a piece of armor: the **helmet** is only the headband (the helmet itself disappears, so the band sits on your head), the **chestplate** has the shoulder
-pads, the chest plate with its symbol, grey sleeves and the belt, the **leggings** have the apron with its white edge
-over the trousers, and the **boots** are the soft shoes. Any other trim material (iron, gold, emerald...) gives the same
-uniform in that material's colours. Coal also works as a trim material on the game's own trims.
+**On a player, the uniform is drawn on the skin itself**, as a skin's outer layer is: no bulk of armor, the body keeps
+its shape. Each piece draws its part: the **helmet** the head, the **chestplate** the body and arms (shoulder pads, the
+chest plate with its symbol, sleeves, belt), the **leggings** (or boots) the legs. Other trim materials: amethyst and
+diamond make the water brigade, copper fire, quartz air, any other earth. (On armor stands and mobs the trim is drawn
+on the armor as before.) Coal also works as a trim material on the game's own trims.
+
+**Hide your armor** if you like: `/armor hide` (and `/armor show`). Everyone sees you without it; it still protects you.
 
 You find the template in **Ellora**. Copy it like any trim template: the template, seven diamonds and a cut red
 sandstone make two.

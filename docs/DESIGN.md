@@ -602,3 +602,11 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | | |
 |---|---|
 | Presets | A preset is `{Slots, Levels}` (1.0.17's bare list still loads); `load` calls `Mastery.learn` for each slot's ability until its saved level (or the first refusal: points, gate), then places what is learned. |
+
+## 43. 1.0.20: brigade uniforms on the skin, hidden armour, Nisha
+
+| | |
+|---|---|
+| Brigade uniforms | `BrigadeLayer` on the player renderer: a player model at deformation 0.04 (the skin's own size; its outer parts as the skin's) draws `entity/brigade/<brigade>.png` (designs in the skin layout) for each brigade-trimmed piece: helmet the head, chestplate body and arms, leggings or boots the legs. `brigade(stack)`: lapis/amethyst/diamond water, redstone/copper fire, gold/quartz air, netherite avatar, else earth. `HumanoidArmorLayerMixin` skips brigade pieces on players (armor stands and mobs keep the trim on the armour). |
+| Hidden armour | `BendingData.armorHidden` (bit 52, synced, kept by `clearToggles`), set by `/armor hide|show` (`ArmorCommand`, anyone): the mixin skips all armour, and `BrigadeLayer` the uniform. |
+| Nisha | `tools/skins_provided/nisha.png` replaced by the new skin. |

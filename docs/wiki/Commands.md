@@ -17,6 +17,7 @@ All need operator rights (permission level 2).
 | `/enlightened avatar <players> <enter\|leave\|rest>` | Enters or leaves the [Avatar State](Chakras-and-the-Avatar-State) (whatever the chakras), or ends its rest. Avatars only. |
 | `/enlightened avatars` / `/enlightened avatars max <count>` | List the Avatars (and the element each was born to, and the next one's); set how many Avatars a world may have at a time (default 1). |
 | `/enlightened avatar <players> dark` / `light` | Make the players the Dark Avatar (making them the Avatar first if they are not), or bring a Dark Avatar back to the light. |
+| `/armor hide` / `/armor show` | (Anyone.) Whether the armor you wear is drawn on you, for everyone; hidden, it still protects you. |
 | `/bendpreset save <name>` / `load <name>` / `delete <name>` / `list` | (Anyone.) Save which ability sits on each of your keys as a named preset (up to 20), apply a preset: it **learns its abilities up to the saved levels** with your points (what you cannot learn yet, for lack of points or an unopened sub-bending, is left out and listed) and lays them out on your keys, delete one, list yours. |
 | `/avatarquest` / `/avatarquest light` / `/avatarquest dark` | (Anyone.) Where you stand in [Raava and Vaatu](Raava-and-Vaatu)'s quest; your answer to Vaatu's offer (what its two answers in the chat run). |
 | `/enlightened guru <players> <taught\|untaught>` | Marks players as taught (or not) by Guru Pathik. |

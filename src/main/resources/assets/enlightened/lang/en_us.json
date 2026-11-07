@@ -785,5 +785,7 @@
   "command.enlightened.preset.empty": "You have no presets yet: /bendpreset save <name>",
   "command.enlightened.preset.list": "Your presets: %s",
   "message.enlightened.starter_kit": "You begin with: %s",
-  "command.enlightened.preset.missing": "Not learned yet (more points, or a gate, needed): %s"
+  "command.enlightened.preset.missing": "Not learned yet (more points, or a gate, needed): %s",
+  "command.enlightened.armor.hidden": "Your armour is hidden (it still protects you)",
+  "command.enlightened.armor.shown": "Your armour is shown"
 }

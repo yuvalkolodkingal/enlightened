@@ -103,6 +103,10 @@ public final class EnlightenedClient {
                 com.kolodkingal.enlightened.client.render.DragonRenderer::createBodyLayer);
         event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.CityGuardRenderer.HELMET,
                 com.kolodkingal.enlightened.client.render.CityGuardRenderer::createHelmetLayer);
+        event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.BrigadeLayer.WIDE,
+                () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.04F), false), 64, 64));
+        event.registerLayerDefinition(com.kolodkingal.enlightened.client.render.BrigadeLayer.SLIM,
+                () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.04F), true), 64, 64));
         event.registerLayerDefinition(SHELL_WIDE, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.6F), false), 64, 64));
         event.registerLayerDefinition(SHELL_SLIM, () -> LayerDefinition.create(PlayerModel.createMesh(new CubeDeformation(0.6F), true), 64, 64));
     }
@@ -112,6 +116,8 @@ public final class EnlightenedClient {
             if (event.getSkin(skin) instanceof PlayerRenderer renderer) {
                 boolean slim = skin == PlayerSkin.Model.SLIM;
                 renderer.addLayer(new ShellLayer(renderer, event.getEntityModels().bakeLayer(slim ? SHELL_SLIM : SHELL_WIDE), slim));
+                renderer.addLayer(new com.kolodkingal.enlightened.client.render.BrigadeLayer(renderer, event.getEntityModels().bakeLayer(slim
+                        ? com.kolodkingal.enlightened.client.render.BrigadeLayer.SLIM : com.kolodkingal.enlightened.client.render.BrigadeLayer.WIDE), slim));
                 renderer.addLayer(new AvatarGlowLayer(renderer));
                 renderer.addLayer(new com.kolodkingal.enlightened.client.render.ChakraAuraLayer(renderer));
                 renderer.addLayer(new HandTrackerLayer(renderer));

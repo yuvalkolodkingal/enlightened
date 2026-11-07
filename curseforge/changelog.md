@@ -1,3 +1,7 @@
+# Enlightened 1.0.26
+
+* Iroh's tea-house skin is back to exactly the one Eilon sent.
+
 # Enlightened 1.0.25
 
 * **Thirteen new combos**, among them the **Burning Wall** (the Avatar: Earth Wall then Fire Ball, a wall of magma and

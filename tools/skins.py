@@ -1261,24 +1261,7 @@ def paint_iroh_tea():
     given = os.path.join(PROVIDED, 'iroh_tea.png')
     if os.path.exists(given):
         # 1.0.24: the skin Yuval gave (the apron with the jasmine flower) replaces the painted one.
-        img = Image.open(given).convert('RGBA')
-        # Blended with the second look Eilon sent (a render): the yellow collar and the golden cuffs.
-        gold, yellow = (200, 156, 48, 255), (226, 190, 70, 255)
-        for x in range(20, 28):
-            if x not in (23, 24):
-                img.putpixel((x, 20), yellow)
-        for x in (20, 21, 26, 27):
-            img.putpixel((x, 21), yellow)
-        for x in range(16, 40):  # the collar round the sides and back
-            if not 20 <= x < 28:
-                img.putpixel((x, 20), yellow)
-        for x in range(40, 56):
-            for y in (28, 29):
-                img.putpixel((x, y), gold if y == 28 else shade(gold, 0.8))
-        for x in range(32, 48):
-            for y in (60, 61):
-                img.putpixel((x, y), gold if y == 60 else shade(gold, 0.8))
-        img.save(os.path.join(ENTITY, 'iroh_tea.png'))
+        Image.open(given).convert('RGBA').save(os.path.join(ENTITY, 'iroh_tea.png'))
         return
     p = Painter('iroh_tea')
     skin = (230, 200, 170)

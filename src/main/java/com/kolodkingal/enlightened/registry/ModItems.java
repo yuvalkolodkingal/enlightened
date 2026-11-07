@@ -60,6 +60,25 @@ public final class ModItems {
     public static final DeferredItem<net.neoforged.neoforge.common.DeferredSpawnEggItem> DRAGON_SPAWN_EGG = ITEMS.register("dragon_spawn_egg",
             () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(ModEntities.DRAGON, 0xB82A22, 0xF0E6D0, new Item.Properties()));
 
+    /** Iroh's teas (1.0.23). */
+    public static final DeferredItem<com.kolodkingal.enlightened.item.TeaItem> JASMINE_TEA = ITEMS.register("jasmine_tea",
+            () -> new com.kolodkingal.enlightened.item.TeaItem(new Item.Properties().stacksTo(16).food(new net.minecraft.world.food.FoodProperties.Builder()
+                    .nutrition(3).saturationModifier(0.8F).alwaysEdible()
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 200, 0), 1.0F).build())));
+    public static final DeferredItem<com.kolodkingal.enlightened.item.TeaItem> GINSENG_TEA = ITEMS.register("ginseng_tea",
+            () -> new com.kolodkingal.enlightened.item.TeaItem(new Item.Properties().stacksTo(16).food(new net.minecraft.world.food.FoodProperties.Builder()
+                    .nutrition(3).saturationModifier(0.8F).alwaysEdible()
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 900, 0), 1.0F)
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DIG_SPEED, 900, 0), 1.0F).build())));
+    public static final DeferredItem<com.kolodkingal.enlightened.item.TeaItem> DRAGON_TEA = ITEMS.register("dragon_tea",
+            () -> new com.kolodkingal.enlightened.item.TeaItem(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON).food(new net.minecraft.world.food.FoodProperties.Builder()
+                    .nutrition(4).saturationModifier(1.0F).alwaysEdible()
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE, 2400, 0), 1.0F)
+                    .effect(() -> new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, 2400, 0), 1.0F).build())));
+    /** Iroh's tsungi horn: blown at your home, he comes to sell tea there. */
+    public static final DeferredItem<com.kolodkingal.enlightened.item.TsungiHornItem> TSUNGI_HORN = ITEMS.register("tsungi_horn",
+            () -> new com.kolodkingal.enlightened.item.TsungiHornItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
     private static DeferredItem<BendingScrollItem> scroll(String name, Element element) {
         return ITEMS.register(name, () -> new BendingScrollItem(element, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
     }

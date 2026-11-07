@@ -483,6 +483,23 @@ public final class LionTurtle {
         if (!had) {
             say(p, "lion_turtle.enlightened.hero");
             say(p, "lion_turtle.enlightened.gift");
+            gift(p, turtle);
+        } else {
+            say(p, "lion_turtle.enlightened.again");
+        }
+        say(p, "lion_turtle.enlightened.home");
+    }
+
+    /** Whether he holds the lion turtle's gift already. */
+    public static boolean gifted(ServerPlayer p) {
+        BendingData data = Benders.get(p);
+        return data.has(Ability.ENERGYBENDING) && data.has(Ability.ENERGY_RESTORE);
+    }
+
+    /** The lion turtle gives a hero energybending and its giving back. */
+    public static void gift(ServerPlayer p, LionTurtleEntity turtle) {
+        BendingData data = Benders.get(p);
+        {
             for (Ability a : List.of(Ability.ENERGYBENDING, Ability.ENERGY_RESTORE)) {
                 if (data.level(a) < 1) {
                     data.setLevel(a, 1);
@@ -498,10 +515,7 @@ public final class LionTurtle {
             Fx.send(p.serverLevel(), Fx.LION_GIFT, p.position(), turtle.clawRoot(p), 0xFFF6D0, turtle.getId(), p.getId());
             p.serverLevel().playSound(null, p.blockPosition(), com.kolodkingal.enlightened.registry.ModSounds.AWAKEN.get(),
                     net.minecraft.sounds.SoundSource.PLAYERS, 1.6F, 0.5F);
-        } else {
-            say(p, "lion_turtle.enlightened.again");
         }
-        say(p, "lion_turtle.enlightened.home");
     }
 
     private static void say(ServerPlayer p, String key) {

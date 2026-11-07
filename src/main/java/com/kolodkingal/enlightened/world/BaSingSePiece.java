@@ -137,6 +137,10 @@ public class BaSingSePiece extends DesignPiece {
         if (minor == 4 && m % 10 == 0) {
             return dy == 0 ? STREET : dy <= 2 ? Blocks.STONE_BRICK_WALL.defaultBlockState() : dy == 3 ? Blocks.LANTERN.defaultBlockState() : AIR;
         }
+        BlockState tea = teaShop(dx, dy, dz);
+        if (tea != null) {
+            return tea;
+        }
         House h = houseAt(dx, dz);
         if (h != null) {
             BlockState b = house(h, dx - h.x, dy, dz - h.z);
@@ -420,8 +424,122 @@ public class BaSingSePiece extends DesignPiece {
         return null;
     }
 
+    // ---- the Jasmine Dragon (1.0.23) ----
+
+    /** The tea house's plot in the Upper Ring, east of the south street: x 19-29, z 6-14, its door to the street. */
+    public static final int TEA_X0 = 19;
+    public static final int TEA_Z0 = 6;
+    public static final int TEA_W = 11;
+    public static final int TEA_D = 9;
+
+    /** Where Iroh stands, behind his counter (relative to the city's origin). */
+    public static BlockPos irohSpot() {
+        return new BlockPos(TEA_X0 + 5, 1, TEA_Z0 + 7);
+    }
+
+    /** Where the stools stand (relative to the city's origin, at floor level + 1). */
+    public static final int[][] STOOLS = {{1, 3}, {3, 3}, {7, 3}, {9, 3}, {2, 4}, {8, 4}};
+
+    /**
+     * Iroh's tea house: green and gold, dark wood pillars, green glass, a tiered green roof with a golden ridge; inside, a
+     * counter with azaleas, shelves of tea behind it, a kettle, two tables with stools to sit at, lanterns overhead.
+     */
+    private static BlockState teaShop(int dx, int dy, int dz) {
+        int lx = dx - TEA_X0;
+        int lz = dz - TEA_Z0;
+        if (lz >= -2 && lz < 0 && lx >= 4 && lx <= 6) {
+            // The path from the street to the door.
+            return dy == 0 ? STREET : dy > 0 && dy < 8 ? AIR : null;
+        }
+        if (lx < 0 || lx >= TEA_W || lz < 0 || lz >= TEA_D || dy < 0) {
+            return null;
+        }
+        boolean edge = lx == 0 || lx == TEA_W - 1 || lz == 0 || lz == TEA_D - 1;
+        if (dy == 0) {
+            return edge ? STONE : ((lx + lz) & 1) == 0 ? Blocks.DARK_OAK_PLANKS.defaultBlockState() : Blocks.SPRUCE_PLANKS.defaultBlockState();
+        }
+        if (dy >= 5) {
+            if (dy == 5) {
+                return ROOF;
+            }
+            if (dy == 6) {
+                return lx >= 1 && lx <= 9 && lz >= 1 && lz <= 7 ? ROOF : AIR;
+            }
+            if (dy == 7) {
+                return lx >= 3 && lx <= 7 && lz >= 2 && lz <= 6 ? ROOF : AIR;
+            }
+            if (dy == 8) {
+                return lx >= 4 && lx <= 6 && lz == 4 ? Blocks.GOLD_BLOCK.defaultBlockState() : AIR;
+            }
+            return AIR;
+        }
+        if (edge) {
+            boolean door = lz == 0 && lx >= 4 && lx <= 6 && (dy <= 2 || dy == 3 && lx == 5);
+            if (door) {
+                return AIR;
+            }
+            if (dy == 4) {
+                return Blocks.DARK_OAK_PLANKS.defaultBlockState();
+            }
+            boolean pillar = (lz == 0 || lz == TEA_D - 1) && (lx == 0 || lx == 4 || lx == 6 || lx == TEA_W - 1)
+                    || (lx == 0 || lx == TEA_W - 1) && lz == 4;
+            if (pillar) {
+                return Blocks.DARK_OAK_LOG.defaultBlockState();
+            }
+            return dy == 1 ? ROOF : Blocks.GREEN_STAINED_GLASS.defaultBlockState();
+        }
+        // Inside.
+        if (dy == 4) {
+            return (lx == 3 || lx == 7) && lz == 3 || lx == 5 && lz == 5
+                    ? Blocks.LANTERN.defaultBlockState().setValue(net.minecraft.world.level.block.LanternBlock.HANGING, true) : AIR;
+        }
+        if (lz == 6 && lx >= 2 && lx <= 8) {
+            if (dy == 1) {
+                return Blocks.SPRUCE_PLANKS.defaultBlockState();
+            }
+            if (dy == 2) {
+                return lx == 3 || lx == 7 ? Blocks.POTTED_FLOWERING_AZALEA.defaultBlockState()
+                        : lx == 5 ? Blocks.CANDLE.defaultBlockState().setValue(net.minecraft.world.level.block.CandleBlock.CANDLES, 3) : AIR;
+            }
+            return AIR;
+        }
+        if (lz == 7) {
+            if ((lx == 1 || lx == 2 || lx == 8 || lx == 9) && dy <= 3) {
+                return Blocks.BOOKSHELF.defaultBlockState();
+            }
+            if (lx == 3 && dy == 1) {
+                return Blocks.WATER_CAULDRON.defaultBlockState();
+            }
+            return AIR;
+        }
+        if (dy == 1) {
+            if ((lx == 2 || lx == 8) && lz == 3) {
+                return Blocks.SPRUCE_TRAPDOOR.defaultBlockState().setValue(net.minecraft.world.level.block.TrapDoorBlock.HALF,
+                        net.minecraft.world.level.block.state.properties.Half.TOP);
+            }
+            for (int[] st : STOOLS) {
+                if (st[0] == lx && st[1] == lz) {
+                    return com.kolodkingal.enlightened.registry.ModBlocks.TEA_STOOL.get().defaultBlockState();
+                }
+            }
+            if ((lx == 1 || lx == 9) && lz == 1) {
+                return Blocks.POTTED_FLOWERING_AZALEA.defaultBlockState();
+            }
+        }
+        return AIR;
+    }
+
     @Override
     protected void decorate(WorldGenLevel level, BoundingBox box, RandomSource random) {
+        BlockPos irohAt = origin.offset(irohSpot());
+        if (box.isInside(irohAt)) {
+            var iroh = com.kolodkingal.enlightened.registry.ModEntities.IROH.get().create(level.getLevel());
+            if (iroh != null) {
+                iroh.moveTo(irohAt.getX() + 0.5, irohAt.getY(), irohAt.getZ() + 0.5, 180.0F, 0.0F);
+                iroh.setYHeadRot(180.0F);
+                level.addFreshEntityWithPassengers(iroh);
+            }
+        }
         int ox = origin.getX();
         int oz = origin.getZ();
         for (int lx = Math.floorDiv(box.minX() - ox + LOT / 2, LOT); lx <= Math.floorDiv(box.maxX() - ox + LOT / 2, LOT); lx++) {

@@ -53,7 +53,7 @@ public class KingBumiEntity extends PathfinderMob {
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
-        if (player instanceof ServerPlayer server) {
+        if (player instanceof ServerPlayer server && !com.kolodkingal.enlightened.talk.Talk.begin(server, this, com.kolodkingal.enlightened.talk.Speaker.BUMI)) {
             talk(server);
         }
         return InteractionResult.sidedSuccess(level().isClientSide);

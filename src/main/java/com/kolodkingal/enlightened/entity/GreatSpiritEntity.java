@@ -134,7 +134,7 @@ public class GreatSpiritEntity extends PathfinderMob {
         if (hand != InteractionHand.MAIN_HAND || kind() != Kind.RAAVA || hostile() || chosen != null) {
             return InteractionResult.PASS;
         }
-        if (player instanceof ServerPlayer p) {
+        if (player instanceof ServerPlayer p && !com.kolodkingal.enlightened.talk.Talk.begin(p, this, com.kolodkingal.enlightened.talk.Speaker.RAAVA)) {
             p.sendSystemMessage(Component.translatable("raava.enlightened.says", Component.translatable(talk(p))).withStyle(ChatFormatting.AQUA));
         }
         return InteractionResult.sidedSuccess(level().isClientSide);

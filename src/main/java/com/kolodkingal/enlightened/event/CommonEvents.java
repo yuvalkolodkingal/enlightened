@@ -65,6 +65,7 @@ public final class CommonEvents {
         TempBlocks.tick(event.getServer());
         com.kolodkingal.enlightened.world.LionTurtles.tick(event.getServer());
         com.kolodkingal.enlightened.bending.AvatarCycle.tick(event.getServer());
+        com.kolodkingal.enlightened.talk.Talk.tick(event.getServer());
     }
 
     @SubscribeEvent
@@ -390,6 +391,7 @@ public final class CommonEvents {
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer leaving) {
             SoftLanding.forget(leaving);
+            com.kolodkingal.enlightened.talk.Talk.forget(leaving.getUUID());
         }
         if (event.getEntity() instanceof ServerPlayer player) {
             BendingData data = Benders.get(player);
@@ -434,6 +436,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
         SoftLanding.clear();
+        com.kolodkingal.enlightened.talk.Talk.clear();
         Abilities.clearAll();
         Projection.clear();
         TempBlocks.clear();

@@ -155,7 +155,8 @@ public class LionTurtleEntity extends PathfinderMob {
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
-        if (player instanceof ServerPlayer server && gift(0.0F) < 0.0F) {
+        if (player instanceof ServerPlayer server && gift(0.0F) < 0.0F
+                && !com.kolodkingal.enlightened.talk.Talk.begin(server, this, com.kolodkingal.enlightened.talk.Speaker.LION_TURTLE)) {
             LionTurtle.talk(server, this);
         }
         return InteractionResult.sidedSuccess(level().isClientSide);

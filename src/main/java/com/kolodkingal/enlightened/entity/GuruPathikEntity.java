@@ -43,7 +43,7 @@ public class GuruPathikEntity extends PathfinderMob {
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
-        if (player instanceof ServerPlayer server) {
+        if (player instanceof ServerPlayer server && !com.kolodkingal.enlightened.talk.Talk.begin(server, this, com.kolodkingal.enlightened.talk.Speaker.PATHIK)) {
             Guru.talk(server, this);
         }
         return InteractionResult.sidedSuccess(level().isClientSide);

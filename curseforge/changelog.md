@@ -1,3 +1,14 @@
+# Enlightened 1.0.23
+
+* **A new talk screen for everyone you can talk to**, after Enhanced's: the speaker's face and name, the words typed out,
+  and **answers to choose**. Guru Pathik, King Bumi (riddles!), the city guards, the Sun Warriors, the lion turtle and
+  Raava all have new things to say, and taking up the Sun Warriors' test, letting Raava in or receiving the lion
+  turtle's gift are answers now.
+* **The Jasmine Dragon**, Iroh's tea house in Ba Sing Se's Upper Ring: talk to Iroh in his tea server's clothes, buy
+  his teas, sit on the stools to eat and drink, ask him about the dragons (he killed the last one... he says), and for
+  50 gold get his **tsungi horn**: blow it at home and he comes flying on jets of fire to sell tea there.
+* **Presets in the Bending Scroll**: a third tab saves your keys under a name and loads them back.
+
 # Enlightened 1.0.22
 
 * **A new Bending Scroll**, after Enhanced's Hero Creator: your picture on the left, tabs for Abilities and Keys, a

@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v123".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v123();
+            return;
+        }
         if ("v122".equals(System.getProperty("enlightened.tour.only", ""))) {
             v122();
             return;
@@ -1033,6 +1037,75 @@ public final class Tour {
     }
 
     /** 1.0.21: the dragons' new faces, horns, legs and wings; the sky bison's gust (alone: -Denlightened.tour.only=v121). */
+    /** 1.0.23: the talk screen, the Jasmine Dragon and Iroh, the horn, the scroll's presets (alone: -Denlightened.tour.only=v123). */
+    private static void v123() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        element("fire", "zuko", "fire_ball", "fire_jet");
+        camera(CameraType.FIRST_PERSON, 2);
+        // The tea house, built from Ba Sing Se's own design at 600 0.
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            net.minecraft.core.BlockPos origin = new net.minecraft.core.BlockPos(700 - com.kolodkingal.enlightened.world.BaSingSePiece.TEA_X0, -61, 80 - com.kolodkingal.enlightened.world.BaSingSePiece.TEA_Z0);
+            var city = new com.kolodkingal.enlightened.world.BaSingSePiece(origin);
+            try {
+                java.lang.reflect.Method design = com.kolodkingal.enlightened.world.BaSingSePiece.class.getDeclaredMethod("design", int.class, int.class, int.class);
+                design.setAccessible(true);
+                for (int dx = com.kolodkingal.enlightened.world.BaSingSePiece.TEA_X0 - 2; dx < com.kolodkingal.enlightened.world.BaSingSePiece.TEA_X0 + 13; dx++) {
+                    for (int dz = com.kolodkingal.enlightened.world.BaSingSePiece.TEA_Z0 - 4; dz < com.kolodkingal.enlightened.world.BaSingSePiece.TEA_Z0 + 11; dz++) {
+                        for (int dy = 0; dy < 10; dy++) {
+                            var b = (net.minecraft.world.level.block.state.BlockState) design.invoke(city, dx, dy, dz);
+                            if (b != null) {
+                                level.setBlock(origin.offset(dx, dy, dz), b, 2);
+                            }
+                        }
+                    }
+                }
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+            net.minecraft.core.BlockPos at = origin.offset(com.kolodkingal.enlightened.world.BaSingSePiece.irohSpot());
+            var iroh = com.kolodkingal.enlightened.registry.ModEntities.IROH.get().create(level);
+            iroh.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 180.0F, 0.0F);
+            iroh.setYHeadRot(180.0F);
+            level.addFreshEntity(iroh);
+        }, 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("tp @s 705.5 -57 68.5 0 18", 30);
+        shot("390_jasmine_dragon", 30);
+        cmd("tp @s 705.5 -60 81.2 0 12", 20);
+        shot("391_tea_house_inside", 20);
+        cmd("tp @s 705.5 -60 84.6 0 5", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        server(p -> {
+            for (var iroh : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.IrohEntity.class, p.getBoundingBox().inflate(10))) {
+                com.kolodkingal.enlightened.talk.Talk.begin(p, iroh, com.kolodkingal.enlightened.talk.Speaker.IROH);
+            }
+        }, 60);
+        shot("392_talk_iroh", 4);
+        server(p -> {
+            for (var iroh : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.IrohEntity.class, p.getBoundingBox().inflate(10))) {
+                com.kolodkingal.enlightened.talk.Talk.tryChoose(p, iroh.getId(), "ask_dragons");
+            }
+        }, 100);
+        shot("393_talk_dragons", 4);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().setScreen(null)));
+        // The horn: Iroh flies down on jets of fire.
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("tp @s 760.5 -60 0.5 0 -45", 20);
+        server(p -> com.kolodkingal.enlightened.entity.IrohEntity.arrive(p), 34);
+        shot("394_iroh_arrives", 50);
+        cmd("tp @s 760.5 -60 0.5 0 15", 10);
+        shot("395_iroh_landed", 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = false));
+        // The presets tab.
+        cmd("bendpreset save fight", 4);
+        cmd("bendpreset save travel", 4);
+        STEPS.add(new Step(6, () -> Minecraft.getInstance().setScreen(com.kolodkingal.enlightened.client.screen.ScrollScreen.tourPresets())));
+        shot("396_scroll_presets", 30);
+        STEPS.add(new Step(4, () -> Minecraft.getInstance().setScreen(null)));
+    }
+
     /** 1.0.22: the Bending Scroll after the Hero Creator (alone: -Denlightened.tour.only=v122). */
     private static void v122() {
         cmd("time set noon", 2);

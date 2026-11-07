@@ -30,6 +30,11 @@ public final class ModCreativeTab {
                 output.accept(ModItems.DRAGON_SPAWN_EGG.get());
                 output.accept(ModItems.DARK_SPIRIT_SPAWN_EGG.get());
                 output.accept(ModItems.ETERNAL_FLAME.get());
+                output.accept(ModItems.JASMINE_TEA.get());
+                output.accept(ModItems.GINSENG_TEA.get());
+                output.accept(ModItems.DRAGON_TEA.get());
+                output.accept(ModItems.TSUNGI_HORN.get());
+                output.accept(ModBlocks.TEA_STOOL.get());
                 output.accept(ModBlocks.GOLDEN_DRAGON_EGG_ITEM.get());
                 output.accept(ModBlocks.ANOMALY_BLOCK.get());
                 output.accept(ModBlocks.MEDITATION_POINT.get());

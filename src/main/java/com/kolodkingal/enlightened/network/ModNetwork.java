@@ -12,7 +12,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
  */
 public final class ModNetwork {
     /** A client and a server with different versions can't play together. */
-    public static final String PROTOCOL_VERSION = "3";
+    public static final String PROTOCOL_VERSION = "4";
 
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
@@ -22,6 +22,10 @@ public final class ModNetwork {
         registrar.playToServer(StepPayload.TYPE, StepPayload.STREAM_CODEC, StepPayload::handle);
         registrar.playToServer(DragonBreathPayload.TYPE, DragonBreathPayload.STREAM_CODEC, DragonBreathPayload::handle);
         registrar.playToServer(MeditatePayload.TYPE, MeditatePayload.STREAM_CODEC, MeditatePayload::handle);
+        registrar.playToServer(PresetPayload.Act.TYPE, PresetPayload.Act.STREAM_CODEC, PresetPayload::handleAct);
+        registrar.playToClient(PresetPayload.Listing.TYPE, PresetPayload.Listing.STREAM_CODEC, PresetPayload::handleListing);
+        registrar.playToServer(TalkPayload.Choose.TYPE, TalkPayload.Choose.STREAM_CODEC, TalkPayload::handleChoose);
+        registrar.playToClient(TalkPayload.Open.TYPE, TalkPayload.Open.STREAM_CODEC, TalkPayload::handleOpen);
         registrar.playToClient(SeismicPayload.TYPE, SeismicPayload.STREAM_CODEC, SeismicPayload::handle);
         registrar.playToClient(FxPayload.TYPE, FxPayload.STREAM_CODEC, FxPayload::handle);
     }

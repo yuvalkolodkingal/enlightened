@@ -12,6 +12,8 @@ import com.kolodkingal.enlightened.client.KeyBindings;
 import com.kolodkingal.enlightened.client.screen.ScrollUi.BigButton;
 import com.kolodkingal.enlightened.network.ModNetwork;
 import com.kolodkingal.enlightened.network.ScrollActionPayload;
+import com.kolodkingal.enlightened.network.PresetPayload;
+import com.kolodkingal.enlightened.client.ClientPresets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -49,11 +51,24 @@ public class ScrollScreen extends Screen {
     private static final int CARD_H = 24;
     private static final int GAP = 2;
 
-    private enum Tab { ABILITIES, KEYS }
+    private enum Tab { ABILITIES, KEYS, PRESETS }
 
     private static Tab tab = Tab.ABILITIES;
     private static String chip = "all";
     private static String query = "";
+    private static String presetName = "";
+    @Nullable
+    private static String chosenPreset;
+    private boolean asked;
+    private int presetsSeen = -1;
+    private boolean naming;
+    private boolean confirmDelete;
+    @Nullable
+    private BigButton loadButton;
+    @Nullable
+    private BigButton deleteButton;
+    private int presetPanelX;
+    private int presetPanelW;
     @Nullable
     private static Ability selected;
     private static int selectedSlot = -1;
@@ -78,6 +93,12 @@ public class ScrollScreen extends Screen {
     }
 
     /** A fresh scroll on a tab, reset to its first page (the tour's pictures). */
+    public static ScrollScreen tourPresets() {
+        ScrollScreen screen = tour(false);
+        tab = Tab.PRESETS;
+        return screen;
+    }
+
     public static ScrollScreen tour(boolean keys) {
         tab = keys ? Tab.KEYS : Tab.ABILITIES;
         chip = "all";
@@ -120,15 +141,26 @@ public class ScrollScreen extends Screen {
         learnButton = null;
         int x0 = left();
         int w = right() - x0;
-        int tabW = Math.min(110, (w - 4) / 2);
+        if (!asked) {
+            asked = true;
+            ModNetwork.sendToServer(new PresetPayload.Act(PresetPayload.LIST, ""));
+        }
+        presetsSeen = ClientPresets.version();
+        loadButton = null;
+        deleteButton = null;
+        int tabW = Math.min(110, (w - 8) / 3);
         addRenderableWidget(new BigButton(x0, TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.abilities"), null,
                 element().color, () -> switchTab(Tab.ABILITIES)).selected(tab == Tab.ABILITIES));
         addRenderableWidget(new BigButton(x0 + tabW + 4, TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.keys"), null,
                 0xFFD54F, () -> switchTab(Tab.KEYS)).selected(tab == Tab.KEYS));
+        addRenderableWidget(new BigButton(x0 + 2 * (tabW + 4), TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.presets"), null,
+                0xCE93D8, () -> switchTab(Tab.PRESETS)).selected(tab == Tab.PRESETS));
         if (tab == Tab.ABILITIES) {
             initAbilities(x0, w);
-        } else {
+        } else if (tab == Tab.KEYS) {
             initKeys(x0, w);
+        } else {
+            initPresets(x0, w);
         }
         int by = height - 24;
         addRenderableWidget(new BigButton(right() - 80, by, 80, 18, Component.translatable("gui.done"), null, 0xB0B0B0, this::onClose));
@@ -231,6 +263,145 @@ public class ScrollScreen extends Screen {
                     ModNetwork.sendToServer(ScrollActionPayload.learn(selected));
                 }
             }));
+        }
+    }
+
+    private void initPresets(int x0, int w) {
+        int half = (w - 6) / 2;
+        int top = TOP + 14;
+        EditBox name = addRenderableWidget(new EditBox(font, x0 + 1, top + 3, half - 90, 14, Component.translatable("screen.enlightened.scroll.presets.name")));
+        name.setHint(Component.translatable("screen.enlightened.scroll.presets.name.hint").withStyle(ChatFormatting.DARK_GRAY));
+        name.setMaxLength(PresetPayload.MAX_NAME);
+        name.setFilter(t -> t.isEmpty() || PresetPayload.validName(t));
+        name.setValue(presetName);
+        name.setResponder(t -> presetName = t);
+        if (naming) {
+            setFocused(name);
+            name.setFocused(true);
+            name.moveCursorToEnd(false);
+        }
+        addRenderableWidget(new BigButton(x0 + half - 86, top, 86, 20, Component.translatable("screen.enlightened.scroll.presets.save"), null, 0x66BB6A, () -> {
+            String n = presetName.trim();
+            if (PresetPayload.validName(n)) {
+                ModNetwork.sendToServer(new PresetPayload.Act(PresetPayload.SAVE, n));
+                chosenPreset = n;
+            }
+        }));
+        gridLeft = x0;
+        gridRight = x0 + half;
+        gridTop = top + 26;
+        gridBottom = bottom();
+        columns = 1;
+        int cardH = 22;
+        List<ClientPresets.Preset> list = ClientPresets.all();
+        listSize = list.size();
+        int rows = Math.max(1, (gridBottom - gridTop + GAP) / (cardH + GAP));
+        scroll = Math.max(0, Math.min(scroll, Math.max(0, list.size() - rows)));
+        if (chosenPreset != null && list.stream().noneMatch(p -> p.name().equals(chosenPreset))) {
+            chosenPreset = null;
+        }
+        if (chosenPreset == null && !list.isEmpty()) {
+            chosenPreset = list.get(0).name();
+        }
+        for (int i = scroll; i < list.size() && i < scroll + rows; i++) {
+            ClientPresets.Preset preset = list.get(i);
+            int count = 0;
+            Ability first = null;
+            for (Ability a : preset.slots()) {
+                if (a != null) {
+                    count++;
+                    first = first == null ? a : first;
+                }
+            }
+            BigButton card = new BigButton(x0, gridTop + (i - scroll) * (cardH + GAP), half, cardH, Component.literal(preset.name()),
+                    Component.translatable("screen.enlightened.scroll.presets.count", count), first != null ? first.element.color : 0xCE93D8, () -> {
+                        chosenPreset = preset.name();
+                        confirmDelete = false;
+                        naming = false;
+                    }).selected(preset.name().equals(chosenPreset));
+            card.symbol = first != null ? ScrollUi.symbol(first) : null;
+            addRenderableWidget(card);
+        }
+        presetPanelX = x0 + half + 6;
+        presetPanelW = right() - presetPanelX;
+        int by = bottom() - 4 - 22;
+        int bw = (presetPanelW - 8 - GAP) / 2;
+        loadButton = addRenderableWidget(new BigButton(presetPanelX + 4, by, bw, 22, Component.translatable("screen.enlightened.scroll.presets.load"),
+                null, 0x66BB6A, () -> {
+                    if (chosenPreset != null) {
+                        ModNetwork.sendToServer(new PresetPayload.Act(PresetPayload.LOAD, chosenPreset));
+                    }
+                }));
+        deleteButton = addRenderableWidget(new BigButton(presetPanelX + 4 + bw + GAP, by, bw, 22, Component.translatable("screen.enlightened.scroll.presets.delete"),
+                null, 0xEF5350, () -> {
+                    if (chosenPreset == null) {
+                        return;
+                    }
+                    if (!confirmDelete) {
+                        confirmDelete = true;
+                        return;
+                    }
+                    ModNetwork.sendToServer(new PresetPayload.Act(PresetPayload.DELETE, chosenPreset));
+                    confirmDelete = false;
+                    chosenPreset = null;
+                }));
+    }
+
+    @Nullable
+    private ClientPresets.Preset chosen() {
+        for (ClientPresets.Preset p : ClientPresets.all()) {
+            if (p.name().equals(chosenPreset)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    /** The chosen preset: its name and its ten keys, each with the art on it. */
+    private void renderPresets(GuiGraphics g, BendingData data) {
+        ScrollUi.drawFitted(g, font, Component.translatable("screen.enlightened.scroll.presets.help").withStyle(ChatFormatting.GRAY), left(), TOP,
+                right() - left(), 0xFFFFFF);
+        ClientPresets.Preset p = chosen();
+        if (ClientPresets.all().isEmpty()) {
+            g.drawString(font, Component.translatable("screen.enlightened.scroll.presets.none").withStyle(ChatFormatting.GRAY), gridLeft + 4, gridTop + 6, 0xFFFFFF, true);
+        }
+        int top = TOP + 14;
+        int bottom = bottom();
+        ScrollUi.panel(g, presetPanelX, top, presetPanelW, bottom - top, 0xCE93D8);
+        if (loadButton != null) {
+            loadButton.visible = p != null;
+            deleteButton.visible = p != null;
+            deleteButton.setMessage(Component.translatable(confirmDelete ? "screen.enlightened.scroll.presets.sure" : "screen.enlightened.scroll.presets.delete"));
+        }
+        if (p == null) {
+            return;
+        }
+        int x = presetPanelX + 6;
+        int room = presetPanelW - 12;
+        ScrollUi.drawBig(g, font, Component.literal(p.name()).withStyle(s -> s.withColor(0xCE93D8).withBold(true)), x, top + 6, 1.5F, room);
+        int rowsTop = top + 22;
+        int rowsBottom = loadButton != null ? loadButton.getY() - 4 : bottom - 4;
+        int rowH = Math.max(11, Math.min(20, (rowsBottom - rowsTop) / BendingData.KEYS));
+        int colW = (room - 4) / 2;
+        for (int key = 1; key <= BendingData.KEYS; key++) {
+            for (int sneak = 0; sneak < 2; sneak++) {
+                int slot = BendingData.slotIndex(key, sneak == 1);
+                Ability a = p.slots()[slot];
+                int cx = x + sneak * (colW + 4);
+                int cy = rowsTop + (key - 1) * rowH;
+                int sz = Math.min(rowH - 2, 16);
+                Component label = Component.literal("").append(keyLabel(slot)).withStyle(ChatFormatting.YELLOW);
+                int lw = font.width(label);
+                g.drawString(font, label, cx, cy + (rowH - 8) / 2, 0xFFFFFF, true);
+                if (a != null) {
+                    ScrollUi.drawSymbol(g, ScrollUi.symbol(a), cx + lw + 3, cy + (rowH - sz) / 2, sz);
+                    boolean have = data.has(a);
+                    Component n = a.displayName().copy().withStyle(s -> s.withColor(have ? a.element.color : 0x808080));
+                    ScrollUi.drawFitted(g, font, n, cx + lw + 5 + sz, cy + (rowH - 8) / 2, colW - lw - 6 - sz, 0xFFFFFF);
+                } else {
+                    g.drawString(font, Component.literal("-").withStyle(ChatFormatting.DARK_GRAY), cx + lw + 4, cy + (rowH - 8) / 2, 0xFFFFFF, true);
+                }
+            }
         }
     }
 
@@ -427,6 +598,11 @@ public class ScrollScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        if (presetsSeen != ClientPresets.version()) {
+            // The server listed the presets again (after a save, a load or a delete): lay the tab out anew.
+            naming = getFocused() instanceof EditBox && tab == Tab.PRESETS;
+            rebuildWidgets();
+        }
         BendingData data = data();
         refreshButtons(data);
         super.render(g, mouseX, mouseY, partialTick);
@@ -439,13 +615,16 @@ public class ScrollScreen extends Screen {
         if (previewRight() > 0) {
             renderPreview(g, data, mouseX, mouseY);
         }
-        if (tab == Tab.ABILITIES) {
+        if (tab == Tab.PRESETS) {
+            renderPresets(g, data);
+        } else if (tab == Tab.ABILITIES) {
             renderDetail(g, data);
             if (cards.isEmpty()) {
                 g.drawString(font, Component.translatable("screen.enlightened.scroll.none").withStyle(ChatFormatting.GRAY), gridLeft + 4, gridTop + 6, 0xFFFFFF, true);
             }
         } else {
-            g.drawString(font, Component.translatable("screen.enlightened.scroll.keys.help").withStyle(ChatFormatting.GRAY), left(), TOP, 0xFFFFFF, true);
+            ScrollUi.drawFitted(g, font, Component.translatable("screen.enlightened.scroll.keys.help").withStyle(ChatFormatting.GRAY), left(), TOP,
+                    right() - left(), 0xFFFFFF);
             if (cards.isEmpty()) {
                 g.drawString(font, Component.translatable("screen.enlightened.scroll.keys.nothing").withStyle(ChatFormatting.GRAY), gridLeft + 4, gridTop + 6, 0xFFFFFF, true);
             }
@@ -593,7 +772,7 @@ public class ScrollScreen extends Screen {
     }
 
     private void renderScrollBar(GuiGraphics g) {
-        int rowH = (tab == Tab.KEYS ? 20 : CARD_H) + GAP;
+        int rowH = (tab == Tab.KEYS ? 20 : tab == Tab.PRESETS ? 22 : CARD_H) + GAP;
         int rows = Math.max(1, (gridBottom - gridTop + GAP) / rowH);
         int total = (listSize + columns - 1) / columns;
         if (total <= rows) {

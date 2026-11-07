@@ -40,7 +40,7 @@ earthbender, and bloodbending never holds a stronger or equal waterbender.
 *The Bending Scroll: your picture, the cards, the chosen art*
 
 Press **K** (or right-click with your element's scroll) to open it. It is laid out like Enhanced's Hero Creator: big
-buttons framed in your element's colour, two **tabs** on top (Abilities and Keys), and the **points bar** under them
+buttons framed in your element's colour, three **tabs** on top (Abilities, Keys and Presets), and the **points bar** under them
 (your points to spend in gold, the share already spent, and a thin green line: the experience toward the next point).
 
 **Your picture** stands on the left, and it **acts out the art you chose**: the whip's lash, the rock's punch, the
@@ -60,6 +60,13 @@ flame, a wall, a spiral...), on its card, on its key and big beside its name.
 * **Keys.** The ten keys as big buttons, each plain and with Sneak (⇧), with the art on it. **Pick a key, then an art**
   on the right to put it there (the next key is picked for you, to lay out several in a row). **Right-click** a key to
   empty it. **Default keys** lays your learned arts out in the element's default order.
+
+* **Presets.** Save your keys under a name (letters of any alphabet, digits, `-` and `_`) and **load** them back any
+  time: missing levels are learned with your points, as `/bendpreset load` does (they are the same presets, up to 20).
+  Choose a preset to see its ten keys; **Delete** asks you to click twice.
+
+![The Presets tab](images/scroll-presets.jpg)
+*The Presets tab*
 
 The mouse wheel scrolls the cards. Every ability you learn takes its default slot if that is free, else the first free
 slot. The panel in the corner always shows the keys as they are now.

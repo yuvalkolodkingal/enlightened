@@ -56,7 +56,13 @@ public final class ModBlocks {
     public static final net.neoforged.neoforge.registries.DeferredItem<BlockItem> GOLDEN_DRAGON_EGG_ITEM = ModItems.ITEMS.register("golden_dragon_egg",
             () -> new BlockItem(GOLDEN_DRAGON_EGG.get(), new Item.Properties().stacksTo(1).rarity(net.minecraft.world.item.Rarity.EPIC).fireResistant()));
 
+    /** A tea house stool: sit on it. */
+    public static final DeferredBlock<com.kolodkingal.enlightened.block.TeaStoolBlock> TEA_STOOL = BLOCKS.register("tea_stool",
+            () -> new com.kolodkingal.enlightened.block.TeaStoolBlock(BlockBehaviour.Properties.of().mapColor(net.minecraft.world.level.material.MapColor.WOOD)
+                    .strength(1.5F).noOcclusion().sound(net.minecraft.world.level.block.SoundType.WOOD).ignitedByLava()));
+
     public static void registerItems() {
+        ModItems.ITEMS.register("tea_stool", () -> new BlockItem(TEA_STOOL.get(), new Item.Properties()));
         ModItems.ITEMS.register("meditation_point", () -> new BlockItem(MEDITATION_POINT.get(), new Item.Properties()));
         ModItems.ITEMS.register("anomaly_block", () -> new BlockItem(ANOMALY_BLOCK.get(), new Item.Properties()));
     }

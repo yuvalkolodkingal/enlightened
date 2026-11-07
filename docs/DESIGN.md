@@ -634,3 +634,25 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
   animator ignores; while the scroll draws it, `Animator.previewPartial` carries the real partial tick into
   `Animator.frame` and `BenderPoses.apply`.
 
+## 46. 1.0.23: the talk screen, the Jasmine Dragon, presets in the scroll
+
+* `talk/`: a port of Enhanced's Asgardian talk. `Speaker` (enum: name key, colour, portrait: a face blitted from the
+  speaker's own renderer texture, or an ability symbol for the lion turtle and Raava), `Dialogue` (nodes per speaker:
+  `when`/priority picking, options with actions, variants, arguments, and `line(fn)` for nodes that say an older or
+  worked-out key), `Talk` (sessions per player, answers checked against the offered ones and the distance, `tick`
+  keeps the speaker still and looking, ends the talk when the player walks off), `Lines` (every speaker's table),
+  `TalkPayload.Open/Choose`, `TalkScreen` (typewriter, keys 1-4, right-to-left aware). Up to 4 answers. The NPCs'
+  right-click opens a talk; their older `line()`/`talk()` logic stays (the guards' turns, the king's counter, the
+  chief's offer) and is what the nodes say; the chat path is the fallback if no node applies.
+* Iroh (`IrohEntity`, a `Merchant`): the vanilla trading screen for tea (gold nuggets), `sellHorn` for 50 gold (ingots,
+  blocks count nine, change given). `arrive(player)` discards the player's other Iroh, spawns a home Iroh 24 blocks up
+  with `ARRIVING` synced, descending with flame particles to the spot 2.5 blocks ahead; the player's persisted data
+  keeps the latest Iroh's UUID so an older one that reloads leaves. `TsungiHornItem` calls it (1 minute cooldown).
+* `TeaStoolBlock` + `SeatEntity` (invisible, not saved, leaves when empty or the stool goes). `TeaItem`: drink
+  animation, always edible, effects by food properties.
+* `BaSingSePiece.teaShop`: an 11x9 plot at x 19-29, z 6-14 in the Upper Ring (which had no houses), door and path to
+  the south street; Iroh spawned behind the counter in `decorate`.
+* Presets tab: `PresetPayload.Act` (list/save/load/delete) and `Listing` (names, slot ids joined by commas) over the
+  `/bendpreset` storage; `ClientPresets` holds the listing, and the scroll lays itself out again when its version
+  changes.
+

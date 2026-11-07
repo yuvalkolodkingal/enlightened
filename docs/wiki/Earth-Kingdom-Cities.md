@@ -27,6 +27,39 @@ palace stairs, and some houses keep a chest.
 **There is no war in Ba Sing Se**: no monster comes inside its walls (not from the dark, a spawner, an egg or a raid),
 and no wither or other boss can be raised there.
 
+## The Jasmine Dragon: Iroh's tea house
+
+![The Jasmine Dragon](images/jasmine-dragon.jpg)
+*The Jasmine Dragon, in the Upper Ring*
+
+![Inside: Iroh behind his counter](images/jasmine-dragon-inside.jpg)
+*Inside: Iroh behind his counter*
+
+![Ask him about the dragons](images/talk-dragons.jpg)
+*Ask him about the dragons*
+
+![Blow the tsungi horn, and Iroh comes on jets of fire](images/iroh-arrives.jpg)
+*Blow the tsungi horn, and Iroh comes on jets of fire*
+
+In Ba Sing Se's **Upper Ring**, by the south street near the palace, stands the **Jasmine Dragon**: green and gold,
+dark wood pillars, green glass, a tiered green roof with a golden ridge. Inside, **Iroh** in his tea server's
+clothes (a green robe, a cream apron, a little green cap) stands behind his counter, between shelves of tea, a kettle
+and azaleas; two tables with **stools** fill the room, lanterns hang overhead.
+
+* **Talk to Iroh** (right-click): he greets you, and you choose what to say.
+  * **"I'd like some tea."**: his tea, for gold nuggets: **Jasmine Tea** (3: regeneration), **Ginseng Tea** (4:
+    strength and haste for 45 seconds), **Dragon Tea** (6: fire resistance and absorption for two minutes), cookies,
+    pumpkin pie, a cake (a gold ingot) and tea stools (two ingots). Teas are drunk, and may be drunk when you are full.
+  * **"Do you know where the dragons are?"**: he is afraid he **killed the last dragon**, long ago...
+  * **"Could you serve tea at my home?"**: for **50 gold** (ingots; a gold block counts nine, with change) he gives you
+    his **tsungi horn**.
+  * **"Any advice, Uncle?"**: a piece of his wisdom.
+* **Sit and eat**: right-click a **tea stool** to sit on it (sneak or jump to stand up); eat and drink sitting there.
+  Stools can be crafted too (green wool over two sticks makes two).
+* **The tsungi horn**: blow it (right-click) where you live, and **Iroh comes flying down on jets of fire** from his
+  fists and feet, lands beside you, and sells his tea **at your home** from then on, keeping near the spot. Blow it
+  again elsewhere and he moves there (you have one Iroh of your own; once a minute). At home he greets you as a friend.
+
 ## Omashu
 
 ![Omashu over its chasm, the bridge on tall arches](images/omashu.jpg)
@@ -51,6 +84,17 @@ Inside the pyramid is the **throne hall**: pillars, hanging lanterns, a green ai
 (a little more each time; he knows the Avatar when he sees one). Nothing can harm him.
 
 Villagers live on its terraces; guards keep the gate, the stairway and the hall; no monster comes into the city.
+
+## Talking to people
+
+![The talk screen](images/talk-iroh.jpg)
+*The talk screen*
+
+Everyone you can talk to (Iroh, Guru Pathik, King Bumi, the city guards, the Sun Warriors, the lion turtle, Raava)
+answers on the **talk screen**: a panel at the bottom of the screen with their face, their name and their words typed
+out (a click, Space or Enter shows them at once), and **answers to choose** above it (or keys 1-4). "Farewell" or Esc
+ends the talk; walking away does too. What used to need a second right-click is an answer now: taking up the Sun
+Warriors' test, letting Raava in, receiving the lion turtle's gift. Ask the guards of Ba Sing Se where to find good tea.
 
 ## City guards
 

@@ -76,6 +76,41 @@ public final class PresetCommand {
         return true;
     }
 
+    /** The levels the last {@link #load} learned. */
+    public static int lastLearned() {
+        return lastLearned;
+    }
+
+    /** Deletes a preset; false if there is none of that name. */
+    public static boolean delete(ServerPlayer p, String name) {
+        CompoundTag all = presets(p);
+        if (!all.contains(name)) {
+            return false;
+        }
+        all.remove(name);
+        store(p, all);
+        return true;
+    }
+
+    /** The player's presets for the scroll: each name, and its slots' ability ids joined by commas. */
+    public static com.kolodkingal.enlightened.network.PresetPayload.Listing listing(ServerPlayer p) {
+        CompoundTag all = presets(p);
+        java.util.List<String> names = new java.util.ArrayList<>(new java.util.TreeSet<>(all.getAllKeys()));
+        java.util.List<String> slots = new java.util.ArrayList<>();
+        for (String name : names) {
+            ListTag list = all.getTagType(name) == Tag.TAG_LIST ? all.getList(name, Tag.TAG_STRING) : all.getCompound(name).getList("Slots", Tag.TAG_STRING);
+            StringBuilder row = new StringBuilder();
+            for (int s = 0; s < BendingData.SLOTS; s++) {
+                if (s > 0) {
+                    row.append(',');
+                }
+                row.append(s < list.size() ? list.getString(s) : "");
+            }
+            slots.add(row.toString());
+        }
+        return new com.kolodkingal.enlightened.network.PresetPayload.Listing(names, slots);
+    }
+
     /** Levels learned by the last {@link #load}, and the abilities it could not learn. */
     static int lastLearned;
     static final java.util.List<Ability> LAST_MISSING = new java.util.ArrayList<>();

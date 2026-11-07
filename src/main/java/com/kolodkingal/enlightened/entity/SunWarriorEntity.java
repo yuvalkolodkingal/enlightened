@@ -159,7 +159,7 @@ public class SunWarriorEntity extends PathfinderMob {
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
-        if (player instanceof ServerPlayer server) {
+        if (player instanceof ServerPlayer server && !com.kolodkingal.enlightened.talk.Talk.begin(server, this, speaker())) {
             talk(server);
         }
         return InteractionResult.sidedSuccess(level().isClientSide);
@@ -191,16 +191,30 @@ public class SunWarriorEntity extends PathfinderMob {
         }
         if (player.getUUID().equals(asked) && now - askedAt <= ANSWER) {
             asked = null;
-            ItemStack flame = EternalFlameItem.lit(now);
-            if (!player.getInventory().add(flame)) {
-                player.drop(flame, false);
-            }
-            playSound(SoundEvents.FIRECHARGE_USE, 0.8F, 1.0F);
+            giveFlame(player);
             return "sun.enlightened.chief.given";
         }
         asked = player.getUUID();
         askedAt = now;
         return "sun.enlightened.chief.offer";
+    }
+
+    /** The chief hands the Eternal Flame to a player who takes up the test. */
+    public void giveFlame(ServerPlayer player) {
+        ItemStack flame = EternalFlameItem.lit(level().getGameTime());
+        if (!player.getInventory().add(flame)) {
+            player.drop(flame, false);
+        }
+        playSound(SoundEvents.FIRECHARGE_USE, 0.8F, 1.0F);
+    }
+
+    /** The speaker of the talk screen this warrior is. */
+    public com.kolodkingal.enlightened.talk.Speaker speaker() {
+        return switch (role()) {
+            case CHIEF -> com.kolodkingal.enlightened.talk.Speaker.SUN_CHIEF;
+            case DANCER -> com.kolodkingal.enlightened.talk.Speaker.SUN_DANCER;
+            case WARRIOR -> com.kolodkingal.enlightened.talk.Speaker.SUN_WARRIOR;
+        };
     }
 
     public void talk(ServerPlayer player) {

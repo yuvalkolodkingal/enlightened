@@ -1254,6 +1254,67 @@ def paint_lion_turtle():
     p.fill((x, y + h - 1, w, 1), (168, 170, 140), 0.04)
     p.save(os.path.join(ENTITY, 'lion_turtle.png'))
 
+def paint_iroh_tea():
+    """Iroh at the Jasmine Dragon (1.0.23): the tea server's clothes, a forest-green robe with a cream collar and cuffs,
+    a cream apron over it, dark trousers, a little green cap with a cream band; white topknot and great beard
+    (entity/iroh_tea.png)."""
+    p = Painter('iroh_tea')
+    skin = (230, 200, 170)
+    white = (232, 232, 232)
+    green = (52, 104, 62)
+    cream = (232, 222, 192)
+    s = dict(garment='robe', skin=skin, shirt=green, sleeves=shade(green, 0.92), pants=(44, 56, 44), boots=(40, 34, 30),
+             trim=cream, belt=(110, 80, 50))
+    paint_head(p, skin, (190, 150, 60), brows=white)
+    paint_hair(p, white, 'topknot')
+    paint_body(p, s, False)
+    paint_beard(p, white, big=True)
+    # The cap: green, a cream band.
+    for name in ('front', 'left', 'right', 'back', 'top'):
+        x, y, w, h = HAT[name]
+        if name == 'top':
+            p.fill((x + 2, y + 2, 4, 4), green, 0.05)
+        else:
+            p.fill((x + 1, y, w - 2, 1), green, 0.05)
+            p.fill((x + 1, y + 1, w - 2, 1), cream, 0.05)
+    # The cream collar crossing over, the apron from the waist down, the cuffs.
+    bx, by = BODY['front'][0], BODY['front'][1]
+    p.rows(BODY, cream, (0,), names=('front', 'back', 'left', 'right'))
+    for j in range(1, 5):
+        p.dot(bx + j, by + j, cream)
+        p.dot(bx + 7 - j, by + j, cream)
+    p.fill((bx + 1, by + 6, 6, 6), cream, 0.04)
+    p.rows(BODY, (110, 80, 50), (5,), names=('front', 'back', 'left', 'right'))
+    for a in (arm(40, 16, False), arm(32, 48, False)):
+        p.rows(a, cream, (10, 11))
+    p.save(os.path.join(ENTITY, 'iroh_tea.png'))
+
+
+def paint_tea_items():
+    """Iroh's teas (cups of three colours) and his tsungi horn (1.0.23)."""
+    os.makedirs(ITEM, exist_ok=True)
+    for name, tea in {'jasmine_tea': (214, 196, 110), 'ginseng_tea': (176, 120, 60), 'dragon_tea': (200, 60, 40)}.items():
+        img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+        d = ImageDraw.Draw(img)
+        d.ellipse((2, 11, 13, 14), fill=(222, 222, 214, 255), outline=(160, 160, 150, 255))
+        d.polygon([(3, 6), (12, 6), (11, 12), (4, 12)], fill=(240, 240, 232, 255), outline=(170, 170, 160, 255))
+        d.line((4, 9, 11, 9), fill=(70, 130, 90, 255))
+        d.ellipse((3, 5, 12, 7), fill=tea + (255,), outline=(170, 170, 160, 255))
+        for x, y in ((6, 1), (8, 2), (7, 3), (9, 0)):
+            img.putpixel((x, y), (240, 240, 240, 140))
+        img.save(os.path.join(ITEM, name + '.png'))
+    img = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.line((2, 13, 9, 6), fill=(196, 150, 90, 255), width=2)
+    d.line((9, 6, 12, 3), fill=(176, 130, 76, 255), width=3)
+    d.ellipse((10, 0, 15, 5), fill=(150, 104, 60, 255), outline=(110, 74, 40, 255))
+    d.ellipse((11, 1, 14, 4), fill=(60, 40, 24, 255))
+    d.line((5, 9, 6, 10), fill=(214, 176, 64, 255))
+    d.line((8, 6, 9, 7), fill=(214, 176, 64, 255))
+    img.putpixel((2, 14), (110, 74, 40, 255))
+    img.save(os.path.join(ITEM, 'tsungi_horn.png'))
+
+
 def paint_items():
     os.makedirs(ITEM, exist_ok=True)
     scrolls = {'earth_scroll': (90, 140, 70), 'air_scroll': (220, 170, 60), 'water_scroll': (50, 120, 200), 'fire_scroll': (200, 60, 30), 'avatar_scroll': (127, 214, 255)}
@@ -1516,6 +1577,8 @@ def main():
     paint_pathik()
     paint_guards()
     paint_king_bumi()
+    paint_iroh_tea()
+    paint_tea_items()
     paint_aura()
     paint_anomaly_block()
     paint_anomaly()

@@ -142,7 +142,7 @@ public class CityGuardEntity extends PathfinderMob {
         if (hand != InteractionHand.MAIN_HAND) {
             return InteractionResult.PASS;
         }
-        if (player instanceof ServerPlayer server) {
+        if (player instanceof ServerPlayer server && !com.kolodkingal.enlightened.talk.Talk.begin(server, this, speaker())) {
             talk(server);
         }
         return InteractionResult.sidedSuccess(level().isClientSide);
@@ -163,6 +163,15 @@ public class CityGuardEntity extends PathfinderMob {
             return city + "avatar";
         }
         return city + "line." + Math.floorMod(voice() * 3 + n - 1, LINES);
+    }
+
+    /** The speaker of the talk screen this guard is (his city's). */
+    public com.kolodkingal.enlightened.talk.Speaker speaker() {
+        return switch (city()) {
+            case OMASHU -> com.kolodkingal.enlightened.talk.Speaker.GUARD_OMASHU;
+            case BA_SING_SE -> com.kolodkingal.enlightened.talk.Speaker.GUARD_BA_SING_SE;
+            case ELLORA -> com.kolodkingal.enlightened.talk.Speaker.GUARD_ELLORA;
+        };
     }
 
     public void talk(ServerPlayer player) {

@@ -51,12 +51,14 @@ public class ScrollScreen extends Screen {
     private static final int CARD_H = 24;
     private static final int GAP = 2;
 
-    private enum Tab { ABILITIES, KEYS, PRESETS }
+    private enum Tab { ABILITIES, KEYS, PRESETS, COMBOS }
 
     private static Tab tab = Tab.ABILITIES;
     private static String chip = "all";
     private static String query = "";
     private static String presetName = "";
+    @Nullable
+    private static com.kolodkingal.enlightened.bending.Combos chosenCombo;
     @Nullable
     private static String chosenPreset;
     private boolean asked;
@@ -93,6 +95,13 @@ public class ScrollScreen extends Screen {
     }
 
     /** A fresh scroll on a tab, reset to its first page (the tour's pictures). */
+    public static ScrollScreen tourCombos() {
+        ScrollScreen screen = tour(false);
+        tab = Tab.COMBOS;
+        chosenCombo = null;
+        return screen;
+    }
+
     public static ScrollScreen tourPresets() {
         ScrollScreen screen = tour(false);
         tab = Tab.PRESETS;
@@ -148,19 +157,23 @@ public class ScrollScreen extends Screen {
         presetsSeen = ClientPresets.version();
         loadButton = null;
         deleteButton = null;
-        int tabW = Math.min(110, (w - 8) / 3);
+        int tabW = Math.min(110, (w - 12) / 4);
         addRenderableWidget(new BigButton(x0, TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.abilities"), null,
                 element().color, () -> switchTab(Tab.ABILITIES)).selected(tab == Tab.ABILITIES));
         addRenderableWidget(new BigButton(x0 + tabW + 4, TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.keys"), null,
                 0xFFD54F, () -> switchTab(Tab.KEYS)).selected(tab == Tab.KEYS));
         addRenderableWidget(new BigButton(x0 + 2 * (tabW + 4), TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.presets"), null,
                 0xCE93D8, () -> switchTab(Tab.PRESETS)).selected(tab == Tab.PRESETS));
+        addRenderableWidget(new BigButton(x0 + 3 * (tabW + 4), TABS_Y, tabW, 18, Component.translatable("screen.enlightened.scroll.tab.combos"), null,
+                0x4DD0E1, () -> switchTab(Tab.COMBOS)).selected(tab == Tab.COMBOS));
         if (tab == Tab.ABILITIES) {
             initAbilities(x0, w);
         } else if (tab == Tab.KEYS) {
             initKeys(x0, w);
-        } else {
+        } else if (tab == Tab.PRESETS) {
             initPresets(x0, w);
+        } else {
+            initCombos(x0, w);
         }
         int by = height - 24;
         addRenderableWidget(new BigButton(right() - 80, by, 80, 18, Component.translatable("gui.done"), null, 0xB0B0B0, this::onClose));
@@ -345,6 +358,117 @@ public class ScrollScreen extends Screen {
                     confirmDelete = false;
                     chosenPreset = null;
                 }));
+    }
+
+    /** The combos of the bender's element (the Avatar's: all), found ones first. */
+    private List<com.kolodkingal.enlightened.bending.Combos> combos() {
+        List<com.kolodkingal.enlightened.bending.Combos> out = new ArrayList<>();
+        for (com.kolodkingal.enlightened.bending.Combos c : com.kolodkingal.enlightened.bending.Combos.VALUES) {
+            if (element().commands(c.element)) {
+                out.add(c);
+            }
+        }
+        out.sort((a, b) -> Boolean.compare(!com.kolodkingal.enlightened.client.ClientCombos.found(a.id()), !com.kolodkingal.enlightened.client.ClientCombos.found(b.id())));
+        return out;
+    }
+
+    private void initCombos(int x0, int w) {
+        int half = (w - 6) / 2;
+        gridLeft = x0;
+        gridRight = x0 + half;
+        gridTop = TOP + 14;
+        gridBottom = bottom();
+        columns = 1;
+        int cardH = 22;
+        List<com.kolodkingal.enlightened.bending.Combos> list = combos();
+        listSize = list.size();
+        int rows = Math.max(1, (gridBottom - gridTop + GAP) / (cardH + GAP));
+        scroll = Math.max(0, Math.min(scroll, Math.max(0, list.size() - rows)));
+        if (chosenCombo == null || !list.contains(chosenCombo)) {
+            chosenCombo = list.isEmpty() ? null : list.get(0);
+        }
+        BendingData data = data();
+        for (int i = scroll; i < list.size() && i < scroll + rows; i++) {
+            com.kolodkingal.enlightened.bending.Combos c = list.get(i);
+            boolean found = com.kolodkingal.enlightened.client.ClientCombos.found(c.id());
+            Component sub = found ? Component.translatable("screen.enlightened.scroll.combos.found").withStyle(ChatFormatting.GREEN)
+                    : c.known(data) ? Component.translatable("screen.enlightened.scroll.combos.unfound")
+                    : Component.translatable("screen.enlightened.scroll.combos.unknown");
+            BigButton card = new BigButton(x0, gridTop + (i - scroll) * (cardH + GAP), half, cardH,
+                    found ? c.displayName() : Component.literal("? ? ?"), sub, found ? c.element.color : 0x808080, () -> chosenCombo = c)
+                    .selected(c == chosenCombo);
+            card.symbol = ScrollUi.symbol(c.sequence.get(0));
+            addRenderableWidget(card);
+        }
+        presetPanelX = x0 + half + 6;
+        presetPanelW = right() - presetPanelX;
+    }
+
+    /** The chosen combo: its name and its steps when found; when not, its first step and a hint. */
+    private void renderCombos(GuiGraphics g, BendingData data) {
+        List<com.kolodkingal.enlightened.bending.Combos> list = combos();
+        int found = 0;
+        for (com.kolodkingal.enlightened.bending.Combos c : list) {
+            found += com.kolodkingal.enlightened.client.ClientCombos.found(c.id()) ? 1 : 0;
+        }
+        ScrollUi.drawFitted(g, font, Component.translatable("screen.enlightened.scroll.combos.help", found, list.size()).withStyle(ChatFormatting.GRAY),
+                left(), TOP, right() - left(), 0xFFFFFF);
+        // The chosen card's state is refreshed here, as the found ones may change while the scroll is open.
+        int top = TOP + 14;
+        int bottom = bottom();
+        com.kolodkingal.enlightened.bending.Combos c = chosenCombo;
+        ScrollUi.panel(g, presetPanelX, top, presetPanelW, bottom - top, c == null ? 0x4DD0E1 : c.element.color);
+        if (c == null) {
+            return;
+        }
+        boolean isFound = com.kolodkingal.enlightened.client.ClientCombos.found(c.id());
+        int x = presetPanelX + 6;
+        int room = presetPanelW - 12;
+        int y = top + 6;
+        ScrollUi.drawBig(g, font, (isFound ? c.displayName().copy() : Component.literal("? ? ?")).withStyle(s -> s.withColor(isFound ? c.element.color : 0xA0A0A0).withBold(true)),
+                x, y, 1.5F, room);
+        y += 16;
+        ScrollUi.drawFitted(g, font, c.element.displayName().copy().withStyle(s -> s.withColor(c.element.color)), x, y, room, 0xFFFFFF);
+        y += 13;
+        // The steps: symbols with arrows between (the ones not found yet hidden).
+        int size = 22;
+        int cx = x;
+        for (int i = 0; i < c.sequence.size(); i++) {
+            Ability a = c.sequence.get(i);
+            if (i > 0) {
+                g.drawString(font, "→", cx + 1, y + (size - 8) / 2, 0xFFFFFF, true);
+                cx += 10;
+            }
+            if (isFound || i == 0) {
+                ScrollUi.drawSymbol(g, ScrollUi.symbol(a), cx, y, size);
+            } else {
+                g.fill(cx, y, cx + size, y + size, 0xC0101824);
+                g.renderOutline(cx, y, size, size, 0xFF606060);
+                g.drawCenteredString(font, "?", cx + size / 2, y + (size - 8) / 2, 0xA0A0A0);
+            }
+            cx += size + 2;
+        }
+        y += size + 4;
+        StringBuilder names = new StringBuilder();
+        MutableComponent steps = Component.empty();
+        for (int i = 0; i < c.sequence.size(); i++) {
+            if (i > 0) {
+                steps.append(Component.literal(" → ").withStyle(ChatFormatting.GRAY));
+            }
+            Ability a = c.sequence.get(i);
+            boolean have = data.has(a);
+            steps.append(isFound || i == 0 ? a.displayName().copy().withStyle(s -> s.withColor(have ? a.element.color : 0x808080)) : Component.literal("?").withStyle(ChatFormatting.GRAY));
+        }
+        ScrollUi.drawFitted(g, font, steps, x, y, room, 0xFFFFFF);
+        y += 13;
+        Component text = isFound ? c.description()
+                : c.known(data) ? Component.translatable("screen.enlightened.scroll.combos.hint", c.sequence.get(0).displayName())
+                : Component.translatable("screen.enlightened.scroll.combos.learn");
+        List<FormattedCharSequence> wrapped = font.split(text, room);
+        for (int i = 0; i < wrapped.size() && y + 9 <= bottom - 4; i++) {
+            g.drawString(font, wrapped.get(i), x, y, isFound ? 0xDDDDDD : 0xB0B0B0, false);
+            y += 10;
+        }
     }
 
     @Nullable
@@ -615,7 +739,9 @@ public class ScrollScreen extends Screen {
         if (previewRight() > 0) {
             renderPreview(g, data, mouseX, mouseY);
         }
-        if (tab == Tab.PRESETS) {
+        if (tab == Tab.COMBOS) {
+            renderCombos(g, data);
+        } else if (tab == Tab.PRESETS) {
             renderPresets(g, data);
         } else if (tab == Tab.ABILITIES) {
             renderDetail(g, data);
@@ -772,7 +898,7 @@ public class ScrollScreen extends Screen {
     }
 
     private void renderScrollBar(GuiGraphics g) {
-        int rowH = (tab == Tab.KEYS ? 20 : tab == Tab.PRESETS ? 22 : CARD_H) + GAP;
+        int rowH = (tab == Tab.KEYS ? 20 : tab == Tab.PRESETS || tab == Tab.COMBOS ? 22 : CARD_H) + GAP;
         int rows = Math.max(1, (gridBottom - gridTop + GAP) / rowH);
         int total = (listSize + columns - 1) / columns;
         if (total <= rows) {

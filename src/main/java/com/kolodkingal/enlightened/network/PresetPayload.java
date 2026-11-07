@@ -99,6 +99,7 @@ public final class PresetPayload {
                 }
             }
             ModNetwork.sendTo(player, PresetCommand.listing(player));
+            ModNetwork.sendTo(player, com.kolodkingal.enlightened.bending.Combos.listing(player));
         });
     }
 

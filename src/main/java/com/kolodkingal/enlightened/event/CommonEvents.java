@@ -66,6 +66,7 @@ public final class CommonEvents {
         com.kolodkingal.enlightened.world.LionTurtles.tick(event.getServer());
         com.kolodkingal.enlightened.bending.AvatarCycle.tick(event.getServer());
         com.kolodkingal.enlightened.talk.Talk.tick(event.getServer());
+        com.kolodkingal.enlightened.bending.Combos.tick(event.getServer());
     }
 
     @SubscribeEvent
@@ -368,6 +369,7 @@ public final class CommonEvents {
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             Benders.castFate(player);
+            com.kolodkingal.enlightened.network.ModNetwork.sendTo(player, com.kolodkingal.enlightened.bending.Combos.listing(player));
             if (player.getClass() == ServerPlayer.class) {
                 com.kolodkingal.enlightened.bending.AvatarCycle cycle = com.kolodkingal.enlightened.bending.AvatarCycle.get(player.getServer());
                 // An Avatar from before the cycle was kept is counted now.

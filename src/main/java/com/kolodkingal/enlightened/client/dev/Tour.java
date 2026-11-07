@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v125".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v125();
+            return;
+        }
         if ("v123".equals(System.getProperty("enlightened.tour.only", ""))) {
             v123();
             return;
@@ -1037,6 +1041,44 @@ public final class Tour {
     }
 
     /** 1.0.21: the dragons' new faces, horns, legs and wings; the sky bison's gust (alone: -Denlightened.tour.only=v121). */
+    /** 1.0.25: the new combos, found in a fight (alone: -Denlightened.tour.only=v125). */
+    private static void v125() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        element("avatar", "aang", "earth_wall", "fire_ball", "water_whip", "tornado", "air_blast", "rock_throw");
+        camera(CameraType.FIRST_PERSON, 2);
+        cmd("tp @s 900.5 -60 0.5 0 20", 20);
+        cmd("summon minecraft:husk 900.5 -60 5.5 {NoAI:1b,PersistenceRequired:1b}", 4);
+        // The hint: a water whip begins the steam cloud.
+        server(p -> com.kolodkingal.enlightened.bending.Combos.cast(p, com.kolodkingal.enlightened.bending.Benders.get(p),
+                com.kolodkingal.enlightened.bending.Ability.WATER_WHIP), 10);
+        shot("400_combo_hint", 4);
+        cmd("tp @s 900.5 -60 0.5 0 15", 70);
+        server(p -> {
+            var data = com.kolodkingal.enlightened.bending.Benders.get(p);
+            com.kolodkingal.enlightened.bending.Combos.cast(p, data, com.kolodkingal.enlightened.bending.Ability.EARTH_WALL);
+            com.kolodkingal.enlightened.bending.Combos.cast(p, data, com.kolodkingal.enlightened.bending.Ability.FIRE_BALL);
+        }, 20);
+        shot("401_burning_wall_discovered", 30);
+        cmd("tp @s 905.5 -59 0.5 50 20", 40);
+        shot("402_burning_wall", 20);
+        STEPS.add(new Step(4, () -> Minecraft.getInstance().setScreen(com.kolodkingal.enlightened.client.screen.ScrollScreen.tourCombos())));
+        shot("403_scroll_combos", 30);
+        STEPS.add(new Step(4, () -> Minecraft.getInstance().setScreen(null)));
+        // The thunder jet.
+        element("fire", "zuko", "fire_jet", "lightning");
+        cmd("tp @s 950.5 -60 0.5 0 10", 20);
+        cmd("summon minecraft:husk 948.5 -60 7.5 {NoAI:1b,PersistenceRequired:1b}", 2);
+        cmd("summon minecraft:husk 952.5 -60 8.5 {NoAI:1b,PersistenceRequired:1b}", 2);
+        cmd("summon minecraft:husk 950.5 -60 10.5 {NoAI:1b,PersistenceRequired:1b}", 10);
+        server(p -> {
+            var data = com.kolodkingal.enlightened.bending.Benders.get(p);
+            com.kolodkingal.enlightened.bending.Combos.cast(p, data, com.kolodkingal.enlightened.bending.Ability.FIRE_JET);
+            com.kolodkingal.enlightened.bending.Combos.cast(p, data, com.kolodkingal.enlightened.bending.Ability.LIGHTNING);
+        }, 3);
+        shot("404_thunder_jet", 30);
+    }
+
     /** 1.0.23: the talk screen, the Jasmine Dragon and Iroh, the horn, the scroll's presets (alone: -Denlightened.tour.only=v123). */
     private static void v123() {
         cmd("time set noon", 2);

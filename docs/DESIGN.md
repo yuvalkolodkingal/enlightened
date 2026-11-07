@@ -656,3 +656,15 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
   `/bendpreset` storage; `ClientPresets` holds the listing, and the scroll lays itself out again when its version
   changes.
 
+## 47. 1.0.25: thirteen combos, found in a fight
+
+* `Combos` gains 13 entries (performed by `performMore`); a test checks that no combo's sequence is the tail of another
+  (it would always fire first). `BURNING_WALL`/`MAGMA_WALL` place a 5x3 magma wall (temp blocks) with fire on top and
+  register a `Burning` box; `Combos.tick` (server tick) ignites and hurts whoever is within 0.4 of it every 5 ticks.
+* Discovery: found combo ids live in the player's persisted NBT (`enlightened_combos`); the first landing sends a title
+  and subtitle and a `ComboPayload` (also sent at login and with every preset listing, i.e. when the scroll opens).
+  `hint` looks at the latest casts: if they are the first k steps of an unfound, doable, ready combo, the action bar
+  names step k+1 (once per combo per 45 s).
+* The scroll's fourth tab, Combos: cards (found first; others "? ? ?" with the first art's symbol) and a panel with the
+  steps' symbols and arrows, hidden after the first step until found.
+

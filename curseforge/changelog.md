@@ -1,3 +1,13 @@
+# Enlightened 1.0.25
+
+* **Thirteen new combos**, among them the **Burning Wall** (the Avatar: Earth Wall then Fire Ball, a wall of magma and
+  flame that burns whoever touches it), the **Magma Wall** for lavabenders, and the **Thunder Jet** (Fire Jet then
+  Lightning). Also Dragon's Breath, Air Slam, Vacuum Cannon, Rock Storm, Earthquake, Tidal Wave, Healing Tide, Steam
+  Cloud, Fire Tornado and Sandstorm.
+* **Find combos in a fight**: when your casts begin a combo you haven't found, the bar names the next step; the first
+  time you land one, **Combo discovered!** The scroll's new **Combos** tab shows what you found (the rest as ? ? ?).
+* Iroh's tea-house skin now has a yellow collar and golden cuffs (blended with the second look sent).
+
 # Enlightened 1.0.24
 
 * **Iroh has a new skin** at the Jasmine Dragon: the green robe and apron with the jasmine flower.

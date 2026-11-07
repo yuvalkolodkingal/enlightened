@@ -49,7 +49,34 @@ public enum Combos {
     /** Fire: two fire balls, then the ring: a kick of fire that arcs from the feet. */
     FIRE_KICK(Element.FIRE, 120, Ability.FIRE_BALL, Ability.FIRE_BALL, Ability.FIRE_RING),
     /** Fire: the shield, then the ring: a whirl of flame spinning out far and wide. */
-    FIRE_SPIN(Element.FIRE, 200, Ability.FIRE_SHIELD, Ability.FIRE_RING);
+    FIRE_SPIN(Element.FIRE, 200, Ability.FIRE_SHIELD, Ability.FIRE_RING),
+    // ---- 1.0.25: thirteen more, to be found in a fight ----
+    /** Avatar: an earth wall, then a fire ball into it: the wall bursts into flame and burns whoever touches it. */
+    BURNING_WALL(Element.AVATAR, 240, Ability.EARTH_WALL, Ability.FIRE_BALL),
+    /** Earth (lava): an earth wall, then the lava path: the wall melts to glowing magma that burns whoever touches it. */
+    MAGMA_WALL(Element.EARTH, 240, Ability.EARTH_WALL, Ability.LAVA_PATH),
+    /** Fire: the jet, then lightning: you shoot ahead and lightning leaps from you to every enemy near. */
+    THUNDER_JET(Element.FIRE, 240, Ability.FIRE_JET, Ability.LIGHTNING),
+    /** Fire: a fist of fire, then a fire ball: a long breath of flame like a dragon's. */
+    DRAGON_BREATH(Element.FIRE, 160, Ability.FIRE_FIST, Ability.FIRE_BALL),
+    /** Air: the jump, then the burst: you fly up and slam the air down round you, flattening all near. */
+    AIR_SLAM(Element.AIR, 160, Ability.AIR_JUMP, Ability.AIR_BURST),
+    /** Air: suction, then the blast: what you pulled in is flung far away. */
+    VACUUM_CANNON(Element.AIR, 160, Ability.AIR_SUCTION, Ability.AIR_BLAST),
+    /** Earth: two rocks, then the shockwave: a storm of rocks flies ahead. */
+    ROCK_STORM(Element.EARTH, 160, Ability.ROCK_THROW, Ability.ROCK_THROW, Ability.SHOCKWAVE),
+    /** Earth: the grab, then the shockwave: an earthquake that stuns everyone round you. */
+    EARTHQUAKE(Element.EARTH, 220, Ability.EARTH_GRAB, Ability.SHOCKWAVE),
+    /** Water: two whips, then the spout: a great wave rolls ahead and washes everything away. */
+    TIDAL_WAVE(Element.WATER, 200, Ability.WATER_WHIP, Ability.WATER_WHIP, Ability.WATER_SPOUT),
+    /** Water: healing, then the bubble: a healing tide for you and every friend near. */
+    HEALING_TIDE(Element.WATER, 400, Ability.WATER_HEALING, Ability.WATER_BUBBLE),
+    /** Avatar: a water whip, then a fire ball: a scalding cloud of steam that blinds. */
+    STEAM_CLOUD(Element.AVATAR, 200, Ability.WATER_WHIP, Ability.FIRE_BALL),
+    /** Avatar: the tornado, then a fire ball: a tornado of fire. */
+    FIRE_TORNADO(Element.AVATAR, 300, Ability.TORNADO, Ability.FIRE_BALL),
+    /** Avatar: an air blast, then a rock: a sandstorm that blinds and slows. */
+    SANDSTORM(Element.AVATAR, 200, Ability.AIR_BLAST, Ability.ROCK_THROW);
 
     public final Element element;
     /** The combo's own cooldown, in ticks. */
@@ -120,7 +147,134 @@ public enum Combos {
             combo.perform(p, data);
             p.displayClientMessage(Component.translatable("message.enlightened.combo", combo.displayName()).withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), true);
             p.level().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.POINT.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 0.7F);
+            if (discover(p, combo)) {
+                // The first time: a title, a fanfare, and the scroll's Combos tab learns it.
+                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(5, 50, 15));
+                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(
+                        Component.translatable("message.enlightened.combo.discovered").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(combo.displayName().copy().withStyle(ChatFormatting.AQUA)));
+                p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
+                        net.minecraft.sounds.SoundSource.PLAYERS, 0.7F, 1.0F);
+                com.kolodkingal.enlightened.network.ModNetwork.sendTo(p, listing(p));
+            }
             return;
+        }
+        hint(p, data, recent, now);
+    }
+
+    // ---- discovery ----
+
+    private static final String DISCOVERED = "enlightened_combos";
+    /** How long a hint for one combo stays quiet after it is given. */
+    public static final int HINT_REST = 20 * 45;
+    private static final Map<UUID, Map<Combos, Long>> HINTED = new HashMap<>();
+
+    /** The combos a player has found (kept through deaths). */
+    public static java.util.Set<String> discovered(net.minecraft.world.entity.player.Player p) {
+        net.minecraft.nbt.ListTag list = p.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG)
+                .getList(DISCOVERED, net.minecraft.nbt.Tag.TAG_STRING);
+        java.util.Set<String> out = new java.util.LinkedHashSet<>();
+        for (int i = 0; i < list.size(); i++) {
+            out.add(list.getString(i));
+        }
+        return out;
+    }
+
+    /** Notes a combo found; true if it is the first time. */
+    public static boolean discover(net.minecraft.world.entity.player.Player p, Combos combo) {
+        net.minecraft.nbt.CompoundTag kept = p.getPersistentData().getCompound(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG);
+        net.minecraft.nbt.ListTag list = kept.getList(DISCOVERED, net.minecraft.nbt.Tag.TAG_STRING);
+        for (int i = 0; i < list.size(); i++) {
+            if (list.getString(i).equals(combo.id())) {
+                return false;
+            }
+        }
+        list.add(net.minecraft.nbt.StringTag.valueOf(combo.id()));
+        kept.put(DISCOVERED, list);
+        p.getPersistentData().put(net.minecraft.world.entity.player.Player.PERSISTED_NBT_TAG, kept);
+        return true;
+    }
+
+    /** The combos found, for the scroll. */
+    public static com.kolodkingal.enlightened.network.ComboPayload listing(ServerPlayer p) {
+        return new com.kolodkingal.enlightened.network.ComboPayload(List.copyOf(discovered(p)));
+    }
+
+    /**
+     * A hint in the heat of a fight: when the casts just made begin a combo the bender has not found yet (and can do:
+     * he knows its arts, it is ready), the bar says a combo stirs and names the next art. Each combo hints once in a
+     * while, so a fight is not a lecture.
+     */
+    private static void hint(ServerPlayer p, BendingData data, Deque<Recent> recent, long now) {
+        java.util.Set<String> found = discovered(p);
+        Map<Combos, Long> cds = COOLDOWNS.computeIfAbsent(p.getUUID(), k -> new HashMap<>());
+        Map<Combos, Long> hinted = HINTED.computeIfAbsent(p.getUUID(), k -> new HashMap<>());
+        Recent[] tail = recent.toArray(new Recent[0]);
+        for (Combos combo : VALUES) {
+            if (found.contains(combo.id()) || !data.element().commands(combo.element) || !combo.known(data)
+                    || cds.getOrDefault(combo, 0L) > now || hinted.getOrDefault(combo, Long.MIN_VALUE / 2) + HINT_REST > now) {
+                continue;
+            }
+            int done = prefix(tail, combo, now);
+            if (done > 0 && done < combo.sequence.size()) {
+                hinted.put(combo, now);
+                p.displayClientMessage(Component.translatable("message.enlightened.combo.hint", combo.sequence.get(done).displayName())
+                        .withStyle(ChatFormatting.GOLD), true);
+                p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME,
+                        net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.4F);
+                return;
+            }
+        }
+    }
+
+    /** How many first steps of a combo the latest casts make (the last cast being the last of them), or 0. */
+    private static int prefix(Recent[] tail, Combos combo, long now) {
+        int window = window();
+        for (int k = combo.sequence.size() - 1; k >= 1; k--) {
+            if (tail.length < k) {
+                continue;
+            }
+            boolean ok = true;
+            for (int i = 0; i < k && ok; i++) {
+                Recent r = tail[tail.length - k + i];
+                ok = r.ability == combo.sequence.get(i) && (i == 0 || r.tick - tail[tail.length - k + i - 1].tick <= window);
+            }
+            if (ok && now - tail[tail.length - 1].tick <= window) {
+                return k;
+            }
+        }
+        return 0;
+    }
+
+    // ---- the burning walls ----
+
+    private record Burning(ServerLevel level, net.minecraft.world.phys.AABB box, long until, UUID owner) {
+    }
+
+    private static final List<Burning> BURNING = new java.util.ArrayList<>();
+
+    /** Every tick: whoever touches a burning wall catches fire. */
+    public static void tick(net.minecraft.server.MinecraftServer server) {
+        if (BURNING.isEmpty()) {
+            return;
+        }
+        BURNING.removeIf(b -> b.level.getGameTime() > b.until);
+        for (Burning b : BURNING) {
+            if (b.level.getGameTime() % 5 != 0) {
+                continue;
+            }
+            ServerPlayer owner = server.getPlayerList().getPlayer(b.owner);
+            for (LivingEntity e : b.level.getEntitiesOfClass(LivingEntity.class, b.box.inflate(0.4))) {
+                if (e.getUUID().equals(b.owner) || e.fireImmune()) {
+                    continue;
+                }
+                if (owner != null) {
+                    Shots.hurt(owner, e, 2.0F, ModDamageTypes.FIRE);
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(owner, e, 4);
+                } else {
+                    e.igniteForSeconds(4);
+                }
+            }
         }
     }
 
@@ -149,6 +303,10 @@ public enum Combos {
         int color = data.element() == Element.AVATAR ? element.color : Benders.color(p);
         Vec3 facing = Shots.facing(p);
         int strength = Math.max(1, Math.min(3, 1 + Mastery.strength(p) / 6));
+        if (performMore(p, data, level, color, facing, strength)) {
+            Fx.around(level, Fx.AIR_BURST, p, color, 0.0F);
+            return;
+        }
         switch (this) {
             case TWISTER -> {
                 TornadoEntity t = new TornadoEntity(level, p, p.position().add(facing.scale(2.0)), facing, 2.0F + strength * 0.5F, 160, 2.0F + strength, true);
@@ -265,13 +423,223 @@ public enum Combos {
         Fx.around(level, Fx.AIR_BURST, p, color, 0.0F);
     }
 
+    /** The combos of 1.0.25. */
+    private boolean performMore(ServerPlayer p, BendingData data, ServerLevel level, int color, Vec3 facing, int strength) {
+        int fire = Variants.fireColour(data);
+        switch (this) {
+            case BURNING_WALL, MAGMA_WALL -> {
+                // A wall five wide and three high, two blocks ahead, of magma, with flames along its top.
+                Vec3 side = new Vec3(-facing.z, 0, facing.x).normalize();
+                Vec3 base = p.position().add(facing.scale(2.5));
+                net.minecraft.world.phys.AABB box = null;
+                int ticks = 20 * (6 + strength * 2);
+                for (int s = -2; s <= 2; s++) {
+                    BlockPos foot = BlockPos.containing(base.add(side.scale(s)));
+                    for (int up = 0; up < 3; up++) {
+                        BlockPos pos = foot.above(up);
+                        if (level.getBlockState(pos).isAir() || level.getBlockState(pos).canBeReplaced() || TempBlocks.isRaised(level, pos)) {
+                            TempBlocks.replace(p, level, pos, Blocks.MAGMA_BLOCK.defaultBlockState(), ticks);
+                        }
+                        box = box == null ? new net.minecraft.world.phys.AABB(pos) : box.minmax(new net.minecraft.world.phys.AABB(pos));
+                    }
+                    BlockPos top = foot.above(3);
+                    if (level.getBlockState(top).isAir()) {
+                        TempBlocks.place(p, level, top, Blocks.FIRE.defaultBlockState(), ticks);
+                    }
+                }
+                if (box != null) {
+                    BURNING.add(new Burning(level, box, level.getGameTime() + ticks, p.getUUID()));
+                }
+                for (LivingEntity e : Shots.area(p, base.add(0, 1, 0), 2.5)) {
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 5);
+                    Shots.push(e, p.position(), 0.8, 0.3);
+                }
+                Fx.at(level, Fx.LAVA_BURST, base, fire, 3.0F);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.EARTH_RISE.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.4F, 0.6F);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.FIRECHARGE_USE, net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 0.7F);
+            }
+            case THUNDER_JET -> {
+                p.setDeltaMovement(facing.scale(1.6).add(0, 0.35, 0));
+                p.hurtMarked = true;
+                int bolts = 0;
+                for (LivingEntity e : Shots.area(p, p.position().add(facing.scale(4)), 9.0)) {
+                    if (bolts >= 3 + strength) {
+                        break;
+                    }
+                    Shots.hurt(p, e, 6.0F + strength * 2, ModDamageTypes.LIGHTNING);
+                    e.addEffect(new MobEffectInstance(ModEffects.STUNNED, 30, 0, false, true, true));
+                    Fx.send(level, Fx.LIGHTNING, p.position().add(0, 1, 0), e.position().add(0, e.getBbHeight() * 0.5, 0), 0, 1.0F);
+                    bolts++;
+                }
+                for (int i = 0; i < 12; i++) {
+                    Vec3 at = p.position().subtract(facing.scale(i * 0.4));
+                    level.sendParticles(ParticleTypes.FLAME, at.x, at.y + 0.2, at.z, 3, 0.15, 0.1, 0.15, 0.02);
+                    level.sendParticles(ParticleTypes.ELECTRIC_SPARK, at.x, at.y + 1, at.z, 2, 0.3, 0.3, 0.3, 0.1);
+                }
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.LIGHTNING_STRIKE.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.3F, 1.1F);
+            }
+            case DRAGON_BREATH -> {
+                double range = 10 + strength * 2;
+                for (LivingEntity e : Shots.cone(p, range, 28)) {
+                    Shots.hurt(p, e, 5.0F + strength * 1.5F, ModDamageTypes.FLAME);
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 6);
+                }
+                Fx.send(level, Fx.DRAGON_FIRE, p.getEyePosition().subtract(0, 0.2, 0), p.getEyePosition().add(facing.scale(range)), fire, (float) range);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.FIRE_BLAST.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.5F, 0.5F);
+            }
+            case AIR_SLAM -> {
+                p.setDeltaMovement(p.getDeltaMovement().x, 0.9, p.getDeltaMovement().z);
+                p.hurtMarked = true;
+                double radius = 6 + strength;
+                for (LivingEntity e : Shots.area(p, p.position(), radius)) {
+                    Shots.hurt(p, e, 4.0F + strength, ModDamageTypes.AIR);
+                    Shots.push(e, p.position(), 1.8, -0.2);
+                    e.addEffect(new MobEffectInstance(ModEffects.STUNNED, 40, 0, false, true, true));
+                }
+                Fx.at(level, Fx.SHOCKWAVE, p.position(), color, (float) radius);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_BLAST.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.5F, 0.6F);
+            }
+            case VACUUM_CANNON -> {
+                double range = 12 + strength * 2;
+                for (LivingEntity e : Shots.cone(p, range, 35)) {
+                    Shots.hurt(p, e, 4.0F + strength, ModDamageTypes.AIR);
+                    Shots.shove(e, facing, 2.6 + strength * 0.3, 0.6);
+                }
+                Fx.send(level, Fx.AIR_BLAST, p.getEyePosition(), p.getEyePosition().add(facing.scale(range)), color, (float) range);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_BLAST.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.6F, 0.5F);
+            }
+            case ROCK_STORM -> {
+                Shots.Aim aim = Shots.aim(p, 24);
+                BlockState stone = level.getBlockState(p.blockPosition().below());
+                if (!stone.isSolid()) {
+                    stone = Blocks.STONE.defaultBlockState();
+                }
+                for (int i = 0; i < 6 + strength * 2; i++) {
+                    Vec3 dir = aim.end().subtract(p.getEyePosition()).normalize()
+                            .yRot((float) Math.toRadians((level.random.nextDouble() - 0.5) * 30))
+                            .xRot((float) Math.toRadians((level.random.nextDouble() - 0.5) * 12));
+                    Vec3 from = p.position().add(facing.scale(1.2)).add((level.random.nextDouble() - 0.5) * 2, 0.6 + level.random.nextDouble(), (level.random.nextDouble() - 0.5) * 2);
+                    BendingShotEntity shot = new BendingShotEntity(level, BendingShotEntity.Kind.ROCK, from, p, color);
+                    shot.setBlockState(stone);
+                    shot.setDamage(3.0F + strength);
+                    shot.launch(dir, 1.3 + level.random.nextDouble() * 0.4);
+                    level.addFreshEntity(shot);
+                }
+                Fx.at(level, Fx.EARTH_RISE, p.position(), color, 2.0F);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.EARTH_RISE.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.4F, 0.8F);
+            }
+            case EARTHQUAKE -> {
+                double radius = 9 + strength * 2;
+                for (LivingEntity e : Shots.area(p, p.position(), radius)) {
+                    if (!e.onGround()) {
+                        continue;
+                    }
+                    Shots.hurt(p, e, 4.0F + strength, ModDamageTypes.EARTH);
+                    e.addEffect(new MobEffectInstance(ModEffects.STUNNED, 50 + strength * 10, 0, false, true, true));
+                    e.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 100, 2));
+                    e.setDeltaMovement(e.getDeltaMovement().add(0, 0.4, 0));
+                    e.hurtMarked = true;
+                }
+                for (int i = 0; i < 40; i++) {
+                    double a = level.random.nextDouble() * Math.PI * 2;
+                    double d = level.random.nextDouble() * radius;
+                    BlockPos under = BlockPos.containing(p.getX() + Math.cos(a) * d, p.getY() - 1, p.getZ() + Math.sin(a) * d);
+                    BlockState st = level.getBlockState(under);
+                    if (!st.isAir()) {
+                        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, st), under.getX() + 0.5, under.getY() + 1.1, under.getZ() + 0.5, 8, 0.4, 0.1, 0.4, 0.1);
+                    }
+                }
+                Fx.at(level, Fx.SHOCKWAVE, p.position(), color, (float) radius);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.WARDEN_SONIC_BOOM, net.minecraft.sounds.SoundSource.PLAYERS, 0.6F, 0.5F);
+            }
+            case TIDAL_WAVE -> {
+                double range = 10 + strength * 2;
+                for (LivingEntity e : Shots.cone(p, range, 50)) {
+                    Shots.hurt(p, e, 4.0F + strength, ModDamageTypes.WATER);
+                    Shots.shove(e, facing, 1.8 + strength * 0.2, 0.4);
+                    e.clearFire();
+                }
+                Vec3 side = new Vec3(-facing.z, 0, facing.x);
+                for (double d = 1; d <= range; d += 0.7) {
+                    for (double s = -d * 0.5; s <= d * 0.5; s += 0.8) {
+                        Vec3 at = p.position().add(facing.scale(d)).add(side.scale(s));
+                        level.sendParticles(ParticleTypes.SPLASH, at.x, at.y + 0.6, at.z, 2, 0.2, 0.3, 0.2, 0.2);
+                    }
+                }
+                Fx.send(level, Fx.WATER_SPLASH, p.position(), p.position().add(facing.scale(range)), color, (float) range);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.PLAYER_SPLASH_HIGH_SPEED, net.minecraft.sounds.SoundSource.PLAYERS, 1.4F, 0.6F);
+            }
+            case HEALING_TIDE -> {
+                double radius = 6 + strength;
+                for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(radius))) {
+                    boolean friend = e == p || e instanceof net.minecraft.world.entity.player.Player
+                            || e instanceof net.minecraft.world.entity.TamableAnimal t && t.isOwnedBy(p);
+                    if (friend) {
+                        e.heal(4.0F + strength * 2);
+                        e.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 100, 1));
+                        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, e.getX(), e.getY() + 1, e.getZ(), 8, 0.4, 0.5, 0.4, 0.05);
+                    }
+                }
+                Fx.at(level, Fx.WATER_HEAL, p.position(), color, (float) radius);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE, net.minecraft.sounds.SoundSource.PLAYERS, 1.4F, 1.2F);
+            }
+            case STEAM_CLOUD -> {
+                double range = 8 + strength;
+                for (LivingEntity e : Shots.cone(p, range, 50)) {
+                    Shots.hurt(p, e, 3.0F + strength, ModDamageTypes.FIRE);
+                    e.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.BLINDNESS, 80, 0));
+                }
+                for (int i = 0; i < 60; i++) {
+                    Vec3 at = p.getEyePosition().add(facing.scale(1 + level.random.nextDouble() * range))
+                            .add((level.random.nextDouble() - 0.5) * 3, (level.random.nextDouble() - 0.5) * 2, (level.random.nextDouble() - 0.5) * 3);
+                    level.sendParticles(ParticleTypes.CLOUD, at.x, at.y, at.z, 2, 0.3, 0.3, 0.3, 0.02);
+                }
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, net.minecraft.sounds.SoundSource.PLAYERS, 1.5F, 0.6F);
+            }
+            case FIRE_TORNADO -> {
+                TornadoEntity t = new TornadoEntity(level, p, p.position().add(facing.scale(2.5)), facing, 2.5F + strength * 0.5F, 160, 2.0F + strength, true);
+                level.addFreshEntity(t);
+                for (LivingEntity e : Shots.cone(p, 10, 40)) {
+                    com.kolodkingal.enlightened.fire.FireBending.ignite(p, e, 6);
+                    Shots.hurt(p, e, 3.0F + strength, ModDamageTypes.FIRE);
+                }
+                Fx.at(level, Fx.FIRE_SPIN, p.position().add(facing.scale(2.5)), fire, 4.0F);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.TORNADO.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.4F, 0.7F);
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.FIRE_RING.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.2F, 0.6F);
+            }
+            case SANDSTORM -> {
+                double range = 10 + strength;
+                for (LivingEntity e : Shots.cone(p, range, 55)) {
+                    Shots.hurt(p, e, 2.0F + strength, ModDamageTypes.EARTH);
+                    e.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.BLINDNESS, 100, 0));
+                    e.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 100, 1));
+                    Shots.shove(e, facing, 0.8, 0.2);
+                }
+                BlockParticleOption sand = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.SAND.defaultBlockState());
+                for (int i = 0; i < 80; i++) {
+                    Vec3 at = p.position().add(facing.scale(1 + level.random.nextDouble() * range))
+                            .add((level.random.nextDouble() - 0.5) * 4, level.random.nextDouble() * 2.5, (level.random.nextDouble() - 0.5) * 4);
+                    level.sendParticles(sand, at.x, at.y, at.z, 2, 0.3, 0.3, 0.3, 0.1);
+                }
+                level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.AIR_BLAST.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.4F, 0.5F);
+            }
+            default -> {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static void forget(ServerPlayer player) {
         RECENT.remove(player.getUUID());
         COOLDOWNS.remove(player.getUUID());
+        HINTED.remove(player.getUUID());
     }
 
     public static void clear() {
         RECENT.clear();
         COOLDOWNS.clear();
+        HINTED.clear();
+        BURNING.clear();
     }
 }

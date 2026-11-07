@@ -91,7 +91,8 @@ chosen by chance.
 
 * **It grows up in twenty minutes.** Feed it meat (beef, pork, mutton, chicken, cod, salmon, raw or cooked) to make it
   grow faster and to heal it.
-* **A grown dragon is huge** (a long serpent body with a white crest and mane) and has **200 health**.
+* **A grown dragon is huge** (a long serpent body with a white crest and mane, swept horns, fangs and a nose pad, four
+  clawed legs and a pair of wings that beat as it flies) and has **200 health**.
 * **Ride it:** right-click. Look where you want to go and hold forward; **Jump climbs**; with nothing held it hangs in
   the air. **Attack (left-click) breathes a great stream of fire** where you look. **A blue dragon breathes blue fire.**
 * **Sneak + right-click** makes it stay; do it again and it follows you.

@@ -1388,7 +1388,7 @@ def paint_dragons():
     out = os.path.join(ENTITY, 'dragon')
     white = (246, 244, 238)
     for name, c in DRAGONS.items():
-        p = Painter('dragon_' + name, (128, 64))
+        p = Painter('dragon_' + name, (128, 128))
         body, belly, dark = c['body'], c['belly'], c['dark']
         seg = cube(0, 0, 16, 16, 16)
         for face, rect in seg.items():
@@ -1437,6 +1437,40 @@ def paint_dragons():
             p.dot(x + 1, y + 1, (20, 16, 10))
         x, y, w, h = eyes['front']
         p.fill((x + 2, y, 8, h), body, 0.04)
+        # 1.0.21: the nose pad, fangs, legs and claws, wings, brows.
+        nose = (196, 120, 120) if name != 'blue' else (150, 130, 170)
+        for face, rect in cube(0, 64, 7, 4, 2).items():
+            p.fill(rect, nose, 0.06)
+        x, y, w, h = cube(0, 64, 7, 4, 2)['front']
+        p.dot(x + 1, y + 1, (40, 24, 24))
+        p.dot(x + w - 2, y + 1, (40, 24, 24))
+        for face, rect in cube(28, 64, 1, 4, 1).items():
+            p.fill(rect, white, 0.03)
+        for c2 in (cube(32, 64, 5, 9, 5), cube(52, 64, 4, 8, 4)):
+            for face, rect in c2.items():
+                paint_scales(p, rect, body, dark)
+        for face, rect in cube(68, 64, 5, 2, 6).items():
+            p.fill(rect, shade(dark, 0.8), 0.05)
+        x, y, w, h = cube(68, 64, 5, 2, 6)['front']
+        for i in range(0, w, 2):
+            p.dot(x + i, y + h - 1, (235, 230, 215))
+        membrane = mixc(body, dark, 0.45)
+        for face, rect in cube(0, 80, 20, 1, 15).items():
+            p.fill(rect, membrane, 0.08)
+        tx, ty, tw, th = cube(0, 80, 20, 1, 15)['top']
+        for k in range(0, tw, 5):
+            for j in range(th):
+                p.dot(tx + k, ty + j, shade(dark, 0.9))
+        bx, by, bw, bh = cube(0, 80, 20, 1, 15)['bottom']
+        for k in range(0, bw, 5):
+            for j in range(bh):
+                p.dot(bx + k, by + j, shade(dark, 0.9))
+        for face, rect in cube(0, 112, 20, 2, 2).items():
+            paint_scales(p, rect, body, dark)
+        for face, rect in cube(0, 100, 13, 2, 4).items():
+            p.fill(rect, shade(dark, 0.95), 0.06)
+        for face, rect in cube(88, 16, 2, 2, 8).items():
+            p.fill(rect, (226, 214, 180), 0.06)
         p.save(os.path.join(out, name + '.png'))
 
 

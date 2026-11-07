@@ -59,8 +59,9 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onInteractionKey(InputEvent.InteractionKeyMappingTriggered event) {
         Minecraft mc = Minecraft.getInstance();
-        if (event.isAttack() && mc.player != null && mc.player.getVehicle() instanceof com.kolodkingal.enlightened.entity.DragonEntity dragon
-                && dragon.getControllingPassenger() == mc.player) {
+        if (event.isAttack() && mc.player != null && mc.player.getVehicle() instanceof net.minecraft.world.entity.LivingEntity mount
+                && (mount instanceof com.kolodkingal.enlightened.entity.DragonEntity || mount instanceof com.kolodkingal.enlightened.entity.SkyBisonEntity)
+                && mount.getControllingPassenger() == mc.player) {
             net.neoforged.neoforge.network.PacketDistributor.sendToServer(com.kolodkingal.enlightened.network.DragonBreathPayload.INSTANCE);
             event.setSwingHand(false);
             event.setCanceled(true);

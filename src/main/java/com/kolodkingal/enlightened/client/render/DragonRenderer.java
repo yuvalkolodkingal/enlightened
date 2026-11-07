@@ -50,7 +50,10 @@ public class DragonRenderer extends EntityRenderer<DragonEntity> {
 
     private final ModelPart segment;
     private final ModelPart fin;
-    private final ModelPart leg;
+    private final ModelPart legL;
+    private final ModelPart legR;
+    private final ModelPart wingL;
+    private final ModelPart wingR;
     private final ModelPart head;
     private final ModelPart jaw;
 
@@ -59,7 +62,10 @@ public class DragonRenderer extends EntityRenderer<DragonEntity> {
         ModelPart root = context.bakeLayer(LAYER);
         segment = root.getChild("segment");
         fin = root.getChild("fin");
-        leg = root.getChild("leg");
+        legL = root.getChild("leg_l");
+        legR = root.getChild("leg_r");
+        wingL = root.getChild("wing_l");
+        wingR = root.getChild("wing_r");
         head = root.getChild("head");
         jaw = head.getChild("jaw");
         shadowRadius = 1.2F;
@@ -71,23 +77,52 @@ public class DragonRenderer extends EntityRenderer<DragonEntity> {
         PartDefinition root = mesh.getRoot();
         root.addOrReplaceChild("segment", CubeListBuilder.create().texOffs(0, 0).addBox(-8, -8, -8, 16, 16, 16), PartPose.ZERO);
         root.addOrReplaceChild("fin", CubeListBuilder.create().texOffs(64, 0).addBox(-1, -13, -5, 2, 5, 10), PartPose.ZERO);
-        root.addOrReplaceChild("leg", CubeListBuilder.create().texOffs(64, 16).addBox(6, 2, -2, 4, 9, 4)
-                .texOffs(64, 16).mirror().addBox(-10, 2, -2, 4, 9, 4), PartPose.ZERO);
+        // A leg each side: thigh, shin and a clawed foot, set at a segment (the left built, the right mirrored).
+        for (int side = -1; side <= 1; side += 2) {
+            String n = side < 0 ? "r" : "l";
+            CubeListBuilder thigh = CubeListBuilder.create().texOffs(32, 64);
+            if (side < 0) {
+                thigh.mirror();
+            }
+            PartDefinition leg = root.addOrReplaceChild("leg_" + n, thigh.addBox(-2.5F, 0, -2.5F, 5, 9, 5), PartPose.offset(side * 7.5F, 3, 0));
+            PartDefinition shin = leg.addOrReplaceChild("shin", CubeListBuilder.create().texOffs(52, 64).addBox(-2, 0, -2, 4, 8, 4),
+                    PartPose.offsetAndRotation(0, 8, 0.5F, -0.6F, 0, 0));
+            shin.addOrReplaceChild("foot", CubeListBuilder.create().texOffs(68, 64).addBox(-2.5F, 0, -4.5F, 5, 2, 6), PartPose.offsetAndRotation(0, 7.5F, 0, 0.6F, 0, 0));
+            // A wing of middling size: a bony leading edge and the membrane behind it.
+            CubeListBuilder wing = CubeListBuilder.create().texOffs(0, 80);
+            if (side < 0) {
+                wing.mirror();
+            }
+            float x0 = side < 0 ? -20 : 0;
+            root.addOrReplaceChild("wing_" + n, wing.addBox(x0, 0, -2, 20, 1, 15)
+                    .texOffs(0, 112).addBox(side < 0 ? -20 : 0, -1, -3, 20, 2, 2), PartPose.offset(side * 7.0F, -6, 0));
+        }
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
                 .texOffs(0, 32).addBox(-6, -6, -6, 12, 10, 12)
-                .texOffs(48, 32).addBox(-4, -3, 6, 8, 6, 9)
+                .texOffs(48, 32).addBox(-4, -3, 6, 8, 6, 10)
                 .texOffs(82, 32).addBox(-8, -9, -9, 16, 14, 4)
-                .texOffs(82, 50).addBox(-6, -4.5F, 3, 12, 2, 2, new CubeDeformation(0.1F)), PartPose.ZERO);
-        head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(48, 48).addBox(-3.5F, 0, 0, 7, 2, 10), PartPose.offset(0, 3, 4));
-        head.addOrReplaceChild("horn_r", CubeListBuilder.create().texOffs(88, 0).addBox(-1, -1, -10, 2, 2, 10),
-                PartPose.offsetAndRotation(-4, -6, -2, 0.45F, -0.25F, 0));
-        head.addOrReplaceChild("horn_l", CubeListBuilder.create().texOffs(88, 0).mirror().addBox(-1, -1, -10, 2, 2, 10),
-                PartPose.offsetAndRotation(4, -6, -2, 0.45F, 0.25F, 0));
-        head.addOrReplaceChild("whisker_r", CubeListBuilder.create().texOffs(88, 12).addBox(-8, 0, 0, 8, 1, 1),
-                PartPose.offsetAndRotation(-4, 1, 13, 0, 0.5F, 0.3F));
-        head.addOrReplaceChild("whisker_l", CubeListBuilder.create().texOffs(88, 12).mirror().addBox(0, 0, 0, 8, 1, 1),
-                PartPose.offsetAndRotation(4, 1, 13, 0, -0.5F, -0.3F));
-        return LayerDefinition.create(mesh, 128, 64);
+                .texOffs(82, 50).addBox(-6, -4.5F, 3, 12, 2, 2, new CubeDeformation(0.1F))
+                // Heavy brows over the eyes, a broad nose pad at the snout's tip.
+                .texOffs(0, 100).addBox(-6.5F, -7, 1.5F, 13, 2, 4)
+                .texOffs(0, 64).addBox(-3.5F, -3.8F, 15, 7, 4, 2), PartPose.ZERO);
+        head.addOrReplaceChild("fang_r", CubeListBuilder.create().texOffs(28, 64).addBox(-0.5F, 0, -0.5F, 1, 4, 1), PartPose.offset(-3, 3, 13));
+        head.addOrReplaceChild("fang_l", CubeListBuilder.create().texOffs(28, 64).addBox(-0.5F, 0, -0.5F, 1, 4, 1), PartPose.offset(3, 3, 13));
+        head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(48, 48).addBox(-3.5F, 0, 0, 7, 2, 11), PartPose.offset(0, 3, 4));
+        // Long horns swept back from the brow, curving up at their tips.
+        for (int side = -1; side <= 1; side += 2) {
+            CubeListBuilder horn = CubeListBuilder.create().texOffs(88, 0);
+            if (side > 0) {
+                horn.mirror();
+            }
+            PartDefinition h = head.addOrReplaceChild(side < 0 ? "horn_r" : "horn_l", horn.addBox(-1.5F, -1.5F, -11, 3, 3, 11),
+                    PartPose.offsetAndRotation(side * 4, -6, -1, 0.25F, side * 0.22F, 0));
+            h.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(88, 16).addBox(-1, -1, -8, 2, 2, 8), PartPose.offsetAndRotation(0, 0, -10.5F, -0.5F, 0, 0));
+        }
+        head.addOrReplaceChild("whisker_r", CubeListBuilder.create().texOffs(88, 12).addBox(-10, 0, 0, 10, 1, 1),
+                PartPose.offsetAndRotation(-3.5F, 0, 16, 0, 0.6F, 0.35F));
+        head.addOrReplaceChild("whisker_l", CubeListBuilder.create().texOffs(88, 12).mirror().addBox(0, 0, 0, 10, 1, 1),
+                PartPose.offsetAndRotation(3.5F, 0, 16, 0, -0.6F, -0.35F));
+        return LayerDefinition.create(mesh, 128, 128);
     }
 
     /** How thick the body is along its length (0 the neck, 1 the tip of the tail). */
@@ -134,12 +169,30 @@ public class DragonRenderer extends EntityRenderer<DragonEntity> {
             if (t < 0.92F) {
                 fin.render(pose, vc, light, overlay);
             }
-            if (i == 3 || i == 10) {
-                float step = Mth.sin(age * 0.3F + i) * (dragon.airborne() ? 0.6F : 0.3F);
-                leg.xRot = dragon.airborne() ? 0.9F : step;
-                leg.render(pose, vc, light, overlay);
-            }
             pose.popPose();
+            if (i == 2 || i == 3 || i == 10) {
+                // Limbs at the segment, drawn at its girth (not stretched along the body).
+                pose.pushPose();
+                pose.translate(at.x, at.y, at.z);
+                orient(pose, dir.normalize());
+                pose.scale(-g, -g, g);
+                boolean air = dragon.airborne();
+                if (i == 2) {
+                    // The wings: beating in flight, folded along the back on the ground.
+                    float beat = air ? Mth.sin(age * 0.35F) * 0.7F : 1.25F;
+                    wingL.zRot = -beat;
+                    wingR.zRot = beat;
+                    wingL.render(pose, vc, light, overlay);
+                    wingR.render(pose, vc, light, overlay);
+                } else {
+                    float stride = Mth.sin(age * 0.3F + i) * (air ? 0.15F : 0.5F) * Math.min(1.0F, dragon.walkAnimation.speed(partial) * 3.0F + (air ? 1 : 0));
+                    legL.xRot = (air ? 0.9F : 0.0F) + stride;
+                    legR.xRot = (air ? 0.9F : 0.0F) - stride;
+                    legL.render(pose, vc, light, overlay);
+                    legR.render(pose, vc, light, overlay);
+                }
+                pose.popPose();
+            }
             prev = at;
         }
 

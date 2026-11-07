@@ -93,6 +93,85 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8));
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 10.0F));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
+        goalSelector.addGoal(1, new GustGoal());
+        targetSelector.addGoal(1, new net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(2, new net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal(this));
+    }
+
+    // ---- its gust: as a dragon breathes fire, a bison blows a great wind ----
+
+    /** How far its gust reaches, what it does, and how long it rests after (ticks). */
+    public static final double GUST_REACH = 14.0;
+    public static final float GUST_DAMAGE = 4.0F;
+    public static final int GUST_REST = 40;
+    private int gustRest;
+
+    /** Its rider attacked: it blows where he looks. */
+    public void riderGusts(Player rider) {
+        if (getControllingPassenger() == rider) {
+            gust(rider.getLookAngle());
+        }
+    }
+
+    /**
+     * A great gust from its mouth along a direction (if it is not resting from the last): everything in the way is
+     * hurt a little and flung far, its owner and his riders spared. Returns whether it blew.
+     */
+    public boolean gust(Vec3 dir) {
+        if (gustRest > 0 || isBaby() || !(level() instanceof ServerLevel level) || dir.lengthSqr() < 1.0E-6) {
+            return false;
+        }
+        dir = dir.normalize();
+        gustRest = GUST_REST;
+        float yaw = yBodyRot * Mth.DEG_TO_RAD;
+        Vec3 mouth = position().add(-Mth.sin(yaw) * 2.2, 1.4, Mth.cos(yaw) * 2.2);
+        double cos = Math.cos(Math.toRadians(30));
+        LivingEntity owner = getOwner();
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(GUST_REACH), e -> e.isAlive() && e != this)) {
+            if (hasPassenger(e) || e == owner || owner != null && e instanceof net.minecraft.world.entity.OwnableEntity o && owner.getUUID().equals(o.getOwnerUUID())
+                    || e instanceof Player pl && (pl.isCreative() || pl.isSpectator())) {
+                continue;
+            }
+            Vec3 to = e.position().add(0, e.getBbHeight() * 0.5, 0).subtract(mouth);
+            double d = to.length();
+            if (d > GUST_REACH || d > 1.0 && to.scale(1.0 / d).dot(dir) < cos) {
+                continue;
+            }
+            e.hurt(damageSources().mobAttack(this), GUST_DAMAGE);
+            e.setDeltaMovement(e.getDeltaMovement().add(dir.scale(2.2 * (1.0 - d / GUST_REACH * 0.5))).add(0, 0.5, 0));
+            e.hurtMarked = true;
+        }
+        com.kolodkingal.enlightened.fx.Fx.send(level, com.kolodkingal.enlightened.fx.Fx.AIR_BLAST, mouth, mouth.add(dir.scale(GUST_REACH)),
+                com.kolodkingal.enlightened.bending.Element.AIR.glow, (float) GUST_REACH);
+        level.sendParticles(ParticleTypes.GUST, mouth.x + dir.x * 4, mouth.y + dir.y * 4, mouth.z + dir.z * 4, 3, 0.8, 0.8, 0.8, 0.0);
+        level.playSound(null, mouth.x, mouth.y, mouth.z, SoundEvents.BREEZE_WIND_CHARGE_BURST.value(), SoundSource.NEUTRAL, 1.6F, 0.6F);
+        return true;
+    }
+
+    /** Tame and grown, it blows its enemies (its owner's) away when they come within reach. */
+    final class GustGoal extends net.minecraft.world.entity.ai.goal.Goal {
+        GustGoal() {
+            setFlags(java.util.EnumSet.of(Flag.LOOK));
+        }
+
+        @Override
+        public boolean canUse() {
+            LivingEntity t = getTarget();
+            return isTame() && !isBaby() && getControllingPassenger() == null && t != null && t.isAlive() && distanceToSqr(t) < GUST_REACH * GUST_REACH;
+        }
+
+        @Override
+        public void tick() {
+            LivingEntity t = getTarget();
+            if (t == null) {
+                return;
+            }
+            getLookControl().setLookAt(t, 30.0F, 30.0F);
+            if (hasLineOfSight(t)) {
+                gust(t.getEyePosition().subtract(position().add(0, 1.4, 0)));
+            }
+        }
     }
 
     // ---- taming, growing, the saddle ----
@@ -352,6 +431,9 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
     @Override
     public void tick() {
         super.tick();
+        if (gustRest > 0) {
+            gustRest--;
+        }
         // Ridden, it carries its own weight in the air (and the server does not take it for a cheat).
         setNoGravity(getControllingPassenger() != null);
         if (!level().isClientSide && getControllingPassenger() == null && airborne()) {

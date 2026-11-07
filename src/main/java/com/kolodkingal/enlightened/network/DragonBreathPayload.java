@@ -23,6 +23,8 @@ public record DragonBreathPayload() implements CustomPacketPayload {
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player && player.getVehicle() instanceof DragonEntity dragon) {
                 dragon.riderBreathes(player);
+            } else if (context.player() instanceof ServerPlayer player && player.getVehicle() instanceof com.kolodkingal.enlightened.entity.SkyBisonEntity bison) {
+                bison.riderGusts(player);
             }
         });
     }

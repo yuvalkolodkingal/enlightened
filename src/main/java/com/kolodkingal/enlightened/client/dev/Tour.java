@@ -435,6 +435,10 @@ public final class Tour {
             omashu();
             return;
         }
+        if ("v121".equals(System.getProperty("enlightened.tour.only", ""))) {
+            v121();
+            return;
+        }
         if ("v120".equals(System.getProperty("enlightened.tour.only", ""))) {
             v120();
             return;
@@ -1022,6 +1026,43 @@ public final class Tour {
 
         cmd("tp @s 412.5 -6 118.5 172 -8", 200);
         shot("285_omashu_bridge", 200);
+    }
+
+    /** 1.0.21: the dragons' new faces, horns, legs and wings; the sky bison's gust (alone: -Denlightened.tour.only=v121). */
+    private static void v121() {
+        cmd("time set noon", 2);
+        cmd("gamerule doMobSpawning false", 2);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().options.hideGui = true));
+        cmd("gamemode spectator", 4);
+        cmd("summon enlightened:dragon 500.5 -60 0.5 {Colour:0,NoAI:1b,Rotation:[180f,0f]}", 2);
+        cmd("summon enlightened:dragon 510.5 -60 0.5 {Colour:1,NoAI:1b,Rotation:[180f,0f]}", 2);
+        cmd("summon enlightened:dragon 520.5 -60 0.5 {Colour:2,NoAI:1b,Rotation:[180f,0f]}", 2);
+        cmd("summon enlightened:dragon 510.5 -52 20.5 {Colour:2,NoAI:1b,NoGravity:1b,Rotation:[90f,0f]}", 2);
+        cmd("tp @s 510.5 -55 -14.5 0 15", 40);
+        shot("370_dragons_standing", 40);
+        cmd("tp @s 502.5 -57.5 -5.0 -20 20", 20);
+        shot("371_dragon_face", 20);
+        cmd("tp @s 498.5 -50 14.5 -80 5", 20);
+        shot("372_dragon_flying", 20);
+        // The sky bison blows a husk away.
+        server(p -> {
+            net.minecraft.server.level.ServerLevel level = p.serverLevel();
+            var bison = com.kolodkingal.enlightened.registry.ModEntities.SKY_BISON.get().create(level);
+            bison.moveTo(560.5, -60, 0.5, 0, 0);
+            bison.setNoAi(true);
+            level.addFreshEntity(bison);
+            var husk = net.minecraft.world.entity.EntityType.HUSK.create(level);
+            husk.moveTo(560.5, -60, 8.5, 180, 0);
+            husk.setNoAi(true);
+            level.addFreshEntity(husk);
+        }, 4);
+        cmd("tp @s 570.5 -56 2.5 70 15", 30);
+        server(p -> {
+            for (var b : p.serverLevel().getEntitiesOfClass(com.kolodkingal.enlightened.entity.SkyBisonEntity.class, p.getBoundingBox().inflate(40))) {
+                b.gust(new net.minecraft.world.phys.Vec3(0, 0.1, 1));
+            }
+        }, 4);
+        shot("373_bison_gust", 3);
     }
 
     /** 1.0.20: the brigades' uniforms drawn on the skin, armour hidden, Nisha (alone: -Denlightened.tour.only=v120). */

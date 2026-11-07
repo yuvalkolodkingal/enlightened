@@ -55,6 +55,10 @@ flat tail that swims through the air.
 * **Flying**: look where to go and hold **forward**; **Jump** climbs ("Yip yip!"). With no key held it hangs in the
   air and drifts slowly down. It lands where it touches the ground and walks there. Riders who step off high in the
   air float down. A bison never takes fall damage.
+* **Its gust**: as a dragon breathes fire, a grown bison **blows a great wind**. Riding it, **attack (left-click)** and
+  it blows where you look: everything in the way (up to 14 blocks) is flung far and hurt a little (4); you, its
+  riders and your pets are spared. Unridden and tamed, it blows away whatever attacks you or what you attack. It rests
+  2 seconds between gusts.
 
 A spawn egg is in the creative tab.
 

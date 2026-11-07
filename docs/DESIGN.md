@@ -610,3 +610,10 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
 | Brigade uniforms | `BrigadeLayer` on the player renderer: a player model at deformation 0.04 (the skin's own size; its outer parts as the skin's) draws `entity/brigade/<brigade>.png` (designs in the skin layout) for each brigade-trimmed piece: helmet the head, chestplate body and arms, leggings or boots the legs. `brigade(stack)`: lapis/amethyst/diamond water, redstone/copper fire, gold/quartz air, netherite avatar, else earth. `HumanoidArmorLayerMixin` skips brigade pieces on players (armor stands and mobs keep the trim on the armour). |
 | Hidden armour | `BendingData.armorHidden` (bit 52, synced, kept by `clearToggles`), set by `/armor hide|show` (`ArmorCommand`, anyone): the mixin skips all armour, and `BrigadeLayer` the uniform. |
 | Nisha | `tools/skins_provided/nisha.png` replaced by the new skin. |
+
+## 44. 1.0.21: the bison's gust, the dragons' faces, legs and wings
+
+| | |
+|---|---|
+| The gust | `SkyBisonEntity.gust(dir)`: from its mouth, a 30° cone of `GUST_REACH` 14: `GUST_DAMAGE` 4 and a fling along the gust (spares riders, owner, the owner's pets, creative players); `Fx.AIR_BLAST`, gust particles, a wind charge's burst; rests `GUST_REST` 40. Ridden: the attack key (`DragonBreathPayload`, now for bison too). Unridden: `GustGoal` at its target (owner's attacker and mark, its own attacker). |
+| The dragons | `DragonRenderer` (texture 128x128): brows and a nose pad on the head, two fangs, horns of 11 with a tip curving up, longer whiskers; legs (thigh, shin, clawed foot) both sides at the 4th and 11th segments, striding with its walk, tucked in flight; wings (bone and membrane, 20 by 15) at the 3rd segment, beating in flight, folded on the ground. Limbs are drawn at the segment's girth, not stretched along it. |

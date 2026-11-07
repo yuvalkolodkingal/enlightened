@@ -190,4 +190,23 @@ public final class NewArtsTests {
             helper.succeed();
         });
     }
+
+    @GameTest(template = ARENA, timeoutTicks = 20)
+    public static void aSkyBisonBlowsItsEnemiesAway(GameTestHelper helper) {
+        TestKit.Fixture f = TestKit.fixture(helper);
+        ServerPlayer p = f.player(10.5, TestKit.FLOOR, 2.5);
+        var bison = com.kolodkingal.enlightened.registry.ModEntities.SKY_BISON.get().create(helper.getLevel());
+        BlockPos at = helper.absolutePos(new BlockPos(10, 2, 4));
+        bison.moveTo(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 0.0F, 0.0F);
+        bison.setYBodyRot(0.0F);
+        bison.tame(p);
+        helper.getLevel().addFreshEntity(bison);
+        Husk husk = helper.spawn(EntityType.HUSK, new BlockPos(10, 2, 12));
+        husk.setNoAi(true);
+        check(bison.gust(new net.minecraft.world.phys.Vec3(0, 0, 1)), "it blows");
+        check(husk.getHealth() < husk.getMaxHealth() && husk.getDeltaMovement().z > 0.5, "the husk is hurt and flung away");
+        check(p.getHealth() == p.getMaxHealth(), "its owner is spared");
+        check(!bison.gust(new net.minecraft.world.phys.Vec3(0, 0, 1)), "and it rests before the next");
+        helper.succeed();
+    }
 }

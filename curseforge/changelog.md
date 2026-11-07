@@ -1,3 +1,10 @@
+# Enlightened 1.0.21
+
+* **Sky bison blow wind at enemies**: riding a bison, left-click and it blows a great gust where you look, flinging
+  everything away; a tamed bison also blows away whatever attacks you.
+* **The dragons look better**: a new face (heavy brows, fangs, a nose pad), long horns swept back, four proper legs with
+  claws, and medium wings that beat as they fly.
+
 # Enlightened 1.0.20
 
 * **The brigade uniforms are drawn on the skin**: Seven Havens' brigade armor no longer makes its wearer look bulky; the

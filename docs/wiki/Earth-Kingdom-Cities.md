@@ -43,7 +43,7 @@ and no wither or other boss can be raised there.
 
 In Ba Sing Se's **Upper Ring**, by the south street near the palace, stands the **Jasmine Dragon**: green and gold,
 dark wood pillars, green glass, a tiered green roof with a golden ridge. Inside, **Iroh** in his tea server's
-clothes (a green robe, a cream apron, a little green cap) stands behind his counter, between shelves of tea, a kettle
+clothes (a green robe, an apron with the jasmine flower) stands behind his counter, between shelves of tea, a kettle
 and azaleas; two tables with **stools** fill the room, lanterns hang overhead.
 
 * **Talk to Iroh** (right-click): he greets you, and you choose what to say.

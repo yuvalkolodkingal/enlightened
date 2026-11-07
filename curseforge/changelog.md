@@ -1,3 +1,7 @@
+# Enlightened 1.0.24
+
+* **Iroh has a new skin** at the Jasmine Dragon: the green robe and apron with the jasmine flower.
+
 # Enlightened 1.0.23
 
 * **A new talk screen for everyone you can talk to**, after Enhanced's: the speaker's face and name, the words typed out,

@@ -1258,6 +1258,11 @@ def paint_iroh_tea():
     """Iroh at the Jasmine Dragon (1.0.23): the tea server's clothes, a forest-green robe with a cream collar and cuffs,
     a cream apron over it, dark trousers, a little green cap with a cream band; white topknot and great beard
     (entity/iroh_tea.png)."""
+    given = os.path.join(PROVIDED, 'iroh_tea.png')
+    if os.path.exists(given):
+        # 1.0.24: the skin Yuval gave (the apron with the jasmine flower) replaces the painted one.
+        Image.open(given).convert('RGBA').save(os.path.join(ENTITY, 'iroh_tea.png'))
+        return
     p = Painter('iroh_tea')
     skin = (230, 200, 170)
     white = (232, 232, 232)
@@ -1565,7 +1570,7 @@ def main():
         paint_look(name, slim, spec)
     # Looks that exist only as given skins (Pavi and Nisha, the Avatars of Seven Havens).
     for f in sorted(os.listdir(PROVIDED)):
-        if f.endswith('.png') and f[:-4] not in LOOKS:
+        if f.endswith('.png') and f[:-4] not in LOOKS and f[:-4] != 'iroh_tea':
             provided(f[:-4])
     paint_shell('earth_armor', (120, 105, 85), (80, 70, 55))
     paint_shell('metal_armor', (170, 175, 180), (110, 115, 120))

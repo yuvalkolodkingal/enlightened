@@ -56,6 +56,11 @@ public final class BenderPoses {
             return; // one of Enhanced's heroes, not bending now: his body is the hero's
         }
         float pt = ageInTicks - player.tickCount;
+        if (st != null && ageInTicks == st.frameAge) {
+            // (the frame the body was just animated for: its exact partial tick; the float sum rounds to a whole tick
+            // after an hour or two in the world, which drew the vanilla pose for that frame: the flight's flicker)
+            pt = st.framePt;
+        }
         if (pt >= 1.0F && Animator.previewPartial >= 0.0F) {
             // The Bending Scroll's picture is drawn at a whole tick: pose it at the real frame.
             pt = Animator.previewPartial;

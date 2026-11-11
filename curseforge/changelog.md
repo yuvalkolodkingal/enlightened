@@ -1,3 +1,9 @@
+# Enlightened 1.0.30
+
+* **Steadier poses in long sessions.** After an hour or two in a world, a bender's pose could drop to the plain
+  standing pose for a single frame now and then (a flicker, most visible in flight and in third person). It no longer
+  does.
+
 # Enlightened 1.0.29
 
 * **Minecraft 1.21.4 too, in the same jar.** Put the one jar in a NeoForge 21.1 (Minecraft 1.21.1) or a NeoForge 21.4

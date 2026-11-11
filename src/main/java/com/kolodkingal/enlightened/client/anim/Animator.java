@@ -568,6 +568,9 @@ public final class Animator {
         if (pt >= 1.0F) {
             // The Bending Scroll's live picture: drawn at a whole tick, it moves on with the real frame.
             pt = previewPartial;
+        } else {
+            s.frameAge = (float) player.tickCount + pt;
+            s.framePt = pt;
         }
         double time = player.tickCount + pt;
         boolean first = s.fresh || time < s.time - 1.5;

@@ -18,7 +18,8 @@ public final class BodyLean {
     /** Updates this player's animation for the frame being drawn and applies the body's motion to the pose stack. */
     public static void apply(AbstractClientPlayer player, PoseStack poseStack, float yBodyRot, float partialTick) {
         AnimState state = Animator.frame(player, yBodyRot, partialTick);
-        if (state != null && state.wVanilla <= 0.0F) {
+        // (one of Enhanced's heroes who is not bending now leans as the hero does, once, not twice)
+        if (state != null && state.wVanilla <= 0.0F && !com.kolodkingal.enlightened.client.Coexist.yieldsBody(player, state)) {
             Animator.applyBody(poseStack, state, player);
         }
     }

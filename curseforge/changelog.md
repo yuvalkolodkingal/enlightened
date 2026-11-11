@@ -8,7 +8,8 @@
 * **The ability wheel** (hold **U**): all ten of your abilities around your face, with the name, level, key and state
   of the one you point at.
 * **Plays together with Enhanced.** A bender who is also one of Enhanced's heroes no longer fires both at once:
-  Enhanced's key **`** switches the ability keys between the hero and the bending.
+  Enhanced's key **`** switches the ability keys between the hero and the bending. A hero's suit, when it is on, is what
+  everyone sees, and the bending poses the body only while a bending move plays.
 * **Five more languages**: Spanish, French, German, Russian and Brazilian Portuguese (machine translated; corrections
   are welcome). In Hebrew the new panel styles are laid out right to left.
 

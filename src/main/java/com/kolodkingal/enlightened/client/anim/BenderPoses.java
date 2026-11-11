@@ -52,6 +52,9 @@ public final class BenderPoses {
         if (st != null) {
             st.posed = false;
         }
+        if (st != null && com.kolodkingal.enlightened.client.Coexist.yieldsBody(player, st)) {
+            return; // one of Enhanced's heroes, not bending now: his body is the hero's
+        }
         float pt = ageInTicks - player.tickCount;
         if (pt >= 1.0F && Animator.previewPartial >= 0.0F) {
             // The Bending Scroll's picture is drawn at a whole tick: pose it at the real frame.

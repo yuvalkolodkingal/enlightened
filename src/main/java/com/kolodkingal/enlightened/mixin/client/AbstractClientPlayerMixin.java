@@ -14,6 +14,9 @@ public abstract class AbstractClientPlayerMixin {
     @Inject(method = "getSkin", at = @At("RETURN"), cancellable = true)
     private void enlightened$suit(CallbackInfoReturnable<PlayerSkin> cir) {
         PlayerSkin own = cir.getReturnValue();
+        if (own != null && "enhanced".equals(own.texture().getNamespace())) {
+            return; // a hero's suit of Enhanced is on: the suit is what is seen, not the bender's look
+        }
         PlayerSkin skin = SuitSkins.skinFor((AbstractClientPlayer) (Object) this, own);
         if (skin != own) {
             cir.setReturnValue(skin);

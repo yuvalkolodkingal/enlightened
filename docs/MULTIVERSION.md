@@ -90,5 +90,16 @@ The gate of every phase: it compiles on every version done so far, the GameTests
 | 6. 1.21.10 and 1.21.11 | The submit-based renderers (the bison, the dragons, the spirits); the 1.21.11 renames. | Gate. |
 | 7. 26.1.2, 26.2, 26.3 | Java 25 and the new toolchain. | Gate. |
 
+### Phase 0, first result (2026-11-11)
+
+A toy mod built the way section 2 describes was tried: one jar holding a `boot` entry class and one `Entry` class per
+version (`spike.v1_21_1.Entry` using `ResourceLocation`, `spike.v1_21_11.Entry` using its 1.21.11 name `Identifier`),
+each compiled against its own NeoForge. **The same jar loaded on a dedicated server of NeoForge 21.1.265 (1.21.1) and
+of 21.11.48 (1.21.11)**, and on each the entry of that version ran. So the core of the approach holds across the whole
+1.21 range.
+
+Still to prove before phase 1: a mixin config per version switched by a plugin, a pack overlay, a client (only
+servers were started), and 26.x with its Java 25 classes. The two small projects are in Enhanced's `tools/multiversion-spike/`.
+
 What is uncertain: the notes for 1.21.5 and later are from NeoForge's release notes and from memory, and 26.2 and
 26.3 have not been audited. Re-run the audit at the start of each phase.

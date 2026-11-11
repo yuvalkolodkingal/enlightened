@@ -41,6 +41,61 @@ public final class Coexist {
         return !otherHasPowers() || SELF.equals(System.getProperty("kolodkingal.powers.active"));
     }
 
+    private static boolean looked;
+    private static net.neoforged.neoforge.attachment.AttachmentType<?> heroType;
+    private static java.lang.reflect.Method powerOf;
+    private static java.lang.reflect.Method hasPowers;
+
+    /**
+     * Whether a player (anyone in view, not only the local one) is one of Enhanced's heroes: read from Enhanced's
+     * synced {@code enhanced:power} attachment by its id, so that this mod needs none of Enhanced's classes.
+     */
+    public static boolean isHero(net.minecraft.world.entity.player.Player player) {
+        if (!OTHER_LOADED) {
+            return false;
+        }
+        try {
+            if (!looked) {
+                looked = true;
+                heroType = net.neoforged.neoforge.registries.NeoForgeRegistries.ATTACHMENT_TYPES.get(
+                        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(OTHER, "power"));
+            }
+            if (heroType == null) {
+                return false;
+            }
+            java.util.Optional<?> data = player.getExistingData(heroType);
+            if (data.isEmpty()) {
+                return false;
+            }
+            if (powerOf == null) {
+                powerOf = data.get().getClass().getMethod("power");
+                hasPowers = powerOf.getReturnType().getMethod("hasPowers");
+            }
+            return (Boolean) hasPowers.invoke(powerOf.invoke(data.get()));
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            heroType = null; // an Enhanced this does not understand: behave as if the player were no hero
+            return false;
+        }
+    }
+
+    /**
+     * Whether this mod leaves a player's body to Enhanced's animation: a hero who is not casting any bending right
+     * now. (While a bending gesture plays, the bending poses the body; the rest of the time the hero's own stance,
+     * flight and run do, so the two never fight over the same limbs.)
+     */
+    public static boolean yieldsBody(net.minecraft.world.entity.player.Player player,
+                                     com.kolodkingal.enlightened.client.anim.AnimState state) {
+        if (!isHero(player)) {
+            return false;
+        }
+        for (com.kolodkingal.enlightened.client.anim.AnimState.Slot slot : state.slots) {
+            if (slot != null && slot.id != null && slot.weight > 0.01F) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** The name of the key that switches between the two, as Enhanced wrote it ("" if unknown). */
     public static String switchKey() {
         return System.getProperty("kolodkingal.powers.switchKey", "");

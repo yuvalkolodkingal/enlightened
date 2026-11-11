@@ -1,5 +1,6 @@
 package com.kolodkingal.enlightened.client;
 
+import com.kolodkingal.enlightened.client.hud.PowerPanels;
 import com.kolodkingal.enlightened.air.AirBending;
 import com.kolodkingal.enlightened.bending.Ability;
 import com.kolodkingal.enlightened.bending.Benders;
@@ -50,6 +51,30 @@ public class BendingHud implements LayeredDraw.Layer {
         Font font = mc.font;
         long now = mc.level.getGameTime();
         float partial = deltaTracker.getGameTimeDeltaPartialTick(false);
+        if (!Coexist.active()) {
+            // A hero of Enhanced too, and switched to the hero: one line under the hero's panel says how to come back.
+            int[] other = Coexist.otherHudBottom();
+            Component line = Component.literal("[" + Coexist.switchKey() + "] ").withStyle(ChatFormatting.YELLOW)
+                    .append(element.awakeningTitle().copy().withStyle(s -> s.withColor(Variants.current(data).color())));
+            int w = font.width(line) + 6;
+            int ly = other == null ? 4 : other[0] + 2;
+            int lx = other != null && other[1] == 1 ? graphics.guiWidth() - 4 - w : 4;
+            graphics.fill(lx, ly, lx + w, ly + 11, 0x70000000);
+            graphics.drawString(font, line, lx + 3, ly + 2, 0xFFFFFFFF, true);
+            return;
+        }
+        PowerPanels.Style style = EnlightenedClientConfig.hudStyle();
+        if (style != PowerPanels.Style.CLASSIC) {
+            PowerPanels.Model model = model(mc);
+            if (model != null) {
+                boolean right = EnlightenedClientConfig.hudRight();
+                int top = 4 + (right ? effectsClearance(player) : 0);
+                int height = PowerPanels.draw(style, graphics, font, model, graphics.guiWidth(), top, right,
+                        EnlightenedClientConfig.reducedMotion());
+                Coexist.hudBottom(top + height, right);
+            }
+            return;
+        }
         watch(data, now);
         Variant look = Variants.current(data);
         MutableComponent title = element.awakeningTitle().copy().withStyle(s -> s.withColor(look.color()).withBold(true));
@@ -111,6 +136,7 @@ public class BendingHud implements LayeredDraw.Layer {
         int x = 4;
         int y = 4;
         int height = 12 + lines.size() * 10;
+        Coexist.hudBottom(y + height, false);
         graphics.fill(x - 2, y - 2, x + width + 4, y + height, 0x70000000);
         graphics.drawString(font, title, x, y, 0xFFFFFFFF, true);
         y += 12;
@@ -122,6 +148,86 @@ public class BendingHud implements LayeredDraw.Layer {
             graphics.drawString(font, line, x, y, 0xFFFFFFFF, true);
             y += 10;
         }
+    }
+
+    /** How far down a panel in the top-right corner starts so as not to cover the status effect icons there. */
+    private static int effectsClearance(LocalPlayer player) {
+        boolean good = false;
+        boolean bad = false;
+        for (net.minecraft.world.effect.MobEffectInstance effect : player.getActiveEffects()) {
+            if (effect.showIcon()) {
+                if (effect.getEffect().value().isBeneficial()) {
+                    good = true;
+                } else {
+                    bad = true;
+                }
+            }
+        }
+        return bad ? 52 : good ? 26 : 0;
+    }
+
+    /** What the new panel styles and the wheel draw: the same content as the classic panel, as data (null: no bender). */
+    @javax.annotation.Nullable
+    public static PowerPanels.Model model(Minecraft mc) {
+        LocalPlayer player = mc.player;
+        if (player == null || mc.level == null) {
+            return null;
+        }
+        BendingData data = Benders.get(player);
+        if (!data.canBend()) {
+            return null;
+        }
+        long now = mc.level.getGameTime();
+        Element element = data.element();
+        Variant look = Variants.current(data);
+        PowerPanels.Model model = new PowerPanels.Model();
+        model.identity = element.name() + "/" + look.displayName().getString();
+        model.title = element.awakeningTitle();
+        model.color = look.color();
+        model.sneaking = player.isShiftKeyDown();
+        for (int key = 1; key <= BendingData.KEYS; key++) {
+            model.rows.add(new PowerPanels.Row(KeyBindings.ability(key).getTranslatedKeyMessage(),
+                    panelSlot(player, data, BendingData.slotIndex(key, false), now),
+                    panelSlot(player, data, BendingData.slotIndex(key, true), now)));
+        }
+        model.notes.add(Component.translatable("hud.enlightened.points", data.points()).withStyle(ChatFormatting.GOLD)
+                .append(Component.literal("  "))
+                .append(Component.translatable("hud.enlightened.xp", data.xp(), Mastery.xpPerPoint()).withStyle(ChatFormatting.GRAY)));
+        if (element == Element.WATER) {
+            model.notes.add(Component.translatable("hud.enlightened.water", (int) data.water()).withStyle(s -> s.withColor(Element.WATER.color)));
+        }
+        if (data.suppressed(now)) {
+            model.notes.add(Component.translatable("hud.enlightened.suppressed", (data.suppressedUntil() - now) / 20).withStyle(ChatFormatting.RED));
+        }
+        if (element == Element.AIR && data.tetherless()) {
+            model.notes.add(Component.translatable("hud.enlightened.tetherless").withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
+        if (data.avatar(now)) {
+            model.notes.add(Component.translatable("hud.enlightened.avatar", (data.avatarUntil() - now) / 20).withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD));
+        }
+        if (data.chakras() > 0 || data.meditating()) {
+            model.beads = data.chakras();
+            model.beadsMax = com.kolodkingal.enlightened.bending.Chakras.COUNT;
+            if (data.meditating() && data.chakras() < com.kolodkingal.enlightened.bending.Chakras.COUNT) {
+                int pct = Math.min(100, data.meditation() * 100 / Math.max(1, com.kolodkingal.enlightened.bending.Chakras.ticksPerChakra()));
+                model.notes.add(Component.translatable("hud.enlightened.meditating", pct).withStyle(ChatFormatting.GRAY));
+            }
+        }
+        return model;
+    }
+
+    @javax.annotation.Nullable
+    private static PowerPanels.Slot panelSlot(LocalPlayer player, BendingData data, int slot, long now) {
+        Ability a = data.slot(slot);
+        if (a == null || !data.has(a)) {
+            return null;
+        }
+        boolean on = (a.kind == Ability.Kind.TOGGLE && data.on(a)) || data.active(a);
+        long left = data.cooldownUntil(a) - now;
+        float seconds = left > 0 && !on ? left / 20.0F : 0.0F;
+        net.minecraft.resources.ResourceLocation symbol = com.kolodkingal.enlightened.client.screen.ScrollUi.symbol(a);
+        return new PowerPanels.Slot(a.displayName(), status(player, data, a, now), seconds, on, data.level(a), Ability.MAX_LEVEL,
+                (g, x, y, size) -> com.kolodkingal.enlightened.client.screen.ScrollUi.drawSymbol(g, symbol, x, y, size));
     }
 
     /** Remembers when each cooldown began and how long it is, so the bar can ease and the line can flash. */

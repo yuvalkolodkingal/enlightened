@@ -994,5 +994,19 @@
   "npc.enlightened.iroh.ozai_map": "Here, I have marked it for you. Be careful, my friend. And when it is over, come back for tea.",
   "npc.enlightened.iroh.ozai_no_map": "Wulong Forest is far from here, farther than I know. Travel on, and ask me again.",
   "npc.enlightened.option.what_now": "What happens now?",
-  "npc.enlightened.option.ask_ozai": "Do you know where Ozai is?"
+  "npc.enlightened.option.ask_ozai": "Do you know where Ozai is?",
+  "key.enlightened.hud_style": "Change the Bending Panel's Style",
+  "key.enlightened.wheel": "Ability Wheel (hold)",
+  "hud.enlightened.style": "Bending panel: %s",
+  "hud.enlightened.style.classic": "Classic",
+  "hud.enlightened.style.stack": "Key stack",
+  "hud.enlightened.style.dial": "Dial",
+  "hud.enlightened.style.comic": "Comic panels",
+  "hud.enlightened.style.scroll": "Scroll",
+  "hud.enlightened.style.cluster": "Cluster",
+  "hud.enlightened.sneak": "Sneak",
+  "hud.enlightened.ready": "Ready",
+  "enlightened.configuration.hud": "Bending panel",
+  "enlightened.configuration.hudStyle": "Panel style",
+  "enlightened.configuration.hudOnTheRight": "Panel on the right"
 }

@@ -10,6 +10,8 @@ public final class EnlightenedClientConfig {
     public static final ModConfigSpec.BooleanValue REDUCED_MOTION;
     public static final ModConfigSpec.BooleanValue EFFECTS;
     public static final ModConfigSpec.BooleanValue FIRST_PERSON_HANDS;
+    public static final ModConfigSpec.EnumValue<com.kolodkingal.enlightened.client.hud.PowerPanels.Style> HUD_STYLE;
+    public static final ModConfigSpec.BooleanValue HUD_RIGHT;
     public static final ModConfigSpec SPEC;
 
     static {
@@ -22,6 +24,14 @@ public final class EnlightenedClientConfig {
                 .translation("enlightened.configuration.effects").define("effects", true);
         FIRST_PERSON_HANDS = B.comment("Move the first-person hands with the stances and gestures.")
                 .translation("enlightened.configuration.firstPersonHands").define("firstPersonHands", true);
+        B.pop();
+        B.push("hud");
+        HUD_STYLE = B.comment("How the bending panel is drawn. CLASSIC: the text panel of every version until now. STACK: one bar per key. "
+                        + "DIAL: icons around an emblem. COMIC: comic panels. SCROLL: a scroll pinned to the corner. CLUSTER: a small cluster of icons.")
+                .translation("enlightened.configuration.hudStyle")
+                .defineEnum("hudStyle", com.kolodkingal.enlightened.client.hud.PowerPanels.Style.SCROLL);
+        HUD_RIGHT = B.comment("Draw the new panel styles in the top-right corner (off: top-left). The classic panel is always top-left.")
+                .translation("enlightened.configuration.hudOnTheRight").define("hudOnTheRight", true);
         B.pop();
         SPEC = B.build();
     }
@@ -40,6 +50,14 @@ public final class EnlightenedClientConfig {
 
     public static boolean firstPersonHands() {
         return !SPEC.isLoaded() || FIRST_PERSON_HANDS.get();
+    }
+
+    public static com.kolodkingal.enlightened.client.hud.PowerPanels.Style hudStyle() {
+        return SPEC.isLoaded() ? HUD_STYLE.get() : com.kolodkingal.enlightened.client.hud.PowerPanels.Style.SCROLL;
+    }
+
+    public static boolean hudRight() {
+        return !SPEC.isLoaded() || HUD_RIGHT.get();
     }
 
     private EnlightenedClientConfig() {

@@ -31,6 +31,14 @@ public final class KeyBindings {
     public static final KeyMapping MEDITATE = new KeyMapping("key.enlightened.meditate", KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_M, CATEGORY);
 
+    /** Changes the bending panel's style (the client option hudStyle) to the next one. Not bound by default. */
+    public static final KeyMapping HUD_STYLE = new KeyMapping("key.enlightened.hud_style", KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), CATEGORY);
+
+    /** Held: the abilities as a wheel around the bender's face, with the details of the one pointed at. */
+    public static final KeyMapping WHEEL = new KeyMapping("key.enlightened.wheel", KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_U, CATEGORY);
+
     private static KeyMapping create(int ability, int key) {
         return new KeyMapping("key.enlightened.ability_" + ability, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, key, CATEGORY);
     }

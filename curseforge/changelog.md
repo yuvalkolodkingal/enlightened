@@ -1,3 +1,17 @@
+# Enlightened 1.0.29
+
+* **The bending panel has styles.** The new default is the **Scroll**: a scroll pinned to the top-right corner with
+  your element's seal, a line per key with the ability's symbol and level, a brush stroke for its cooldown and your
+  chakras as beads; hold Sneak and every line turns over to the ability on its Sneak slot. Five more to choose from in
+  the settings (or with a key you bind): the **Classic** text panel of every version until now, **Key stack**,
+  **Dial**, **Comic panels** and **Cluster**.
+* **The ability wheel** (hold **U**): all ten of your abilities around your face, with the name, level, key and state
+  of the one you point at.
+* **Plays together with Enhanced.** A bender who is also one of Enhanced's heroes no longer fires both at once:
+  Enhanced's key **`** switches the ability keys between the hero and the bending.
+* **Five more languages**: Spanish, French, German, Russian and Brazilian Portuguese (machine translated; corrections
+  are welcome). In Hebrew the new panel styles are laid out right to left.
+
 # Enlightened 1.0.28
 
 * **The Fire Palace is its own structure now, far from Wulong Forest**: the Fire Nation's Royal Palace, a walled

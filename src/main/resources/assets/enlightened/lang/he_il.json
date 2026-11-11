@@ -994,5 +994,19 @@
   "npc.enlightened.iroh.ozai_map": "הנה, סימנתי לך את המקום. תיזהר, ידידי. וכשזה ייגמר, תחזור לשתות תה.",
   "npc.enlightened.iroh.ozai_no_map": "יער וולונג רחוק מכאן, רחוק יותר ממה שאני יודע. המשך לנסוע, ותשאל אותי שוב.",
   "npc.enlightened.option.what_now": "מה קורה עכשיו?",
-  "npc.enlightened.option.ask_ozai": "אתה יודע איפה אוזאי?"
+  "npc.enlightened.option.ask_ozai": "אתה יודע איפה אוזאי?",
+  "key.enlightened.hud_style": "החלפת סגנון לוח הכשפות",
+  "key.enlightened.wheel": "גלגל היכולות (להחזיק)",
+  "hud.enlightened.style": "לוח הכשפות: %s",
+  "hud.enlightened.style.classic": "קלאסי",
+  "hud.enlightened.style.stack": "ערימת מקשים",
+  "hud.enlightened.style.dial": "חוגה",
+  "hud.enlightened.style.comic": "קומיקס",
+  "hud.enlightened.style.scroll": "מגילה",
+  "hud.enlightened.style.cluster": "אשכול",
+  "hud.enlightened.sneak": "התכופפות",
+  "hud.enlightened.ready": "מוכן",
+  "enlightened.configuration.hud": "לוח הכשפות",
+  "enlightened.configuration.hudStyle": "סגנון הלוח",
+  "enlightened.configuration.hudOnTheRight": "הלוח בצד ימין"
 }

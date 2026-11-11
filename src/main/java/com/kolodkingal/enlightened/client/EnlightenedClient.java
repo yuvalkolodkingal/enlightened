@@ -58,6 +58,8 @@ public final class EnlightenedClient {
         event.register(KeyBindings.CHANGE_LOOK);
         event.register(KeyBindings.SCROLL);
         event.register(KeyBindings.MEDITATE);
+        event.register(KeyBindings.HUD_STYLE);
+        event.register(KeyBindings.WHEEL);
     }
 
     private static void onGuiLayers(RegisterGuiLayersEvent event) {

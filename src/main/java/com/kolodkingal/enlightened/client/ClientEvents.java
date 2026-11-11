@@ -189,7 +189,29 @@ public final class ClientEvents {
 
     private static void handleKeys(Minecraft mc, LocalPlayer player) {
         BendingData data = Benders.get(player);
-        boolean bends = data.canBend();
+        Coexist.publish(data.canBend());
+        // (with Enhanced installed and the player a hero too, the keys go to whichever of the two is switched to)
+        boolean bends = data.canBend() && Coexist.active();
+        boolean styleClicked = false;
+        while (KeyBindings.HUD_STYLE.consumeClick()) {
+            styleClicked = true;
+        }
+        if (styleClicked && mc.screen == null && EnlightenedClientConfig.SPEC.isLoaded()) {
+            var next = EnlightenedClientConfig.HUD_STYLE.get().next();
+            EnlightenedClientConfig.HUD_STYLE.set(next);
+            EnlightenedClientConfig.SPEC.save();
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("hud.enlightened.style",
+                    net.minecraft.network.chat.Component.translatable("hud.enlightened.style." + next.name().toLowerCase(java.util.Locale.ROOT))), true);
+        }
+        boolean wheelClicked = false;
+        while (KeyBindings.WHEEL.consumeClick()) {
+            wheelClicked = true;
+        }
+        if (wheelClicked && bends && mc.screen == null) {
+            mc.setScreen(new com.kolodkingal.enlightened.client.hud.PowerWheelScreen(() -> BendingHud.model(mc), KeyBindings.WHEEL.getKey(),
+                    net.minecraft.network.chat.Component.translatable("hud.enlightened.sneak"),
+                    net.minecraft.network.chat.Component.translatable("hud.enlightened.ready")));
+        }
         boolean lookClicked = false;
         while (KeyBindings.CHANGE_LOOK.consumeClick()) {
             lookClicked = true;
@@ -201,7 +223,7 @@ public final class ClientEvents {
         while (KeyBindings.SCROLL.consumeClick()) {
             scrollClicked = true;
         }
-        if (scrollClicked && bends && mc.screen == null) {
+        if (scrollClicked && data.canBend() && mc.screen == null) {
             ClientScroll.open();
         }
         for (int i = 1; i <= BendingData.KEYS; i++) {

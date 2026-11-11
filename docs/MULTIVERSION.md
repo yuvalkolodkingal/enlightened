@@ -121,7 +121,7 @@ Phases 0 to 3 are done for 1.21.4 (1.21.3 is left out: nobody plays it, and 1.21
   quick tour (`-Denlightened.tour=true -Denlightened.tour.quick=true`) plays on both with the same pictures; the
   GameTests pass on 1.21.1. The GameTests are not built for 1.21.4 yet.
 
-## Progress (1.0.30): 1.21.5 joins the jar
+## Progress (1.0.31): 1.21.5 joins the jar
 
 Phase 4 is done for the server: the jar holds a third copy, `com.kolodkingal.enlightened.v1_21_5`, made by
 `versions/1.21.5`.

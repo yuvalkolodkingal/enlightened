@@ -36,4 +36,13 @@ public class LemurRenderer extends MobRenderer<FlyingLemurEntity, LemurModel> {
     public ResourceLocation getTextureLocation(FlyingLemurEntity entity) {
         return TEXTURE;
     }
+
+    //#if >=1.21.4
+    //$$ @Override
+    //$$ protected void scale(FlyingLemurEntity lemur, PoseStack pose, float partialTick) {
+    //$$     if (lemur.isBaby()) {
+    //$$         pose.scale(0.6F, 0.6F, 0.6F);
+    //$$     }
+    //$$ }
+    //#endif
 }

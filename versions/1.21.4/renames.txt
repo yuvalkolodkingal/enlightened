@@ -1,0 +1,82 @@
+# Names that changed between 1.21.1 and 1.21.4 and mean the same (regex => replacement), applied to the 1.21.4 copy.
+\bMobSpawnType\b => EntitySpawnReason
+\bRelativeMovement\b => Relative
+\bUseAnim\b => ItemUseAnimation
+\bgetMinBuildHeight\(\) => getMinY()
+\bregistryOrThrow\( => lookupOrThrow(
+\bFastColor\.ARGB32\b => ARGB
+\bnet\.minecraft\.util\.FastColor\b => net.minecraft.util.ARGB
+\bgetMaxBuildHeight\(\) - 1\b => getMaxY()
+# entities: hurt became hurtServer (server only) and hurtOrSimulate; create takes a spawn reason
+public boolean hurt\((?:net\.minecraft\.world\.damagesource\.)?DamageSource (\w+), float (\w+)\) => public boolean hurtServer(net.minecraft.server.level.ServerLevel hurtLevel, net.minecraft.world.damagesource.DamageSource $1, float $2)
+\bsuper\.hurt\( => super.hurtServer(hurtLevel, 
+(?<!super|Shots)\.hurt\( => .hurtOrSimulate(
+\.create\((level(?:\.getLevel\(\))?)\) => .create($1, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED)
+# registries
+\bgetHolderOrThrow\( => getOrThrow(
+\bstructures\.get\( => structures.getValue(
+(lookupOrThrow\((?:net\.minecraft\.core\.registries\.)?Registries\.STRUCTURE\))\.get\( => $1.getValue(
+\bnet\.minecraft\.world\.item\.armortrim\.TrimPattern\b => net.minecraft.world.item.equipment.trim.TrimPattern
+# entity types are built with their registry key
+\.build\("(\w+)"\)\) => .build(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, com.kolodkingal.enlightened.Enlightened.id("$1"))))
+# items: use() returns an InteractionResult that may carry the stack
+\bimport net\.minecraft\.world\.InteractionResultHolder; => import net.minecraft.world.InteractionResult;
+(?:net\.minecraft\.world\.)?InteractionResultHolder<ItemStack> => net.minecraft.world.InteractionResult
+(?:net\.minecraft\.world\.)?InteractionResultHolder\.sidedSuccess\((\w+), [^;]*\); => net.minecraft.world.InteractionResult.SUCCESS.heldItemTransformedTo($1);
+(?:net\.minecraft\.world\.)?InteractionResultHolder\.(?:success|consume)\((\w+)\) => net.minecraft.world.InteractionResult.SUCCESS.heldItemTransformedTo($1)
+(?:net\.minecraft\.world\.)?InteractionResultHolder\.pass\(\w+\) => net.minecraft.world.InteractionResult.PASS
+(?:net\.minecraft\.world\.)?InteractionResultHolder\.fail\(\w+\) => net.minecraft.world.InteractionResult.FAIL
+\bInteractionResult\.sidedSuccess\([^;]*\); => InteractionResult.SUCCESS;
+\.getCooldowns\(\)\.addCooldown\(this, => .getCooldowns().addCooldown(stack,
+# effects tick on the server, with its level
+public boolean applyEffectTick\(LivingEntity (\w+), int (\w+)\) => public boolean applyEffectTick(net.minecraft.server.level.ServerLevel effectLevel, LivingEntity $1, int $2)
+# blocks
+\bRenderShape\.ENTITYBLOCK_ANIMATED\b => RenderShape.INVISIBLE
+public ItemStack getCloneItemStack\(LevelReader (\w+), BlockPos (\w+), BlockState (\w+)\) => protected ItemStack getCloneItemStack(LevelReader $1, BlockPos $2, BlockState $3, boolean includeData)
+setBackground\(InventoryMenu\.BLOCK_ATLAS, => setBackground(
+\.getExperience\(\) => .experience()
+# entities
+(?<![\w.])spawnAtLocation\( => spawnAtLocation((net.minecraft.server.level.ServerLevel) level(), 
+public boolean doHurtTarget\(Entity (\w+)\) => public boolean doHurtTarget(net.minecraft.server.level.ServerLevel hurtLevel, Entity $1)
+\bsuper\.doHurtTarget\( => super.doHurtTarget(hurtLevel, 
+(?<![\w.])doHurtTarget\(getTarget\(\)\) => doHurtTarget((net.minecraft.server.level.ServerLevel) level(), getTarget())
+\bisInvulnerableTo\(source\) => isInvulnerableTo((net.minecraft.server.level.ServerLevel) level(), source)
+protected void dropEquipment\(\) => protected void dropEquipment(net.minecraft.server.level.ServerLevel dropLevel)
+\bsuper\.dropEquipment\(\) => super.dropEquipment(dropLevel)
+\bSoundEvents\.GENERIC_EAT\b => SoundEvents.GENERIC_EAT.value()
+\bIngredient\.of\((ModTags\.\w+)\) => Ingredient.of(net.minecraft.core.registries.BuiltInRegistries.ITEM.getOrThrow($1))
+\bnavigation\.setCanPassDoors\( => navigation.getNodeEvaluator().setCanPassDoors(
+(new NearestAttackableTargetGoal<>\(this, Mob\.class, \d+, \w+, \w+,\s*)e -> => $1(e, targetLevel) ->
+# client
+\bgetTimer\(\) => getDeltaTracker()
+\bgetToasts\(\) => getToastManager()
+RenderSystem\.setShader\(GameRenderer::getPositionTexColorShader\) => RenderSystem.setShader(net.minecraft.client.renderer.CoreShaders.POSITION_TEX_COLOR)
+RenderSystem\.setShader\(GameRenderer::getPositionColorShader\) => RenderSystem.setShader(net.minecraft.client.renderer.CoreShaders.POSITION_COLOR)
+\bRenderType\.entityTranslucentCull\( => RenderType.itemEntityTranslucentCull(
+\bSkyType\.NORMAL\b => SkyType.OVERWORLD
+\bATTACHMENT_TYPES\.get\( => ATTACHMENT_TYPES.getValue(
+\bg\.blit\((\w+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+), ([^,()]+)\) => g.blit(net.minecraft.client.renderer.RenderType::guiTextured, $1, $2, $3, $6, $7, $4, $5, $8, $9, $10, $11)
+\.create\((p\.serverLevel\(\))\) => .create($1, net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED)
+\bp\.teleportTo\(([^;]*?), (-?[\d.]+F), (-?[\d.]+F)\) => p.teleportTo($1, java.util.Set.of(), $2, $3, true)
+\bnew GameRules\(\) => new GameRules(net.minecraft.world.flag.FeatureFlags.DEFAULT_FLAGS)
+# renderers and models written against 1.21.1 (compat/Legacy*: posed and drawn from the render state's entity)
+\bextends HierarchicalModel<(\w+)> => extends com.kolodkingal.enlightened.compat.LegacyModel<$1>
+\bextends PlayerModel<(\w+)> => extends com.kolodkingal.enlightened.compat.LegacyPlayerModel<$1>
+\bextends EntityRenderer<(\w+)> => extends com.kolodkingal.enlightened.compat.LegacyEntityRenderer<$1>
+\bextends MobRenderer<(\w+), ([\w.]+(?:<\w+>)?)> => extends com.kolodkingal.enlightened.compat.LegacyMobRenderer<$1, $2>
+\bextends LivingEntityRenderer<(\w+), ([\w.]+(?:<\w+>)?)> => extends com.kolodkingal.enlightened.compat.LegacyLivingRenderer<$1, $2>
+\bextends HumanoidMobRenderer<(\w+), ([\w.]+(?:<\w+>)?)> => extends com.kolodkingal.enlightened.compat.LegacyHumanoidRenderer<$1, $2>
+\bRenderLayer<\w+, PlayerModel<\w+>> => RenderLayer<net.minecraft.client.renderer.entity.state.PlayerRenderState, PlayerModel>
+\bRenderLayerParent<\w+, PlayerModel<\w+>> => RenderLayerParent<net.minecraft.client.renderer.entity.state.PlayerRenderState, PlayerModel>
+public void render\(PoseStack (\w+), MultiBufferSource (\w+), int (\w+), (\w+) (\w+),\s*float (\w+),\s*float (\w+),\s*float (\w+),\s*float (\w+),\s*float (\w+),\s*float (\w+)\) \{ => public void render(PoseStack $1, MultiBufferSource $2, int $3, net.minecraft.client.renderer.entity.state.PlayerRenderState layerState, float $10, float $11) {\n        if (!(com.kolodkingal.enlightened.compat.RenderBridge.entity(layerState) instanceof $4 $5)) {\n            return;\n        }\n        float $6 = layerState.walkAnimationPos, $7 = layerState.walkAnimationSpeed, $8 = layerState.partialTick, $9 = layerState.ageInTicks;
+\b(shell|uniform|helmet)\.setupAnim\(\w+, \w+, \w+, \w+, \w+, \w+\); => $1.setupAnim(layerState);
+\bnew PlayerModel<>\( => new PlayerModel(
+\briding = (\w+); => legacyRiding($1);
+\bnet\.minecraft\.world\.item\.armortrim\.ArmorTrim\b => net.minecraft.world.item.equipment.trim.ArmorTrim
+\bPlayerModel<[\w?]+> => PlayerModel
+# the humanoid model's per-entity fields moved to the render state (RenderBridge.pose: the player being posed)
+\b(?:m|model)\.(rightArmPose|leftArmPose|attackTime)\b => com.kolodkingal.enlightened.compat.RenderBridge.pose.$1
+\bm\.crouching\b => com.kolodkingal.enlightened.compat.RenderBridge.pose.isCrouching
+\bLivingEntityRenderer\.getOverlayCoords\((\w+), 0\.0F\) => net.minecraft.client.renderer.texture.OverlayTexture.pack(net.minecraft.client.renderer.texture.OverlayTexture.u(0.0F), net.minecraft.client.renderer.texture.OverlayTexture.v($1.hurtTime > 0 || $1.deathTime > 0))
+\bcontext\.getItemRenderer\(\) => net.minecraft.client.Minecraft.getInstance().getItemRenderer()
+\bimport net\.minecraft\.client\.model\.HierarchicalModel; => // (HierarchicalModel is gone from 1.21.2: compat.LegacyModel)

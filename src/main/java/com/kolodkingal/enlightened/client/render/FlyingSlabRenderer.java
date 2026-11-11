@@ -34,7 +34,11 @@ public class FlyingSlabRenderer extends EntityRenderer<FlyingSlabEntity> {
 
     @Override
     public boolean shouldRender(FlyingSlabEntity slab, Frustum frustum, double x, double y, double z) {
+        //#if >=1.21.4
+        //$$ return frustum.isVisible(slab.getBoundingBox().inflate(4.0));
+        //#else
         return frustum.isVisible(slab.getBoundingBoxForCulling());
+        //#endif
     }
 
     @SuppressWarnings("deprecation")

@@ -33,6 +33,9 @@ public class LionTurtleModel extends HierarchicalModel<LionTurtleEntity> {
     private final ModelPart rightFlipper;
 
     public LionTurtleModel(ModelPart root) {
+        //#if >=1.21.4
+        //$$ super(root);
+        //#endif
         this.root = root;
         this.head = root.getChild("head");
         this.leftFlipper = root.getChild("left_flipper");
@@ -108,10 +111,12 @@ public class LionTurtleModel extends HierarchicalModel<LionTurtleEntity> {
         }
     }
 
+    //#if <1.21.4
     @Override
     public ModelPart root() {
         return root;
     }
+    //#endif
 
     @Override
     public void setupAnim(LionTurtleEntity turtle, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

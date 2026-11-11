@@ -1,0 +1,29 @@
+// Enlightened's copy for Minecraft 1.21.4: the shared sources (../../src/main/java) through Preprocess, compiled
+// against NeoForge 21.4. The root project puts its classes into the one jar (docs/MULTIVERSION.md).
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+def mc = '1.21.4'
+def copySuffix = 'v1_21_4'
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+def preprocess = tasks.register('preprocess', Preprocess) {
+    source = rootProject.file('src/main/java')
+    target = layout.buildDirectory.dir('preprocessed/java')
+    minecraft = mc
+    overlay = file('src/main/java')
+    renames = file('renames.txt')
+    suffix = copySuffix
+}
+sourceSets.main.java.srcDirs = [preprocess.map { it.target }]
+
+neoForge {
+    version = '21.4.161'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xmaxerrs', '100000'])
+}

@@ -146,3 +146,39 @@ idea {
         downloadJavadoc = true
     }
 }
+
+// ===== One jar for several Minecraft versions (docs/MULTIVERSION.md) =====
+// The jar holds the mod as written (for 1.21.1) and, for each later version, its copy from versions/<mc> (relocated to
+// com.kolodkingal.enlightened.v<mc>); boot.EnlightenedBoot starts the copy of the running version. Each copy has its own
+// mixin config, made from enlightened.mixins.json, which boot.MixinGate applies only on its version.
+def copies = [[project: ':v1_21_4', suffix: 'v1_21_4']]
+def copyMixins = tasks.register('copyMixinConfigs') {
+    def source = file('src/main/resources/enlightened.mixins.json')
+    def out = layout.buildDirectory.dir('generated/copyMixins')
+    inputs.file(source)
+    outputs.dir(out)
+    doLast {
+        copies.each { c ->
+            def text = source.getText('UTF-8').replace('"com.kolodkingal.enlightened.mixin"', "\"com.kolodkingal.enlightened.${c.suffix}.mixin\"")
+            def f = out.get().file("enlightened.${c.suffix}.mixins.json").asFile
+            f.parentFile.mkdirs()
+            f.setText(text, 'UTF-8')
+        }
+    }
+}
+tasks.named('jar', Jar) {
+    copies.each { c ->
+        dependsOn("${c.project}:classes")
+        from(project(c.project).sourceSets.main.output.classesDirs)
+    }
+    from(copyMixins)
+    // (only the jar names the copies' mixin configs: a development run has the 1.21.1 classes alone)
+    filesMatching('META-INF/neoforge.mods.toml') {
+        filter { String line ->
+            line.startsWith('config="enlightened.mixins.json"')
+                    ? line + copies.collect { c -> "\n[[mixins]]\nconfig=\"enlightened.${c.suffix}.mixins.json\"" }.join('')
+                    : line
+        }
+    }
+}
+// `./gradlew compileJava` and friends run in every project; the root's own tasks are :compileJava etc.

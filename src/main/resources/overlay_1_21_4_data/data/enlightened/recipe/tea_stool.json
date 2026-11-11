@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "W",
+    "S",
+    "S"
+  ],
+  "key": {
+    "W": "minecraft:green_wool",
+    "S": "minecraft:stick"
+  },
+  "result": {
+    "id": "enlightened:tea_stool",
+    "count": 2
+  }
+}

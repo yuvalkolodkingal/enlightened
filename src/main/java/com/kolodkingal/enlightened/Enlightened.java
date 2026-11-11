@@ -13,7 +13,6 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import org.slf4j.Logger;
 
@@ -21,7 +20,7 @@ import org.slf4j.Logger;
  * Enlightened: become a bender of the Avatar world (earth, air, water or fire), learn the sub-bending arts and choose
  * the abilities you take into battle.
  */
-@Mod(Enlightened.MODID)
+/* Started by boot.EnlightenedBoot (the jar's only @Mod), which picks the copy of the running Minecraft version. */
 public class Enlightened {
     public static final String MODID = "enlightened";
     public static final Logger LOGGER = LogUtils.getLogger();
@@ -43,6 +42,11 @@ public class Enlightened {
         modBus.addListener(ModEntities::createAttributes);
         modBus.addListener(ModEntities::registerSpawnPlacements);
         container.registerConfig(ModConfig.Type.SERVER, EnlightenedConfig.SPEC);
+        // (registered here, not found by scanning: a copy of the mod for another Minecraft version must never be loaded)
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.event.CommonEvents.class);
+        //#if >=1.21.4
+        //$$ net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.compat.AttachSync.class);
+        //#endif
     }
 
     public static ResourceLocation id(String path) {

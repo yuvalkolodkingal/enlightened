@@ -85,7 +85,7 @@ public final class Projection {
                 body.discard();
             }
             if (p.level() != level) {
-                p.teleportTo(level, at.x, at.y, at.z, p.getYRot(), p.getXRot());
+                com.kolodkingal.enlightened.compat.Compat.teleport(p, level, at.x, at.y, at.z, p.getYRot(), p.getXRot());
             } else {
                 p.teleportTo(at.x, at.y, at.z);
             }

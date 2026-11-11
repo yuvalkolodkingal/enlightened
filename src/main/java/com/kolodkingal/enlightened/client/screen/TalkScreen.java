@@ -186,8 +186,17 @@ public class TalkScreen extends Screen {
         if (entity == null) {
             return null;
         }
+        //#if >=1.21.4
+        //$$ var renderer = mc.getEntityRenderDispatcher().getRenderer(entity);
+        //$$ if (renderer instanceof net.minecraft.client.renderer.entity.LivingEntityRenderer living) {
+        //$$     return living.getTextureLocation((net.minecraft.client.renderer.entity.state.LivingEntityRenderState)
+        //$$             living.createRenderState(entity, 1.0F));
+        //$$ }
+        //$$ return null;
+        //#else
         EntityRenderer<Entity> renderer = (EntityRenderer<Entity>) mc.getEntityRenderDispatcher().getRenderer(entity);
         return renderer.getTextureLocation(entity);
+        //#endif
     }
 
     private void answer(String option) {

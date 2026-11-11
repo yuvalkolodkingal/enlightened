@@ -41,7 +41,7 @@ public class BackSlot extends Slot {
     public static void set(Player player, ItemStack stack) {
         player.setData(ModAttachments.BACK, stack);
         if (player instanceof ServerPlayer server) {
-            server.syncData(ModAttachments.BACK);
+            com.kolodkingal.enlightened.compat.Compat.sync(server, ModAttachments.BACK.get());
         }
     }
 

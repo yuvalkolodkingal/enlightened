@@ -139,10 +139,20 @@ public class FlyingSlabEntity extends Entity implements IEntityWithComplexSpawn 
         return extent.move(position());
     }
 
+    //#if <1.21.4
+    // (from 1.21.4 the renderer gives the box it is culled by: FlyingSlabRenderer)
     @Override
     public AABB getBoundingBoxForCulling() {
         return space().inflate(1.0);
     }
+    //#endif
+
+    //#if >=1.21.4
+    //$$ @Override
+    //$$ public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+    //$$     return false;
+    //$$ }
+    //#endif
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {

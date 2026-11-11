@@ -420,7 +420,11 @@ public final class LionTurtle {
     static void carry(ServerLevel level, Entity e, Direction dir) {
         if (e instanceof ServerPlayer p) {
             p.teleportTo(level, p.getX() + dir.getStepX(), p.getY(), p.getZ() + dir.getStepZ(), EnumSet.of(RelativeMovement.X,
+                    //#if >=1.21.4
+                    //$$ RelativeMovement.Y, RelativeMovement.Z, RelativeMovement.X_ROT, RelativeMovement.Y_ROT), p.getYRot(), p.getXRot(), true);
+                    //#else
                     RelativeMovement.Y, RelativeMovement.Z, RelativeMovement.X_ROT, RelativeMovement.Y_ROT), p.getYRot(), p.getXRot());
+                    //#endif
         } else {
             e.teleportTo(e.getX() + dir.getStepX(), e.getY(), e.getZ() + dir.getStepZ());
         }

@@ -378,7 +378,11 @@ public final class FireMore {
             for (net.minecraft.world.item.crafting.RecipeType<? extends net.minecraft.world.item.crafting.AbstractCookingRecipe> type
                     : java.util.List.of(net.minecraft.world.item.crafting.RecipeType.SMELTING, net.minecraft.world.item.crafting.RecipeType.BLASTING,
                     net.minecraft.world.item.crafting.RecipeType.SMOKING, net.minecraft.world.item.crafting.RecipeType.CAMPFIRE_COOKING)) {
+                //#if >=1.21.4
+                //$$ var found = level.recipeAccess().getRecipeFor(type, input, level);
+                //#else
                 var found = level.getRecipeManager().getRecipeFor(type, input, level);
+                //#endif
                 if (found.isPresent()) {
                     return found.get().value();
                 }

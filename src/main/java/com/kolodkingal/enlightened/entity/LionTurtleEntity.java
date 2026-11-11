@@ -43,7 +43,9 @@ public class LionTurtleEntity extends PathfinderMob {
         super(type, level);
         setPersistenceRequired();
         setNoGravity(true);
-        noCulling = true;
+        //#if <1.21.4
+        noCulling = true; // (from 1.21.4 its renderer is never culled: LionTurtleRenderer)
+        //#endif
     }
 
     public static AttributeSupplier.Builder createAttributes() {

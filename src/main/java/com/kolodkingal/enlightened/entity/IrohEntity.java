@@ -405,4 +405,12 @@ public class IrohEntity extends PathfinderMob implements Merchant {
             return com.kolodkingal.enlightened.registry.ModBlocks.TEA_STOOL.get();
         }
     }
+
+    //#if >=1.21.4
+    //$$ @Override
+    //$$ public boolean stillValid(Player player) {
+    //$$     return getTradingPlayer() == player && isAlive() && player.distanceToSqr(this) <= 64.0;
+    //$$ }
+    //#endif
+
 }

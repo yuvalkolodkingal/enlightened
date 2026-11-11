@@ -30,6 +30,11 @@ public final class ModNetwork {
         registrar.playToClient(CometPayload.TYPE, CometPayload.STREAM_CODEC, CometPayload::handle);
         registrar.playToClient(SeismicPayload.TYPE, SeismicPayload.STREAM_CODEC, SeismicPayload::handle);
         registrar.playToClient(FxPayload.TYPE, FxPayload.STREAM_CODEC, FxPayload::handle);
+        //#if >=1.21.4
+        //$$ // (NeoForge 21.4 does not sync attachments: the mod sends its two itself)
+        //$$ registrar.playToClient(com.kolodkingal.enlightened.compat.AttachSync.Payload.TYPE,
+        //$$         com.kolodkingal.enlightened.compat.AttachSync.Payload.STREAM_CODEC, com.kolodkingal.enlightened.compat.AttachSync::receive);
+        //#endif
     }
 
     public static void sendTo(ServerPlayer player, CustomPacketPayload payload) {

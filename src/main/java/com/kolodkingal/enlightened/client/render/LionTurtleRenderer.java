@@ -27,4 +27,12 @@ public class LionTurtleRenderer extends MobRenderer<LionTurtleEntity, LionTurtle
     public ResourceLocation getTextureLocation(LionTurtleEntity entity) {
         return TEXTURE;
     }
+
+    //#if >=1.21.4
+    //$$ // (the head is far bigger than its hit box: never culled, as 1.21.1's noCulling)
+    //$$ @Override
+    //$$ protected boolean affectedByCulling(LionTurtleEntity turtle) {
+    //$$     return false;
+    //$$ }
+    //#endif
 }

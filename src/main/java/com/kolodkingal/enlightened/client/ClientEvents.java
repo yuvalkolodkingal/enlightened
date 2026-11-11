@@ -17,16 +17,13 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 /** The client's key handling (ability keys with their Sneak, the look, the scroll) and the world effects. */
-@EventBusSubscriber(modid = Enlightened.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
     /** Whether a "down" was sent for each ability key, so its "up" is sent once and never twice. */
     private static final boolean[] SENT_DOWN = new boolean[BendingData.KEYS + 1];

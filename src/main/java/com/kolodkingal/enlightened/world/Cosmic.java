@@ -65,7 +65,7 @@ public final class Cosmic {
         p.getPersistentData().remove(ANOMALY);
         build(cosmic);
         p.fallDistance = 0;
-        p.teleportTo(cosmic, 0.5, Y + 1, 0.5, 0.0F, 0.0F);
+        com.kolodkingal.enlightened.compat.Compat.teleport(p, cosmic, 0.5, Y + 1, 0.5, 0.0F, 0.0F);
         cosmic.playSound(null, p.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0F, 0.6F);
         p.sendSystemMessage(Component.translatable("message.enlightened.cosmic.enter").withStyle(ChatFormatting.LIGHT_PURPLE));
         return true;
@@ -88,7 +88,7 @@ public final class Cosmic {
         p.getPersistentData().putBoolean(ANOMALY, true);
         buildAnomaly(cosmic);
         p.fallDistance = 0;
-        p.teleportTo(cosmic, ANOMALY_X + 0.5, Y + 1, 0.5, 0.0F, 0.0F);
+        com.kolodkingal.enlightened.compat.Compat.teleport(p, cosmic, ANOMALY_X + 0.5, Y + 1, 0.5, 0.0F, 0.0F);
         cosmic.playSound(null, p.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 1.0F, 0.6F);
         p.sendSystemMessage(Component.translatable("message.enlightened.cosmic.anomaly").withStyle(ChatFormatting.LIGHT_PURPLE));
         return true;
@@ -114,7 +114,7 @@ public final class Cosmic {
         buildAnomaly(level);
         p.fallDistance = 0;
         if (p.getY() < Y - 15) {
-            p.teleportTo(level, ANOMALY_X + 0.5, Y + 1, 0.5, 0.0F, 0.0F);
+            com.kolodkingal.enlightened.compat.Compat.teleport(p, level, ANOMALY_X + 0.5, Y + 1, 0.5, 0.0F, 0.0F);
             p.displayClientMessage(Component.translatable("message.enlightened.cosmic.fell").withStyle(ChatFormatting.LIGHT_PURPLE), true);
             return;
         }
@@ -165,7 +165,7 @@ public final class Cosmic {
         build(level);
         p.fallDistance = 0;
         if (p.getY() < Y - 15) {
-            p.teleportTo(level, 0.5, Y + 1, 0.5, 0.0F, 0.0F);
+            com.kolodkingal.enlightened.compat.Compat.teleport(p, level, 0.5, Y + 1, 0.5, 0.0F, 0.0F);
             p.displayClientMessage(Component.translatable("message.enlightened.cosmic.fell").withStyle(ChatFormatting.LIGHT_PURPLE), true);
             return;
         }
@@ -199,9 +199,9 @@ public final class Cosmic {
         if (to == null || to.dimension().equals(LEVEL)) {
             ServerLevel overworld = server.overworld();
             BlockPos spawn = overworld.getSharedSpawnPos();
-            p.teleportTo(overworld, spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, 0.0F, 0.0F);
+            com.kolodkingal.enlightened.compat.Compat.teleport(p, overworld, spawn.getX() + 0.5, spawn.getY(), spawn.getZ() + 0.5, 0.0F, 0.0F);
         } else {
-            p.teleportTo(to, back.getDouble("x"), back.getDouble("y"), back.getDouble("z"), back.getFloat("yaw"), 0.0F);
+            com.kolodkingal.enlightened.compat.Compat.teleport(p, to, back.getDouble("x"), back.getDouble("y"), back.getDouble("z"), back.getFloat("yaw"), 0.0F);
         }
     }
 

@@ -36,6 +36,9 @@ public class LemurModel extends HierarchicalModel<FlyingLemurEntity> {
     private final ModelPart backRightLeg;
 
     public LemurModel(ModelPart root) {
+        //#if >=1.21.4
+        //$$ super(root);
+        //#endif
         this.root = root;
         this.body = root.getChild("body");
         this.head = body.getChild("head");
@@ -79,10 +82,12 @@ public class LemurModel extends HierarchicalModel<FlyingLemurEntity> {
         return LayerDefinition.create(mesh, 64, 32);
     }
 
+    //#if <1.21.4
     @Override
     public ModelPart root() {
         return root;
     }
+    //#endif
 
     @Override
     public void setupAnim(FlyingLemurEntity lemur, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
@@ -144,6 +149,8 @@ public class LemurModel extends HierarchicalModel<FlyingLemurEntity> {
         backRightLeg.xRot = (walk - lift) * ground - tuck;
     }
 
+    //#if <1.21.4
+    // (from 1.21.4 a pup is made small by LemurRenderer.scale)
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         if (young) {
@@ -156,4 +163,5 @@ public class LemurModel extends HierarchicalModel<FlyingLemurEntity> {
             root.render(poseStack, buffer, packedLight, packedOverlay, color);
         }
     }
+    //#endif
 }

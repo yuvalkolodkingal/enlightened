@@ -27,6 +27,9 @@ public class SkyBisonModel extends HierarchicalModel<SkyBisonEntity> {
     private final ModelPart[] legs = new ModelPart[6];
 
     public SkyBisonModel(ModelPart root) {
+        //#if >=1.21.4
+        //$$ super(root);
+        //#endif
         this.root = root;
         this.body = root.getChild("body");
         this.head = body.getChild("head");
@@ -83,10 +86,12 @@ public class SkyBisonModel extends HierarchicalModel<SkyBisonEntity> {
         return LayerDefinition.create(mesh, 256, 256);
     }
 
+    //#if <1.21.4
     @Override
     public ModelPart root() {
         return root;
     }
+    //#endif
 
     @Override
     public void setupAnim(SkyBisonEntity bison, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

@@ -12,6 +12,8 @@ public class TeaItem extends Item {
         super(properties);
     }
 
+    //#if <1.21.4
+    // (from 1.21.4 the drink is the item's consumable component, set in ModItems.tea)
     @Override
     public UseAnim getUseAnimation(ItemStack stack) {
         return UseAnim.DRINK;
@@ -26,4 +28,5 @@ public class TeaItem extends Item {
     public SoundEvent getEatingSound() {
         return SoundEvents.GENERIC_DRINK;
     }
+    //#endif
 }

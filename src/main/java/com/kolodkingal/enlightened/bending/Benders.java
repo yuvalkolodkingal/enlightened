@@ -33,7 +33,7 @@ public final class Benders {
         BendingData data = get(player);
         if (data.isDirty()) {
             data.clearDirty();
-            player.syncData(ModAttachments.BENDING);
+            com.kolodkingal.enlightened.compat.Compat.sync(player, ModAttachments.BENDING.get());
         }
     }
 

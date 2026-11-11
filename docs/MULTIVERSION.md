@@ -101,5 +101,25 @@ of 21.11.48 (1.21.11)**, and on each the entry of that version ran. So the core 
 Still to prove before phase 1: a mixin config per version switched by a plugin, a pack overlay, a client (only
 servers were started), and 26.x with its Java 25 classes. The two small projects are in Enhanced's `tools/multiversion-spike/`.
 
+## Progress (1.0.29): 1.21.1 and 1.21.4 in one jar
+
+Phases 0 to 3 are done for 1.21.4 (1.21.3 is left out: nobody plays it, and 1.21.4 has the same changes).
+
+* **The jar**: `boot.EnlightenedBoot` is the only `@Mod`; `boot.Versions` lists the copies; `boot.MixinGate` lets a
+  copy's mixins apply only on its version (each copy has its own mixin config, made by the build). The four scanned
+  subscriber classes are registered by hand.
+* **The sources**: one tree. `versions/1.21.4` makes the 1.21.4 copy from it with the `Preprocess` task (buildSrc):
+  version blocks (`//#if >=1.21.4` ... `//#else` ... `//#endif`, the other version's lines written as `//$$ code`),
+  whole-file replacements in `versions/1.21.4/src/main/java`, plain renames in `versions/1.21.4/renames.txt`, and the
+  move to the package `com.kolodkingal.enlightened.v1_21_4`. The calls that differ are in `compat.Compat`.
+* **1.21.4's own code** (`versions/1.21.4/src/main/java`): the render-state bridge and the `Legacy*` base classes, so
+  the renderers and models written against 1.21.1 draw unchanged from a render state; the attachment sync NeoForge 21.4
+  lacks (`compat.AttachSync`); the client mixins whose targets changed.
+* **Resources**: pack overlays made by `tools/overlays.py` (recipes and biomes in 1.21.4's format, the item model
+  definitions, the spawn eggs' colours and the glider's dye).
+* **Checked**: both copies compile; the jar starts a dedicated server and a client on 1.21.1 and on 1.21.4, and the
+  quick tour (`-Denlightened.tour=true -Denlightened.tour.quick=true`) plays on both with the same pictures; the
+  GameTests pass on 1.21.1. The GameTests are not built for 1.21.4 yet.
+
 What is uncertain: the notes for 1.21.5 and later are from NeoForge's release notes and from memory, and 26.2 and
 26.3 have not been audited. Re-run the audit at the start of each phase.

@@ -28,12 +28,23 @@ public class DarkSpiritRenderer extends MobRenderer<DarkSpiritEntity, DarkSpirit
 
     public DarkSpiritRenderer(EntityRendererProvider.Context context) {
         super(context, new Model(context.bakeLayer(LAYER)), 0.6F);
+        //#if >=1.21.4
+        //$$ addLayer(new net.minecraft.client.renderer.entity.layers.RenderLayer<>(this) {
+        //$$     @Override
+        //$$     public void render(com.mojang.blaze3d.vertex.PoseStack pose, net.minecraft.client.renderer.MultiBufferSource buffers, int light,
+        //$$                        net.minecraft.client.renderer.entity.state.PlayerRenderState state,
+        //$$                        float yRot, float xRot) {
+        //$$         getParentModel().renderToBuffer(pose, buffers.getBuffer(EYES), 0xF00000, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        //$$     }
+        //$$ });
+        //#else
         addLayer(new EyesLayer<>(this) {
             @Override
             public RenderType renderType() {
                 return EYES;
             }
         });
+        //#endif
     }
 
     @Override
@@ -68,6 +79,9 @@ public class DarkSpiritRenderer extends MobRenderer<DarkSpiritEntity, DarkSpirit
         private final ModelPart tail;
 
         Model(ModelPart root) {
+            //#if >=1.21.4
+            //$$ super(root);
+            //#endif
             this.root = root;
             body = root.getChild("body");
             head = body.getChild("head");
@@ -79,10 +93,12 @@ public class DarkSpiritRenderer extends MobRenderer<DarkSpiritEntity, DarkSpirit
             tail = body.getChild("tail");
         }
 
+        //#if <1.21.4
         @Override
         public ModelPart root() {
             return root;
         }
+        //#endif
 
         @Override
         public void setupAnim(DarkSpiritEntity s, float limbSwing, float limbSwingAmount, float age, float netHeadYaw, float headPitch) {

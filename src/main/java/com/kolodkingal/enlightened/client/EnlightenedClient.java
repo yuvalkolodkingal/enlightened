@@ -17,11 +17,9 @@ import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.resources.PlayerSkin;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
@@ -31,7 +29,7 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 /** The client half of the mod: keys, the HUD, renderers, layers, particles, the glider's colour and the config screen. */
-@Mod(value = Enlightened.MODID, dist = Dist.CLIENT)
+/* Started by boot.EnlightenedBoot on a client. */
 public final class EnlightenedClient {
     /** A player model inflated past the skin's outer layer, for the earth and metal armour shells. */
     public static final ModelLayerLocation SHELL_WIDE = new ModelLayerLocation(Enlightened.id("player_shell"), "wide");
@@ -46,9 +44,18 @@ public final class EnlightenedClient {
         modBus.addListener(EnlightenedClient::onAddLayers);
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent e) ->
                 e.register(Enlightened.id("cosmic"), new com.kolodkingal.enlightened.client.cosmic.CosmicEffects()));
+        //#if >=1.21.4
+        //$$ // (the glider's dye is its item model's tint from 1.21.4: assets/enlightened/items/air_glider.json)
+        //$$ modBus.addListener(com.kolodkingal.enlightened.compat.RenderBridge::register);
+        //#else
         modBus.addListener(EnlightenedClient::onItemColors);
+        //#endif
         container.registerConfig(ModConfig.Type.CLIENT, EnlightenedClientConfig.SPEC);
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        // (registered here, not found by scanning: see Enlightened)
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(ClientEvents.class);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.anim.FirstPersonArms.class);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.dev.Tour.class);
     }
 
     private static void onKeys(RegisterKeyMappingsEvent event) {
@@ -134,7 +141,9 @@ public final class EnlightenedClient {
         }
     }
 
+    //#if <1.21.4
     private static void onItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tint) -> tint == 1 ? 0xFF000000 | GliderItem.color(stack) : 0xFFFFFFFF, ModItems.AIR_GLIDER.get());
     }
+    //#endif
 }

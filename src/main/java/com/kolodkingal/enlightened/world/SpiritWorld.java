@@ -64,7 +64,7 @@ public final class SpiritWorld {
         BlockPos at = arrival(spirit, p.getBlockX(), p.getBlockZ());
         p.fallDistance = 0;
         p.setPortalCooldown(80);
-        p.teleportTo(spirit, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.getYRot(), 0.0F);
+        com.kolodkingal.enlightened.compat.Compat.teleport(p, spirit, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.getYRot(), 0.0F);
         spirit.playSound(null, at, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 1.2F, 0.7F);
         p.sendSystemMessage(Component.translatable("message.enlightened.spirit.enter").withStyle(ChatFormatting.LIGHT_PURPLE));
         return true;
@@ -88,10 +88,10 @@ public final class SpiritWorld {
         if (to == null || to.dimension().equals(LEVEL)) {
             ServerLevel overworld = server.overworld();
             BlockPos at = arrival(overworld, p.getBlockX(), p.getBlockZ());
-            p.teleportTo(overworld, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.getYRot(), 0.0F);
+            com.kolodkingal.enlightened.compat.Compat.teleport(p, overworld, at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.getYRot(), 0.0F);
         } else {
             // A step out of the gate he went in by, so he does not walk straight back through it.
-            p.teleportTo(to, back.getDouble("x") + 1.5, back.getDouble("y"), back.getDouble("z") + 1.5, back.getFloat("yaw"), 0.0F);
+            com.kolodkingal.enlightened.compat.Compat.teleport(p, to, back.getDouble("x") + 1.5, back.getDouble("y"), back.getDouble("z") + 1.5, back.getFloat("yaw"), 0.0F);
         }
         p.sendSystemMessage(Component.translatable("message.enlightened.spirit.leave").withStyle(ChatFormatting.LIGHT_PURPLE));
     }

@@ -80,8 +80,8 @@ public class GoldenDragonEggBlockEntity extends BlockEntity {
             return;
         }
         if (p != null && p.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < 64 * 64) {
-            p.sendSystemMessage(Component.translatable("message.enlightened.dragon.hatched",
-                    Component.translatable("message.enlightened.dragon.colour." + pup.colour().id)).withStyle(ChatFormatting.GOLD));
+            p.displayClientMessage(Component.translatable("message.enlightened.dragon.hatched",
+                    Component.translatable("message.enlightened.dragon.colour." + pup.colour().id)).withStyle(ChatFormatting.GOLD), false);
         }
     }
 

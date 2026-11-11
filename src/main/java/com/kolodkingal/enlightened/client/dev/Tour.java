@@ -15,9 +15,7 @@ import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.WorldDataConfiguration;
 import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.levelgen.presets.WorldPresets;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import java.util.ArrayList;
@@ -29,7 +27,6 @@ import java.util.List;
  * game directory's {@code screenshots} folder, then quits. It lets the effects be looked at on a machine without a
  * player at the keyboard.
  */
-@EventBusSubscriber(modid = Enlightened.MODID, value = Dist.CLIENT)
 public final class Tour {
     private record Step(int delay, Runnable action) {
     }

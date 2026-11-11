@@ -14,9 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.MapItem;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 
 import static com.kolodkingal.enlightened.client.anim.AnimMath.ss;
@@ -34,7 +32,6 @@ import static com.kolodkingal.enlightened.client.anim.AnimMath.ss;
  * its own. The stances have rows here. The empty off hand, which vanilla never draws, is drawn when a pose really
  * uses it, sliding up from below the screen as vanilla's equip animation does.
  */
-@EventBusSubscriber(modid = Enlightened.MODID, value = Dist.CLIENT)
 public final class FirstPersonArms {
     private static final float PIVOT_X = 0.40F;
     private static final float PIVOT_Y = -0.45F;

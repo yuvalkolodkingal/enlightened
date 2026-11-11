@@ -1,5 +1,9 @@
 # Enlightened 1.0.29
 
+* **Minecraft 1.21.4 too, in the same jar.** Put the one jar in a NeoForge 21.1 (Minecraft 1.21.1) or a NeoForge 21.4
+  (Minecraft 1.21.4) instance: it starts the copy of itself made for that version. Everything is there on 1.21.4, the
+  bending, the creatures, the places and the bosses; it has been started on both versions and its tour played through
+  on both, but it has had far less play on 1.21.4 than on 1.21.1, so please report anything that looks wrong there.
 * **The bending panel has styles.** The new default is the **Scroll**: a scroll pinned to the top-right corner with
   your element's seal, a line per key with the ability's symbol and level, a brush stroke for its cooldown and your
   chakras as beads; hold Sneak and every line turns over to the ability on its Sneak slot. Five more to choose from in

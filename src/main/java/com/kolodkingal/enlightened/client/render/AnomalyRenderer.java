@@ -45,10 +45,15 @@ public class AnomalyRenderer extends EntityRenderer<AnomalyEntity> {
         if (list.isEmpty()) {
             return;
         }
+        //#if >=1.21.4
+        //$$ var fog = RenderSystem.getShaderFog();
+        //$$ RenderSystem.setShaderFog(net.minecraft.client.renderer.FogParameters.NO_FOG);
+        //#else
         float fogStart = RenderSystem.getShaderFogStart();
         float fogEnd = RenderSystem.getShaderFogEnd();
         RenderSystem.setShaderFogStart(Float.MAX_VALUE / 2);
         RenderSystem.setShaderFogEnd(Float.MAX_VALUE);
+        //#endif
         MultiBufferSource.BufferSource buffers = FxGeometry.source();
         PoseStack pose = event.getPoseStack();
         for (AnomalyEntity e : list) {
@@ -60,8 +65,12 @@ public class AnomalyRenderer extends EntityRenderer<AnomalyEntity> {
             pose.popPose();
             buffers.endBatch();
         }
+        //#if >=1.21.4
+        //$$ RenderSystem.setShaderFog(fog);
+        //#else
         RenderSystem.setShaderFogStart(fogStart);
         RenderSystem.setShaderFogEnd(fogEnd);
+        //#endif
     }
 
     @Override

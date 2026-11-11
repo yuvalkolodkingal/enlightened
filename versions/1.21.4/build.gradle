@@ -16,6 +16,7 @@ def preprocess = tasks.register('preprocess', Preprocess) {
     overlay = file('src/main/java')
     renames = file('renames.txt')
     suffix = copySuffix
+    basePackage = 'com.kolodkingal.enlightened'
 }
 sourceSets.main.java.srcDirs = [preprocess.map { it.target }]
 

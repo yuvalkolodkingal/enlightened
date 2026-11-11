@@ -15,7 +15,7 @@ import org.gradle.api.tasks.TaskAction
  *   {@code //#else} / {@code //#endif} are kept when the condition holds for this version and commented out with
  *   {@code //$$ } when it does not; the lines after {@code //#else} the other way round. In the shared sources the
  *   lines of the versions that are not 1.21.1 are written commented, as {@code //$$ code};</li>
- *   <li>relocation: {@code com.kolodkingal.enlightened} becomes {@code com.kolodkingal.enlightened.<suffix>} (all
+ *   <li>relocation: {@code <basePackage>} becomes {@code <basePackage>.<suffix>} (all
  *   but the {@code boot} package, which is not copied), so that every copy has classes of its own in the one jar.</li>
  * </ul>
  */
@@ -42,6 +42,10 @@ abstract class Preprocess extends DefaultTask {
 
     @Input
     abstract Property<String> getSuffix()
+
+    /** The mod's base package (com.kolodkingal.enhanced): what is relocated, and where the sources are. */
+    @Input
+    abstract Property<String> getBasePackage()
 
     static int[] parse(String v) {
         def parts = v.split('\\.').collect { it as int }
@@ -116,7 +120,7 @@ abstract class Preprocess extends DefaultTask {
         for (List<String> rule : renameRules()) {
             s = s.replaceAll(rule[0], rule[1])
         }
-        String pkg = 'com.kolodkingal.enlightened'
+        String pkg = basePackage.get()
         String to = pkg + '.' + suffix.get()
         s = s.replaceAll(/\b${java.util.regex.Pattern.quote(pkg)}(?=[.;])(?!\.boot\b)/, java.util.regex.Matcher.quoteReplacement(to))
         return s
@@ -147,7 +151,7 @@ abstract class Preprocess extends DefaultTask {
         File src = source.get().asFile
         File dst = target.get().asFile
         dst.deleteDir()
-        String rel = 'com/kolodkingal/enlightened/'
+        String rel = basePackage.get().replace('.', '/') + '/'
         src.eachFileRecurse { File f ->
             if (!f.isFile() || !f.name.endsWith('.java')) return
             String path = src.toPath().relativize(f.toPath()).toString().replace('\\', '/')

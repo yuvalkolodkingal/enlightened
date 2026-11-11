@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "enlightened:item/city_guard_spawn_egg"
+  }
+}

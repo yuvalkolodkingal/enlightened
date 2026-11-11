@@ -103,10 +103,12 @@ public class MeditatingBodyEntity extends LivingEntity {
         return true;
     }
 
+    //#if <1.21.5
     @Override
     public Iterable<ItemStack> getArmorSlots() {
         return java.util.List.of();
     }
+    //#endif
 
     @Override
     public ItemStack getItemBySlot(EquipmentSlot slot) {

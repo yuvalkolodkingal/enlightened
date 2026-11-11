@@ -1,6 +1,6 @@
 # Enlightened
 
-Become a bender of the Avatar world in Minecraft (NeoForge, 1.21.1 and 1.21.4): an **earthbender**, an **airbender**, a
+Become a bender of the Avatar world in Minecraft (NeoForge, 1.21.1, 1.21.4 and 1.21.5): an **earthbender**, an **airbender**, a
 **waterbender**, a **firebender** or **the Avatar**, with the sub-bending arts (sand, lava, metal; flight; ice, blood; lightning), a
 progression of ability points earned by fighting with your bending, and a loadout of the abilities you take into
 battle. [עברית](Home-HE)

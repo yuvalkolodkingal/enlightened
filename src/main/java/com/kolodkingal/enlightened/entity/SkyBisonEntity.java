@@ -24,7 +24,9 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+//#if <1.21.5
 import net.minecraft.world.entity.Saddleable;
+//#endif
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -57,7 +59,11 @@ import java.util.List;
  * hangs in the air, drifting slowly down; it lands where it touches the ground and walks there. Riders who step off
  * high in the air fall slowly. A bison never takes fall damage.
  */
+//#if >=1.21.5
+//$$ public class SkyBisonEntity extends TamableAnimal { // (1.21.5: Saddleable is gone, saddles are equipment; the bison keeps its own flag)
+//#else
 public class SkyBisonEntity extends TamableAnimal implements Saddleable {
+//#endif
     private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(SkyBisonEntity.class, EntityDataSerializers.BOOLEAN);
     /** Wheat a bison must eat from one hand before it trusts it. */
     public static final int WHEAT_TO_TAME = 16;
@@ -252,12 +258,16 @@ public class SkyBisonEntity extends TamableAnimal implements Saddleable {
         return super.mobInteract(player, hand);
     }
 
+    //#if <1.21.5
     @Override
+    //#endif
     public boolean isSaddleable() {
         return isAlive() && !isBaby() && isTame();
     }
 
+    //#if <1.21.5
     @Override
+    //#endif
     public void equipSaddle(ItemStack stack, @Nullable SoundSource source) {
         entityData.set(SADDLED, true);
         if (source != null) {

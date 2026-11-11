@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "enlightened:item/dark_spirit_spawn_egg"
+  }
+}

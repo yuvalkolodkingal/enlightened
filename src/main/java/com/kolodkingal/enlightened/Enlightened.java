@@ -41,6 +41,12 @@ public class Enlightened {
         modBus.addListener(ModNetwork::register);
         modBus.addListener(ModEntities::createAttributes);
         modBus.addListener(ModEntities::registerSpawnPlacements);
+        //#if >=1.21.5
+        //$$ // (1.21.5: an item is a trim material by a component, not by the material's "ingredient": coal sets the earth brigade)
+        //$$ modBus.addListener((net.neoforged.neoforge.event.ModifyDefaultComponentsEvent e) -> e.modify(net.minecraft.world.item.Items.COAL,
+        //$$         b -> b.set(net.minecraft.core.component.DataComponents.PROVIDES_TRIM_MATERIAL, new net.minecraft.world.item.component.ProvidesTrimMaterial(
+        //$$                 net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.TRIM_MATERIAL, id("coal"))))));
+        //#endif
         container.registerConfig(ModConfig.Type.SERVER, EnlightenedConfig.SPEC);
         // (registered here, not found by scanning: a copy of the mod for another Minecraft version must never be loaded)
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.event.CommonEvents.class);

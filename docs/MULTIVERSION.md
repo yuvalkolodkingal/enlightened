@@ -121,5 +121,51 @@ Phases 0 to 3 are done for 1.21.4 (1.21.3 is left out: nobody plays it, and 1.21
   quick tour (`-Denlightened.tour=true -Denlightened.tour.quick=true`) plays on both with the same pictures; the
   GameTests pass on 1.21.1. The GameTests are not built for 1.21.4 yet.
 
+## Progress (1.0.30): 1.21.5 joins the jar
+
+Phase 4 is done for the server: the jar holds a third copy, `com.kolodkingal.enlightened.v1_21_5`, made by
+`versions/1.21.5`.
+
+* **The versions are chained.** `Preprocess` (the same as Enhanced's) takes ordered lists: a copy's whole-file
+  replacements are the folders of every version up to its own, the later winning (1.21.5: `versions/1.21.4/src/main/java`,
+  then `versions/1.21.5/src/main/java`), and its renames are the `renames.txt` of each, applied in order. So
+  `versions/1.21.5` holds only what changed since 1.21.4. The mixin configs are chained the same way in the root
+  `build.gradle`: each copy lists its `chain` of version folders, whose `mixins.json` (`mixins`, `client`, `server`,
+  and a `remove` list to drop an earlier version's) are merged over `enlightened.mixins.json`.
+* **1.21.5's renames** (`versions/1.21.5/renames.txt`, 52 rules): `moveTo` to `snapTo`, the renamed effects, the NBT
+  getters that return an `Optional` (the `...Or` forms with 1.21.1's defaults, `getCompoundOrEmpty`, `getListOrEmpty`),
+  UUIDs and block positions through their codecs, `SavedData.Factory` to `SavedDataType` (a `CompoundTag.CODEC` bridge
+  to the existing load and save), owners as `EntityReference`s, `Inventory.items`, villager types as registry keys,
+  the click and hover event records, `entityInside`, tooltips to a consumer, `causeFallDamage`, the client input
+  vector, the block entity renderer's camera position.
+* **Version blocks** (`//#if >=1.21.5`) in the shared sources for the rest: the lion turtles' chunk ticket and the
+  moved respawn point, the sky bison without `Saddleable`, the meditating body's armour slots, the items' server-only
+  `inventoryTick`, the saved data's `save` (no longer an override), coal as a trim material (now an item component),
+  and the two places that drew with `BufferUploader` (`CometSky`, `BlueScreenFire`), which draw through a render type on
+  1.21.5. No 1.21.5 overlay files were needed: 1.21.4's (the render-state bridge, `AttachSync`, the client mixins)
+  compile and apply unchanged.
+* **Resources**: `tools/overlays.py` widens the 1.21.4 overlays to 1.21.5's formats (data 71, resources 55: their
+  contents are still valid there) and adds two 1.21.5 overlays: the trim recipe with its `pattern`, and a texture and
+  model of its own for each spawn egg (1.21.5 removed the template egg they were tinted from).
+* **Checked**: all three copies compile (`./gradlew :compileJava :v1_21_4:compileJava :v1_21_5:compileJava`);
+  `./gradlew build` makes the jar; the jar starts a dedicated server of NeoForge 21.5.101 (a new world, then again on
+  it, no errors, the copy's four common mixins applied) and still of 21.4.161; the dev server starts on 1.21.1 and the
+  119 GameTests pass there. **Not checked on 1.21.5**: a client (nothing client-side has been run there: the client
+  mixins' targets were compared by signature only), the tour, and GameTests (they are not built for the later copies).
+
+### Known differences on 1.21.5
+
+* **The Eternal Flame's flicker** is sent from the server (1.21.5 ticks a held item on the server only), so it reaches
+  the client a little later and is seen by everyone near, as before.
+* **The sky bison** keeps its own saddle flag: 1.21.5 dropped `Saddleable` (saddles are equipment there), so a
+  dispenser no longer saddles a bison. Saddling it by hand is unchanged.
+* **The spawn eggs** have their own textures (an egg in the two colours, drawn by `tools/overlays.py`) instead of the
+  game's tinted template egg.
+* **The water spout's steering** reads 1.21.5's movement vector, which is normalised: moving diagonally is a little
+  slower than on 1.21.1 (where the two keys add up).
+* **Sozin's Comet in the sky and the blue fire over the screen** draw through a render pipeline (the comet's own, from
+  the game's position-colour one, without depth test; the fire through the game's fire-overlay render type). They
+  compile and follow the 1.21.4 drawing, but have not been seen on a 1.21.5 client yet.
+
 What is uncertain: the notes for 1.21.5 and later are from NeoForge's release notes and from memory, and 26.2 and
 26.3 have not been audited. Re-run the audit at the start of each phase.

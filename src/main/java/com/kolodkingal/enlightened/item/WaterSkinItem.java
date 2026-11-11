@@ -77,7 +77,11 @@ public class WaterSkinItem extends Item {
     }
 
     @Override
+    //#if >=1.21.5
+    //$$ public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level, Entity entity, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.EquipmentSlot slot) {
+    //#else
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+    //#endif
         // In the rain it fills slowly: one use every 15 seconds under the open sky.
         if (!level.isClientSide && level.getGameTime() % 300 == 0 && charges(stack) < CHARGES
                 && level.isRaining() && level.canSeeSky(entity.blockPosition())) {

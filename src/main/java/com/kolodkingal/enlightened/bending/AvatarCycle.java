@@ -246,7 +246,9 @@ public final class AvatarCycle extends SavedData {
         return c;
     }
 
+    //#if <1.21.5
     @Override
+    //#endif
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
         tag.putInt("Max", max);
         tag.putInt("Owed", owed);

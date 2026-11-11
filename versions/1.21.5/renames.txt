@@ -1,0 +1,65 @@
+# Names and signatures that changed between 1.21.4 and 1.21.5 (regex => replacement), applied to the 1.21.5 copy
+# after 1.21.4's (../1.21.4/renames.txt).
+# entities: moveTo became snapTo
+(?<![\w.])moveTo\( => snapTo(
+(?<!getNavigation\(\))\.moveTo\( => .snapTo(
+# effects
+\bMobEffects\.DAMAGE_RESISTANCE\b => MobEffects.RESISTANCE
+\bMobEffects\.MOVEMENT_SLOWDOWN\b => MobEffects.SLOWNESS
+\bMobEffects\.MOVEMENT_SPEED\b => MobEffects.SPEED
+\bMobEffects\.CONFUSION\b => MobEffects.NAUSEA
+\bMobEffects\.DIG_SLOWDOWN\b => MobEffects.MINING_FATIGUE
+\bMobEffects\.DIG_SPEED\b => MobEffects.HASTE
+\bMobEffects\.DAMAGE_BOOST\b => MobEffects.STRENGTH
+\bMobEffects\.JUMP\b => MobEffects.JUMP_BOOST
+\bMobEffects\.HARM\b => MobEffects.INSTANT_DAMAGE
+\bMobEffects\.HEAL\b => MobEffects.INSTANT_HEALTH
+# NBT: a tag's getters return an Optional; the ...Or forms give 1.21.1's defaults for a missing key
+\.getInt\(([^(),]+(?:\([^()]*\))?)\) => .getIntOr($1, 0)
+\.getLong\(([^(),]+(?:\([^()]*\))?)\) => .getLongOr($1, 0L)
+\.getFloat\(([^(),]+(?:\([^()]*\))?)\) => .getFloatOr($1, 0.0F)
+\.getDouble\(([^(),]+(?:\([^()]*\))?)\) => .getDoubleOr($1, 0.0)
+(?<!getGameRules\(\)|Boolean)\.getBoolean\(([^(),]+(?:\([^()]*\))?)\) => .getBooleanOr($1, false)
+\.getString\(([^(),]+(?:\([^()]*\))?)\) => .getStringOr($1, "")
+\.getCompound\(([^(),]+(?:\([^()]*\))?)\) => .getCompoundOrEmpty($1)
+\.getIntArray\(([^(),]+(?:\([^()]*\))?)\) => .getIntArray($1).orElse(new int[0])
+\.getList\(([^(),]+(?:\([^()]*\))?), (?:net\.minecraft\.nbt\.)?Tag\.TAG_\w+\) => .getListOrEmpty($1)
+\b(\w+)\.getTagType\((\w+)\) == Tag\.TAG_LIST\b => ($1.get($2) instanceof ListTag)
+\.getAllKeys\(\) => .keySet()
+# UUIDs and positions in a tag go through their codecs
+\.getUUID\(("[^"]*"|[A-Z_]+)\) => .read($1, net.minecraft.core.UUIDUtil.CODEC).orElse(null)
+\.hasUUID\(("[^"]*"|[A-Z_]+)\) => .read($1, net.minecraft.core.UUIDUtil.CODEC).isPresent()
+\.putUUID\(("[^"]*"|[A-Z_]+), => .store($1, net.minecraft.core.UUIDUtil.CODEC,
+(?:net\.minecraft\.nbt\.)?NbtUtils\.loadUUID\((\w+)\) => net.minecraft.core.UUIDUtil.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, $1).getOrThrow()
+(?:net\.minecraft\.nbt\.)?NbtUtils\.createUUID\((\w+)\) => net.minecraft.core.UUIDUtil.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, $1).getOrThrow()
+\btag\.put\(("\w+"), NbtUtils\.writeBlockPos\((\w+)\)\) => tag.store($1, net.minecraft.core.BlockPos.CODEC, $2)
+\bNbtUtils\.readBlockPos\((\w+), ("\w+")\) => $1.read($2, net.minecraft.core.BlockPos.CODEC)
+# saved data: SavedData.Factory became SavedDataType, saved with a codec (here a bridge to the tag's load and save)
+new SavedData\.Factory<>\((\w+)::new, (\w+)::load, null\), (\w+)\) => new net.minecraft.world.level.saveddata.SavedDataType<>($3, $1::new, net.minecraft.nbt.CompoundTag.CODEC.xmap(t -> $2.load(t, null), d -> d.save(new net.minecraft.nbt.CompoundTag(), null))))
+# entities
+\bpublic boolean causeFallDamage\(float => public boolean causeFallDamage(double
+\bsetOwnerUUID\(getOwnerUUID\(\)\) => setOwnerReference(getOwnerReference())
+\b(\w+)\.getOwnerUUID\(\) => java.util.Optional.ofNullable($1.getOwnerReference()).map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null)
+(?<![\w.])getOwnerUUID\(\) => java.util.Optional.ofNullable(getOwnerReference()).map(net.minecraft.world.entity.EntityReference::getUUID).orElse(null)
+\bisControlledByLocalInstance\(\) => isLocalInstanceAuthoritative()
+\.isNight\(\) => .isDarkOutside()
+\bSoundEvents\.HORSE_SADDLE\b => SoundEvents.HORSE_SADDLE.value()
+\.getInventory\(\)\.items\b => .getInventory().getNonEquipmentItems()
+# villagers: their type is a registry key
+, VillagerType type\) \{ => , net.minecraft.resources.ResourceKey<VillagerType> type) {
+\.getVillagerData\(\)\.setType\( => .getVillagerData().withType(level.registryAccess(), 
+# chat: click and hover events are records per action
+new HoverEvent\(HoverEvent\.Action\.SHOW_TEXT, => new HoverEvent.ShowText(
+new ClickEvent\(ClickEvent\.Action\.RUN_COMMAND, => new ClickEvent.RunCommand(
+# blocks: entityInside takes the effect applier
+protected void entityInside\(BlockState (\w+), Level (\w+), BlockPos (\w+), Entity (\w+)\) => protected void entityInside(BlockState $1, Level $2, BlockPos $3, Entity $4, net.minecraft.world.entity.InsideBlockEffectApplier effects)
+\bsuper\.entityInside\((\w+), (\w+), (\w+), (\w+)\) => super.entityInside($1, $2, $3, $4, effects)
+# items: tooltips go to a consumer
+public void appendHoverText\(ItemStack (\w+), ([\w.]*TooltipContext) (\w+), List<Component> (\w+), TooltipFlag (\w+)\) => public void appendHoverText(ItemStack $1, $2 $3, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> $4, TooltipFlag $5)
+\btooltip\.add\( => tooltip.accept(
+# client
+\bplayer\.input\.forwardImpulse\b => player.input.getMoveVector().y
+\bplayer\.input\.leftImpulse\b => player.input.getMoveVector().x
+\brenderStatic\((\w+), (\w+), (ItemDisplayContext\.\w+), false, => renderStatic($1, $2, $3,
+com\.mojang\.blaze3d\.systems\.RenderSystem\.(?:enable|disable)Blend\(\); => // (1.21.5: the render type blends)
+public void render\((\w+BlockEntity) (\w+), float (\w+), PoseStack (\w+), MultiBufferSource (\w+), int (\w+), int (\w+)\) \{ => public void render($1 $2, float $3, PoseStack $4, MultiBufferSource $5, int $6, int $7, net.minecraft.world.phys.Vec3 cameraPos) {

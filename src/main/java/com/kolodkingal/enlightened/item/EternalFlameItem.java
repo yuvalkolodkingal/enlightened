@@ -83,8 +83,19 @@ public class EternalFlameItem extends Item {
     }
 
     @Override
+    //#if >=1.21.5
+    //$$ public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level, Entity entity, @org.jetbrains.annotations.Nullable net.minecraft.world.entity.EquipmentSlot slot) {
+    //$$     // (1.21.5 ticks a held item on the server only: its flame is sent to the clients)
+    //$$     if ((slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND || slot == net.minecraft.world.entity.EquipmentSlot.OFFHAND) && level.random.nextInt(3) == 0) {
+    //$$         level.sendParticles(ParticleTypes.FLAME, entity.getX() + (level.random.nextDouble() - 0.5) * 0.6, entity.getY() + 1.1,
+    //$$                 entity.getZ() + (level.random.nextDouble() - 0.5) * 0.6, 0, 0, 1, 0, 0.03);
+    //$$     }
+    //$$     boolean selected = slot == net.minecraft.world.entity.EquipmentSlot.MAINHAND;
+    //$$     if (level.isClientSide) {
+    //#else
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
         if (level.isClientSide) {
+    //#endif
             if ((selected || (entity instanceof Player p && p.getOffhandItem() == stack)) && level.random.nextInt(3) == 0) {
                 level.addParticle(ParticleTypes.FLAME, entity.getX() + (level.random.nextDouble() - 0.5) * 0.6, entity.getY() + 1.1,
                         entity.getZ() + (level.random.nextDouble() - 0.5) * 0.6, 0, 0.03, 0);

@@ -1,5 +1,9 @@
 # Enlightened 1.0.30
 
+* **Minecraft 1.21.5 too, in the same jar.** The one jar now also runs in a NeoForge 21.5 (Minecraft 1.21.5) instance,
+  beside 1.21.1 and 1.21.4. It has been started on a 1.21.5 server; it has had far less play there than on 1.21.1, so
+  please report anything that looks wrong. On 1.21.5 the spawn eggs have their own pictures (the game no longer
+  colours a common egg).
 * **Steadier poses in long sessions.** After an hour or two in a world, a bender's pose could drop to the plain
   standing pose for a single frame now and then (a flicker, most visible in flight and in third person). It no longer
   does.

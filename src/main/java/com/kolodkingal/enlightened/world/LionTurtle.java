@@ -407,11 +407,20 @@ public final class LionTurtle {
                 LionTurtle.carry(level, e, dir);
             }
             for (ServerPlayer p : level.players()) {
+                //#if >=1.21.5
+                //$$ ServerPlayer.RespawnConfig spawn = p.getRespawnConfig();
+                //$$ BlockPos home = spawn == null ? null : spawn.pos();
+                //$$ if (home != null && spawn.dimension() == level.dimension() && dot(home.getX(), home.getZ(), dir) == t
+                //$$         && from.contains(home) ) {
+                //$$     p.setRespawnPosition(new ServerPlayer.RespawnConfig(level.dimension(), home.relative(dir), spawn.angle(), spawn.forced()), false);
+                //$$ }
+                //#else
                 BlockPos home = p.getRespawnPosition();
                 if (home != null && p.getRespawnDimension() == level.dimension() && dot(home.getX(), home.getZ(), dir) == t
                         && from.contains(home) ) {
                     p.setRespawnPosition(level.dimension(), home.relative(dir), p.getRespawnAngle(), p.isRespawnForced(), false);
                 }
+                //#endif
             }
         }
     }

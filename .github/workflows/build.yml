@@ -109,12 +109,12 @@ jobs:
           fi
           notes="Alpha build from ${GITHUB_SHA::7} on ${GITHUB_REF_NAME}: everything may still change.
 
-          Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,
+          Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1), 21.4 (1.21.4) or 21.5 (1.21.5) instance, on the client and,
           for multiplayer, on the server too."
           if [ "$kind" = "--latest" ] && [ -f curseforge/changelog.md ]; then
             notes="$(cat curseforge/changelog.md)
 
-          Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1) instance, on the client and,
+          Install: put the jar in the mods folder of a NeoForge 21.1 (Minecraft 1.21.1), 21.4 (1.21.4) or 21.5 (1.21.5) instance, on the client and,
           for multiplayer, on the server too."
           fi
           gh release create "$tag" dist/*.jar \

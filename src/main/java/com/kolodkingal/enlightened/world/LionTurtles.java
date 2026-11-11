@@ -37,7 +37,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public final class LionTurtles extends SavedData {
     private static final String NAME = "enlightened_lion_turtles";
+    //#if >=1.21.5
+    //$$ private static final TicketType TICKET = new TicketType(TicketType.NO_TIMEOUT, false, TicketType.TicketUse.LOADING);
+    //#else
     private static final TicketType<ChunkPos> TICKET = TicketType.create("enlightened_lion_turtle", Comparator.comparingLong(ChunkPos::toLong));
+    //#endif
     /** Blocks the builder and the swim look at in a tick. */
     private static final int BUDGET = 40000;
     /** Islands chosen by the world generator (off the server thread), waiting to be raised. */
@@ -342,7 +346,11 @@ public final class LionTurtles extends SavedData {
     private static void hold(ServerLevel level, Island i) {
         for (long c : chunks(level, i)) {
             ChunkPos pos = new ChunkPos(c);
+            //#if >=1.21.5
+            //$$ level.getChunkSource().addTicketWithRadius(TICKET, pos, 0);
+            //#else
             level.getChunkSource().addRegionTicket(TICKET, pos, 0, pos);
+            //#endif
             i.held.add(c);
         }
     }
@@ -350,7 +358,11 @@ public final class LionTurtles extends SavedData {
     private static void release(ServerLevel level, Island i) {
         for (long c : i.held) {
             ChunkPos pos = new ChunkPos(c);
+            //#if >=1.21.5
+            //$$ level.getChunkSource().removeTicketWithRadius(TICKET, pos, 0);
+            //#else
             level.getChunkSource().removeRegionTicket(TICKET, pos, 0, pos);
+            //#endif
         }
         i.held.clear();
     }
@@ -366,7 +378,9 @@ public final class LionTurtles extends SavedData {
 
     // ---- saving ----
 
+    //#if <1.21.5
     @Override
+    //#endif
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         ListTag list = new ListTag();
         for (Island i : islands) {

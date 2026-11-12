@@ -1,3 +1,11 @@
+# Enlightened 1.0.32
+
+* **Minecraft 1.21.11 too, in the same jar.** The one jar now also runs in a NeoForge 21.11 (Minecraft 1.21.11)
+  instance, beside 1.21.1, 1.21.4 and 1.21.5. It has been started on a 1.21.11 server, with every creature summoned,
+  saved and loaded again and the places raised; nothing has been played on a 1.21.11 client yet, so please report
+  anything that looks wrong there. On 1.21.11 a flying lemur sitting on a shoulder is not seen (the game no longer
+  tells the players what sits on a shoulder, only which parrot).
+
 # Enlightened 1.0.31
 
 * **Minecraft 1.21.5 too, in the same jar.** The one jar now also runs in a NeoForge 21.5 (Minecraft 1.21.5) instance,

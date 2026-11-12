@@ -14,7 +14,19 @@ ranges reach over 1.21.5's. On top of them, for 1.21.5 only:
 * data: the trim recipe names its pattern (a trim pattern no longer names its template item);
 * assets: the spawn eggs have a texture each (1.21.5 removed the template egg they were tinted from), drawn here in
   their two colours, and an item model for it.
+
+The 1.21.4 and 1.21.5 overlays also apply on 1.21.11 (data format 94.1, resource format 75.0): the recipes, item model
+definitions and spawn eggs are still in those formats. On top of them, for 1.21.11 only:
+* data: noise settings with a preliminary surface level; biomes with their sky, fog, water fog, particles, sounds and music as environment attributes; dimension types in
+  1.21.11's form (the skybox, the bed and respawn anchor rules and the raids as attributes, a fixed time as a timeline of
+  the day's values at that time: data/enlightened/timeline/); tags with the blocks and items 1.21.9 renamed (chain is
+  iron_chain).
+
+From 1.21.9 the overlay entries carry min_format and max_format as well as the old formats range: 1.21.11 reads the
+same entries for data (last old format 81) and for resources (last old format 64), and an entry that reaches past one
+of those needs the new fields, equal to the old range.
 """
+import copy
 import json
 import os
 import re
@@ -27,6 +39,12 @@ DATA_4 = "overlay_1_21_4_data"
 ASSETS_4 = "overlay_1_21_4_assets"
 DATA_5 = "overlay_1_21_5_data"
 ASSETS_5 = "overlay_1_21_5_assets"
+DATA_11 = "overlay_1_21_11_data"
+# what a dimension's special effects did on 1.21.1 (client.cosmic.CosmicEffects), as timeline values that override the
+# day's: the cosmic plane's haze keeps its purple at night, and it has no clouds
+SKY_11 = {"enlightened:cosmic": {"minecraft:visual/fog_color": "#210d3d", "minecraft:visual/cloud_color": "#00000000"}}
+# ids 1.21.9 and later renamed, as tags name them
+RENAMED_11 = {"minecraft:chain": "minecraft:iron_chain"}
 
 
 def write(path, obj):
@@ -112,8 +130,160 @@ def egg_texture(path, base, spots):
     img.save(path)
 
 
+def hexcolour(value):
+    return value if isinstance(value, str) else "#%06x" % (value & 0xFFFFFF)
+
+
+def biome_11(obj):
+    """A biome in 1.21.4's form (carvers as a list, music as a weighted list) in 1.21.11's: its sky, fog, water fog,
+    particles, sounds and music are environment attributes; the colours left in its effects are written in hex."""
+    obj = copy.deepcopy(obj)
+    effects = obj.get("effects", {})
+    attributes = obj.get("attributes", {})
+    for key, attribute in (("sky_color", "sky_color"), ("fog_color", "fog_color"), ("water_fog_color", "water_fog_color")):
+        if key in effects:
+            attributes["minecraft:visual/" + attribute] = hexcolour(effects.pop(key))
+    for key in ("water_color", "grass_color", "foliage_color", "dry_foliage_color"):
+        if key in effects:
+            effects[key] = hexcolour(effects[key])
+    particle = effects.pop("particle", None)
+    if particle:
+        attributes["minecraft:visual/ambient_particles"] = [{"particle": particle["options"], "probability": particle["probability"]}]
+    sounds = {}
+    if "ambient_sound" in effects:
+        sounds["loop"] = effects.pop("ambient_sound")
+    if "mood_sound" in effects:
+        sounds["mood"] = effects.pop("mood_sound")
+    if "additions_sound" in effects:
+        sounds["additions"] = effects.pop("additions_sound")
+    if sounds:
+        attributes["minecraft:audio/ambient_sounds"] = sounds
+    music = effects.pop("music", None)
+    if isinstance(music, list):
+        music = music[0]["data"] if music else None
+    if music:
+        music = {k: v for k, v in music.items() if k != "replace_current_music" or v}
+        attributes["minecraft:audio/background_music"] = {"default": music}
+    effects.pop("music_volume", None)
+    obj["effects"] = effects
+    if attributes:
+        obj["attributes"] = attributes
+    return obj
+
+
+def colour_channels(value):
+    if isinstance(value, str):
+        h = value[1:]
+        v = int(h, 16)
+        return [(v >> 24) & 255 if len(h) == 8 else None, (v >> 16) & 255, (v >> 8) & 255, v & 255]
+    v = value & 0xFFFFFFFF
+    return [(v >> 24) & 255, (v >> 16) & 255, (v >> 8) & 255, v & 255]
+
+
+def interpolate(a, b, f):
+    if isinstance(a, bool) or isinstance(b, bool):
+        return a
+    if isinstance(a, str) or (isinstance(a, int) and abs(a) > 0xFFFFFF) or (isinstance(a, int) and a < 0):
+        ca, cb = colour_channels(a), colour_channels(b)
+        out = [None if x is None else round(x + (y - x) * f) for x, y in zip(ca, cb)]
+        if isinstance(a, str):
+            return ("#%02x" % out[0] if out[0] is not None else "#") + "%02x%02x%02x" % tuple(out[1:])
+        v = (out[0] << 24) | (out[1] << 16) | (out[2] << 8) | out[3]
+        return v - (1 << 32) if v >= 1 << 31 else v
+    return a + (b - a) * f
+
+
+def track_at(track, ticks, period):
+    """A timeline track's value at a time of day (the keyframes repeat every period; two keyframes on one tick jump)."""
+    frames = track["keyframes"]
+    before = [k for k in frames if k["ticks"] <= ticks]
+    prev = before[-1] if before else dict(frames[-1], ticks=frames[-1]["ticks"] - period)
+    after = [k for k in frames if k["ticks"] > ticks]
+    nxt = after[0] if after else dict(frames[0], ticks=frames[0]["ticks"] + period)
+    if track.get("ease") == "constant" or nxt["ticks"] == prev["ticks"]:
+        return prev["value"]
+    return interpolate(prev["value"], nxt["value"], (ticks - prev["ticks"]) / (nxt["ticks"] - prev["ticks"]))
+
+
+def game_json_11(path):
+    """A file of 1.21.11's own data (its day timeline, its overworld noise), from the game's resources in the build."""
+    import glob
+    import zipfile
+    for jar in glob.glob(os.path.join(ROOT, "versions/1.21.11/build/moddev/artifacts/*client-extra*.jar")):
+        with zipfile.ZipFile(jar) as z:
+            return json.loads(z.read(path))
+    raise SystemExit("run ./gradlew :v1_21_11:compileJava first: 1.21.11's " + path + " is read from its resources")
+
+
+def day_timeline():
+    return game_json_11("data/minecraft/timeline/day.json")
+
+
+def noise_settings_11(obj, overworld):
+    """Noise settings in 1.21.11's form: the router's initial density without jaggedness became the preliminary surface
+    level, found from the top as the game's overworld does (its upper bound is the overworld's, as the router's terrain)."""
+    obj = copy.deepcopy(obj)
+    router = obj["noise_router"]
+    initial = router.pop("initial_density_without_jaggedness", None)
+    if initial is not None and "preliminary_surface_level" not in router:
+        top = overworld["noise_router"]["preliminary_surface_level"]
+        router["preliminary_surface_level"] = {
+            "type": "minecraft:find_top_surface",
+            "density": {"type": "minecraft:add", "argument1": top["density"]["argument1"], "argument2": initial},
+            "upper_bound": top["upper_bound"],
+            "lower_bound": obj["noise"]["min_y"],
+            "cell_height": obj["noise"]["size_vertical"] * 4,
+        }
+    return obj
+
+
+def dimension_type_11(obj, name, day):
+    """A dimension type in 1.21.11's form, and the timeline that holds its fixed time (or None)."""
+    out = {k: obj[k] for k in ("has_skylight", "has_ceiling", "coordinate_scale", "min_y", "height", "logical_height",
+                               "infiniburn", "ambient_light", "monster_spawn_light_level", "monster_spawn_block_light_limit")}
+    out["skybox"] = {"minecraft:the_end": "end", "minecraft:the_nether": "none"}.get(obj.get("effects"), "overworld")
+    attributes = {}
+    if not obj.get("bed_works", True):
+        attributes["minecraft:gameplay/bed_rule"] = {"can_set_spawn": "never", "can_sleep": "never", "explodes": True}
+    attributes["minecraft:gameplay/respawn_anchor_works"] = bool(obj.get("respawn_anchor_works", False))
+    if not obj.get("has_raids", True):
+        attributes["minecraft:gameplay/can_start_raid"] = False
+    if obj.get("piglin_safe", False):
+        attributes["minecraft:gameplay/piglins_zombify"] = False
+    if obj.get("ultrawarm", False):
+        attributes["minecraft:gameplay/water_evaporates"] = True
+        attributes["minecraft:gameplay/fast_lava"] = True
+    timeline = None
+    if "fixed_time" in obj:
+        # the day's values at that time, for ever (1.21.1's fixed_time)
+        out["has_fixed_time"] = True
+        period = day.get("period_ticks", 24000)
+        tracks = {}
+        for key, track in day["tracks"].items():
+            entry = {"keyframes": [{"ticks": 0, "value": track_at(track, obj["fixed_time"] % period, period)}]}
+            if "modifier" in track:
+                entry["modifier"] = track["modifier"]
+            tracks[key] = entry
+        for key, value in SKY_11.get(obj.get("effects"), {}).items():
+            tracks[key] = {"keyframes": [{"ticks": 0, "value": value}]}
+        timeline = {"period_ticks": period, "tracks": tracks}
+        out["timelines"] = [f"{NS}:fixed_{name}"]
+    out["attributes"] = attributes
+    return out, timeline
+
+
+def rename_ids(value):
+    if isinstance(value, str):
+        return RENAMED_11.get(value, value)
+    if isinstance(value, list):
+        return [rename_ids(v) for v in value]
+    if isinstance(value, dict):
+        return {k: rename_ids(v) for k, v in value.items()}
+    return value
+
+
 def main():
-    for d in (DATA_4, ASSETS_4, DATA_5, ASSETS_5):
+    for d in (DATA_4, ASSETS_4, DATA_5, ASSETS_5, DATA_11):
         shutil.rmtree(os.path.join(RES, d), ignore_errors=True)
 
     data = os.path.join(RES, "data", NS)
@@ -157,14 +327,43 @@ def main():
         write(os.path.join(RES, ASSETS_5, "assets", NS, "items", item + ".json"),
               {"model": {"type": "minecraft:model", "model": f"{NS}:item/{item}"}})
 
+    # 1.21.11: biomes and dimension types in its form, tags with its renamed ids
+    for name in sorted(os.listdir(os.path.join(data, "worldgen", "biome"))):
+        obj = json.load(open(os.path.join(RES, DATA_4, "data", NS, "worldgen", "biome", name), encoding="utf-8"))
+        write(os.path.join(RES, DATA_11, "data", NS, "worldgen", "biome", name), biome_11(obj))
+    overworld = game_json_11("data/minecraft/worldgen/noise_settings/overworld.json")
+    for name in sorted(os.listdir(os.path.join(data, "worldgen", "noise_settings"))):
+        obj = json.load(open(os.path.join(data, "worldgen", "noise_settings", name), encoding="utf-8"))
+        write(os.path.join(RES, DATA_11, "data", NS, "worldgen", "noise_settings", name), noise_settings_11(obj, overworld))
+    day = day_timeline()
+    for name in sorted(os.listdir(os.path.join(data, "dimension_type"))):
+        obj = json.load(open(os.path.join(data, "dimension_type", name), encoding="utf-8"))
+        dim, timeline = dimension_type_11(obj, name[:-5], day)
+        write(os.path.join(RES, DATA_11, "data", NS, "dimension_type", name), dim)
+        if timeline:
+            write(os.path.join(RES, DATA_11, "data", NS, "timeline", "fixed_" + name), timeline)
+    for ns in sorted(os.listdir(os.path.join(RES, "data"))):
+        tags = os.path.join(RES, "data", ns, "tags")
+        for root, _, files in os.walk(tags):
+            for name in sorted(files):
+                path = os.path.join(root, name)
+                obj = json.load(open(path, encoding="utf-8"))
+                if rename_ids(obj) != obj:
+                    write(os.path.join(RES, DATA_11, os.path.relpath(path, RES)), rename_ids(obj))
+
     # (later entries win; each range reaches over the formats of the versions it serves: 1.21.4 is data 57-61 and
-    # resources 42-46, 1.21.5 data 71 and resources 55)
+    # resources 42-46, 1.21.5 data 71 and resources 55, 1.21.11 data 94.1 and resources 75.0; min_format and
+    # max_format repeat the range for 1.21.9 and later)
+    def entry(low, high, directory):
+        return {"formats": {"min_inclusive": low, "max_inclusive": high}, "min_format": low, "max_format": high, "directory": directory}
+
     write(os.path.join(RES, "pack.mcmeta"), {
         "overlays": {"entries": [
-            {"formats": {"min_inclusive": 57, "max_inclusive": 71}, "directory": DATA_4},
-            {"formats": {"min_inclusive": 42, "max_inclusive": 55}, "directory": ASSETS_4},
-            {"formats": {"min_inclusive": 62, "max_inclusive": 71}, "directory": DATA_5},
-            {"formats": {"min_inclusive": 47, "max_inclusive": 55}, "directory": ASSETS_5},
+            entry(57, 94, DATA_4),
+            entry(42, 75, ASSETS_4),
+            entry(62, 94, DATA_5),
+            entry(47, 75, ASSETS_5),
+            entry(94, 94, DATA_11),
         ]}
     })
     print("overlays written; spawn eggs:", sorted(eggs))

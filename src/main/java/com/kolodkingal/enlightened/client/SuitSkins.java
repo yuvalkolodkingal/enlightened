@@ -27,8 +27,13 @@ public final class SuitSkins {
         if (look.ownSkin()) {
             return own;
         }
+        //#if >=1.21.11
+        //$$ return CACHE.computeIfAbsent(look, v -> new PlayerSkin(new net.minecraft.core.ClientAsset.ResourceTexture(v.skin(), v.skin()), null, null,
+        //$$         v.slim() ? PlayerSkin.Model.SLIM : PlayerSkin.Model.WIDE, true));
+        //#else
         return CACHE.computeIfAbsent(look, v -> new PlayerSkin(v.skin(), null, null, null,
                 v.slim() ? PlayerSkin.Model.SLIM : PlayerSkin.Model.WIDE, true));
+        //#endif
     }
 
     private SuitSkins() {

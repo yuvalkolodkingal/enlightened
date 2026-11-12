@@ -417,12 +417,20 @@ public class BendingShotEntity extends Entity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag tag) {
+        //#if >=1.21.11
+        //$$ if (tag.read("kind", com.mojang.serialization.Codec.INT).isPresent()) {
+        //#else
         if (tag.contains("kind")) {
+        //#endif
             setKind(Kind.values()[Math.floorMod(tag.getInt("kind"), Kind.values().length)]);
         }
+        //#if >=1.21.11
+        //$$ tag.read("block", net.minecraft.world.level.block.state.BlockState.CODEC).ifPresent(this::setBlockState);
+        //#else
         if (tag.contains("block")) {
             setBlockState(NbtUtils.readBlockState(level().holderLookup(Registries.BLOCK), tag.getCompound("block")));
         }
+        //#endif
         if (tag.hasUUID("owner")) {
             owner = tag.getUUID("owner");
         }
@@ -438,7 +446,11 @@ public class BendingShotEntity extends Entity {
     @Override
     protected void addAdditionalSaveData(CompoundTag tag) {
         tag.putInt("kind", kind().ordinal());
+        //#if >=1.21.11
+        //$$ tag.store("block", net.minecraft.world.level.block.state.BlockState.CODEC, blockState());
+        //#else
         tag.put("block", NbtUtils.writeBlockState(blockState()));
+        //#endif
         if (owner != null) {
             tag.putUUID("owner", owner);
         }

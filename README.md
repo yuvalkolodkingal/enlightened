@@ -1,6 +1,6 @@
 # Enlightened
 
-A Minecraft mod (NeoForge, Minecraft 1.21.1, 1.21.4 and 1.21.5, one jar for all three) where you become a **bender of the Avatar world**:
+A Minecraft mod (NeoForge, Minecraft 1.21.1, 1.21.4, 1.21.5 and 1.21.11, one jar for all four) where you become a **bender of the Avatar world**:
 an **earthbender** who throws rock, wears earth armour, raises walls and pillars and feels the ground, and learns
 **sand** (a wall, sand in the air, quicksand), **lava** (a path, a shuriken, a lavabender's skin) and **metal**
 (a wall, blades, full armour, pulling metal out of the ground, wrecking machines);
@@ -111,7 +111,7 @@ Java 21. The skins and the sounds are generated: `python3 tools/skins.py` and `p
 
 # Enlightened (עברית)
 
-מוד למיינקראפט (NeoForge, מיינקראפט 1.21.1, 1.21.4 ו-1.21.5, אותו קובץ לשלושתן) שבו אתם הופכים ל**כשפים מעולם האווטאר**:
+מוד למיינקראפט (NeoForge, מיינקראפט 1.21.1, 1.21.4, 1.21.5 ו-1.21.11, אותו קובץ לארבעתן) שבו אתם הופכים ל**כשפים מעולם האווטאר**:
 **כשף אדמה** שזורק סלעים, לובש שריון אדמה, מרים קירות ועמודים ומרגיש את האדמה, ולומד **חול** (קיר, חול באוויר,
 חול טובעני), **לבה** (שביל, שוריקן, עור של כשף לבה) ו**פלדה** (קיר, סכינים, שריון מלא, משיכת מתכת מהאדמה, הריסת
 מכשירים);

@@ -1,0 +1,145 @@
+# Names that changed between 1.21.5 and 1.21.11 and mean the same (regex => replacement), applied after 1.21.4's and 1.21.5's.
+# 1.21.11: ResourceLocation is Identifier, ResourceKey.location() is identifier()
+\bnet\.minecraft\.resources\.ResourceLocation\b => net.minecraft.resources.Identifier
+\bResourceLocation\b => Identifier
+\b(dimension\(\)|k|key)\.location\(\) => $1.identifier()
+# classes that moved to new packages
+\bnet\.minecraft\.Util\b => net.minecraft.util.Util
+\bnet\.minecraft\.world\.entity\.npc\.(Villager|AbstractVillager|VillagerType|VillagerProfession|VillagerData)\b => net.minecraft.world.entity.npc.villager.$1
+\bnet\.minecraft\.world\.entity\.animal\.IronGolem\b => net.minecraft.world.entity.animal.golem.IronGolem
+\bnet\.minecraft\.world\.entity\.animal\.ShoulderRidingEntity\b => net.minecraft.world.entity.animal.parrot.ShoulderRidingEntity
+\bnet\.minecraft\.world\.entity\.vehicle\.AbstractMinecart\b => net.minecraft.world.entity.vehicle.minecart.AbstractMinecart
+\bnet\.minecraft\.world\.entity\.projectile\.SmallFireball\b => net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball
+\bnet\.minecraft\.world\.level\.GameRules\b => net.minecraft.world.level.gamerules.GameRules
+\bnet\.minecraft\.client\.resources\.PlayerSkin\b => net.minecraft.world.entity.player.PlayerSkin
+# 1.21.9/1.21.10: the side is a method; a server player's level is a ServerLevel; the server through the level
+\.isClientSide\b(?!\() => .isClientSide()
+\.serverLevel\(\) => .level()
+\b(p|player|dead|ctx\.player\(\))\.getServer\(\) => $1.level().getServer()
+\b(p|player)\.server\. => $1.level().getServer().
+# client: the camera
+\bgetMainCamera\(\)\.getPosition\(\) => getMainCamera().position()
+# 1.21.6: entities and block entities save to a ValueOutput and load from a ValueInput
+(public|protected) void addAdditionalSaveData\(CompoundTag (\w+)\) => $1 void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput $2)
+(public|protected) void readAdditionalSaveData\(CompoundTag (\w+)\) => $1 void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput $2)
+protected void saveAdditional\(CompoundTag (\w+), HolderLookup\.Provider \w+\) => protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput $1)
+protected void loadAdditional\(CompoundTag (\w+), HolderLookup\.Provider \w+\) => protected void loadAdditional(net.minecraft.world.level.storage.ValueInput $1)
+\bsuper\.(saveAdditional|loadAdditional)\((\w+), \w+\) => super.$1($2)
+\btag\.contains\("(\w+)"\) \? tag\.get(Int|Float|Long|Double|Boolean)Or\("\1", [^)]*\) : ([^;)]+) => tag.get$2Or("$1", $3)
+# game rules are typed keys (1.21.11)
+getGameRules\(\)\.getBoolean\(([\w.]*GameRules)\.RULE_DOBLOCKDROPS\) => getGameRules().get($1.BLOCK_DROPS)
+getGameRules\(\)\.getBoolean\(([\w.]*GameRules)\.RULE_KEEPINVENTORY\) => getGameRules().get($1.KEEP_INVENTORY)
+\bserver\.isPvpAllowed\(\) => ((net.minecraft.server.level.ServerLevel) player.level()).isPvpAllowed()
+# commands: permission checks (1.21.11)
+\.requires\((\w+) -> \1\.hasPermission\(2\)\) => .requires(net.minecraft.commands.Commands.hasPermission(net.minecraft.commands.Commands.LEVEL_GAMEMASTERS))
+# mobs: the restriction is a home (1.21.6)
+\brestrictTo\( => setHomeTo(
+\bhasRestriction\(\) => hasHome()
+\bgetRestrictCenter\(\) => getHomePosition()
+# chunk tickets take flags (1.21.9)
+new TicketType\(TicketType\.NO_TIMEOUT, false, TicketType\.TicketUse\.LOADING\) => new TicketType(TicketType.NO_TIMEOUT, TicketType.FLAG_LOADING)
+# explosions name their block particles (1.21.9)
+ParticleTypes\.EXPLOSION, ParticleTypes\.EXPLOSION_EMITTER,(\s*)SoundEvents\.GENERIC_EXPLODE\) => ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,$1net.minecraft.util.random.WeightedList.<net.minecraft.core.particles.ExplosionParticleInfo>builder().add(new net.minecraft.core.particles.ExplosionParticleInfo(ParticleTypes.POOF, 0.5F, 1.0F)).add(new net.minecraft.core.particles.ExplosionParticleInfo(ParticleTypes.SMOKE, 1.0F, 1.0F)).build(), SoundEvents.GENERIC_EXPLODE)
+# a block entity loads from a ValueInput
+\bbe\.loadWithComponents\((\w+), (level\.registryAccess\(\))\) => be.loadWithComponents(net.minecraft.world.level.storage.TagValueInput.create(net.minecraft.util.ProblemReporter.DISCARDING, $2, $1))
+# respawn points and the world spawn are RespawnData (1.21.9)
+\bspawn\.pos\(\) => spawn.respawnData().pos()
+\bspawn\.dimension\(\) => spawn.respawnData().dimension()
+new ServerPlayer\.RespawnConfig\((level\.dimension\(\)), (home\.relative\(dir\)), spawn\.angle\(\), spawn\.forced\(\)\) => new ServerPlayer.RespawnConfig(net.minecraft.world.level.storage.LevelData.RespawnData.of($1, $2, spawn.respawnData().yaw(), spawn.respawnData().pitch()), spawn.forced())
+\.getSharedSpawnPos\(\) => .getRespawnData().pos()
+# blocks
+\bBlocks\.CHAIN\b => Blocks.IRON_CHAIN
+InsideBlockEffectApplier effects\) => InsideBlockEffectApplier effects, boolean pastEdges)
+\bsuper\.entityInside\((\w+), (\w+), (\w+), (\w+), effects\) => super.entityInside($1, $2, $3, $4, effects, pastEdges)
+# entities
+public boolean canBeCollidedWith\(\) => public boolean canBeCollidedWith(@org.jetbrains.annotations.Nullable net.minecraft.world.entity.Entity other)
+# the moon phase is an environment attribute (1.21.11)
+(\w+)\.getMoonPhase\(\) == 0 => $1.environmentAttributes().getDimensionValue(net.minecraft.world.attribute.EnvironmentAttributes.MOON_PHASE) == net.minecraft.world.level.MoonPhase.FULL_MOON
+# players' profiles: GameProfile is a record; bans and the name cache by NameAndId (1.21.9)
+\bgetGameProfile\(\)\.getName\(\) => getGameProfile().name()
+\bisBanned\((\w+)\.getGameProfile\(\)\) => isBanned(new net.minecraft.server.players.NameAndId($1.getGameProfile()))
+\bserver\.getProfileCache\(\) == null \? null : server\.getProfileCache\(\)\.get\((\w+)\)\.orElse\(null\) => server.services().nameToIdCache().get($1).orElse(null)
+# network: the client's send moved to ClientPacketDistributor
+(?:net\.neoforged\.neoforge\.network\.)?(?<![\w.]Client)PacketDistributor\.sendToServer\( => net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(
+# client: the player model and its render state (1.21.9: avatars), render types in their own package (1.21.11)
+\bnet\.minecraft\.client\.model\.PlayerModel\b => net.minecraft.client.model.player.PlayerModel
+\bPlayerRenderState\b => AvatarRenderState
+\bnet\.minecraft\.client\.renderer\.entity\.player\.PlayerRenderer\b => net.minecraft.client.renderer.entity.player.AvatarRenderer
+\bnet\.minecraft\.client\.renderer\.RenderType\b => net.minecraft.client.renderer.rendertype.RenderType
+(?<![\w.])(?:net\.minecraft\.client\.renderer\.rendertype\.)?RenderType\.(entityCutoutNoCull|entityTranslucent|entityTranslucentEmissive|eyes|fireScreenEffect|itemEntityTranslucentCull|lightning|entitySolid|entityCutout)\( => net.minecraft.client.renderer.rendertype.RenderTypes.$1(
+# client: layers written against 1.21.1 draw into the level's buffers while they are submitted (1.21.9; compat.RenderBridge)
+public void render\((?:com\.mojang\.blaze3d\.vertex\.)?PoseStack (\w+), (?:net\.minecraft\.client\.renderer\.)?MultiBufferSource (\w+), int (\w+),\s*([\w.]*AvatarRenderState) (\w+),\s*float (\w+), float (\w+)\) \{ => public void submit(com.mojang.blaze3d.vertex.PoseStack $1, net.minecraft.client.renderer.SubmitNodeCollector layerCollector, int $3, $4 $5, float $6, float $7) {\n        net.minecraft.client.renderer.MultiBufferSource $2 = com.kolodkingal.enlightened.compat.RenderBridge.buffers();
+# client: the player model's overlays (hat, sleeves, ...) are children of their parts from 1.21.2 and follow them
+(?m)^(\s*)((?:this\.|model\.)?(?:hat|jacket|leftSleeve|rightSleeve|leftPants|rightPants))\.copyFrom\([\w.]+\); => $1// (1.21.11: $2 is a child of its part and follows it)
+\bgetParentModel\(\)\.copyPropertiesTo\((\w+)\); => // (1.21.11: $1.setupAnim(state) poses it, the benders' poses too)
+# client: skins (1.21.9)
+\bPlayerSkin\.Model\.(SLIM|WIDE)\b => net.minecraft.world.entity.player.PlayerModelType.$1
+\bPlayerSkin\.Model\b => net.minecraft.world.entity.player.PlayerModelType
+\bgetSkin\(\)\.texture\(\) => getSkin().body().texturePath()
+\bgetSkin\(\)\.model\(\) => getSkin().model()
+# client: sprites of materials through the atlas manager (1.21.9)
+\b([A-Z][A-Z_$0-9]*)\.sprite\(\) => net.minecraft.client.Minecraft.getInstance().getAtlasManager().get($1)
+# client: screenshots take a downscale
+\bScreenshot\.grab\(([^,]+), ([^,]+), (mc\.getMainRenderTarget\(\)), => Screenshot.grab($1, $2, $3, 1,
+# client: HUD layers
+\bimport net\.minecraft\.client\.gui\.LayeredDraw; => // (1.21.6: NeoForge's GuiLayer)
+\bimplements LayeredDraw\.Layer\b => implements net.neoforged.neoforge.client.gui.GuiLayer
+# client: the level's render stages are events of their own; the camera and the partial tick from the state (1.21.9)
+\bevent\.getCamera\(\)\.getPosition\(\) => event.getLevelRenderState().cameraRenderState.pos
+\bevent\.getPartialTick\(\)\.getGameTimeDeltaPartialTick\(false\) => net.minecraft.client.Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false)
+\bevent\.getStage\(\) != RenderLevelStageEvent\.Stage\.AFTER_SKY\b => !(event instanceof RenderLevelStageEvent.AfterSky)
+\bmc\.getEntityRenderDispatcher\(\)\.cameraOrientation\(\) => mc.gameRenderer.getMainCamera().rotation()
+# client: the lightmap is bound by the render types themselves (1.21.6)
+(?m)^(\s*)mc\.gameRenderer\.lightTexture\(\)\.turn(?:On|Off)LightLayer\(\); => $1// (1.21.11: the render type binds the lightmap)
+# client: no fog override (the fog is a buffer of the GameRenderer's own from 1.21.6; MULTIVERSION known differences)
+RenderSystem\.setShaderFog\(net\.minecraft\.client\.renderer\.FogParameters\.NO_FOG\); => // (1.21.11: the frame's fog stays)
+# client: a sprite is drawn whole (1.21.11: no shrink ratio)
+\bsprite\.uvShrinkRatio\(\) => 0.0F
+# client: vertex consumers carry a line width (1.21.11)
+(public VertexConsumer setNormal\(float x, float y, float z\) \{\s*base\.setNormal\(x, y, z\);\s*return this;\s*\}) => $1\n\n            @Override\n            public VertexConsumer setLineWidth(float width) {\n                base.setLineWidth(width);\n                return this;\n            }\n\n            @Override\n            public VertexConsumer setColor(int argb) {\n                return setColor((argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF, argb >>> 24);\n            }
+# client: input (1.21.9: key events, the window object)
+\bInputConstants\.getKey\(event\.getKey\(\), event\.getScanCode\(\)\) => InputConstants.getKey(event.getKeyEvent())
+\blong window = mc\.getWindow\(\)\.getWindow\(\); => com.mojang.blaze3d.platform.Window window = mc.getWindow();
+\bGLFW\.glfwGetMouseButton\(window, => GLFW.glfwGetMouseButton(window.handle(), 
+# client: tooltips are set for the next frame (1.21.6)
+\.renderTooltip\(net\.minecraft\.client\.Minecraft\.getInstance\(\)\.font, => .setTooltipForNextFrame(net.minecraft.client.Minecraft.getInstance().font,
+# client: the player renderers of the AddLayers event are avatar renderers (1.21.9)
+\bevent\.getSkin\((\w+)\) instanceof PlayerRenderer (\w+)\b => event.getPlayerRenderer($1) instanceof net.minecraft.client.renderer.entity.player.AvatarRenderer<?> $2
+\bown\.texture\(\) => own.body().texturePath()
+# client: the first-person hands are submitted (1.21.9): FirstPersonArms calls the hand renderer with the event's collector
+ItemStack stack, float equippedProgress, PoseStack poseStack, MultiBufferSource buffer, int combinedLight\) => ItemStack stack, float equippedProgress, PoseStack poseStack, net.minecraft.client.renderer.SubmitNodeCollector buffer, int combinedLight)
+void enlightened\$renderPlayerArm\(PoseStack poseStack, MultiBufferSource buffer, => void enlightened\$renderPlayerArm(PoseStack poseStack, net.minecraft.client.renderer.SubmitNodeCollector buffer,
+\bevent\.getMultiBufferSource\(\) => event.getSubmitNodeCollector()
+# client: the shoulder entities stay on the server from 1.21.9 (the client only knows a parrot's variant): no lemur is drawn on a shoulder
+\bplayer\.getShoulderEntity(?:Left|Right)\(\) => (net.minecraft.nbt.CompoundTag) null /* 1.21.11: not on the client */
+# client: a skin by profile
+\.getInsecureSkin\((new GameProfile\([^;]*?\))\)\.texture\(\) => .createLookup($1, false).get().body().texturePath()
+# client: items are submitted (1.21.9)
+\bMinecraft\.getInstance\(\)\.getItemRenderer\(\)\.renderStatic\((\w+), (\w+), (ItemDisplayContext\.\w+), (\w+), \w+, [^,]+,\s*(\w+), ([\w.]+), [^;]+\); => com.kolodkingal.enlightened.compat.ItemSubmit.living($1, $2, $3, $4, layerCollector, $5, $6);
+\bitems\.renderStatic\((\w+), (ItemDisplayContext\.\w+), (\w+), ([\w.]+), (\w+), \w+, (\w+)\.level\(\), [^;]+\); => com.kolodkingal.enlightened.compat.ItemSubmit.entity($6, $1, $2, $5, collector(), $3, $4);
+\bPlayerRenderer\.class\b => net.minecraft.client.renderer.entity.player.AvatarRenderer.class
+# client: a render type is made from a render setup (1.21.11)
+(RenderType\.create\(\s*"enlightened_comet_sky"), (\d+), (\w+), [\w.]*RenderType\.CompositeState\.builder\(\)\.createCompositeState\(false\)\) => $1, net.minecraft.client.renderer.rendertype.RenderSetup.builder($3).bufferSize($2).createRenderSetup())
+# GUI (1.21.6): the GUI's pose is a 2D matrix stack; textured blits take the GUI pipeline
+\bg\.pose\(\)\.pushPose\(\) => g.pose().pushMatrix()
+\bg\.pose\(\)\.popPose\(\) => g.pose().popMatrix()
+\bg\.pose\(\)\.translate\(([^;]*), 0(?:\.0F?)?\); => g.pose().translate($1);
+\bg\.pose\(\)\.scale\(([^;]*), 1(?:\.0F?)?\); => g.pose().scale($1);
+(?:net\.minecraft\.client\.renderer\.rendertype\.)?RenderType::guiTextured\b => net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED
+@in(client/hud/PowerPanels) \bPoseStack pose = g\.pose\(\); => org.joml.Matrix3x2fStack pose = g.pose();
+@in(client/hud/PowerPanels) \bpose\.pushPose\(\) => pose.pushMatrix()
+@in(client/hud/PowerPanels) \bpose\.popPose\(\) => pose.popMatrix()
+@in(client/hud/PowerPanels) \bpose\.translate\(([^;]*), 0(?:\.0F?)?\); => pose.translate($1);
+@in(client/hud/PowerPanels) \bpose\.scale\(([^;]*), 1(?:\.0F?)?\); => pose.scale($1);
+@in(client/hud/PowerPanels) \bpose\.mulPose\(new Matrix4f\(\)\.m10\(([^)]*)\)\); => pose.mul(new org.joml.Matrix3x2f(1.0F, 0.0F, $1, 1.0F, 0.0F, 0.0F));
+# GUI (1.21.9): input events, and buttons draw their contents
+@in(client/screen/) public void onPress\(\) \{ => public void onPress(net.minecraft.client.input.InputWithModifiers input) {
+@in(client/screen/) protected boolean isValidClickButton\(int button\) \{ => protected boolean isValidClickButton(net.minecraft.client.input.MouseButtonInfo buttonInfo) {\n            int button = buttonInfo.button();
+@in(client/screen/) public boolean mouseClicked\(double mouseX, double mouseY, int button\) \{ => public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent clickEvent, boolean doubleClick) {\n        double mouseX = clickEvent.x(), mouseY = clickEvent.y();\n        int button = clickEvent.button();
+@in(client/screen/) \bsuper\.mouseClicked\(mouseX, mouseY, button\) => super.mouseClicked(clickEvent, doubleClick)
+@in(client/screen/) public boolean keyPressed\(int keyCode, int scanCode, int modifiers\) \{ => public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {\n        int keyCode = keyEvent.key(), scanCode = keyEvent.scancode(), modifiers = keyEvent.modifiers();
+@in(client/screen/) \bsuper\.keyPressed\(keyCode, scanCode, modifiers\) => super.keyPressed(keyEvent)
+@in(client/screen/) \.matches\(keyCode, scanCode\) => .matches(keyEvent)
+@in(client/screen/(ScrollUi|TalkScreen)) protected void renderWidget\(GuiGraphics g, int mouseX, int mouseY, float partialTick\) => protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTick)
+# mobs that are tempted need the tempt range attribute (1.21.6: TemptGoal reads it)
+@in(entity/(FlyingLemur|SkyBison)Entity) \b(Mob|TamableAnimal)\.createMobAttributes\(\) => $1.createMobAttributes().add(net.minecraft.world.entity.ai.attributes.Attributes.TEMPT_RANGE, 10.0)

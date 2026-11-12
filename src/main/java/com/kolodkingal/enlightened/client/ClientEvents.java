@@ -77,8 +77,16 @@ public final class ClientEvents {
     /** The local player burning blue sees blue flames over the screen instead of orange. */
     /** The back slot is drawn as a slot (the inventory's own texture has none there). */
     @SubscribeEvent
+    //#if >=1.21.11
+    //$$ // (1.21.6: no container background event; the screen's background event comes after the container's texture)
+    //$$ public static void onContainerBackground(net.neoforged.neoforge.client.event.ScreenEvent.Render.Background event) {
+    //$$     if (!(event.getScreen() instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> screen)) {
+    //$$         return;
+    //$$     }
+    //#else
     public static void onContainerBackground(net.neoforged.neoforge.client.event.ContainerScreenEvent.Render.Background event) {
         var screen = event.getContainerScreen();
+    //#endif
         for (net.minecraft.world.inventory.Slot slot : screen.getMenu().slots) {
             if (slot.container instanceof com.kolodkingal.enlightened.item.BackSlot.Back && slot.isActive()) {
                 int x = screen.getGuiLeft() + slot.x - 1;
@@ -294,6 +302,20 @@ public final class ClientEvents {
         }
     }
 
+    //#if >=1.21.11
+    //$$ // (1.21.9: each stage of the level's rendering is an event of its own)
+    //$$ @SubscribeEvent
+    //$$ public static void onRenderSky(RenderLevelStageEvent.AfterSky event) {
+    //$$     com.kolodkingal.enlightened.client.sky.CometSky.render(event);
+    //$$ }
+    //$$
+    //$$ @SubscribeEvent
+    //$$ public static void onRenderLevel(RenderLevelStageEvent.AfterParticles event) {
+    //$$     WorldFxRenderer.render(event);
+    //$$     com.kolodkingal.enlightened.client.cosmic.CosmicRenderer.render(event);
+    //$$     com.kolodkingal.enlightened.client.render.AnomalyRenderer.drawAll(event);
+    //$$ }
+    //#else
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {
         com.kolodkingal.enlightened.client.sky.CometSky.render(event);
@@ -303,6 +325,7 @@ public final class ClientEvents {
             com.kolodkingal.enlightened.client.render.AnomalyRenderer.drawAll(event);
         }
     }
+    //#endif
 
     @SubscribeEvent
     public static void onFogColor(net.neoforged.neoforge.client.event.ViewportEvent.ComputeFogColor event) {

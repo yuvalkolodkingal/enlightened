@@ -42,8 +42,11 @@ public final class EnlightenedClient {
         modBus.addListener(EnlightenedClient::onRenderers);
         modBus.addListener(EnlightenedClient::onLayerDefinitions);
         modBus.addListener(EnlightenedClient::onAddLayers);
+        //#if <1.21.11
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent e) ->
                 e.register(Enlightened.id("cosmic"), new com.kolodkingal.enlightened.client.cosmic.CosmicEffects()));
+        //#endif
+        // (1.21.11: the cosmic plane's sky is its dimension type's attributes, in the 1.21.11 data overlay)
         //#if >=1.21.4
         //$$ // (the glider's dye is its item model's tint from 1.21.4: assets/enlightened/items/air_glider.json)
         //$$ modBus.addListener(com.kolodkingal.enlightened.compat.RenderBridge::register);
@@ -59,6 +62,9 @@ public final class EnlightenedClient {
     }
 
     private static void onKeys(RegisterKeyMappingsEvent event) {
+        //#if >=1.21.11
+        //$$ event.registerCategory(KeyBindings.CATEGORY);
+        //#endif
         for (var key : KeyBindings.ABILITIES) {
             event.register(key);
         }

@@ -97,7 +97,11 @@ public final class ModItems {
                                           int base, int spots) {
         //#if >=1.21.4
         //$$ // (the colours are in the item's model from 1.21.4: assets/enlightened/items/<name>.json)
+        //#if >=1.21.11
+        //$$ return ITEMS.register(name, () -> new net.minecraft.world.item.SpawnEggItem(props(name).spawnEgg(type.get())));
+        //#else
         //$$ return ITEMS.register(name, () -> new net.minecraft.world.item.SpawnEggItem(type.get(), props(name)));
+        //#endif
         //#else
         return ITEMS.register(name, () -> new net.neoforged.neoforge.common.DeferredSpawnEggItem(type, base, spots, props(name)));
         //#endif

@@ -11,7 +11,12 @@ import org.lwjgl.glfw.GLFW;
  * (Sneak + H goes back). The Scroll key (default K) opens the Bending Scroll: the abilities, the points and the loadout.
  */
 public final class KeyBindings {
+    //#if >=1.21.11
+    //$$ // (1.21.9: a category is a record, registered with the keys; its name is key.category.enlightened.main)
+    //$$ public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(com.kolodkingal.enlightened.Enlightened.id("main"));
+    //#else
     public static final String CATEGORY = "key.categories.enlightened";
+    //#endif
 
     public static final KeyMapping[] ABILITIES = {
             create(1, GLFW.GLFW_KEY_R),

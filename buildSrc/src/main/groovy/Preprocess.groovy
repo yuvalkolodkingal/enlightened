@@ -37,7 +37,9 @@ abstract class Preprocess extends DefaultTask {
     /**
      * Pure renames, applied to every file after the version blocks, file by file in order (the versions before this
      * one first): one {@code regex => replacement} per line ({@code #} comments). For names that only moved or
-     * changed (MobSpawnType => EntitySpawnReason).
+     * changed (MobSpawnType => EntitySpawnReason). A line {@code @in(<regex>) regex => replacement} applies only to
+     * the files whose path (relative to the source root, e.g. {@code com/kolodkingal/enlightened/client/hud/PowerPanels.java})
+     * the first regex finds.
      */
     @org.gradle.api.tasks.InputFiles @PathSensitive(PathSensitivity.RELATIVE)
     abstract org.gradle.api.file.ConfigurableFileCollection getRenames()
@@ -123,6 +125,7 @@ abstract class Preprocess extends DefaultTask {
         if (!stack.isEmpty()) throw new IllegalStateException(file + ': //#if without //#endif')
         String s = out.join('\n')
         for (List<String> rule : renameRules()) {
+            if (rule.size() > 2 && !(file =~ rule[2])) continue
             s = s.replaceAll(rule[0], rule[1])
         }
         String pkg = basePackage.get()
@@ -141,9 +144,18 @@ abstract class Preprocess extends DefaultTask {
                 file.readLines('UTF-8').each { String line ->
                     String l = line.trim()
                     if (l.isEmpty() || l.startsWith('#')) return
+                    // "@in(<regex>) rule": the rule applies only to the files whose path (from the source root) the regex finds
+                    String scope = null
+                    def m = l =~ /^@in\((\S+)\) (.*)$/
+                    if (m.matches()) {
+                        scope = m.group(1)
+                        l = m.group(2)
+                    }
                     int at = l.indexOf(' => ')
                     if (at < 0) throw new IllegalArgumentException(file.name + ': bad rename line: ' + line)
-                    rules << [l.substring(0, at), l.substring(at + 4).replace('\\n', '\n')]  // (\\n in a replacement is a new line)
+                    List<String> rule = [l.substring(0, at), l.substring(at + 4).replace('\\n', '\n')]  // (\\n in a replacement is a new line)
+                    if (scope != null) rule << scope
+                    rules << rule
                 }
             }
             cachedRules = rules

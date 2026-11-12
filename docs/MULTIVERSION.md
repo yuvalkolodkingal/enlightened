@@ -167,5 +167,77 @@ Phase 4 is done for the server: the jar holds a third copy, `com.kolodkingal.enl
   the game's position-colour one, without depth test; the fire through the game's fire-overlay render type). They
   compile and follow the 1.21.4 drawing, but have not been seen on a 1.21.5 client yet.
 
+## Progress (1.0.32): 1.21.11 joins the jar
+
+Phases 5 and 6 are done for the server on 1.21.11 (1.21.8 and 1.21.10 are left out: 1.21.11 has all their changes):
+the jar holds a fourth copy, `com.kolodkingal.enlightened.v1_21_11`, made by `versions/1.21.11` (NeoForge 21.11.48).
+Java stays 21: 1.21.11's `version.json` says `"java_version": 21`.
+
+* **The chain**: `versions/1.21.11` builds on 1.21.4's and 1.21.5's overlays and renames (in that order), so it holds
+  only what changed since 1.21.5. The first compile of the copy had 1,135 errors in 138 files; then 567, 524, 214,
+  130, 85, 43, 1 and 0 as the rules, overlays and version blocks below went in.
+* **The renames** (`versions/1.21.11/renames.txt`, 104 rules): `ResourceLocation` is `Identifier` (and
+  `ResourceKey.location()` is `identifier()`); the classes that moved (villagers, golems, minecarts, fireballs,
+  `GameRules`, `Util`, `PlayerSkin`); `level.isClientSide()`; a server player's `level()` is its `ServerLevel` and the
+  server comes through it; entities and block entities save to a `ValueOutput` and load from a `ValueInput`; typed game
+  rules; the command permission check; a mob's restriction is its home; chunk ticket flags; explosion block particles;
+  respawn points as `RespawnData`; `iron_chain`; `entityInside`'s extra argument; `canBeCollidedWith(Entity)`; the
+  moon phase as an environment attribute; `GameProfile` as a record and bans by `NameAndId`;
+  `ClientPacketDistributor`; the tempt range attribute of the tempted mobs (TemptGoal reads it from 1.21.6). On the
+  client: the player model and `AvatarRenderState`, render types in `RenderTypes`, the render layers' `submit`, the
+  overlay parts of the player model as children of their parts (no `copyFrom`), skins, sprites through the atlas
+  manager, the level's render stage events, `GuiLayer`, the GUI's 2D pose and its pipelines, the input events of the
+  screens and buttons, item rendering through `ItemStackRenderState`, the first-person hand renderer's collector.
+* **Preprocess** learned file-scoped rules: `@in(<regex>) rule` applies a rename only to the files whose path the regex
+  finds (the GUI's `pose.pushPose()` is not the world's).
+* **1.21.11's own code** (`versions/1.21.11/src/main/java`): the render bridge for the submit-based renderers of 1.21.9
+  (`compat.RenderBridge`, the `Legacy*Renderer` classes, `LegacyLiving`): a renderer or layer written against 1.21.1
+  draws straight into the level's buffers while it is submitted (the level flushes them after the entities), and its
+  `super.render(...)` submits vanilla's part to the collector; `compat.ItemSubmit` (items submitted);
+  `compat.AttachCodecs` (attachments saved through a map codec in the same format as before, so a world keeps its
+  bending); the anomaly cube's block entity renderer with a render state; the energy particle as a `SingleQuadParticle`;
+  an empty `CosmicEffects` (1.21.11 has no dimension special effects); the client mixins whose targets changed
+  (`HumanoidArmorLayerMixin`, `ItemInHandLayerMixin`, and `FlameFeatureRendererMixin` in place of
+  `EntityRenderDispatcherMixin`, which `versions/1.21.11/mixins.json` removes).
+* **Version blocks** (`//#if >=1.21.11`, 12 in 7 files): the shot's block state and kind saved through codecs, the
+  attachments' serializers, the spawn eggs' entity type as an item property, the key category record and its
+  registration, the render stage events, the back slot drawn on the screen's background event, the suit skins'
+  textures, no dimension special effects.
+* **Resources**: `tools/overlays.py` widens the 1.21.4 and 1.21.5 overlays to 1.21.11 (data 94.1, resources 75.0:
+  recipes, item model definitions and the spawn eggs are still in those formats) and adds `overlay_1_21_11_data`: the
+  noise settings with a preliminary surface level, the biomes with their sky, fog, particles, sounds and music as
+  environment attributes, the dimension types in 1.21.11's form (a fixed time is a timeline of the day's values at that
+  time, `data/enlightened/timeline/`; the cosmic plane's purple haze and its lack of clouds are values in it), and the
+  tags with `minecraft:iron_chain`. Every overlay entry now carries `min_format` and `max_format` beside `formats`:
+  1.21.11 reads the same entries for data and for resources and refuses an entry that reaches past format 64
+  (resources) or 81 (data) without them.
+* **Checked**: all four copies compile (`./gradlew :compileJava :v1_21_4:compileJava :v1_21_5:compileJava
+  :v1_21_11:compileJava`); `./gradlew build` makes the jar; the jar starts a dedicated server of NeoForge 21.11.48 (a
+  new world, then again on it), every summonable creature of the mod was summoned there, saved and found again after a
+  restart, and six of the mod's places were raised with `/place structure` (the other five refused the spot they were
+  given, as several do on 1.21.5) and loaded again, with no errors (the one error in the log, netty's kqueue probe, comes from the game
+  itself, without the mod too); it still starts servers of 21.5.101 and 21.4.161; the 119 GameTests pass on 1.21.1.
+  **Not checked on 1.21.11**: a client (nothing client-side has been run: the client mixins' targets were compared by
+  signature only), the tour and the GameTests.
+
+### Known differences on 1.21.11
+
+* **A flying lemur on a shoulder is not drawn.** From 1.21.9 the game keeps what sits on a player's shoulder on the
+  server and tells the clients only a parrot's variant, so the client cannot know a lemur is there. It still sits,
+  and comes down, as before.
+* **The anomaly is drawn in the frame's fog.** 1.21.6 made the fog a buffer of the game renderer's own, which the mod
+  cannot swap for "no fog" while it draws, so far away the anomaly fades into the fog like everything else.
+* **The back slot's frame** is drawn on the screen's background event (1.21.11 has no container background event);
+  it is the same picture.
+* **The renderers written for 1.21.1 draw straight into the level's buffers** (see the render bridge above) instead of
+  submitting: they come out in the same frame, but outside 1.21.9's feature ordering (an outline or a translucent
+  part may sort differently against vanilla's).
+* **The sleeves, the hat and the trousers** of the player-shaped creatures follow their parts by being their children
+  (the model's own way since 1.21.2), not by copying their pose.
+* **The cosmic plane's sky** is the overworld's sky at midnight with the plane's purple haze and no clouds, made from
+  1.21.11's environment attributes, not from 1.21.1's special effects; the spirit world's fixed morning likewise.
+* **Not seen on a client yet**: everything client-side of 1.21.11 (the bridge, the HUD and the screens with their 2D
+  pose, the comet sky's render setup, the hands in first person).
+
 What is uncertain: the notes for 1.21.5 and later are from NeoForge's release notes and from memory, and 26.2 and
 26.3 have not been audited. Re-run the audit at the start of each phase.

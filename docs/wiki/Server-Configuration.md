@@ -2,7 +2,8 @@
 
 [עברית](Server-Configuration-HE)
 
-`world/serverconfig/enlightened-server.toml` (created when the world is first opened; synced to every client). On a
+`world/serverconfig/enlightened-server.toml` (created when the world is first opened; synced to every client; on Minecraft 26.3 it is
+`config/enlightened-synced.toml`, one for all the worlds). On a
 single-player world, the *Config* button of Enlightened in the Mods screen opens it. Every ability's numbers are
 here; the defaults are what the [element pages](Home) describe.
 

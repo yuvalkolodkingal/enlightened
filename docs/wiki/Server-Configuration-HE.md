@@ -4,7 +4,8 @@
 
 [English](Server-Configuration)
 
-`world/serverconfig/enlightened-server.toml` (נוצר כשהעולם נפתח בפעם הראשונה; מסונכרן לכל לקוח). בעולם של שחקן
+`world/serverconfig/enlightened-server.toml` (נוצר כשהעולם נפתח בפעם הראשונה; מסונכרן לכל לקוח; במיינקראפט 26.3 הוא
+`config/enlightened-synced.toml`, אחד לכל העולמות). בעולם של שחקן
 יחיד, כפתור *Config* של Enlightened במסך המודים פותח אותו. כל המספרים של כל יכולת כאן; ברירות המחדל הן מה
 ש[דפי היסודות](Home-HE) מתארים.
 

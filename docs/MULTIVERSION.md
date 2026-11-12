@@ -20,7 +20,7 @@ ever had beta builds (1.21.2, 1.21.6, 1.21.7, 1.21.9, 26.1, 26.1.1) are left out
 | 1.21.11 | 21.11.48 | 21 | 1,691 | 296 |
 | 26.1.2 | 26.1.2.126 | 25 | not audited | |
 | 26.2 | 26.2.0.93 | 25 | not audited | |
-| 26.3 | 26.3.0.102 | 25 | not audited | |
+| 26.3 | 26.3.0.102 | 25 | 615 (from 1.21.11's copy) | 114 |
 
 **The audit.** The mod's main sources (234 Java files) were compiled, unchanged, against each NeoForge version and
 javac's errors counted; "files" is how many files have at least one error. The numbers are a lower bound (fixing a
@@ -239,5 +239,79 @@ Java stays 21: 1.21.11's `version.json` says `"java_version": 21`.
 * **Not seen on a client yet**: everything client-side of 1.21.11 (the bridge, the HUD and the screens with their 2D
   pose, the comet sky's render setup, the hands in first person).
 
-What is uncertain: the notes for 1.21.5 and later are from NeoForge's release notes and from memory, and 26.2 and
-26.3 have not been audited. Re-run the audit at the start of each phase.
+### Found later, on a client (1.0.33)
+
+Two things the 1.21.11 copy got wrong were found when a 26.3 client was first run, and fixed in `versions/1.21.11` (so
+both copies have the fix); a 1.21.11 client was then started briefly and shows them right:
+
+* **The creatures drawn on the player model** (the guards, Iroh, Bumi, Guru Pathik, the Fire Nation, the Sun Warriors)
+  came out as the default player: from 1.21.9 the entity render dispatcher gives every avatar render state to the
+  player's renderer. `EntityRenderDispatcherAvatarMixin` gives the mod's own back to their renderer.
+* **Text in the screens** whose colour was written without alpha (`0xFFFFFF`) was not drawn: from 1.21.6 the GUI skips
+  such text, which 1.21.1 drew opaque. `compat.GuiText` (a rename of the screens' `drawString` calls) draws it opaque.
+
+## Progress (1.0.33): 26.3 joins the jar
+
+The jar holds a fifth copy, `com.kolodkingal.enlightened.v26_3`, made by `versions/26.3` (NeoForge 26.3.0.102, the
+newest 26.3 build on 2026-11-12; moddev 2.0.148 is still the newest plugin and needs no change).
+
+* **Java.** 26.x needs Java 25: the 26.3 copy is compiled by a Java 25 toolchain (Gradle fetches it) against NeoForge
+  26.3, but with `--release 21`, so its classes are Java 21 class files like the rest of the jar. (`java.disableAutoTargetJvm()`
+  lets a Java 21 compile use NeoForge 26.3's libraries, which say they want 25.) The `boot` entry, the mixin gate and
+  the other copies are unchanged, so the one jar still loads on the 1.21.x games on Java 21. `boot.Versions` also asks
+  FML 12 for the running version (`FMLLoader.getCurrent().getVersionInfo()`).
+* **The chain**: `versions/26.3` builds on 1.21.4's, 1.21.5's and 1.21.11's overlays and renames. The first compile of
+  the copy had 615 errors in 114 files; then 71, 31 and 0.
+* **The renames** (`versions/26.3/renames.txt`): 26.1 made the game unobfuscated and renamed or moved much of the client:
+  the GUI is extracted (`GuiGraphicsExtractor`, `extractRenderState`, `text`, `centeredText`), the screen belongs to
+  the GUI (`mc.gui.screen()`, `mc.gui.setScreen`), the HUD is hidden through the GUI's HUD, the camera is
+  `mainCamera()`, keys are SDL's (`InputConstants.KEY_R`), poses rotate with `rotate`, sprites are `SpriteId`s, light
+  is `LightCoordsUtil`, the render types renamed (`entityCutoutNoCull` is `entityCutout`). Common code: vanilla's
+  entity types are in `EntityTypes`, the coloured and copper blocks are collections (`Blocks.CONCRETE.pick(...)`), a
+  level's random is `getRandom()`, the action bar is `sendOverlayMessage`, swings name their animation, a player drops
+  with a prediction, boss bars have an id, saved data is named by an id, chunk positions pack to a long, blocks have no
+  codec, block breaking is `BreakBlockEvent`, the server config is FML's synced type, a mob's babies come from its
+  start age, the cow's sounds are a variant's.
+* **26.3's own code** (`versions/26.3/src/main/java`): 26.1 removed the buffer source entirely. `compat.MultiBufferSource`
+  is one of the mod's own: the renderers, layers and world effects written against 1.21.1 draw into it, it records
+  what they draw per render type and submits each recording as custom geometry to the collector of the submit being
+  answered (the entity's, or the level's `SubmitCustomGeometryEvent` for the world effects, the comet and the anomaly);
+  `compat.BlockDraw` (a block resolved and submitted), `compat.Gui26` (the HUD, the container screen's corner and
+  hovered slot, the mouse buttons, the text box's filter), the sky's comet as level geometry, the first-person hands
+  through `FirstPersonHandsAndItemsRenderer`, the blue flames on `FlameFeatureRenderer`'s sprites, an empty tour.
+* **Version blocks** (`//#if >=26.3`, in `ClientEvents`): the world effects on `SubmitCustomGeometryEvent`, the blue
+  fire over the screen through `ExtractBlockScreenEffectEvent`'s custom renderer.
+* **Resources**: `tools/overlays.py` widens the earlier overlays to 26.3's formats (data 121, resources 97.1: their
+  contents are still valid there) and adds `overlay_26_3_data` and `overlay_26_3_assets`: biomes with their spawns as
+  the natural mob spawns attribute, NeoForge's added spawns with an int provider count, dimension types with
+  `has_ender_dragon_fight` and their fixed time on the overworld's clock, loot tables with `modifier` and `condition`
+  (26.1's names; the old ones would be ignored, not refused), recipes without a category, the coal trim's palette
+  (`palette_id`, `textures/palettes/trim/coal.png`), and the spirit world's noise as 26.3's overworld at its own sea
+  level (1.21.1's was the overworld's too).
+* **Checked**: `./gradlew build` makes the jar with all five copies. The jar starts a dedicated NeoForge 26.3.0.102
+  server on a new world and again on it, with no errors (only netty's kqueue probe, which the game logs without the mod
+  too); every summonable creature was summoned and found again after a restart (the shot, the tornado and the
+  meditating body are gone by then, as they are meant to be; the fire wall, the seat and the flying slab cannot be
+  summoned), five of the mod's eleven places were raised with `/place structure` (the others refused the spot, as on
+  1.21.11), a chest's loot was rolled, and the spirit world generated. A 26.3 client (production launch, under Xvfb on
+  Mesa's software OpenGL) joined that server: the HUD panel, the boss bar, the scroll screen, the wheel, the inventory,
+  the creatures in their skins, the anomaly, the dragon, a fire ring and fire balls were drawn, with no errors in the
+  log. The same jar still starts servers of 21.11.48, 21.5.101, 21.4.161 and 21.1.256, and the 119 GameTests pass on
+  1.21.1. **Not checked on 26.3**: the tour (not in this copy) and the GameTests (not built for the later copies), and
+  on the client most of the abilities, the comet sky, the blue fire, the cosmic plane, the first-person gestures.
+
+### Known differences on 26.3
+
+* **The server's options** are in `config/enlightened-synced.toml` (FML 12 has no per-world server configs).
+* **The lion turtles' islands and the Avatar cycle** are saved under `data/enlightened/` in the world (26.1 names saved
+  data by an id): a world brought over from 1.21.x starts them afresh.
+* **What the mod's renderers draw is recorded and drawn later in the frame** as custom geometry, sorted by render type
+  with vanilla's (an outline or a translucent part may sort differently against vanilla's, as on 1.21.11).
+* **Sozin's Comet** and its red veil are drawn after the world, as far out as it is drawn: nearer land is drawn over the
+  veil, the farthest is seen through it. Not seen on a client yet.
+* **The tour** (`-Denlightened.tour=true`) is not part of the 26.3 copy.
+* **The power wheel** stays open only while a keyboard key or the left, middle or right mouse button holds it.
+* Everything on the list for 1.21.11 above holds for 26.3 too.
+
+What is uncertain: the notes for 1.21.5 and later are from NeoForge's release notes and from memory, and 26.1.2 and
+26.2 have not been audited. Re-run the audit at the start of each phase.

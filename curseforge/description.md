@@ -52,7 +52,7 @@ English and Hebrew.
 
 ## Install
 
-NeoForge 21.1 for Minecraft 1.21.1, NeoForge 21.4 for Minecraft 1.21.4, NeoForge 21.5 for Minecraft 1.21.5, or NeoForge 21.11 for Minecraft 1.21.11 (the same jar). Put the jar in the `mods` folder of the client and, for multiplayer, of the
+NeoForge 21.1 for Minecraft 1.21.1, NeoForge 21.4 for Minecraft 1.21.4, NeoForge 21.5 for Minecraft 1.21.5, NeoForge 21.11 for Minecraft 1.21.11, or NeoForge 26.3 for Minecraft 26.3 (the same jar). Put the jar in the `mods` folder of the client and, for multiplayer, of the
 server too. No other mods needed.
 
 *The ideas are Eilon Kolodkin-Gal's; the mod is by Yuval Kolodkin-Gal.* Enlightened is a fan creation and is not

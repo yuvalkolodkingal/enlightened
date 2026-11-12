@@ -1,3 +1,15 @@
+# Enlightened 1.0.33
+
+* **Minecraft 26.3 too, in the same jar.** The one jar now also runs in a NeoForge 26.3 (Minecraft 26.3) instance,
+  beside 1.21.1, 1.21.4, 1.21.5 and 1.21.11. It has been started on a 26.3 server, with every creature summoned, saved
+  and loaded again and the places raised, and a 26.3 client has joined it; it has had far less play there than on
+  1.21.1, so please report anything that looks wrong. On 26.3 the server's options are in
+  `config/enlightened-synced.toml`, and a world brought over from 1.21.x starts its lion turtles' islands and the
+  Avatar cycle afresh.
+* **On 1.21.11**: the guards, Iroh, Bumi, Guru Pathik and the other people drawn on the player model are drawn in
+  their own skins (they looked like the default player), and some writing in the Bending Scroll that did not show
+  now does.
+
 # Enlightened 1.0.32
 
 * **Minecraft 1.21.11 too, in the same jar.** The one jar now also runs in a NeoForge 21.11 (Minecraft 1.21.11)

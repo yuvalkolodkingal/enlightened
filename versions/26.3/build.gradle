@@ -1,0 +1,35 @@
+// Enlightened's copy for Minecraft 26.3: the shared sources (../../src/main/java) through Preprocess, compiled
+// against NeoForge 26.3. The root project puts its classes into the one jar (docs/MULTIVERSION.md).
+// 26.x needs Java 25 to compile against; the copy is compiled to Java 21 class files (--release 21) like the rest of
+// the jar, so that the 1.21.x games (on Java 21) can still read the whole jar.
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+
+def mc = '26.3'
+def copySuffix = 'v26_3'
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
+// (NeoForge 26.x's libraries say they need Java 25; the copy still compiles against them for Java 21)
+java.disableAutoTargetJvm()
+
+def preprocess = tasks.register('preprocess', Preprocess) {
+    source = rootProject.file('src/main/java')
+    target = layout.buildDirectory.dir('preprocessed/java')
+    overlays.from(file('../1.21.4/src/main/java'), file('../1.21.5/src/main/java'), file('../1.21.11/src/main/java'), file('src/main/java'))
+    renames.from(file('../1.21.4/renames.txt'), file('../1.21.5/renames.txt'), file('../1.21.11/renames.txt'), file('renames.txt'))
+    minecraft = mc
+    suffix = copySuffix
+    basePackage = 'com.kolodkingal.enlightened'
+}
+sourceSets.main.java.srcDirs = [preprocess.map { it.target }]
+
+neoForge {
+    version = '26.3.0.102'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+    options.compilerArgs.addAll(['-Xmaxerrs', '100000'])
+}

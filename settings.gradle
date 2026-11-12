@@ -15,3 +15,8 @@ include ':v1_21_5'
 project(':v1_21_5').projectDir = file('versions/1.21.5')
 include ':v1_21_11'
 project(':v1_21_11').projectDir = file('versions/1.21.11')
+// Work in progress, built only with -Pwip=26.3 until it works (docs/MULTIVERSION.md).
+if ((settings.providers.gradleProperty('wip').getOrElse('')).split(',').contains('26.3')) {
+    include ':v26_3'
+    project(':v26_3').projectDir = file('versions/26.3')
+}

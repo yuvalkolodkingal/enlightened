@@ -122,6 +122,19 @@ public final class ClientEvents {
     }
 
     @SubscribeEvent
+    //#if >=26.3
+    //$$ // (26.1: the screen's overlays are submitted by a renderer the event is given)
+    //$$ public static void onScreenFire(net.neoforged.neoforge.client.event.ExtractBlockScreenEffectEvent event) {
+    //$$     if (event.getOverlayType() != net.neoforged.neoforge.client.event.ExtractBlockScreenEffectEvent.OverlayType.FIRE
+    //$$             || !com.kolodkingal.enlightened.client.fx.BlueBurning.isBlue(event.getPlayer())) {
+    //$$         return;
+    //$$     }
+    //$$     event.setCustomRenderer((state, camera, collector, pose, sprites, partialTicks, hideGui) -> {
+    //$$         com.kolodkingal.enlightened.compat.RenderBridge.with(collector, () -> com.kolodkingal.enlightened.client.fx.BlueScreenFire.render(pose));
+    //$$         return true;
+    //$$     });
+    //$$ }
+    //#else
     public static void onScreenFire(net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent event) {
         if (event.getOverlayType() != net.neoforged.neoforge.client.event.RenderBlockScreenEffectEvent.OverlayType.FIRE
                 || !com.kolodkingal.enlightened.client.fx.BlueBurning.isBlue(event.getPlayer())) {
@@ -130,6 +143,7 @@ public final class ClientEvents {
         event.setCanceled(true);
         com.kolodkingal.enlightened.client.fx.BlueScreenFire.render(event.getPoseStack());
     }
+    //#endif
 
     /** The Anomaly's dread shakes the world in his eyes. */
     @SubscribeEvent
@@ -303,6 +317,18 @@ public final class ClientEvents {
     }
 
     //#if >=1.21.11
+    //#if >=26.3
+    //$$ // (26.1: the level's effects are custom geometry submitted to the frame's collector, drawn later in the frame)
+    //$$ @SubscribeEvent
+    //$$ public static void onRenderLevel(net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent event) {
+    //$$     com.kolodkingal.enlightened.compat.RenderBridge.with(event.getSubmitNodeCollector(), () -> {
+    //$$         com.kolodkingal.enlightened.client.sky.CometSky.render(event);
+    //$$         WorldFxRenderer.render(event);
+    //$$         com.kolodkingal.enlightened.client.cosmic.CosmicRenderer.render(event);
+    //$$         com.kolodkingal.enlightened.client.render.AnomalyRenderer.drawAll(event);
+    //$$     });
+    //$$ }
+    //#else
     //$$ // (1.21.9: each stage of the level's rendering is an event of its own)
     //$$ @SubscribeEvent
     //$$ public static void onRenderSky(RenderLevelStageEvent.AfterSky event) {
@@ -315,6 +341,7 @@ public final class ClientEvents {
     //$$     com.kolodkingal.enlightened.client.cosmic.CosmicRenderer.render(event);
     //$$     com.kolodkingal.enlightened.client.render.AnomalyRenderer.drawAll(event);
     //$$ }
+    //#endif
     //#else
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {

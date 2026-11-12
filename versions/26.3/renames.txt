@@ -1,0 +1,158 @@
+# Names that changed between 1.21.11 and 26.3 and mean the same (regex => replacement), applied after 1.21.4's, 1.21.5's and 1.21.11's.
+# ---- common ----
+# a level's random is protected (26.1)
+\b(level|level\(\))\.random\b => $1.getRandom()
+# messages to a player: the overlay and the chat are methods of their own (26.1)
+(?s)\.displayClientMessage\(((?:(?!, (?:true|false)\);).)*), true\); => .sendOverlayMessage($1);
+(?s)\.displayClientMessage\(((?:(?!, (?:true|false)\);).)*), false\); => .sendSystemMessage($1);
+# the velocity is sent again
+\bhurtMarked = true; => syncVelocity = true;
+# vanilla's entity types are in EntityTypes (26.1)
+(?:net\.minecraft\.world\.entity\.)?\bEntityType\.([A-Z][A-Z0-9_]+)\b => net.minecraft.world.entity.EntityTypes.$1
+# the coloured blocks are collections by dye colour (26.1)
+\bBlocks\.(WHITE|ORANGE|MAGENTA|LIGHT_BLUE|YELLOW|LIME|PINK|GRAY|LIGHT_GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK)_TERRACOTTA\b => Blocks.DYED_TERRACOTTA.pick(net.minecraft.world.item.DyeColor.$1)
+\bBlocks\.(WHITE|ORANGE|MAGENTA|LIGHT_BLUE|YELLOW|LIME|PINK|GRAY|LIGHT_GRAY|CYAN|PURPLE|BLUE|BROWN|GREEN|RED|BLACK)_(CONCRETE|STAINED_GLASS|CARPET|WOOL|STAINED_GLASS_PANE|GLAZED_TERRACOTTA|CONCRETE_POWDER|BED|BANNER)\b => Blocks.$2.pick(net.minecraft.world.item.DyeColor.$1)
+# the copper blocks are collections by weathering (26.1)
+\bBlocks\.WAXED_OXIDIZED_COPPER\b => Blocks.COPPER_BLOCK.waxed().oxidized()
+\bBlocks\.WAXED_CUT_COPPER\b => Blocks.CUT_COPPER.waxed().unaffected()
+\bBlocks\.LIGHTNING_ROD\b => Blocks.LIGHTNING_ROD.weathering().unaffected()
+# swings name their animation; a player drops with a prediction (26.1)
+\.swing\(([\w.]*InteractionHand\.\w+), true\) => .swing($1, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true)
+(?<![\w.])swing\(([\w.]*InteractionHand\.\w+)\); => swing($1, net.minecraft.world.item.component.SwingAnimation.DEFAULT, false);
+\.drop\((.*), false\); => .drop($1, false, net.minecraft.util.Prediction.SERVER_ONLY);
+\b(\w+)\.swinging\b => $1.isSwinging()
+\bplayer\.swingingArm\b => (player.getCurrentSwing() != null ? player.getCurrentSwing().hand() : InteractionHand.MAIN_HAND)
+# recipes assemble without the registries
+\.assemble\((new net\.minecraft\.world\.item\.crafting\.SingleRecipeInput\(\w+\)), level\.registryAccess\(\)\) => .assemble($1)
+# boss bars have an id
+new ServerBossEvent\( => new ServerBossEvent(java.util.UUID.randomUUID(), 
+# saved data is named by an id
+\bSavedDataType<>\(NAME, => SavedDataType<>(com.kolodkingal.enlightened.Enlightened.id(NAME), 
+# chunk positions pack to a long
+\bChunkPos\.asLong\( => ChunkPos.pack(
+\bnew ChunkPos\((\w)\) => ChunkPos.unpack($1)
+\b(\w)\.toLong\(\) => $1.pack()
+# blocks have no codec (26.1)
+@in(/block/) (?m)^\s*public static final MapCodec<\w+> CODEC = simpleCodec\(\w+::new\);\n => // (26.1: not needed)\n
+@in(/block/) (?s)\n\s*@Override\s*\n\s*(?:protected|public) MapCodec<[^>]*> codec\(\) \{\s*return CODEC;\s*\}\n => \n
+\b(pos|\w+Pos)\.getCenter\(\) => net.minecraft.world.phys.Vec3.atCenterOf($1)
+# block breaking is its own event
+\bnet\.neoforged\.neoforge\.event\.level\.BlockEvent\.BreakEvent\b => net.neoforged.neoforge.event.level.block.BreakBlockEvent
+\bBlockEvent\.BreakEvent\b => net.neoforged.neoforge.event.level.block.BreakBlockEvent
+# configs: the server's is synced
+\bModConfig\.Type\.SERVER\b => ModConfig.Type.SYNCED
+# a trim material is a holder
+\bb -> b\.set\((net\.minecraft\.core\.component\.DataComponents\.PROVIDES_TRIM_MATERIAL), new net\.minecraft\.world\.item\.component\.ProvidesTrimMaterial\((\s*)(net\.minecraft\.resources\.ResourceKey\.create\(net\.minecraft\.core\.registries\.Registries\.TRIM_MATERIAL, id\("\w+"\)\))\) => (b, registries, item) -> b.set($1,$2registries.getOrThrow($3)
+# the babies of a mob: their age is the mob's start age (26.1: setBaby is final)
+public void setBaby\(boolean baby\) \{\s*setAge\(baby \? (\w+) : 0\);\s*\} => protected int getBabyStartAge() {\n        return $1;\n    }
+# path types
+\bPathType\.DANGER_FIRE\b => PathType.FIRE_IN_NEIGHBOR
+\bPathType\.DAMAGE_FIRE\b => PathType.FIRE
+# the cow's sounds are a variant's
+\bSoundEvents\.COW_AMBIENT\b => SoundEvents.COW_SOUNDS.get(net.minecraft.world.entity.animal.cow.CowSoundVariants.SoundSet.CLASSIC).ambientSound().value()
+\bSoundEvents\.COW_HURT\b => SoundEvents.COW_SOUNDS.get(net.minecraft.world.entity.animal.cow.CowSoundVariants.SoundSet.CLASSIC).hurtSound().value()
+\bSoundEvents\.COW_DEATH\b => SoundEvents.COW_SOUNDS.get(net.minecraft.world.entity.animal.cow.CowSoundVariants.SoundSet.CLASSIC).deathSound().value()
+# ---- client ----
+# the screen and the HUD are the GUI's (26.1)
+\bmc\.screen\b => mc.gui.screen()
+\bMinecraft\.getInstance\(\)\.screen\b => Minecraft.getInstance().gui.screen()
+\b(mc|Minecraft\.getInstance\(\))\.setScreen\( => $1.gui.setScreen(
+\b(mc|Minecraft\.getInstance\(\))\.options\.hideGui = (true|false)\b => com.kolodkingal.enlightened.compat.Gui26.hideGui($2)
+\b(mc|Minecraft\.getInstance\(\))\.options\.hideGui\b => $1.gui.hud.isHidden()
+\bgetToastManager\(\) => gui.toastManager()
+\bmc\.getMainRenderTarget\(\) => mc.gameRenderer.mainRenderTarget()
+\bgetMainCamera\(\) => mainCamera()
+# GUI (26.1): the GUI is extracted, not rendered
+\bnet\.minecraft\.client\.gui\.GuiGraphics\b => net.minecraft.client.gui.GuiGraphicsExtractor
+\bGuiGraphics\b => GuiGraphicsExtractor
+public void render\(GuiGraphicsExtractor (\w+), int mouseX, int mouseY, float partialTick\) => public void extractRenderState(GuiGraphicsExtractor $1, int mouseX, int mouseY, float partialTick)
+\bsuper\.render\((\w+), mouseX, mouseY, partialTick\) => super.extractRenderState($1, mouseX, mouseY, partialTick)
+public void renderBackground\(GuiGraphicsExtractor (\w+), int mouseX, int mouseY, float partialTick\) => public void extractBackground(GuiGraphicsExtractor $1, int mouseX, int mouseY, float partialTick)
+\bsuper\.renderBackground\( => super.extractBackground(
+protected void renderContents\(GuiGraphicsExtractor => protected void extractContents(GuiGraphicsExtractor
+protected void renderWidget\(GuiGraphicsExtractor => protected void extractWidgetRenderState(GuiGraphicsExtractor
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.drawString\( => $1.text(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.drawCenteredString\( => $1.centeredText(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.drawWordWrap\( => $1.textWithWordWrap(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.renderOutline\( => $1.outline(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.renderFakeItem\( => $1.fakeItem(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.renderItem\( => $1.item(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.renderItemDecorations\( => $1.itemDecorations(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.hLine\( => $1.horizontalLine(
+\b(g|graphics|guiGraphics|event\.getGuiGraphics\(\))\.vLine\( => $1.verticalLine(
+\bPlayerFaceRenderer\.draw\( => net.minecraft.client.gui.components.PlayerFaceExtractor.extractRenderState(
+\bimport net\.minecraft\.client\.gui\.components\.PlayerFaceRenderer; => // (26.1: not needed)
+# input: SDL's key codes (26.1)
+\bimport org\.lwjgl\.glfw\.GLFW; => // (26.1: not needed)
+\bGLFW\.GLFW_KEY_(\w+) => InputConstants.KEY_$1
+\bInputConstants\.Type\.KEYSYM\b => InputConstants.Type.KEYBOARD
+\bkeyEvent\.scancode\(\) => keyEvent.keycode()
+# containers: the slot under the mouse; the screen's corner
+\bscreen\.getSlotUnderMouse\(\) => com.kolodkingal.enlightened.compat.Gui26.hovered(screen)
+\bscreen\.getGuiLeft\(\) => com.kolodkingal.enlightened.compat.Gui26.left(screen)
+\bscreen\.getGuiTop\(\) => com.kolodkingal.enlightened.compat.Gui26.top(screen)
+# poses: rotations are a pose stack's own (26.1)
+\.mulPose\((Axis\.\w+\.rotation(?:Degrees)?\(|face\)|quaternion\)|rot) => .rotate($1
+# the full light
+\bimport net\.minecraft\.client\.renderer\.LightTexture; => import net.minecraft.util.LightCoordsUtil;
+\bLightTexture\.FULL_BRIGHT\b => LightCoordsUtil.FULL_BRIGHT
+\bLevelRenderer\.getLightColor\( => net.minecraft.util.LightCoordsUtil.getLightCoords(
+# render types renamed (26.1): culling is the exception now
+\bRenderTypes\.entityCutoutNoCull\( => RenderTypes.entityCutout(
+\bRenderTypes\.itemEntityTranslucentCull\( => RenderTypes.itemTranslucent(
+# sprites are SpriteIds (26.1)
+\bnet\.minecraft\.client\.resources\.model\.Material\b => net.minecraft.client.resources.model.sprite.SpriteId
+\bnet\.minecraft\.client\.resources\.model\.AtlasManager\b => net.minecraft.client.resources.model.sprite.AtlasManager
+\bnew Material\( => new SpriteId(
+\bMaterial (\w+) = => SpriteId $1 =
+# the player's swing in a render state
+\bRenderBridge\.pose\.attackTime\b => RenderBridge.pose.swingAnimation
+# models: setAllVisible is gone
+\b(\w+)\.setAllVisible\(false\); => $1.root().getAllParts().forEach(p -> p.visible = false);
+# the code written against 1.21.1 draws into a recording buffer source (compat.MultiBufferSource), replayed through the collector
+\bnet\.minecraft\.client\.renderer\.MultiBufferSource\b => com.kolodkingal.enlightened.compat.MultiBufferSource
+\bcom\.kolodkingal\.enlightened\.compat\.RenderBridge\.buffers\(\);\n => com.kolodkingal.enlightened.compat.RenderBridge.buffers(layerCollector);\n
+# blocks drawn by the mod are resolved and submitted (26.1)
+\bimport net\.minecraft\.client\.renderer\.block\.BlockRenderDispatcher; => import com.kolodkingal.enlightened.compat.BlockDraw;
+\bBlockRenderDispatcher\b => BlockDraw
+\bcontext\.getBlockRenderDispatcher\(\) => new BlockDraw(context.getBlockModelResolver())
+@in(client/render/ShotRenderer) \bimport net\.minecraft\.client\.renderer\.entity\.ItemRenderer;\n => // (26.1: not needed)\n
+@in(client/render/ShotRenderer) \s*private final ItemRenderer items; => // (26.1: not needed)
+@in(client/render/ShotRenderer) \s*this\.items = [^;]*getItemRenderer\(\); => // (26.1: not needed)
+# vertex consumers have a third texture coordinate (26.1)
+(public VertexConsumer setLineWidth\(float width\) \{\s*base\.setLineWidth\(width\);\s*return this;\s*\}) => $1\n\n            @Override\n            public VertexConsumer setUv3(float u, float v) {\n                base.setUv3(u, v);\n                return this;\n            }
+@in(compat/Legacy|client/render/AnomalyCubeRenderer) \bRenderBridge\.buffers\(\) => RenderBridge.buffers(collector)
+# the first-person hands are drawn from the frame's player render state (26.1)
+\bmc\.gameRenderer\.itemInHandRenderer\b => mc.gameRenderer.firstPersonHandsAndItemsRenderer
+(renderer\.enlightened\$renderPlayerArm\(ps, event\.getSubmitNodeCollector\(\), event\.getPackedLight\(\), [^;]*, 0\.0F, arm)\); => $1, event.getPlayerState());
+renderer\.enlightened\$renderArmWithItem\(player, pt, => renderer.enlightened\$renderArmWithItem(event.getPlayerState(), event.getPlayerState().firstPersonHandsAndItems, pt, 
+# the camera's render state moved
+\bnet\.minecraft\.client\.renderer\.state\.CameraRenderState\b => net.minecraft.client.renderer.state.level.CameraRenderState
+# structure types: the lambda's type is said (26.1: register takes a supplier or a function)
+\bTYPES\.register\("(\w+)",(\s*)\(\) -> \(\) -> (\w+)\.CODEC\) => TYPES.register("$1",$2() -> (StructureType<$3>) () -> $3.CODEC)
+
+# the level's effects: drawn while the level's custom geometry is submitted (26.1)
+@in(client/(fx/WorldFxRenderer|cosmic/CosmicRenderer|render/AnomalyRenderer)) \bRenderLevelStageEvent event\b => net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent event
+\b(?:net\.minecraft\.client\.Minecraft\.getInstance\(\)|mc)\.renderBuffers\(\)\.bufferSource\(\) => new com.kolodkingal.enlightened.compat.MultiBufferSource.BufferSource(null)
+# the player's render state of the frame is not an avatar's (undoes 1.21.11's PlayerRenderState rename for the 26.1 class)
+\bnet\.minecraft\.client\.renderer\.state\.level\.AvatarRenderState\b => net.minecraft.client.renderer.state.level.PlayerRenderState
+# sprites (26.1)
+@in(mixin/client/FlameFeatureRendererMixin|client/fx/BlueScreenFire) \bMaterial\b => SpriteId
+@in(client/fx/BlueScreenFire|client/sky/CometSky) \bimport com\.mojang\.blaze3d\.vertex\.(Tesselator|VertexFormat|BufferBuilder|DefaultVertexFormat|BufferUploader); => // (26.1: not needed)
+@in(client/fx/BlueScreenFire|client/sky/CometSky) \bimport com\.mojang\.blaze3d\.systems\.RenderSystem; => // (26.1: not needed)
+# input: the mouse's buttons from the mouse handler; keys by SDL's scancode
+\borg\.lwjgl\.glfw\.GLFW\.glfwGetMouseButton\(window\.handle\(\), (\w+\.getValue\(\))\) == org\.lwjgl\.glfw\.GLFW\.GLFW_PRESS => com.kolodkingal.enlightened.compat.Gui26.mouseDown($1)
+\bInputConstants\.isKeyDown\(window, => InputConstants.isKeyDown(
+# the element buffers: no fixed buffers (compat.MultiBufferSource records)
+\bfixed\.put\(type, new ByteBufferBuilder\(type\.bufferSize\(\)\)\); => fixed.put(type, null);
+\bnew ByteBufferBuilder\(786432\) => null
+# models draw with a colour
+\.renderToBuffer\(([^;]*?), ((?:net\.minecraft\.client\.renderer\.texture\.)?OverlayTexture\.NO_OVERLAY|overlay)\); => .renderToBuffer($1, $2, -1);
+# culling asks with the partial tick (26.1)
+public boolean shouldRender\((\w+) (\w+), ((?:net\.minecraft\.client\.renderer\.culling\.)?Frustum) (\w+), double x, double y, double z\) => public boolean shouldRender($1 $2, $3 $4, double x, double y, double z, float partialTicks)
+# particles: light coordinates (26.1)
+protected int getLightColor\(float partialTick\) => protected int getLightCoords(float partialTick)
+# the text box's filter: compat.Gui26 keeps the last valid text
+\b(\w+)\.setFilter\( => com.kolodkingal.enlightened.compat.Gui26.filter($1, 
+# the player in the inventory is extracted
+\bInventoryScreen\.renderEntityInInventoryFollowsMouse\( => InventoryScreen.extractEntityInInventoryFollowsMouse(

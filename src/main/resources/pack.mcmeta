@@ -4,47 +4,65 @@
       {
         "formats": {
           "min_inclusive": 57,
-          "max_inclusive": 94
+          "max_inclusive": 121
         },
         "min_format": 57,
-        "max_format": 94,
+        "max_format": 121,
         "directory": "overlay_1_21_4_data"
       },
       {
         "formats": {
           "min_inclusive": 42,
-          "max_inclusive": 75
+          "max_inclusive": 97
         },
         "min_format": 42,
-        "max_format": 75,
+        "max_format": 97,
         "directory": "overlay_1_21_4_assets"
       },
       {
         "formats": {
           "min_inclusive": 62,
-          "max_inclusive": 94
+          "max_inclusive": 121
         },
         "min_format": 62,
-        "max_format": 94,
+        "max_format": 121,
         "directory": "overlay_1_21_5_data"
       },
       {
         "formats": {
           "min_inclusive": 47,
-          "max_inclusive": 75
+          "max_inclusive": 97
         },
         "min_format": 47,
-        "max_format": 75,
+        "max_format": 97,
         "directory": "overlay_1_21_5_assets"
       },
       {
         "formats": {
           "min_inclusive": 94,
-          "max_inclusive": 94
+          "max_inclusive": 121
         },
         "min_format": 94,
-        "max_format": 94,
+        "max_format": 121,
         "directory": "overlay_1_21_11_data"
+      },
+      {
+        "formats": {
+          "min_inclusive": 121,
+          "max_inclusive": 121
+        },
+        "min_format": 121,
+        "max_format": 121,
+        "directory": "overlay_26_3_data"
+      },
+      {
+        "formats": {
+          "min_inclusive": 97,
+          "max_inclusive": 97
+        },
+        "min_format": 97,
+        "max_format": 97,
+        "directory": "overlay_26_3_assets"
       }
     ]
   }

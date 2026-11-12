@@ -40,6 +40,8 @@ ASSETS_4 = "overlay_1_21_4_assets"
 DATA_5 = "overlay_1_21_5_data"
 ASSETS_5 = "overlay_1_21_5_assets"
 DATA_11 = "overlay_1_21_11_data"
+DATA_26 = "overlay_26_3_data"
+ASSETS_26 = "overlay_26_3_assets"
 # what a dimension's special effects did on 1.21.1 (client.cosmic.CosmicEffects), as timeline values that override the
 # day's: the cosmic plane's haze keeps its purple at night, and it has no clouds
 SKY_11 = {"enlightened:cosmic": {"minecraft:visual/fog_color": "#210d3d", "minecraft:visual/cloud_color": "#00000000"}}
@@ -219,6 +221,57 @@ def day_timeline():
     return game_json_11("data/minecraft/timeline/day.json")
 
 
+def game_json_26(path):
+    """A file of 26.3's own data, from the game's resources in the build."""
+    import glob
+    import zipfile
+    for jar in glob.glob(os.path.join(ROOT, "versions/26.3/build/moddev/artifacts/minecraft-patched-*-merged.jar")):
+        with zipfile.ZipFile(jar) as z:
+            return json.loads(z.read(path))
+    raise SystemExit("run ./gradlew -Pwip=26.3 :v26_3:compileJava first: 26.3's " + path + " is read from its resources")
+
+
+def spawner_26(entry):
+    """A spawner of 1.21.1 ({"type", "weight", "minCount", "maxCount"}) as 26.1's: the count is an int provider."""
+    low, high = entry.get("minCount", 1), entry.get("maxCount", 1)
+    count = low if low == high else {"type": "minecraft:uniform", "min_inclusive": low, "max_inclusive": high}
+    return {"type": entry["type"], "count": count, "weight": entry["weight"]}
+
+
+def loot_26(value):
+    """A loot table of 1.21.1 in 26.1's form: an entry's or pool's "functions" list is its "modifier" (one, or a list),
+    its "conditions" list its "condition"; each function and condition names itself by "type"."""
+    if isinstance(value, list):
+        return [loot_26(v) for v in value]
+    if not isinstance(value, dict):
+        return value
+    out = {}
+    for key, v in value.items():
+        if key == "functions":
+            items = [loot_26(f) for f in v]
+            out["modifier"] = items[0] if len(items) == 1 else items
+        elif key == "conditions":
+            items = [loot_26(c) for c in v]
+            out["condition"] = items[0] if len(items) == 1 else items
+        elif key in ("function", "condition") and isinstance(v, str):
+            out["type"] = v
+        else:
+            out[key] = loot_26(v)
+    return out
+
+
+def biome_26(obj):
+    """A biome in 1.21.11's form in 26.1's: its spawners and spawn costs are the natural mob spawns attribute."""
+    obj = copy.deepcopy(obj)
+    spawners = obj.pop("spawners", {})
+    costs = obj.pop("spawn_costs", {})
+    by_category = {category: [spawner_26(e) for e in entries] for category, entries in spawners.items() if entries}
+    if by_category or costs:
+        obj.setdefault("attributes", {})["minecraft:gameplay/natural_mob_spawns"] = {
+            "argument": {"spawn_costs": costs, "spawns_by_category": by_category}, "modifier": "overlay"}
+    return obj
+
+
 def noise_settings_11(obj, overworld):
     """Noise settings in 1.21.11's form: the router's initial density without jaggedness became the preliminary surface
     level, found from the top as the game's overworld does (its upper bound is the overworld's, as the router's terrain)."""
@@ -351,6 +404,59 @@ def main():
                 if rename_ids(obj) != obj:
                     write(os.path.join(RES, DATA_11, os.path.relpath(path, RES)), rename_ids(obj))
 
+    # 26.3: biomes with their spawns as an attribute, the spawns NeoForge adds with an int provider count, dimension
+    # types with the dragon fight and their fixed time on the overworld's clock, the trim material's palette, the
+    # spirit world's noise as 26.3's overworld at its own sea level
+    shutil.rmtree(os.path.join(RES, DATA_26), ignore_errors=True)
+    shutil.rmtree(os.path.join(RES, ASSETS_26), ignore_errors=True)
+    for name in sorted(os.listdir(os.path.join(data, "worldgen", "biome"))):
+        obj = json.load(open(os.path.join(RES, DATA_11, "data", NS, "worldgen", "biome", name), encoding="utf-8"))
+        write(os.path.join(RES, DATA_26, "data", NS, "worldgen", "biome", name), biome_26(obj))
+    modifiers = os.path.join(data, "neoforge", "biome_modifier")
+    for name in sorted(os.listdir(modifiers)):
+        obj = json.load(open(os.path.join(modifiers, name), encoding="utf-8"))
+        if "spawners" in obj:
+            spawners = obj["spawners"]
+            obj["spawners"] = [spawner_26(e) for e in spawners] if isinstance(spawners, list) else spawner_26(spawners)
+            write(os.path.join(RES, DATA_26, "data", NS, "neoforge", "biome_modifier", name), obj)
+    for name in sorted(os.listdir(os.path.join(data, "recipe"))):
+        newest = os.path.join(RES, DATA_5, "data", NS, "recipe", name)
+        if not os.path.exists(newest):
+            newest = os.path.join(RES, DATA_4, "data", NS, "recipe", name)
+        obj = json.load(open(newest, encoding="utf-8"))
+        obj.pop("category", None)
+        write(os.path.join(RES, DATA_26, "data", NS, "recipe", name), obj)
+    for root, _, files in os.walk(os.path.join(data, "loot_table")):
+        for name in sorted(files):
+            path = os.path.join(root, name)
+            obj = json.load(open(path, encoding="utf-8"))
+            write(os.path.join(RES, DATA_26, os.path.relpath(path, RES)), loot_26(obj))
+    day_26 = game_json_26("data/minecraft/timeline/day.json")
+    for name in sorted(os.listdir(os.path.join(data, "dimension_type"))):
+        obj = json.load(open(os.path.join(data, "dimension_type", name), encoding="utf-8"))
+        dim, timeline = dimension_type_11(obj, name[:-5], day_26)
+        dim["has_ender_dragon_fight"] = False
+        write(os.path.join(RES, DATA_26, "data", NS, "dimension_type", name), dim)
+        if timeline:
+            timeline = {"clock": day_26.get("clock", "minecraft:overworld"), **timeline}
+            write(os.path.join(RES, DATA_26, "data", NS, "timeline", "fixed_" + name), timeline)
+    for name in sorted(os.listdir(os.path.join(data, "trim_material"))):
+        obj = json.load(open(os.path.join(data, "trim_material", name), encoding="utf-8"))
+        palette = obj.get("asset_name", name[:-5])
+        write(os.path.join(RES, DATA_26, "data", NS, "trim_material", name),
+              {"palette_id": f"{NS}:trim/{palette}", "description": obj["description"]})
+        src = os.path.join(RES, "assets", NS, "textures", "trims", "color_palettes", palette + ".png")
+        if os.path.exists(src):
+            out = os.path.join(RES, ASSETS_26, "assets", NS, "textures", "palettes", "trim", palette + ".png")
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            shutil.copyfile(src, out)
+    overworld_26 = game_json_26("data/minecraft/worldgen/noise_settings/overworld.json")
+    for name in sorted(os.listdir(os.path.join(data, "worldgen", "noise_settings"))):
+        obj = json.load(open(os.path.join(data, "worldgen", "noise_settings", name), encoding="utf-8"))
+        settings = copy.deepcopy(overworld_26)
+        settings["sea_level"] = obj["sea_level"]
+        write(os.path.join(RES, DATA_26, "data", NS, "worldgen", "noise_settings", name), settings)
+
     # (later entries win; each range reaches over the formats of the versions it serves: 1.21.4 is data 57-61 and
     # resources 42-46, 1.21.5 data 71 and resources 55, 1.21.11 data 94.1 and resources 75.0; min_format and
     # max_format repeat the range for 1.21.9 and later)
@@ -359,11 +465,13 @@ def main():
 
     write(os.path.join(RES, "pack.mcmeta"), {
         "overlays": {"entries": [
-            entry(57, 94, DATA_4),
-            entry(42, 75, ASSETS_4),
-            entry(62, 94, DATA_5),
-            entry(47, 75, ASSETS_5),
-            entry(94, 94, DATA_11),
+            entry(57, 121, DATA_4),
+            entry(42, 97, ASSETS_4),
+            entry(62, 121, DATA_5),
+            entry(47, 97, ASSETS_5),
+            entry(94, 121, DATA_11),
+            entry(121, 121, DATA_26),
+            entry(97, 97, ASSETS_26),
         ]}
     })
     print("overlays written; spawn eggs:", sorted(eggs))

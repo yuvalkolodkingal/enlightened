@@ -25,7 +25,8 @@ public final class Versions {
             new Copy(List.of("1.21.1"), "com.kolodkingal.enlightened"),
             new Copy(List.of("1.21.4"), "com.kolodkingal.enlightened.v1_21_4"),
             new Copy(List.of("1.21.5"), "com.kolodkingal.enlightened.v1_21_5"),
-            new Copy(List.of("1.21.11"), "com.kolodkingal.enlightened.v1_21_11"));
+            new Copy(List.of("1.21.11"), "com.kolodkingal.enlightened.v1_21_11"),
+            new Copy(List.of("26.3"), "com.kolodkingal.enlightened.v26_3"));
 
     private static String running;
 
@@ -45,6 +46,17 @@ public final class Versions {
         try {
             Class<?> loader = Class.forName("net.neoforged.fml.loading.FMLLoader");
             Object info = loader.getMethod("versionInfo").invoke(null);
+            Object mc = info.getClass().getMethod("mcVersion").invoke(info);
+            if (mc instanceof String s && !s.isEmpty()) {
+                return s;
+            }
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError ignored) {
+            // FML 12 (26.x): FMLLoader.getCurrent().getVersionInfo().mcVersion()
+        }
+        try {
+            Class<?> loader = Class.forName("net.neoforged.fml.loading.FMLLoader");
+            Object current = loader.getMethod("getCurrent").invoke(null);
+            Object info = current.getClass().getMethod("getVersionInfo").invoke(current);
             Object mc = info.getClass().getMethod("mcVersion").invoke(info);
             if (mc instanceof String s && !s.isEmpty()) {
                 return s;

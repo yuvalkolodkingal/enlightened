@@ -1,0 +1,22 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:bamboo_jungle",
+    "minecraft:cherry_grove",
+    "minecraft:meadow",
+    "minecraft:flower_forest"
+  ],
+  "spawners": [
+    {
+      "type": "enlightened:flying_lemur",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 2,
+        "max_inclusive": 4
+      },
+      "weight": 12
+    }
+  ]
+}

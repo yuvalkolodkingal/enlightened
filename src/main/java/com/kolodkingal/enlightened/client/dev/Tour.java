@@ -114,6 +114,29 @@ public final class Tour {
 
     // ---- the script ----
 
+    /** The back slot's index in the player's inventory menu. */
+    private static int backIndex() {
+        var slots = Minecraft.getInstance().player.inventoryMenu.slots;
+        for (int i = 0; i < slots.size(); i++) {
+            if (slots.get(i) instanceof com.kolodkingal.enlightened.item.BackSlot) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** A click on a slot of the open inventory, as the mouse would make it. */
+    private static void click(int slot, boolean shift) {
+        var player = Minecraft.getInstance().player;
+        //#if >=26.3
+        //$$ Minecraft.getInstance().gameMode.handleContainerInput(player.containerMenu.containerId, slot, 0,
+        //$$         shift ? net.minecraft.world.inventory.ContainerInput.QUICK_MOVE : net.minecraft.world.inventory.ContainerInput.PICKUP, player);
+        //#else
+        Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, slot, 0,
+                shift ? net.minecraft.world.inventory.ClickType.QUICK_MOVE : net.minecraft.world.inventory.ClickType.PICKUP, player);
+        //#endif
+    }
+
     private static void cmd(String command, int delay) {
         STEPS.add(new Step(delay, () -> Minecraft.getInstance().player.connection.sendCommand(command)));
     }
@@ -1623,6 +1646,50 @@ public final class Tour {
             Minecraft.getInstance().setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(Minecraft.getInstance().player));
         }));
         shot("256_back_slot_inventory", 5);
+        // the empty slot shows its own icon; and in the creative inventory tab it sits beside the armour
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().setScreen(null)));
+        server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, net.minecraft.world.item.ItemStack.EMPTY), 10);
+        STEPS.add(new Step(10, () -> Minecraft.getInstance().setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(Minecraft.getInstance().player))));
+        shot("256b_back_slot_empty", 5);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().setScreen(null)));
+        cmd("gamemode creative", 10);
+        STEPS.add(new Step(10, () -> {
+            Minecraft.getInstance().setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(Minecraft.getInstance().player));
+            if (Minecraft.getInstance().screen instanceof net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen creative) {
+                try {
+                    var select = net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen.class
+                            .getDeclaredMethod("selectTab", net.minecraft.world.item.CreativeModeTab.class);
+                    select.setAccessible(true);
+                    for (var tab : net.minecraft.world.item.CreativeModeTabs.allTabs()) {
+                        if (tab.getType() == net.minecraft.world.item.CreativeModeTab.Type.INVENTORY) {
+                            select.invoke(creative, tab);
+                        }
+                    }
+                } catch (ReflectiveOperationException e) {
+                    Enlightened.LOGGER.warn("Tour: no creative inventory tab", e);
+                }
+            }
+        }));
+        shot("256c_back_slot_creative", 5);
+        // what the creative inventory sends for the back slot reaches the server (logged: "Tour back slot")
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().gameMode.handleCreativeModeItemAdd(
+                new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BOW), backIndex())));
+        server(p -> Enlightened.LOGGER.info("Tour back slot: creative -> {}", com.kolodkingal.enlightened.item.BackSlot.get(p)), 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().setScreen(null)));
+        cmd("gamemode survival", 5);
+        // and survival clicks: the hotbar's sword onto the back, then shift-clicked off it again
+        server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, net.minecraft.world.item.ItemStack.EMPTY), 5);
+        cmd("item replace entity @s hotbar.0 with minecraft:diamond_sword", 5);
+        STEPS.add(new Step(10, () -> Minecraft.getInstance().setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(Minecraft.getInstance().player))));
+        STEPS.add(new Step(5, () -> click(36, false)));
+        STEPS.add(new Step(5, () -> click(backIndex(), false)));
+        shot("256d_back_slot_clicked", 10);
+        server(p -> Enlightened.LOGGER.info("Tour back slot: clicked -> {}, carried {}", com.kolodkingal.enlightened.item.BackSlot.get(p), p.containerMenu.getCarried()), 5);
+        STEPS.add(new Step(5, () -> click(backIndex(), true)));
+        server(p -> Enlightened.LOGGER.info("Tour back slot: shift-clicked -> {}, inventory has sword {}", com.kolodkingal.enlightened.item.BackSlot.get(p),
+                p.getInventory().contains(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD))), 10);
+        STEPS.add(new Step(2, () -> Minecraft.getInstance().setScreen(null)));
+        server(p -> com.kolodkingal.enlightened.item.BackSlot.set(p, new net.minecraft.world.item.ItemStack(com.kolodkingal.enlightened.registry.ModItems.AIR_GLIDER.get())), 15);
         STEPS.add(new Step(5, () -> {
             Minecraft.getInstance().setScreen(null);
             Minecraft.getInstance().options.hideGui = true;

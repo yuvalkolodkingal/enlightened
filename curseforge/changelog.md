@@ -1,3 +1,10 @@
+# Enlightened 1.0.34
+
+* **The back slot's icon on 1.21.4, 1.21.5, 1.21.11 and 26.3**: the empty slot shows its own picture again (it was
+  the purple and black missing-texture square).
+* **The back slot in creative mode**, on every version: what you put on your back from the creative inventory now
+  really goes there (the server only took it for the game's own slots, so it was never truly on your back).
+
 # Enlightened 1.0.33
 
 * **Minecraft 26.3 too, in the same jar.** The one jar now also runs in a NeoForge 26.3 (Minecraft 26.3) instance,

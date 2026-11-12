@@ -8,7 +8,8 @@
     "LivingEntityAccessor",
     "ServerGamePacketListenerImplAccessor",
     "AbstractContainerMenuInvoker",
-    "InventoryMenuMixin"
+    "InventoryMenuMixin",
+    "CreativeBackSlotMixin"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",

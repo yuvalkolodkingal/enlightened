@@ -143,3 +143,5 @@ void enlightened\$renderPlayerArm\(PoseStack poseStack, MultiBufferSource buffer
 @in(client/screen/(ScrollUi|TalkScreen)) protected void renderWidget\(GuiGraphics g, int mouseX, int mouseY, float partialTick\) => protected void renderContents(GuiGraphics g, int mouseX, int mouseY, float partialTick)
 # mobs that are tempted need the tempt range attribute (1.21.6: TemptGoal reads it)
 @in(entity/(FlyingLemur|SkyBison)Entity) \b(Mob|TamableAnimal)\.createMobAttributes\(\) => $1.createMobAttributes().add(net.minecraft.world.entity.ai.attributes.Attributes.TEMPT_RANGE, 10.0)
+# GUI (1.21.6): text whose colour has no alpha is not drawn; 1.21.1 drew it opaque (compat.GuiText)
+@in(client/) \b(g|graphics|guiGraphics)\.(drawString|drawCenteredString|drawWordWrap)\( => com.kolodkingal.enlightened.compat.GuiText.$2($1, 

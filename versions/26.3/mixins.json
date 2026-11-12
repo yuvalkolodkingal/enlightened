@@ -1,5 +1,7 @@
 {
   "mixins": [],
-  "client": ["client.AbstractContainerScreenAccessor"],
+  "client": [
+    "client.AbstractContainerScreenAccessor"
+  ],
   "remove": []
 }

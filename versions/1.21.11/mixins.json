@@ -1,5 +1,10 @@
 {
   "mixins": [],
-  "client": ["client.FlameFeatureRendererMixin"],
-  "remove": ["client.EntityRenderDispatcherMixin"]
+  "client": [
+    "client.FlameFeatureRendererMixin",
+    "client.EntityRenderDispatcherAvatarMixin"
+  ],
+  "remove": [
+    "client.EntityRenderDispatcherMixin"
+  ]
 }

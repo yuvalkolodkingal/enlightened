@@ -21,7 +21,12 @@ public class BackSlot extends Slot {
     public static final int Y = 44;
     public static final int CREATIVE_X = 127;
     public static final int CREATIVE_Y = 20;
+    //#if >=1.21.4
+    //$$ // (1.21.2: the icon is a GUI sprite, textures/gui/sprites/container/slot/back.png)
+    //$$ public static final ResourceLocation EMPTY_ICON = Enlightened.id("container/slot/back");
+    //#else
     public static final ResourceLocation EMPTY_ICON = Enlightened.id("item/empty_slot_back");
+    //#endif
 
     public BackSlot(Player owner) {
         super(new Back(owner), 0, X, Y);

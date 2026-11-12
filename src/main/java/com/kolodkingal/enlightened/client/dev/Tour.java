@@ -355,6 +355,17 @@ public final class Tour {
             quick();
             return;
         }
+        // A firebender with Fire Ball on key 1 (R) and Fire Fist on 2 (G), then a long wait in survival: the keys are pressed
+        // from outside (a real keyboard, or xdotool on the test display), which the other parts never do.
+        if ("keys".equals(System.getProperty("enlightened.tour.only", ""))) {
+            element("fire", "zuko", "fire_ball", "fire_fist");
+            cmd("enlightened loadout @s 1 fire_ball", 6);
+            cmd("enlightened loadout @s 2 fire_fist", 6);
+            cmd("difficulty peaceful", 6);
+            cmd("gamemode survival", 6);
+            wait(6000);
+            return;
+        }
         if ("v14".equals(System.getProperty("enlightened.tour.only", ""))) {
             v14();
             return;

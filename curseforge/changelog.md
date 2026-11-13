@@ -1,3 +1,9 @@
+# Enlightened 1.0.35
+
+* **Earthbending on Minecraft 26.3.** 26.3's "dirt" is dirt alone (grass, podzol, mycelium, moss and mud left it), so on
+  grass an earthbender found no earth: Rock Throw, Rock Lift and the rest did nothing. They are named among the earth
+  again, on every version.
+
 # Enlightened 1.0.34
 
 * **The back slot's icon on 1.21.4, 1.21.5, 1.21.11 and 26.3**: the empty slot shows its own picture again (it was

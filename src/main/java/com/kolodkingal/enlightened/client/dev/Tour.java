@@ -114,6 +114,85 @@ public final class Tour {
 
     // ---- the script ----
 
+    /**
+     * With Enhanced beside it (-Denlightened.tour.only=duo): the items lying about after the world is made, Jean Grey
+     * flying (behind, in front, first person), her telekinesis (and the items after it), then Rock Throw. What lies on the
+     * ground and what was thrown are logged ("Tour duo").
+     */
+    private static void duo() {
+        server(p -> logItems(p, "after the world was made"), 5);
+        cmd("enlightened element set @s earth", 10);
+        cmd("enlightened learn @s rock_throw 3", 5);
+        cmd("enhanced power set @s phoenix", 40);
+        server(p -> logItems(p, "after Jean Grey"), 5);
+        shot("d00_ground", 5);
+        cmd("tp @s 0 -55 0 0 10", 10);
+        STEPS.add(new Step(5, () -> {
+            var p = Minecraft.getInstance().player;
+            p.getAbilities().flying = true;
+            p.onUpdateAbilities();
+        }));
+        camera(CameraType.THIRD_PERSON_BACK, 30);
+        shot("d01_phoenix_flying_back", 5);
+        camera(CameraType.THIRD_PERSON_FRONT, 20);
+        shot("d02_phoenix_flying_front", 5);
+        camera(CameraType.FIRST_PERSON, 20);
+        shot("d03_phoenix_first_person", 5);
+        STEPS.add(new Step(5, () -> {
+            var p = Minecraft.getInstance().player;
+            p.getAbilities().flying = false;
+            p.onUpdateAbilities();
+        }));
+        cmd("tp @s 0 -60 0 0 45", 30);
+        camera(CameraType.THIRD_PERSON_BACK, 5);
+        shot("d04_phoenix_standing", 5);
+        // telekinesis (key 3), looking at the ground
+        pressNamed("key.enhanced.ability_3", 30);
+        shot("d05_telekinesis", 20);
+        pressNamed("key.enhanced.ability_3", 30);
+        server(p -> logItems(p, "after telekinesis"), 10);
+        shot("d06_after_telekinesis", 5);
+        // the keys to bending (Enhanced's switch key), then Rock Throw on key 1
+        pressNamed("key.enhanced.switch_powers", 10);
+        cmd("enlightened loadout @s 1 rock_throw", 6);
+        press(1, 2);
+        shot("d07_rock_throw_raised", 4);
+        server(p -> Enlightened.LOGGER.info("Tour duo: shots around: {}", p.level().getEntitiesOfClass(
+                com.kolodkingal.enlightened.entity.BendingShotEntity.class, p.getBoundingBox().inflate(16)).size()), 2);
+        press(1, 2);
+        shot("d08_rock_throw_thrown", 4);
+        server(p -> logItems(p, "at the end"), 20);
+    }
+
+    private static void logItems(net.minecraft.server.level.ServerPlayer p, String when) {
+        var items = p.level().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, p.getBoundingBox().inflate(48));
+        StringBuilder names = new StringBuilder();
+        for (var item : items) {
+            names.append(' ').append(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item.getItem().getItem()))
+                    .append(" x").append(item.getItem().getCount());
+        }
+        Enlightened.LOGGER.info("Tour duo: {} items on the ground {}:{}", items.size(), when, names);
+    }
+
+    /** Presses the key mapping of that name (another mod's too), as the keyboard would. */
+    private static void pressNamed(String name, int delay) {
+        STEPS.add(new Step(delay, () -> {
+            for (KeyMapping k : Minecraft.getInstance().options.keyMappings) {
+                if (k.getName().equals(name)) {
+                    k.setDown(true);
+                    KeyMapping.click(k.getKey());
+                }
+            }
+        }));
+        STEPS.add(new Step(3, () -> {
+            for (KeyMapping k : Minecraft.getInstance().options.keyMappings) {
+                if (k.getName().equals(name)) {
+                    k.setDown(false);
+                }
+            }
+        }));
+    }
+
     /** The back slot's index in the player's inventory menu. */
     private static int backIndex() {
         var slots = Minecraft.getInstance().player.inventoryMenu.slots;
@@ -357,10 +436,40 @@ public final class Tour {
         }
         // A firebender with Fire Ball on key 1 (R) and Fire Fist on 2 (G), then a long wait in survival: the keys are pressed
         // from outside (a real keyboard, or xdotool on the test display), which the other parts never do.
+        if ("rock".equals(System.getProperty("enlightened.tour.only", ""))) {
+            element("earth", "toph", "rock_throw");
+            cmd("enlightened learn @s rock_throw 3", 5);
+            cmd("enlightened loadout @s 1 rock_throw", 6);
+            cmd("kill @e[type=zombie]", 5);
+            cmd("tp @s 0 -60 0 0 -5", 20);
+            camera(CameraType.THIRD_PERSON_BACK, 20);
+            press(1, 2);
+            for (int i = 0; i < 4; i++) {
+                server(p -> Enlightened.LOGGER.info("Tour rock: shots around: {}", p.level().getEntitiesOfClass(
+                        com.kolodkingal.enlightened.entity.BendingShotEntity.class, p.getBoundingBox().inflate(32)).size()), 0);
+                shot("r0" + i + "_rock_throw", 1);
+            }
+            // Rock Lift: a rock held before the eyes, which stays to be seen
+            cmd("enlightened learn @s rock_lift 3", 5);
+            cmd("enlightened loadout @s 3 rock_lift", 6);
+            cmd("tp @s 0 -60 0 0 40", 20);
+            press(2, 20);
+            cmd("tp @s 0 -60 0 0 0", 10);
+            shot("r10_rock_lift_back", 10);
+            camera(CameraType.THIRD_PERSON_FRONT, 10);
+            shot("r11_rock_lift_front", 10);
+            camera(CameraType.FIRST_PERSON, 10);
+            shot("r12_rock_lift_first", 10);
+            return;
+        }
+        if ("duo".equals(System.getProperty("enlightened.tour.only", ""))) {
+            duo();
+            return;
+        }
         if ("keys".equals(System.getProperty("enlightened.tour.only", ""))) {
             element("fire", "zuko", "fire_ball", "fire_fist");
             cmd("enlightened loadout @s 1 fire_ball", 6);
-            cmd("enlightened loadout @s 2 fire_fist", 6);
+            cmd("enlightened loadout @s 3 fire_fist", 6);
             cmd("difficulty peaceful", 6);
             cmd("gamemode survival", 6);
             wait(6000);

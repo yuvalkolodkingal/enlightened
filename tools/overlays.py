@@ -366,6 +366,26 @@ def main():
             model["tints"] = [{"type": "minecraft:constant", "value": -1}, {"type": "minecraft:dye", "default": signed(glider_default())}]
         write(os.path.join(RES, ASSETS_4, "assets", NS, "items", name), {"model": model})
 
+    # 1.21.2: the trim textures moved (trims/models/armor/<p>[_leggings] -> trims/entity/humanoid[_leggings]/<p>);
+    # the atlas the mod adds to names them there, and the brigade's own pattern is copied there
+    atlas = json.load(open(os.path.join(RES, "assets", "minecraft", "atlases", "armor_trims.json"), encoding="utf-8"))
+
+    def moved(t):
+        m = re.match(r"^(\w+):trims/models/armor/(\w+?)(_leggings)?$", t)
+        if not m:
+            return t
+        return "%s:trims/entity/humanoid%s/%s" % (m.group(1), "_leggings" if m.group(3) else "", m.group(2))
+
+    for src in atlas["sources"]:
+        if "textures" in src:
+            src["textures"] = [moved(t) for t in src["textures"]]
+    write(os.path.join(RES, ASSETS_4, "assets", "minecraft", "atlases", "armor_trims.json"), atlas)
+    trims = os.path.join(RES, "assets", NS, "textures", "trims", "models", "armor")
+    for part, name in (("humanoid", "brigade.png"), ("humanoid_leggings", "brigade_leggings.png")):
+        out = os.path.join(RES, ASSETS_4, "assets", NS, "textures", "trims", "entity", part)
+        os.makedirs(out, exist_ok=True)
+        shutil.copyfile(os.path.join(trims, name), os.path.join(out, "brigade.png"))
+
     # 1.21.5: the trim recipe names its pattern; the eggs get a texture of their own
     for name in sorted(os.listdir(os.path.join(data, "recipe"))):
         obj = json.load(open(os.path.join(RES, DATA_4, "data", NS, "recipe", name), encoding="utf-8"))

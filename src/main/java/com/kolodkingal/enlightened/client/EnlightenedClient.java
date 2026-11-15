@@ -59,6 +59,7 @@ public final class EnlightenedClient {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(ClientEvents.class);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.anim.FirstPersonArms.class);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.dev.Tour.class);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.dev.Probe.class);
     }
 
     private static void onKeys(RegisterKeyMappingsEvent event) {

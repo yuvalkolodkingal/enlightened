@@ -1,3 +1,16 @@
+# Enlightened 1.0.36
+
+Every element was put through every one of its abilities (learned to the full, pressed, held and with Sneak) and every
+look, and every creature and realm of the mod was visited, on Minecraft 1.21.1, 1.21.4, 1.21.5, 1.21.11 and 26.3, and
+on dedicated servers. What went wrong is fixed:
+
+* **Minecraft 1.21.4 and 1.21.5: a flying lemur or a sky bison crashed the world** as soon as it moved (they lacked
+  something the game's "follow the food" behaviour reads from 1.21.2). Fixed.
+* **Minecraft 1.21.4, 1.21.5, 1.21.11 and 26.3: the brigade armour trim on an armour stand or a mob**, and the coal trim
+  material on the game's own trims, had no texture (the game moved its trim textures in 1.21.2). Fixed.
+* For testing: `-Denlightened.probe=all` (every element, ability and look) and `-Denlightened.probe=world` (every
+  creature and realm) run the game through it all and write each problem to the log, on every supported version.
+
 # Enlightened 1.0.35
 
 * **Earthbending on Minecraft 26.3.** 26.3's "dirt" is dirt alone (grass, podzol, mycelium, moss and mud left it), so on

@@ -80,3 +80,6 @@ public void render\(PoseStack (\w+), MultiBufferSource (\w+), int (\w+), (\w+) (
 \bLivingEntityRenderer\.getOverlayCoords\((\w+), 0\.0F\) => net.minecraft.client.renderer.texture.OverlayTexture.pack(net.minecraft.client.renderer.texture.OverlayTexture.u(0.0F), net.minecraft.client.renderer.texture.OverlayTexture.v($1.hurtTime > 0 || $1.deathTime > 0))
 \bcontext\.getItemRenderer\(\) => net.minecraft.client.Minecraft.getInstance().getItemRenderer()
 \bimport net\.minecraft\.client\.model\.HierarchicalModel; => // (HierarchicalModel is gone from 1.21.2: compat.LegacyModel)
+
+# ---- 1.21.2: a tempting goal reads the mob's tempt range, which the mob must have (or the server crashes when it ticks) ----
+@in(entity/(FlyingLemur|SkyBison)Entity) \b(Mob|TamableAnimal)\.createMobAttributes\(\) => $1.createMobAttributes().add(net.minecraft.world.entity.ai.attributes.Attributes.TEMPT_RANGE, 10.0)

@@ -30,6 +30,20 @@ public final class Gui26 {
         };
     }
 
+    /**
+     * 1.21.1's number of a mouse button 26.1 numbers {@code sdl}: 26.1 moved to SDL's (left 1, middle 2, right 3), the
+     * screens read 1.21.1's (left 0, right 1, middle 2). Without it a left click came in as "1", and the Bending Scroll's
+     * buttons took no left click at all.
+     */
+    public static int legacyButton(int sdl) {
+        return switch (sdl) {
+            case 1 -> 0;
+            case 2 -> 2;
+            case 3 -> 1;
+            default -> sdl > 3 ? sdl - 1 : sdl;
+        };
+    }
+
     /** 1.21.1's {@code EditBox.setFilter}: text the filter refuses is put back to the last text it took. */
     public static void filter(net.minecraft.client.gui.components.EditBox box, java.util.function.Predicate<String> filter) {
         String[] last = {box.getValue()};

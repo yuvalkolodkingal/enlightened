@@ -156,3 +156,6 @@ protected int getLightColor\(float partialTick\) => protected int getLightCoords
 \b(\w+)\.setFilter\( => com.kolodkingal.enlightened.compat.Gui26.filter($1, 
 # the player in the inventory is extracted
 \bInventoryScreen\.renderEntityInInventoryFollowsMouse\( => InventoryScreen.extractEntityInInventoryFollowsMouse(
+# GUI (26.1): the mouse's buttons are SDL's (left 1, middle 2, right 3); the screens read 1.21.1's (left 0, right 1, middle 2)
+\bclickEvent\.button\(\) => com.kolodkingal.enlightened.compat.Gui26.legacyButton(clickEvent.button())
+\bbuttonInfo\.button\(\) => com.kolodkingal.enlightened.compat.Gui26.legacyButton(buttonInfo.button())

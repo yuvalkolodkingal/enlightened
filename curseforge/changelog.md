@@ -1,3 +1,9 @@
+# Enlightened 1.0.38
+
+* **Minecraft 26.3: the Bending Scroll's buttons took no clicks.** 26.1 numbers the mouse's buttons differently (left is
+  1, right 3), so every left click on the scroll's tabs, arts, keys and presets read as another button and did nothing.
+  The scroll (and Iroh's and the other talk screens) read them as before now, left and right click alike.
+
 # Enlightened 1.0.37
 
 * The official Discord is here: https://discord.gg/dKNCxwM5JE (news, help, bug reports and ideas). It is in the mod's

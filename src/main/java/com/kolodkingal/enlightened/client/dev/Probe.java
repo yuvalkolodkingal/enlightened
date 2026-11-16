@@ -96,6 +96,10 @@ public final class Probe {
             mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
             if (MODE.equals("world")) {
                 world();
+            } else if (MODE.equals("scroll")) {
+                // the Bending Scroll held open a minute, for clicks from outside (xdotool) to be tried on it
+                once("open the scroll", p -> KeyMapping.click(KeyBindings.SCROLL.getKey()));
+                waitTicks(1200);
             } else {
                 all();
             }

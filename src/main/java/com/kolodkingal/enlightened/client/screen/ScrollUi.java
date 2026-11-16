@@ -72,6 +72,9 @@ public final class ScrollUi {
 
         @Override
         public void onPress() {
+            if (!System.getProperty("enlightened.probe", "").isEmpty()) {
+                com.kolodkingal.enlightened.Enlightened.LOGGER.info("Probe: scroll button pressed: {}", getMessage().getString());
+            }
             action.run();
         }
 

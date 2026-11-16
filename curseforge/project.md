@@ -14,6 +14,7 @@
 | Mod loader | NeoForge (21.1.x) |
 | Environment | Client and Server (install on both) |
 | Source / issues | https://github.com/yuvalkolodkingal/enlightened |
+| Discord | https://discord.gg/dKNCxwM5JE |
 | Wiki | https://github.com/yuvalkolodkingal/enlightened/wiki |
 | Authors | Yuval Kolodkin-Gal (code), Eilon Kolodkin-Gal (ideas) |
 

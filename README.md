@@ -1,5 +1,7 @@
 # Enlightened
 
+**[Join the official Discord](https://discord.gg/dKNCxwM5JE)** for news, help, bug reports and ideas.
+
 A Minecraft mod (NeoForge, Minecraft 1.21.1, 1.21.4, 1.21.5, 1.21.11 and 26.3, one jar for all five) where you become a **bender of the Avatar world**:
 an **earthbender** who throws rock, wears earth armour, raises walls and pillars and feels the ground, and learns
 **sand** (a wall, sand in the air, quicksand), **lava** (a path, a shuriken, a lavabender's skin) and **metal**

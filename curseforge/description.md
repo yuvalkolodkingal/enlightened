@@ -2,6 +2,8 @@
 
 # Enlightened
 
+**[Join the official Discord](https://discord.gg/dKNCxwM5JE)** for news, help, bug reports and ideas.
+
 **Water. Earth. Fire. Air.** Become a bender of the Avatar world, in Minecraft.
 
 The first time you join, your fate is cast: one chance in six you are born without bending; otherwise a
@@ -49,6 +51,10 @@ elemental sphere, and receive **energybending** from the **lion turtle**, an isl
 The looks of the show's characters (Toph, Zuko, Azula, Iroh, Katara, Tenzin, Zaheer, Bumi, Pavi, Nisha and many
 more), a **back slot** for whatever you carry on your back, operator commands, a full server config, and a wiki in
 English and Hebrew.
+
+## Community
+
+Questions, bugs, ideas or just want to bend with others? Join the **[official Discord](https://discord.gg/dKNCxwM5JE)**.
 
 ## Install
 

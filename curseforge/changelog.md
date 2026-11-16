@@ -1,3 +1,8 @@
+# Enlightened 1.0.37
+
+* The official Discord is here: https://discord.gg/dKNCxwM5JE (news, help, bug reports and ideas). It is in the mod's
+  description, the in-game mod list and the wiki.
+
 # Enlightened 1.0.36
 
 Every element was put through every one of its abilities (learned to the full, pressed, held and with Sneak) and every

@@ -1,3 +1,10 @@
+# Enlightened 1.0.39
+
+* **The official server is on your Multiplayer list:** the first time the game starts with Enlightened, *Enlightened
+  Avatar SMP* (enlightened.exaroton.me) is added at the end of your server list, once. Your own servers are never
+  touched, it is not added twice if you already have it, and if you delete it, it stays deleted. Turn it off with
+  `officialServer = false` in the client config (`official_server`).
+
 # Enlightened 1.0.38
 
 * **Minecraft 26.3: the Bending Scroll's buttons took no clicks.** 26.1 numbers the mouse's buttons differently (left is

@@ -96,6 +96,12 @@ public final class Probe {
             mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
             if (MODE.equals("world")) {
                 world();
+            } else if (MODE.equals("config")) {
+                // the mod's settings screen held open a minute, for clicks from outside (xdotool): a player's report
+                once("open the settings", p -> Minecraft.getInstance().setScreen(
+                        new net.neoforged.neoforge.client.gui.ConfigurationScreen(
+                                net.neoforged.fml.ModList.get().getModContainerById(Enlightened.MODID).orElseThrow(), null)));
+                waitTicks(1200);
             } else if (MODE.equals("scroll")) {
                 // the Bending Scroll held open a minute, for clicks from outside (xdotool) to be tried on it
                 once("open the scroll", p -> KeyMapping.click(KeyBindings.SCROLL.getKey()));

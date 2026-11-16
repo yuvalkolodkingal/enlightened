@@ -1009,5 +1009,8 @@
   "hud.enlightened.ready": "Ready",
   "enlightened.configuration.hud": "Bending panel",
   "enlightened.configuration.hudStyle": "Panel style",
-  "enlightened.configuration.hudOnTheRight": "Panel on the right"
+  "enlightened.configuration.hudOnTheRight": "Panel on the right",
+  "enlightened.configuration.officialServer": "Add the official server",
+  "enlightened.configuration.addedOfficialServer": "Official server added",
+  "enlightened.configuration.official_server": "Official server"
 }

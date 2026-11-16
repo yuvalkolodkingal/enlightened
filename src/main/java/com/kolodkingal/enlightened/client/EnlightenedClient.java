@@ -57,6 +57,8 @@ public final class EnlightenedClient {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         // (registered here, not found by scanning: see Enlightened)
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(ClientEvents.class);
+        // (1.0.39) the official server on the Multiplayer list, once
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(OfficialServer.class);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.anim.FirstPersonArms.class);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.dev.Tour.class);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.register(com.kolodkingal.enlightened.client.dev.Probe.class);

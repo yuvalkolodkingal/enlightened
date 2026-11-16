@@ -1009,5 +1009,8 @@
   "hud.enlightened.ready": "מוכן",
   "enlightened.configuration.hud": "לוח הכשפות",
   "enlightened.configuration.hudStyle": "סגנון הלוח",
-  "enlightened.configuration.hudOnTheRight": "הלוח בצד ימין"
+  "enlightened.configuration.hudOnTheRight": "הלוח בצד ימין",
+  "enlightened.configuration.officialServer": "הוספת השרת הרשמי",
+  "enlightened.configuration.addedOfficialServer": "השרת הרשמי נוסף",
+  "enlightened.configuration.official_server": "השרת הרשמי"
 }

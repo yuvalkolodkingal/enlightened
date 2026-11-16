@@ -12,6 +12,8 @@ public final class EnlightenedClientConfig {
     public static final ModConfigSpec.BooleanValue FIRST_PERSON_HANDS;
     public static final ModConfigSpec.EnumValue<com.kolodkingal.enlightened.client.hud.PowerPanels.Style> HUD_STYLE;
     public static final ModConfigSpec.BooleanValue HUD_RIGHT;
+    public static final ModConfigSpec.BooleanValue OFFICIAL_SERVER;
+    public static final ModConfigSpec.BooleanValue ADDED_OFFICIAL_SERVER;
     public static final ModConfigSpec SPEC;
 
     static {
@@ -32,6 +34,14 @@ public final class EnlightenedClientConfig {
                 .defineEnum("hudStyle", com.kolodkingal.enlightened.client.hud.PowerPanels.Style.SCROLL);
         HUD_RIGHT = B.comment("Draw the new panel styles in the top-right corner (off: top-left). The classic panel is always top-left.")
                 .translation("enlightened.configuration.hudOnTheRight").define("hudOnTheRight", true);
+        B.pop();
+        // (1.0.39) the official server, added to the Multiplayer list once (OfficialServer)
+        B.push("official_server");
+        OFFICIAL_SERVER = B.comment("Add the official Enlightened server to your Multiplayer list the first time the game starts with the mod. "
+                        + "It is added once: delete it and it stays deleted. Off: never added.")
+                .translation("enlightened.configuration.officialServer").define("officialServer", true);
+        ADDED_OFFICIAL_SERVER = B.comment("Set by the mod once it has added the official server (or found it already there).")
+                .translation("enlightened.configuration.addedOfficialServer").define("addedOfficialServer", false);
         B.pop();
         SPEC = B.build();
     }

@@ -276,6 +276,11 @@ public class BendingShotEntity extends Entity {
             hit(entityHit.getEntity());
             return;
         }
+        // 1.1.0: a shot of fire, earth or ice that flies into another bender's tornado joins it (a team combo).
+        if (level() instanceof ServerLevel server && p instanceof ServerPlayer shooter
+                && com.kolodkingal.enlightened.bending.TeamCombos.shotIntoTornado(server, this, shooter)) {
+            return;
+        }
         BlockHitResult blockHit = level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
         if (blockHit.getType() == HitResult.Type.BLOCK) {
             setPos(blockHit.getLocation().x, blockHit.getLocation().y, blockHit.getLocation().z);

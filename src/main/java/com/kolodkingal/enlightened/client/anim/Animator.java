@@ -387,6 +387,8 @@ public final class Animator {
             case CATAPULT -> Gesture.EARTH_CATAPULT;
             case EARTH_GRAB -> Gesture.EARTH_GRAB;
             case EXTRACTION -> Gesture.EARTH_EXTRACT;
+            case EARTH_SPIKES -> Gesture.EARTH_SPIKE;
+            case EARTH_PIT -> Gesture.EARTH_PIT;
             case AIR_SUCTION -> Gesture.AIR_SUCTION;
             case AIR_BURST -> Gesture.AIR_BURST;
             case PHASE_CHANGE -> Gesture.WATER_PHASE;

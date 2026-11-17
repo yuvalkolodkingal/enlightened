@@ -65,6 +65,7 @@ public final class CommonEvents {
         com.kolodkingal.enlightened.bending.AvatarCycle.tick(event.getServer());
         com.kolodkingal.enlightened.talk.Talk.tick(event.getServer());
         com.kolodkingal.enlightened.bending.Combos.tick(event.getServer());
+        com.kolodkingal.enlightened.bending.TeamCombos.tick(event.getServer());
         com.kolodkingal.enlightened.world.Comet.tick(event.getServer());
     }
 
@@ -81,6 +82,10 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onBreak(net.neoforged.neoforge.event.level.BlockEvent.BreakEvent event) {
         if (!onShell(event.getPlayer(), event.getLevel(), event.getPos())) {
+            event.setCanceled(true);
+        }
+        // The closed lid of a hidden pit holds while it holds someone (it opens by itself in a few seconds).
+        if (event.getLevel() instanceof net.minecraft.world.level.Level level && com.kolodkingal.enlightened.earth.EarthPit.isLid(level, event.getPos())) {
             event.setCanceled(true);
         }
     }
@@ -399,6 +404,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer leaving) {
+            com.kolodkingal.enlightened.earth.EarthPit.leave(leaving);
             SoftLanding.forget(leaving);
             com.kolodkingal.enlightened.talk.Talk.forget(leaving.getUUID());
         }
@@ -440,6 +446,7 @@ public final class CommonEvents {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         Projection.returnAll(event.getServer());
+        com.kolodkingal.enlightened.earth.EarthPit.releaseAll(event.getServer());
         TempBlocks.restoreEverything(event.getServer());
     }
 

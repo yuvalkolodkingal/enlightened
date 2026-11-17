@@ -57,6 +57,33 @@ You don't need this page: combos are found **in a fight**.
   others as **? ? ?** with their first art, so you know where to begin ("learn its arts first" if you can't do it yet).
   What you found is kept through deaths.
 
+## Team combos
+
+New in 1.1.0: two benders of **different elements** working one move together. One bender casts an art of the
+combo's first side; within **3 s** (`teamComboWindowTicks`) another bender, of another element, casts an art of its
+second side **into it**: aimed within **8 blocks** (`teamComboRange`) of where the first one aimed, or, for a
+tornado, through the tornado itself. A **fire ball, lava shuriken, rock, sand, ice knife or snowball that flies into
+another bender's tornado** joins it too. The combo goes off where the two meet; both benders see **Team combo: ...!**,
+both take its cooldown, both find it, and neither is hurt by it. It is as strong as the two of them together. One
+bender alone (even the Avatar) never makes a team combo. The server option `teamCombos` turns them off.
+
+| Combo | Elements | First side | Second side (cast into it) | What it does |
+|---|---|---|---|---|
+| **Firestorm** | air + fire | Tornado, Air Blast | Fire Ball, Fire Fist, Fire Whip, Blaze, Fire Jet | The tornado catches fire: it lives only about a third of what it had left (`fireTornadoLife`) but strikes **three times as hard** (`fireTornadoDamage`), twice as often, and sets everything it spins alight. Into an air blast: a gale of fire rolls on the way the air was going. |
+| **Hurricane** | air + water | Tornado | Water Vortex, Water Whip, Water Spout | A great water tornado: half again as big, nearly twice as long-lived, dragging harder; it puts out fires and slows. |
+| **Dust Devil** | air + earth | Tornado, Air Blast | Rock Throw, Shockwave, Sand Lift, Earth Spikes | A cyclone of sand and stone that blinds and slows whatever it spins. Into an air blast: a sandstorm. |
+| **Blizzard** | air + ice | Tornado, Air Blast | Ice Knives, Freeze, Frost Breath, Snow Throw | A tornado of snow that freezes whatever it spins, striking twice as hard. Into an air blast: a gust of frost. |
+| **Scalding Steam** | water + fire | Water Whip, Water Vortex, Water Spout, Water Shield | Fire Ball, Fire Fist, Fire Ring, Blaze, Fire Whip | A cloud of scalding steam hangs there for **6 s** (`steamCloudSeconds`): it burns, blinds and weakens everyone in it. |
+| **Magma Eruption** | earth + fire | Earth Pillar, Earth Wall, Rock Throw, Shockwave, Earth Spikes | Fire Ball, Fire Fist, Blaze, Fire Ring | The ground erupts: it melts to magma for **6 s** (`magmaSeconds`), throws everyone near up in flames, and rains molten rock. |
+| **Mud Flood** | water + earth | Water Whip, Water Vortex, Water Spout | Shockwave, Earth Grab, Rock Throw, Mud Wave, Hidden Pit | A flood of mud rolls out, turning the soil to mud for a while, knocking everyone back and bogging them down for 7 s. |
+| **Storm Surge** | water + lightning | Water Whip, Water Vortex, Water Spout | Lightning | The lightning runs through the water to everyone near it, and to everyone wet (in water or rain) farther off, stunning them. |
+| **Lightning Rod** | metal + lightning | Metal Wall, Metal Blades, Metal Pull | Lightning | The bolt leaps from the metal to the nearest enemy, and on from him to the next (four to six of them). |
+
+**Finding them.** When a bender near you casts an art that begins a team combo you haven't found (and you know an
+art of its other side), a chime rings and your bar says **"✦ Team combo! Cast <your art> into <his> <art>!"**. The
+first time, the screen says **Team combo discovered!**. The scroll's Combos tab lists the team combos either of your
+element's sides can take, marked **team combo**, their two steps joined by **+**.
+
 ## Steps
 
 From *Legend Reforged*'s STEP form: a bender who learned his element's step (**Earth Step**, **Air Step**,

@@ -360,11 +360,11 @@ public class ScrollScreen extends Screen {
                 }));
     }
 
-    /** The combos of the bender's element (the Avatar's: all), found ones first. */
+    /** The combos of the bender's element (the Avatar's: all), and the team combos he can take a side of; found ones first. */
     private List<com.kolodkingal.enlightened.bending.Combos> combos() {
         List<com.kolodkingal.enlightened.bending.Combos> out = new ArrayList<>();
         for (com.kolodkingal.enlightened.bending.Combos c : com.kolodkingal.enlightened.bending.Combos.VALUES) {
-            if (element().commands(c.element)) {
+            if (c.shownTo(element())) {
                 out.add(c);
             }
         }
@@ -391,7 +391,9 @@ public class ScrollScreen extends Screen {
         for (int i = scroll; i < list.size() && i < scroll + rows; i++) {
             com.kolodkingal.enlightened.bending.Combos c = list.get(i);
             boolean found = com.kolodkingal.enlightened.client.ClientCombos.found(c.id());
-            Component sub = found ? Component.translatable("screen.enlightened.scroll.combos.found").withStyle(ChatFormatting.GREEN)
+            Component sub = found ? Component.translatable(c.team ? "screen.enlightened.scroll.combos.team_found" : "screen.enlightened.scroll.combos.found")
+                    .withStyle(ChatFormatting.GREEN)
+                    : c.team ? Component.translatable("screen.enlightened.scroll.combos.team_unfound").withStyle(ChatFormatting.GOLD)
                     : c.known(data) ? Component.translatable("screen.enlightened.scroll.combos.unfound")
                     : Component.translatable("screen.enlightened.scroll.combos.unknown");
             BigButton card = new BigButton(x0, gridTop + (i - scroll) * (cardH + GAP), half, cardH,
@@ -428,7 +430,16 @@ public class ScrollScreen extends Screen {
         ScrollUi.drawBig(g, font, (isFound ? c.displayName().copy() : Component.literal("? ? ?")).withStyle(s -> s.withColor(isFound ? c.element.color : 0xA0A0A0).withBold(true)),
                 x, y, 1.5F, room);
         y += 16;
-        ScrollUi.drawFitted(g, font, c.element.displayName().copy().withStyle(s -> s.withColor(c.element.color)), x, y, room, 0xFFFFFF);
+        if (c.team) {
+            // A team combo: the two elements it joins, each in its colour.
+            Element a = c.sequence.get(0).element;
+            Element b = c.sequence.get(1).element;
+            ScrollUi.drawFitted(g, font, Component.translatable("screen.enlightened.scroll.combos.team",
+                    a.displayName().copy().withStyle(s -> s.withColor(a.color)), b.displayName().copy().withStyle(s -> s.withColor(b.color)))
+                    .withStyle(ChatFormatting.GOLD), x, y, room, 0xFFFFFF);
+        } else {
+            ScrollUi.drawFitted(g, font, c.element.displayName().copy().withStyle(s -> s.withColor(c.element.color)), x, y, room, 0xFFFFFF);
+        }
         y += 13;
         // The steps: symbols with arrows between (the ones not found yet hidden).
         int size = 22;
@@ -436,7 +447,7 @@ public class ScrollScreen extends Screen {
         for (int i = 0; i < c.sequence.size(); i++) {
             Ability a = c.sequence.get(i);
             if (i > 0) {
-                g.drawString(font, "→", cx + 1, y + (size - 8) / 2, 0xFFFFFF, true);
+                g.drawString(font, c.team ? "+" : "→", cx + 1, y + (size - 8) / 2, c.team ? 0xFFD54F : 0xFFFFFF, true);
                 cx += 10;
             }
             if (isFound || i == 0) {
@@ -453,7 +464,7 @@ public class ScrollScreen extends Screen {
         MutableComponent steps = Component.empty();
         for (int i = 0; i < c.sequence.size(); i++) {
             if (i > 0) {
-                steps.append(Component.literal(" → ").withStyle(ChatFormatting.GRAY));
+                steps.append(Component.literal(c.team ? " + " : " → ").withStyle(ChatFormatting.GRAY));
             }
             Ability a = c.sequence.get(i);
             boolean have = data.has(a);
@@ -462,6 +473,8 @@ public class ScrollScreen extends Screen {
         ScrollUi.drawFitted(g, font, steps, x, y, room, 0xFFFFFF);
         y += 13;
         Component text = isFound ? c.description()
+                : c.team ? Component.translatable("screen.enlightened.scroll.combos.team_hint", c.sequence.get(0).element.awakeningTitle(),
+                        c.sequence.get(0).displayName(), c.sequence.get(1).element.awakeningTitle())
                 : c.known(data) ? Component.translatable("screen.enlightened.scroll.combos.hint", c.sequence.get(0).displayName())
                 : Component.translatable("screen.enlightened.scroll.combos.learn");
         List<FormattedCharSequence> wrapped = font.split(text, room);

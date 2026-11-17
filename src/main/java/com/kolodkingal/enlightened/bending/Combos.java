@@ -32,6 +32,11 @@ import java.util.UUID;
  * The combos, after ProjectKorra: a sequence of casts within a few seconds of each other that ends in a move bigger
  * than any one of them. A combo needs every ability in its sequence learned; it has a cooldown of its own. The
  * sequences are shown in the Bending Scroll's combo page and on the wiki.
+ *
+ * <p>1.1.0: the team combos ({@link #team}): two benders of different elements, one casting into the other's bending
+ * (a firebender's fire into an airbender's tornado...). Each has two sides, the arts that start it and the arts of the
+ * other element that join it; {@link #sequence} holds the first of each, to show. They are found and done by
+ * {@link TeamCombos}, never by one bender alone.
  */
 public enum Combos {
     /** Air: the shield, the tornado, the blast: a cyclone that runs along the ground. */
@@ -76,17 +81,80 @@ public enum Combos {
     /** Avatar: the tornado, then a fire ball: a tornado of fire. */
     FIRE_TORNADO(Element.AVATAR, 300, Ability.TORNADO, Ability.FIRE_BALL),
     /** Avatar: an air blast, then a rock: a sandstorm that blinds and slows. */
-    SANDSTORM(Element.AVATAR, 200, Ability.AIR_BLAST, Ability.ROCK_THROW);
+    SANDSTORM(Element.AVATAR, 200, Ability.AIR_BLAST, Ability.ROCK_THROW),
+    // ---- 1.1.0: team combos, two benders of different elements together ----
+    /** Air and fire: fire cast into a tornado makes a fire tornado, short-lived and fierce; into an air blast, a gale of fire. */
+    FIRESTORM(Element.FIRE, 300, new Ability[]{Ability.TORNADO, Ability.AIR_BLAST},
+            new Ability[]{Ability.FIRE_BALL, Ability.FIRE_FIST, Ability.FIRE_WHIP, Ability.BLAZE, Ability.FIRE_JET}),
+    /** Air and water: water cast into a tornado makes a great water tornado that lasts longer and drags harder. */
+    HURRICANE(Element.WATER, 300, new Ability[]{Ability.TORNADO},
+            new Ability[]{Ability.WATER_VORTEX, Ability.WATER_WHIP, Ability.WATER_SPOUT}),
+    /** Air and earth: earth cast into a tornado makes a dust devil that blinds; into an air blast, a sandstorm. */
+    DUST_DEVIL(Element.EARTH, 300, new Ability[]{Ability.TORNADO, Ability.AIR_BLAST},
+            new Ability[]{Ability.ROCK_THROW, Ability.SHOCKWAVE, Ability.SAND_LIFT, Ability.EARTH_SPIKES}),
+    /** Air and ice: ice cast into a tornado makes a blizzard that freezes; into an air blast, a gust of frost. */
+    BLIZZARD(Element.WATER, 300, new Ability[]{Ability.TORNADO, Ability.AIR_BLAST},
+            new Ability[]{Ability.ICE_KNIVES, Ability.FREEZE, Ability.FROST_BREATH, Ability.SNOW_THROW}),
+    /** Water and fire: fire on water makes a cloud of scalding steam that hangs, burns and blinds. */
+    SCALDING_STEAM(Element.FIRE, 300, new Ability[]{Ability.WATER_WHIP, Ability.WATER_VORTEX, Ability.WATER_SPOUT, Ability.WATER_SHIELD},
+            new Ability[]{Ability.FIRE_BALL, Ability.FIRE_FIST, Ability.FIRE_RING, Ability.BLAZE, Ability.FIRE_WHIP}),
+    /** Earth and fire: fire on raised earth makes it erupt: the ground melts to magma and molten rock flies. */
+    MAGMA_ERUPTION(Element.EARTH, 300, new Ability[]{Ability.EARTH_PILLAR, Ability.EARTH_WALL, Ability.ROCK_THROW, Ability.SHOCKWAVE, Ability.EARTH_SPIKES},
+            new Ability[]{Ability.FIRE_BALL, Ability.FIRE_FIST, Ability.BLAZE, Ability.FIRE_RING}),
+    /** Water and earth: earth churned into water makes a flood of mud rolling out, bogging everyone down. */
+    MUD_FLOOD(Element.EARTH, 300, new Ability[]{Ability.WATER_WHIP, Ability.WATER_VORTEX, Ability.WATER_SPOUT},
+            new Ability[]{Ability.SHOCKWAVE, Ability.EARTH_GRAB, Ability.ROCK_THROW, Ability.MUD_WAVE, Ability.EARTH_PIT}),
+    /** Water and lightning: lightning into water runs through everyone wet or near. */
+    STORM_SURGE(Element.WATER, 400, new Ability[]{Ability.WATER_WHIP, Ability.WATER_VORTEX, Ability.WATER_SPOUT},
+            new Ability[]{Ability.LIGHTNING}),
+    /** Metal and lightning: lightning into raised metal leaps from it to enemy after enemy. */
+    LIGHTNING_ROD(Element.FIRE, 400, new Ability[]{Ability.METAL_WALL, Ability.METAL_BLADES, Ability.METAL_PULL},
+            new Ability[]{Ability.LIGHTNING});
 
     public final Element element;
     /** The combo's own cooldown, in ticks. */
     public final int cooldown;
     public final List<Ability> sequence;
+    /** Whether it takes two benders of different elements (a team combo). */
+    public final boolean team;
+    /** A team combo's sides: the arts that start it, and the other element's arts that join it. */
+    public final java.util.Set<Ability> first;
+    public final java.util.Set<Ability> second;
 
     Combos(Element element, int cooldown, Ability... sequence) {
         this.element = element;
         this.cooldown = cooldown;
         this.sequence = List.of(sequence);
+        this.team = false;
+        this.first = java.util.Set.of();
+        this.second = java.util.Set.of();
+    }
+
+    Combos(Element element, int cooldown, Ability[] first, Ability[] second) {
+        this.element = element;
+        this.cooldown = cooldown;
+        this.sequence = List.of(first[0], second[0]);
+        this.team = true;
+        this.first = java.util.Set.of(first);
+        this.second = java.util.Set.of(second);
+    }
+
+    /** Whether the scroll shows the combo to a bender of this element (a team combo: to either side's). */
+    public boolean shownTo(Element element) {
+        if (!team) {
+            return element.commands(this.element);
+        }
+        return element.commands(sequence.get(0).element) || element.commands(sequence.get(1).element);
+    }
+
+    /** A team combo: the element of the side a bender of this element takes (the first side if he could take both). */
+    public Element sideOf(Element element) {
+        return element.commands(sequence.get(0).element) ? sequence.get(0).element : sequence.get(1).element;
+    }
+
+    /** A team combo: the element of the other side, the one he needs a friend for. */
+    public Element partnerOf(Element element) {
+        return element.commands(sequence.get(0).element) ? sequence.get(1).element : sequence.get(0).element;
     }
 
     public String id() {
@@ -101,8 +169,21 @@ public enum Combos {
         return Component.translatable("combo.enlightened." + id() + ".desc");
     }
 
-    /** Whether the bender knows every ability of the combo. */
+    /** Whether the bender knows every ability of the combo (a team combo: one art of either side). */
     public boolean known(BendingData data) {
+        if (team) {
+            for (Ability a : first) {
+                if (data.has(a)) {
+                    return true;
+                }
+            }
+            for (Ability a : second) {
+                if (data.has(a)) {
+                    return true;
+                }
+            }
+            return false;
+        }
         for (Ability a : sequence) {
             if (!data.has(a)) {
                 return false;
@@ -125,6 +206,7 @@ public enum Combos {
 
     /** A cast went off (its cooldown began): remember it, and see whether it completes a combo. */
     public static void cast(ServerPlayer p, BendingData data, Ability ability) {
+        TeamCombos.cast(p, data, ability);
         if (EnlightenedConfig.SPEC.isLoaded() && !EnlightenedConfig.COMBOS.get()) {
             return;
         }
@@ -135,7 +217,7 @@ public enum Combos {
             recent.removeFirst();
         }
         for (Combos combo : VALUES) {
-            if (!data.element().commands(combo.element) || !combo.known(data) || !matches(recent, combo, now)) {
+            if (combo.team || !data.element().commands(combo.element) || !combo.known(data) || !matches(recent, combo, now)) {
                 continue;
             }
             Map<Combos, Long> cds = COOLDOWNS.computeIfAbsent(p.getUUID(), k -> new HashMap<>());
@@ -147,19 +229,25 @@ public enum Combos {
             combo.perform(p, data);
             p.displayClientMessage(Component.translatable("message.enlightened.combo", combo.displayName()).withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), true);
             p.level().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.POINT.get(), net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 0.7F);
-            if (discover(p, combo)) {
-                // The first time: a title, a fanfare, and the scroll's Combos tab learns it.
-                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(5, 50, 15));
-                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(
-                        Component.translatable("message.enlightened.combo.discovered").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
-                p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(combo.displayName().copy().withStyle(ChatFormatting.AQUA)));
-                p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
-                        net.minecraft.sounds.SoundSource.PLAYERS, 0.7F, 1.0F);
-                com.kolodkingal.enlightened.network.ModNetwork.sendTo(p, listing(p));
-            }
+            celebrate(p, combo);
             return;
         }
         hint(p, data, recent, now);
+    }
+
+    /** The first time a combo is done: a title, a fanfare, and the scroll's Combos tab learns it. */
+    static void celebrate(ServerPlayer p, Combos combo) {
+        if (!discover(p, combo)) {
+            return;
+        }
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(5, 50, 15));
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(
+                Component.translatable(combo.team ? "message.enlightened.combo.team_discovered" : "message.enlightened.combo.discovered")
+                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD)));
+        p.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(combo.displayName().copy().withStyle(ChatFormatting.AQUA)));
+        p.level().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE,
+                net.minecraft.sounds.SoundSource.PLAYERS, 0.7F, 1.0F);
+        com.kolodkingal.enlightened.network.ModNetwork.sendTo(p, listing(p));
     }
 
     // ---- discovery ----
@@ -211,7 +299,7 @@ public enum Combos {
         Map<Combos, Long> hinted = HINTED.computeIfAbsent(p.getUUID(), k -> new HashMap<>());
         Recent[] tail = recent.toArray(new Recent[0]);
         for (Combos combo : VALUES) {
-            if (found.contains(combo.id()) || !data.element().commands(combo.element) || !combo.known(data)
+            if (combo.team || found.contains(combo.id()) || !data.element().commands(combo.element) || !combo.known(data)
                     || cds.getOrDefault(combo, 0L) > now || hinted.getOrDefault(combo, Long.MIN_VALUE / 2) + HINT_REST > now) {
                 continue;
             }

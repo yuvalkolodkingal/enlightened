@@ -52,9 +52,10 @@ public class ComboTests {
         check(missing.isEmpty(), "missing: " + missing);
         check(Combos.VALUES.length >= 21, "thirteen more combos (" + Combos.VALUES.length + ")");
         // No combo's sequence is the end of another's that the same bender could do (it would always win first).
+        // (The team combos are never done by one bender, so they hide nothing.)
         for (Combos a : Combos.VALUES) {
             for (Combos b : Combos.VALUES) {
-                if (a == b || a.sequence.size() > b.sequence.size()) {
+                if (a == b || a.team || b.team || a.sequence.size() > b.sequence.size()) {
                     continue;
                 }
                 List<Ability> tail = b.sequence.subList(b.sequence.size() - a.sequence.size(), b.sequence.size());

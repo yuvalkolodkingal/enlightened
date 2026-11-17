@@ -27,7 +27,9 @@
 
 `sandGate` 3, `lavaGate` 6, `metalGate` 9 (נקודות שהושקעו לפני שהכשפות נפתחת); `rockDamage` 4; `rockRange` 24;
 `rockCooldown` 20 טיקים; `rockLiftTakesBlocks` true; `earthArmorSlow` 0.3; `wallSeconds` 10; `wallCooldown` 200
-טיקים; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` true.
+טיקים; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` true; `earthSpikeDamage` 6;
+`earthSpikeRange` 20; `earthSpikeCooldown` 120 טיקים; `earthSpikeSeconds` 3; `pitTrapDamage` 4; `pitTrapRange` 16;
+`pitTrapCooldown` 200 טיקים; `pitTrapWaitSeconds` 60; `pitTrapHoldSeconds` 3.
 
 ## `[air]`
 
@@ -68,5 +70,20 @@
 | `skyBisonFlySpeed` | 1.2 | בלוקים לטיק שביזון אוויר רכוב עף במהירות מלאה (1.2: 24 בלוקים בשנייה). |
 | `lionTurtleSize` | 10 | כמה גדולים צבי אריה חדשים: 1 הוא אי באורך כ-45 בלוקים, 10 באורך כ-440. אי ענק מחזיק את הצ'אנקים שלו טעונים כששחקן קרוב אליו; הורידו את זה בשרת עמוס. |
 | `steps` | true | האם לחיצה כפולה על כיוון מזניקה כשף שלמד את הצעד של היסוד שלו. |
+
+## `[team]`
+
+חדש ב-1.1.0: [הקומבואים הקבוצתיים](Combos-and-Steps-HE).
+
+| אפשרות | ברירת מחדל | מה היא עושה |
+|---|---|---|
+| `teamCombos` | true | האם שני כשפים של יסודות שונים שמטילים זה לתוך הכישוף של זה עושים קומבו קבוצתי. |
+| `teamComboWindowTicks` | 60 | טיקים בין ההטלות של שני הכשפים. |
+| `teamComboRange` | 8.0 | כמה קרוב (בבלוקים) ההטלה השנייה צריכה להגיע לראשונה. |
+| `teamComboDamage` | 8.0 | נזק הבסיס של קומבו קבוצתי (גדל עם הכוח של שני הכשפים). |
+| `fireTornadoLife` | 0.35 | החלק מהחיים שנשארו לטורנדו שהוא שומר כשמטילים לתוכו אש. |
+| `fireTornadoDamage` | 3.0 | פי כמה חזק יותר טורנדו פוגע כשהוא בוער. |
+| `steamCloudSeconds` | 6 | שניות שהקיטור הרותח נשאר באוויר. |
+| `magmaSeconds` | 6 | שניות שהקרקע נשארת מותכת אחרי התפרצות מאגמה. |
 
 </div>

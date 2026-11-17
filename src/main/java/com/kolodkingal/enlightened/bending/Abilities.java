@@ -38,6 +38,7 @@ public final class Abilities {
             logic.clear();
         }
         Combos.clear();
+        TeamCombos.clear();
     }
 
     public static void forgetAll(ServerPlayer player) {
@@ -45,6 +46,7 @@ public final class Abilities {
             logic.forget(player);
         }
         Combos.forget(player);
+        TeamCombos.forget(player);
     }
 
     private Abilities() {

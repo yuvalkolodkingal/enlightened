@@ -25,7 +25,9 @@ here; the defaults are what the [element pages](Home) describe.
 
 `sandGate` 3, `lavaGate` 6, `metalGate` 9 (points spent before the art opens); `rockDamage` 4; `rockRange` 24;
 `rockCooldown` 20 ticks; `rockLiftTakesBlocks` true; `earthArmorSlow` 0.3; `wallSeconds` 10; `wallCooldown` 200
-ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` true.
+ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` true; `earthSpikeDamage` 6;
+`earthSpikeRange` 20; `earthSpikeCooldown` 120 ticks; `earthSpikeSeconds` 3; `pitTrapDamage` 4; `pitTrapRange` 16;
+`pitTrapCooldown` 200 ticks; `pitTrapWaitSeconds` 60; `pitTrapHoldSeconds` 3.
 
 ## `[air]`
 
@@ -66,3 +68,18 @@ ticks; `lavaSeconds` 8; `metalBladeDamage` 6; `metalPullRadius` 6; `wreckDrops` 
 | `skyBisonFlySpeed` | 1.2 | Blocks a tick a ridden sky bison flies at full speed (1.2: 24 blocks a second). |
 | `lionTurtleSize` | 10 | How big new lion turtles are: 1 is an island some 45 blocks long, 10 some 440 long. A great island keeps its own chunks loaded while a player is near it; lower this on a busy server. |
 | `steps` | true | Whether a double tap of a direction dashes a bender who learned his element's step. |
+
+## `[team]`
+
+New in 1.1.0: the [team combos](Combos-and-Steps#team-combos).
+
+| Option | Default | What it does |
+|---|---|---|
+| `teamCombos` | true | Whether two benders of different elements casting into each other's bending make a team combo. |
+| `teamComboWindowTicks` | 60 | Ticks between the two benders' casts. |
+| `teamComboRange` | 8.0 | How close (in blocks) the second cast must come to the first. |
+| `teamComboDamage` | 8.0 | Base damage of a team combo (it grows with the two benders' strength). |
+| `fireTornadoLife` | 0.35 | The share of its remaining life a tornado keeps when fire is cast into it. |
+| `fireTornadoDamage` | 3.0 | How many times harder a tornado strikes once it is on fire. |
+| `steamCloudSeconds` | 6 | Seconds the scalding steam hangs in the air. |
+| `magmaSeconds` | 6 | Seconds the ground stays molten after a magma eruption. |

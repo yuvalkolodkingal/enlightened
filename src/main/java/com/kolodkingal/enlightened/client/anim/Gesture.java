@@ -139,6 +139,10 @@ public enum Gesture {
     EARTH_TUNNEL_START(Group.CAST, 6, 1, 3, true),
     /** Extraction: a fist closes and tears the metal out. */
     EARTH_EXTRACT(Group.CAST, 12, 1, 5, true),
+    /** Earth spikes (1.1.0): the knee lifts, the foot stamps, and the fist drives up from the hip like the spike. */
+    EARTH_SPIKE(Group.CAST, 14, 1, 5, true),
+    /** The hidden pit (1.1.0): a crouch, both palms pressed down flat, then drawn apart as the ground hollows. */
+    EARTH_PIT(Group.CAST, 16, 2, 6, true),
     /** Air suction: the palms draw in. */
     AIR_SUCTION(Group.CAST, 10, 1, 4, true),
     /** The air burst: the arms thrown wide. */

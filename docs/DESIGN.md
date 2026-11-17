@@ -702,3 +702,54 @@ Bending also hits every creature in its way (`general.hurtEverything`, §0).
   (guards, herald). Skins from tools/skins_npc/ (Eilon's): ozai.png, zuko_fire_lord.png, fire_guard.png. Iroh gains
   "Do you know where Ozai is?" with the map (talks offer up to 5 answers now).
 
+
+## 50. 1.1.0: team combos, earth spikes, the hidden pit
+
+* **Team combos** (`bending/TeamCombos`): nine more `Combos` entries flagged `team`, each with two sides (`first`,
+  `second`: sets of arts of different elements; `sequence` holds the first of each, for the scroll). `Combos.cast`
+  hands every cast to `TeamCombos.cast` and never matches a team entry itself. `TeamCombos` keeps the recent casts of
+  every bender (who, dimension, art, tick, eye and aim end, `Shots.aim(32)`); a cast of one side joins another
+  player's cast of the other side within `teamComboWindowTicks` when its aim segment passes within `teamComboRange` of
+  the other's aim end (the anchor is between them), or, when the first side is the tornado, when it passes through one
+  of that bender's tornadoes of plain air (a tornado is always the one joined). `BendingShotEntity.tickFlying` asks
+  `shotIntoTornado` every tick: a FIRE_BALL or LAVA shot in another bender's tornado makes FIRESTORM, ROCK or SAND
+  DUST_DEVIL, ICE_KNIFE or SNOWBALL BLIZZARD (the shot is taken). Both benders take the combo's cooldown (their own
+  map), see "Team combo: ...!", and `Combos.celebrate` (the discovery title) runs for each; `targets` spares both.
+  Strength `1 + (spent a + spent b) / 12` (1-3), damage `teamComboDamage x (0.8 + 0.2 strength)`. A cast that begins a
+  team combo hints (`message.enlightened.combo.team_hint`, every 45 s per combo) to each bender within 24 who knows an
+  art of the other side and has not found it.
+* `TornadoEntity.Kind` (AIR, FIRE, WATER, SAND, ICE; synced `DATA_KIND`, saved as `kind`): `infuse(kind, partner,
+  size, life, damage)` scales the size, the time left and the blow. Fire: life x `fireTornadoLife` (0.35), damage x
+  `fireTornadoDamage` (3), every 5 ticks, ignites; water: x1.6 size, x1.8 life, x1.5 damage, stronger pull, puts out
+  fires, slows; sand: x1.3, x1.2, x1.5, blinds and slows; ice: x1.2, x1, x2, freezes. The partner is never its prey.
+  The funnel's particles follow the kind; `TornadoRenderer` colours the bands (fire spins faster and glows at the
+  foot).
+* Without a tornado: FIRESTORM, DUST_DEVIL and BLIZZARD from an air blast are a `gale` (a widening band 12 + 2 x
+  strength long from the anchor along the first bender's aim: fire x1.6 damage and burning, sand blinding and
+  slowing, ice freezing). SCALDING_STEAM: a lingering cloud (3.5 + 0.75 x strength, `steamCloudSeconds`; every 10
+  ticks 0.3 damage, fire, blindness, weakness). MAGMA_ERUPTION: the earth round the anchor (radius 2, 3 at strength
+  3) `TempBlocks.replace`d with magma for `magmaSeconds`, everyone near hurt (x1.3, lava), set alight and thrown up,
+  5 + 2 x strength LAVA shots thrown up. MUD_FLOOD: a ring rolling out half a block a tick to 6 + 1.5 x strength,
+  soil it passes turned to mud for 8-10 s, each creature struck once (x0.6, `Mud.bog`, pushed). STORM_SURGE: lightning
+  (x1.5, stunned 2 s) from the anchor to everyone within half the radius, or wet within 1.5 x the radius.
+  LIGHTNING_ROD: a chain of 3 + strength bolts (x1.4) from the anchor to the nearest, then on within 6.
+* **Earth Spikes** (`earth/EarthSpikes`, `EARTH_SPIKES`): the top earth under the aimed creature or point
+  (`earthSpikeRange`); after a 4-tick rumble the spike bursts (struck within its column: `earthSpikeDamage` x 1 / 1.4 /
+  1.8, thrown up 0.75 + 0.12 x height, stunned 1 s) and grows a block a tick (2 / 3 / 4: stone under soil, sandstone
+  under sand, the ground's own stone else; a pointed dripstone tip), lifting whoever is in a new cell onto it. Each
+  block is a `TempBlocks.place` that stands `earthSpikeSeconds` and goes top first. Adept: four small spikes (1 high)
+  at distance 2; master: eight (2 high) and a trail of 1-high spikes every 1.5 blocks from the bender, a tick apart,
+  the great one bursting as it arrives. Small spikes strike for half. Cooldown `earthSpikeCooldown` (a master x2/3).
+* **Hidden Pit** (`earth/EarthPit`, `EARTH_PIT`): `Raycasts.block` within `pitTrapRange`, the top earth there; columns
+  of 1x1 (novice) or 3x3 at the same height, air above, top and `depth` (2 / 3 / 3) cells below all `diggable` (earth
+  or sand, no block entity, not a falling block, not raised, `mayBreak`, no fluid beside). The cells under the top are
+  `TempBlocks.replace`d with air (quiet); the top stays. Stages: ARMED (until `pitTrapWaitSeconds`; the owner's tick
+  looks for `prey` standing on the footprint: not him, his team, his pets, and `AreaTargets.mayHurt`), SPRUNG (the
+  tops replaced with air, prey pushed down; after 8 ticks and once all are under the lid, or 24 ticks, `strike`:
+  `pitTrapDamage` x 1 / 1.4 / 1.8 and slowness), CLOSED (the tops `TempBlocks.hold` back to their own blocks, if depth
+  >= 2 and every head is under the lid) or OPEN, for `pitTrapHoldSeconds` + level - 1; then `release`: everyone inside
+  set on the surface, every cell `TempBlocks.releaseAt`. 1 / 2 / 3 pits per bender (a new one fills the oldest).
+  `CommonEvents`: the closed lid cannot be broken; a player who logs out inside a pit is lifted first; the server's
+  stop releases every pit before `TempBlocks.restoreEverything`.
+* Gestures `EARTH_SPIKE` (knee up, stamp, fist driven up) and `EARTH_PIT` (crouch, palms pressed down, drawn apart);
+  symbols drawn by `tools/symbols.py`. GameTests: `TeamComboTests`, `SpikeAndPitTests`.

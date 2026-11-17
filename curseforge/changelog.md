@@ -1,3 +1,28 @@
+# Enlightened 1.1.0
+
+* **Team combos.** Two benders of different elements can now work one move together: one casts, and within three
+  seconds the other casts his element into it. Nine of them, one for every pair of elements and more:
+  * **Firestorm** (air + fire): fire cast into an airbender's tornado (or a fire ball flown through it) turns it into a
+    fire tornado that lives only about a third as long but strikes three times as hard and sets everything alight. Into
+    an air blast: a gale of fire.
+  * **Hurricane** (air + water): water into a tornado makes a giant water tornado, bigger, longer and dragging harder.
+  * **Dust Devil** (air + earth) and **Blizzard** (air + ice): a cyclone of sand that blinds, a tornado of snow that
+    freezes (or a sandstorm and a gust of frost from an air blast).
+  * **Scalding Steam** (water + fire), **Magma Eruption** (earth + fire: the ground melts to magma and rains molten
+    rock), **Mud Flood** (water + earth), **Storm Surge** (water + lightning) and **Lightning Rod** (metal + lightning).
+
+  Both benders find the combo, take its cooldown and are never hurt by it; when a friend begins one near you, your bar
+  says what to cast into it. The Bending Scroll's Combos tab lists them, marked "team combo". Server options in the new
+  `[team]` section.
+* **Earth Spikes** (new earthbending art): the ground under your mark rumbles and a spike of stone shoots out of it,
+  striking and throwing whoever stands there, then crumbles back. Adepts raise a ring of small spikes, masters a trail
+  of spikes racing to the mark.
+* **Hidden Pit** (new earthbending art): hollow out the earth under a patch of ground that still looks like any other.
+  The first enemy to step on it falls in, the ground closes over his head for a few seconds, then spits him out, and
+  the ground is whole again. Never you, your team or your pets; only where you may break blocks; never beside water.
+* Both new arts have their own gestures and symbols in the Bending Scroll, and their numbers in the server config
+  (`earthSpike...`, `pitTrap...`).
+
 # Enlightened 1.0.39
 
 * **The official server is on your Multiplayer list:** the first time the game starts with Enlightened, *Enlightened

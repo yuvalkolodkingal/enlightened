@@ -167,6 +167,23 @@ final class EarthGestures {
                 .key(3, O).mAim(LOOK, -4, -6, 0).o(-20, 0, -20).twist(-10).lean(8)
                 .key(7, O).m(-40, -30, 20).o(10, 10, -20).twist(14).lean(-8).head(-6, 0, 0)
                 .key(12, E).m(StancePoses.REST_M).o(StancePoses.REST_O).twist(0).lean(0).head(0, 0, 0);
+
+        // Earth spikes: the knee lifts and the fists chamber low, the foot stamps and the body sinks, then the main
+        // fist drives straight up past the face, the off arm pulling down, as the spike bursts out at the mark.
+        define(Gesture.EARTH_SPIKE)
+                .key(0, S).m(0, 0, 8).o(0, 0, -8).legs(0, 0).drop(0).lean(0).twist(0).head(0, 0, 0)
+                .key(3, O).m(40, -16, 14).o(36, 16, -14).legs(-56, 6).drop(0.08F).lean(6).twist(-10).head(6, 0, 0)
+                .key(5, I).m(44, -16, 14).o(40, 16, -14).legs(-6, 4).drop(0.30F).lean(10).twist(-12)
+                .key(8, B).m(-168, -14, 8).o(30, 10, -26).legs(-12, 6).drop(0.04F).lean(-8).twist(16).head(-14, 0, 0)
+                .key(14, E).m(StancePoses.REST_M).o(StancePoses.REST_O).legs(0, 0).drop(0).lean(0).twist(0).head(0, 0, 0);
+
+        // The hidden pit: a deep crouch, both palms pressed flat toward the ground, then drawn apart low and slow as
+        // the earth under the mark hollows out; the head stays down, watching the ground.
+        define(Gesture.EARTH_PIT)
+                .key(0, S).m(-40, -10, 10).o(-40, 10, -10).legs(0, 0).drop(0).lean(0).head(0, 0, 0)
+                .key(4, O).m(20, -6, 6).o(20, 6, -6).legs(-40, -40).drop(0.40F).lean(22).head(16, 0, 0)
+                .key(9, S).m(24, -40, 30).o(24, 40, -30).legs(-36, -36).drop(0.36F).lean(18).head(14, 0, 0)
+                .key(16, E).m(StancePoses.REST_M).o(StancePoses.REST_O).legs(0, 0).drop(0).lean(0).head(0, 0, 0);
     }
 
     private EarthGestures() {

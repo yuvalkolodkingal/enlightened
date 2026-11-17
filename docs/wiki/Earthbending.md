@@ -85,3 +85,14 @@ Every earthbender's first chakra, and his heavy footing, also show in the **step
 
 The **Lava Shuriken** is Ghazan's disc: a flat saw of molten rock spinning fast, a glowing heart under dark crust that
 curls over it in spiral streaks and breaks into teeth round the rim, with sparks off the edge.
+
+## New in 1.1.0
+
+| Ability | Kind | What it does |
+|---|---|---|
+| **Earth Spikes** | press | The ground under the creature (or the spot) you aim at, up to **20** blocks away, rumbles for a moment, then a spike of stone shoots out of it a block a tick, **2 / 3 / 4** high with a dripstone point: whoever stands there is struck (**6 / 8.4 / 10.8**), thrown into the air and stunned for a second. An **adept** raises four small spikes round it, a **master** eight, and a trail of small spikes that races over the ground from your feet to the mark first (the small ones strike for half). The spikes crumble back from the tip down after **3 s**, and the ground is as it was. Under soil the spike is stone, under sand sandstone. Cooldown **6 / 6 / 4 s**. |
+| **Hidden Pit** | press | You hollow out the earth under the ground you look at (up to **16** blocks away) and leave its top as it was, so it looks like any other ground: **1x1, two deep** for a novice, **3x3, three deep** for an adept or a master. The first creature that steps on it (never you, your teammates or your pets, nor a player while PvP is off) drops in as the top caves; the earth strikes it (**4 / 5.6 / 7.2**) and, once it is down, closes over its head and holds it for **3 / 4 / 5 s**; then the earth spits it out onto the ground and the ground is whole again. A pit nobody steps on fills back in after **60 s**. You keep **1 / 2 / 3** pits at once (a new one fills the oldest). Only earth and sand are dug, never a block with something in it, never beside water or lava, never under sand or gravel, and only where you may break blocks; the closed lid cannot be broken while it holds someone. Cooldown **10 s**. |
+
+Both work with the team combos: **Earth Spikes** joins a tornado (a dust devil) or takes fire (a magma eruption), the
+**Hidden Pit** churns into a waterbender's water (a mud flood). See [Combos and Steps](Combos-and-Steps#team-combos).
+

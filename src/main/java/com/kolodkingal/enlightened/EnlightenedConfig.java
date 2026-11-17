@@ -40,6 +40,15 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.DoubleValue METAL_BLADE_DAMAGE;
     public static final ModConfigSpec.IntValue METAL_PULL_RADIUS;
     public static final ModConfigSpec.BooleanValue WRECK_DROPS;
+    public static final ModConfigSpec.DoubleValue EARTH_SPIKE_DAMAGE;
+    public static final ModConfigSpec.IntValue EARTH_SPIKE_RANGE;
+    public static final ModConfigSpec.IntValue EARTH_SPIKE_COOLDOWN;
+    public static final ModConfigSpec.IntValue EARTH_SPIKE_SECONDS;
+    public static final ModConfigSpec.DoubleValue PIT_DAMAGE;
+    public static final ModConfigSpec.IntValue PIT_RANGE;
+    public static final ModConfigSpec.IntValue PIT_COOLDOWN;
+    public static final ModConfigSpec.IntValue PIT_WAIT_SECONDS;
+    public static final ModConfigSpec.IntValue PIT_HOLD_SECONDS;
 
     // ---- air ----
     public static final ModConfigSpec.DoubleValue AIR_BLAST_PUSH;
@@ -101,6 +110,16 @@ public final class EnlightenedConfig {
     public static final ModConfigSpec.IntValue COMBO_WINDOW_TICKS;
     public static final ModConfigSpec.BooleanValue STEPS;
 
+    // ---- team combos ----
+    public static final ModConfigSpec.BooleanValue TEAM_COMBOS;
+    public static final ModConfigSpec.IntValue TEAM_COMBO_WINDOW_TICKS;
+    public static final ModConfigSpec.DoubleValue TEAM_COMBO_RANGE;
+    public static final ModConfigSpec.DoubleValue TEAM_COMBO_DAMAGE;
+    public static final ModConfigSpec.DoubleValue FIRE_TORNADO_LIFE;
+    public static final ModConfigSpec.DoubleValue FIRE_TORNADO_DAMAGE;
+    public static final ModConfigSpec.IntValue STEAM_CLOUD_SECONDS;
+    public static final ModConfigSpec.IntValue MAGMA_SECONDS;
+
     static {
         B.push("general");
         STARTING_POINTS = B.comment("Ability points a new bender starts with (the starter ability is free on top of them).")
@@ -141,6 +160,20 @@ public final class EnlightenedConfig {
         METAL_BLADE_DAMAGE = B.comment("Damage of one metal blade (plus one per level).").defineInRange("metalBladeDamage", 6.0, 0.0, 100.0);
         METAL_PULL_RADIUS = B.comment("Radius of the metal pull at level 1 (it grows with the level).").defineInRange("metalPullRadius", 6, 1, 32);
         WRECK_DROPS = B.comment("Whether a wrecked metal device drops its item.").define("wreckDrops", true);
+        EARTH_SPIKE_DAMAGE = B.comment("Damage of the earth spike at level 1 (it grows with the level; the small spikes round it do half).")
+                .defineInRange("earthSpikeDamage", 6.0, 0.0, 100.0);
+        EARTH_SPIKE_RANGE = B.comment("How far away an earth spike can be raised.").defineInRange("earthSpikeRange", 20, 4, 64);
+        EARTH_SPIKE_COOLDOWN = B.comment("Ticks before another earth spike can be raised (a master waits two thirds).")
+                .defineInRange("earthSpikeCooldown", 120, 0, 6000);
+        EARTH_SPIKE_SECONDS = B.comment("Seconds a spike stands before it crumbles back into the ground.").defineInRange("earthSpikeSeconds", 3, 1, 60);
+        PIT_DAMAGE = B.comment("Damage a creature takes falling into a hidden pit at level 1 (it grows with the level).")
+                .defineInRange("pitTrapDamage", 4.0, 0.0, 100.0);
+        PIT_RANGE = B.comment("How far away a hidden pit can be dug.").defineInRange("pitTrapRange", 16, 2, 64);
+        PIT_COOLDOWN = B.comment("Ticks before another hidden pit can be dug.").defineInRange("pitTrapCooldown", 200, 0, 6000);
+        PIT_WAIT_SECONDS = B.comment("Seconds a hidden pit waits for a victim before the ground fills it back in.")
+                .defineInRange("pitTrapWaitSeconds", 60, 5, 1200);
+        PIT_HOLD_SECONDS = B.comment("Seconds the ground holds a creature closed in a pit at level 1 (it grows with the level); then the earth spits it out and the ground is whole again.")
+                .defineInRange("pitTrapHoldSeconds", 3, 1, 60);
         B.pop();
 
         B.push("air");
@@ -219,6 +252,20 @@ public final class EnlightenedConfig {
         COMBOS = B.comment("Whether sequences of casts trigger the combos (Twister, Earth Dome, Ice Wave, Fire Spin...).").define("combos", true);
         COMBO_WINDOW_TICKS = B.comment("Ticks between the casts of a combo (60 = 3 s).").defineInRange("comboWindowTicks", 60, 10, 600);
         STEPS = B.comment("Whether a double tap of a direction dashes a bender who learned his element's step.").define("steps", true);
+        B.pop();
+
+        B.push("team");
+        TEAM_COMBOS = B.comment("Whether two benders of different elements casting into each other's bending make a team combo (fire into a tornado, water into a tornado, fire on earth...).")
+                .define("teamCombos", true);
+        TEAM_COMBO_WINDOW_TICKS = B.comment("Ticks between the two benders' casts of a team combo (60 = 3 s).").defineInRange("teamComboWindowTicks", 60, 10, 600);
+        TEAM_COMBO_RANGE = B.comment("How close (in blocks) the second bender's cast must come to the first one's for them to join.")
+                .defineInRange("teamComboRange", 8.0, 1.0, 32.0);
+        TEAM_COMBO_DAMAGE = B.comment("Base damage of a team combo (it grows with the two benders' strength).").defineInRange("teamComboDamage", 8.0, 0.0, 100.0);
+        FIRE_TORNADO_LIFE = B.comment("The share of its remaining life a tornado keeps when a firebender casts fire into it (0.35: about a third).")
+                .defineInRange("fireTornadoLife", 0.35, 0.05, 1.0);
+        FIRE_TORNADO_DAMAGE = B.comment("How many times harder a tornado strikes once it is on fire.").defineInRange("fireTornadoDamage", 3.0, 1.0, 20.0);
+        STEAM_CLOUD_SECONDS = B.comment("Seconds the scalding steam of water met by fire hangs in the air.").defineInRange("steamCloudSeconds", 6, 1, 60);
+        MAGMA_SECONDS = B.comment("Seconds the ground stays molten after an eruption of earth and fire.").defineInRange("magmaSeconds", 6, 1, 60);
         B.pop();
     }
 

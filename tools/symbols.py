@@ -618,6 +618,22 @@ def m_frost_walk(p):
     m_snowflake_small(p, 72, 30)
 
 
+def m_spikes(p):
+    p.rect(16, 74, 84, 81, p.accent)
+    p.poly([(20, 74), (29, 48), (38, 74)], p.accent)
+    p.poly([(62, 74), (71, 48), (80, 74)], p.accent)
+    p.poly([(37, 74), (50, 16), (63, 74)])
+    p.poly([(50, 16), (56, 44), (50, 40)], p.accent)
+
+
+def m_pit(p):
+    p.d.rectangle([P(30, 50), P(70, 84)], fill=p.dark)
+    for x in range(16, 84, 12):
+        p.rect(x, 44, x + 8, 50, p.accent)
+    p.figure(50, 70, 0.38)
+    p.arrow(50, 22, 50, 38, 5, 9)
+
+
 MOTIFS = {
     "ROCK_THROW": m_rock, "ROCK_LIFT": m_lift, "EARTH_ARMOR": m_armor, "EARTH_PILLAR": m_pillar, "EARTH_WALL": m_wall,
     "SEISMIC_SENSE": m_seismic, "SAND_WALL": m_dunes, "SAND_LIFT": m_sand_lift, "QUICKSAND": m_quicksand,
@@ -642,6 +658,7 @@ MOTIFS = {
     "AVATAR_STATE": m_avatar_state, "ENERGYBENDING": m_energy, "SPIRITBENDING": m_spirit,
     "ELEMENTAL_SPHERE": m_sphere, "FROST_WALK": m_frost_walk, "ENERGY_RESTORE": m_restore,
     "MUD_WAVE": m_mud, "MUD_THROW": m_mud_throw, "PLANT_GIANT": m_giant, "GREAT_LIFT": m_great_lift,
+    "EARTH_SPIKES": m_spikes, "EARTH_PIT": m_pit,
 }
 
 

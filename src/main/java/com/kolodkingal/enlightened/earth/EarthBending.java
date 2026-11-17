@@ -78,6 +78,8 @@ public final class EarthBending {
         logic.put(Ability.METAL_WALL, new Wall(Wall.Material.METAL));
         logic.put(Ability.MUD_WAVE, Mud.wave());
         logic.put(Ability.GREAT_LIFT, new GreatLift());
+        logic.put(Ability.EARTH_SPIKES, new EarthSpikes());
+        logic.put(Ability.EARTH_PIT, new EarthPit());
         logic.put(Ability.SEISMIC_SENSE, new Seismic());
         logic.put(Ability.SAND_LIFT, new SandLift());
         logic.put(Ability.QUICKSAND, new Quicksand());

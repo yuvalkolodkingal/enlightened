@@ -153,6 +153,20 @@ public final class TempBlocks {
         }
     }
 
+    /** Puts back the raised block at one cell now (a pit that closes, a spike that crumbles). Returns whether one was there. */
+    public static boolean releaseAt(ServerLevel level, BlockPos pos) {
+        Iterator<Placed> it = PLACED.iterator();
+        while (it.hasNext()) {
+            Placed p = it.next();
+            if (p.dimension == level.dimension() && p.pos.equals(pos)) {
+                it.remove();
+                restore(level.getServer(), p);
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Puts back every block this bender raised, now. */
     public static void restoreAll(MinecraftServer server, UUID owner) {
         Iterator<Placed> it = PLACED.iterator();

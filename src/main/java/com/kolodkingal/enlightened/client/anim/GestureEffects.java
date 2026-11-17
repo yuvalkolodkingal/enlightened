@@ -68,6 +68,8 @@ public final class GestureEffects {
         switch (id) {
             case EARTH_ROCK_THROW, EARTH_WALL, EARTH_SEISMIC, EARTH_ARMOR_ON, EARTH_LAND -> add(player, now + 1, now + 3, Kind.STOMP_DUST);
             case EARTH_RISE, EARTH_SAND_LIFT -> add(player, now + 2, now + 8, Kind.GROUND_RING);
+            case EARTH_SPIKE -> add(player, now + 5, now + 7, Kind.STOMP_DUST);
+            case EARTH_PIT -> add(player, now + 4, now + 12, Kind.GROUND_RING);
             case EARTH_METAL_PULL, EARTH_WRECK -> add(player, now + 4, now + 11, Kind.GATHER_HANDS);
             case EARTH_QUICKSAND, EARTH_LAVA_PATH, WATER_FREEZE -> add(player, now + 4, now + 8, Kind.GROUND_RING);
             case AIR_BLAST, AIR_BLADES, FIRE_BALL, EARTH_LAVA_FLICK, WATER_WHIP, WATER_SNOW, FIRE_LIGHTNING -> add(player, now + 3, now + 5, Kind.BURST_HAND);

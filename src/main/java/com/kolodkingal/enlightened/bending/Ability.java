@@ -112,7 +112,10 @@ public enum Ability {
     MUD_WAVE(Element.EARTH, Gate.NONE, Kind.PRESS, false),
     MUD_THROW(Element.WATER, Gate.NONE, Kind.PRESS, false),
     PLANT_GIANT(Element.WATER, Gate.NONE, Kind.TOGGLE, false),
-    GREAT_LIFT(Element.EARTH, Gate.CHAKRAS, Kind.PRESS, false);
+    GREAT_LIFT(Element.EARTH, Gate.CHAKRAS, Kind.PRESS, false),
+    // 1.1.0: the spike under a foe, and the hidden pit.
+    EARTH_SPIKES(Element.EARTH, Gate.NONE, Kind.PRESS, false),
+    EARTH_PIT(Element.EARTH, Gate.NONE, Kind.PRESS, false);
 
     /** How an ability answers its key. */
     public enum Kind { PRESS, HOLD, TOGGLE, PASSIVE }

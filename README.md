@@ -3,7 +3,8 @@
 **[Join the official Discord](https://discord.gg/dKNCxwM5JE)** for news, help, bug reports and ideas.
 
 A Minecraft mod (NeoForge, Minecraft 1.21.1, 1.21.4, 1.21.5, 1.21.11 and 26.3, one jar for all five) where you become a **bender of the Avatar world**:
-an **earthbender** who throws rock, wears earth armour, raises walls and pillars and feels the ground, and learns
+an **earthbender** who throws rock, wears earth armour, raises walls and pillars, shoots stone spikes up under his
+foes, digs hidden pits that swallow them and feels the ground, and learns
 **sand** (a wall, sand in the air, quicksand), **lava** (a path, a shuriken, a lavabender's skin) and **metal**
 (a wall, blades, full armour, pulling metal out of the ground, wrecking machines);
 an **airbender** who blasts, shields, jumps and glides on the **Air Glider**, cuts with air blades, leaves his body in
@@ -54,7 +55,10 @@ panel in the top-left corner, items that awaken the power, a server config, oper
 5. **Items.** The **Water Skin** (4 leather, 1 string) carries ten uses of water; right-click water to fill it. The
    **Air Glider** (2 leather, a breeze rod, 2 sticks) opens as an airbender falls; dye it in a crafting table.
 6. **Combos and steps.** Cast the right abilities within three seconds of each other for a combo (Earth Dome, Ice
-   Wave, Fire Spin, Twister...); double-tap a direction to dash with your element's step.
+   Wave, Fire Spin, Twister...); double-tap a direction to dash with your element's step. **Team combos** (new in
+   1.1.0): two benders of different elements cast into each other's bending for a bigger joint attack: fire into an
+   airbender's tornado makes a short, fierce fire tornado, water a great water tornado, earth a dust devil; fire on
+   water scalding steam, fire on earth a magma eruption, earth into water a mud flood, lightning into water or metal...
 7. **The Avatar.** Born the Avatar, you bend all four elements, take or give back bending by touch, calm creatures with spiritbending and fly inside the elemental
    sphere. Only the Avatar has the **Avatar State**: near death at first, and at will once the guru has taught you.
 8. **The Southern Air Temple.** On the mountain tops: **sky bison** calves to tame with wheat, raise, saddle and fly
@@ -114,7 +118,8 @@ Java 21. The skins and the sounds are generated: `python3 tools/skins.py` and `p
 # Enlightened (עברית)
 
 מוד למיינקראפט (NeoForge, מיינקראפט 1.21.1, 1.21.4, 1.21.5, 1.21.11 ו-26.3, אותו קובץ לחמשתן) שבו אתם הופכים ל**כשפים מעולם האווטאר**:
-**כשף אדמה** שזורק סלעים, לובש שריון אדמה, מרים קירות ועמודים ומרגיש את האדמה, ולומד **חול** (קיר, חול באוויר,
+**כשף אדמה** שזורק סלעים, לובש שריון אדמה, מרים קירות ועמודים, יורה קוצי אבן מתחת לאויביו, חופר בורות נסתרים שבולעים
+אותם ומרגיש את האדמה, ולומד **חול** (קיר, חול באוויר,
 חול טובעני), **לבה** (שביל, שוריקן, עור של כשף לבה) ו**פלדה** (קיר, סכינים, שריון מלא, משיכת מתכת מהאדמה, הריסת
 מכשירים);
 **כשף אוויר** שמעיף, מגן, קופץ וגולש על **דאון האוויר**, חותך בלהבי אוויר, עוזב את גופו ב**הקרנה רוחנית**, נושם
@@ -167,7 +172,10 @@ Enlightened בנוי על אותה מסגרת כמו [Enhanced](https://github.c
 7. **מקדש האוויר הדרומי.** על פסגות ההרים: גורי **ביזון אוויר** שמאלפים בחיטה, מגדלים, שמים עליהם אוכף וטסים עם עד
    שישה רוכבים; **גורו פאתיק**, שמלמד את שבע הצ'אקרות; למורים מעופפים; דאונים ואוכפים בתיבות.
 6. **קומבואים וצעדים.** מטילים את היכולות הנכונות בתוך שלוש שניות זו מזו לקומבו (כיפת אדמה, גל קרח, סחרור אש,
-   טוויסטר...); לחיצה כפולה על כיוון מזניקה אתכם בצעד של היסוד שלכם.
+   טוויסטר...); לחיצה כפולה על כיוון מזניקה אתכם בצעד של היסוד שלכם. **קומבואים קבוצתיים** (חדש ב-1.1.0): שני כשפים
+   של יסודות שונים מטילים זה לתוך הכישוף של זה למתקפה משותפת גדולה יותר: אש לתוך הטורנדו של כשף אוויר עושה טורנדו אש
+   קצר ועז, מים טורנדו מים ענק, אדמה שד אבק; אש על מים קיטור רותח, אש על אדמה התפרצות מאגמה, אדמה לתוך מים שיטפון
+   בוץ, ברק לתוך מים או פלדה...
 8. **צ'אקרות.** אחרי השיעור של הגורו, **M** למדיטציה (מהר יותר על **נקודת מדיטציה**, פי שישה ליד הגורו). כל דקה
    פותחת צ'אקרה, כל אחת מתנה קטנה; השביעית שולחת את הרוח למישור הקוסמי, שם הולכים בשביל של אור אל עצמכם, ענקיים.
    לאווטאר, כל השבע פותחות את **מצב האווטאר מרצון**: בלתי פגיע, חזק פי שניים, נכנס ויוצא כרצונו.
